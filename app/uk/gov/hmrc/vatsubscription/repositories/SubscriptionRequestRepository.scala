@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.controllers
+package uk.gov.hmrc.vatsubscription.repositories
 
-import javax.inject.Singleton
+import javax.inject.Inject
 
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import play.api.mvc._
+import play.api.libs.json.Format
+import play.modules.reactivemongo.ReactiveMongoComponent
+import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
 
-import scala.concurrent.Future
-
-@Singleton()
-class MicroserviceHelloWorld extends BaseController {
-
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
-	}
-
-}
+class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)
+  extends ReactiveRepository[SubscriptionRequest, String](
+    "subscriptionRequestRepository",
+    mongo.mongoConnector.db,
+    SubscriptionRequest.mongoFormat,
+    implicitly[Format[String]]
+  )
