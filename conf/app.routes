@@ -1,3 +1,3 @@
 # microservice specific routes
 
-GET        /hello-world             @uk.gov.hmrc.vatsubscription.controllers.MicroserviceHelloWorld.hello
+PUT        /subscription-request/vat-number             @uk.gov.hmrc.vatsubscription.controllers.StoreVatNumberController.storeVrn
