@@ -16,24 +16,24 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.libs.json.{JsPath, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 
-case class SubscriptionRequest(credentialId: String, vrn: Option[String])
+case class SubscriptionRequest(internalId: String, vatNumber: Option[String])
 
 object SubscriptionRequest {
-  val credentialIdKey = "_id"
-  val vrnKey = "vrn"
+  val internalIdKey = "_id"
+  val vatNumberKey = "vatNumber"
 
   val mongoFormat: OFormat[SubscriptionRequest] = OFormat(
     json =>
       for {
-        credentialId <- (json \ "_id").validate[String]
-        vrn <- (json \ "vrn").validateOpt[String]
-      } yield SubscriptionRequest(credentialId, vrn),
+        internalId <- (json \ internalIdKey).validate[String]
+        vrn <- (json \ vatNumberKey).validateOpt[String]
+      } yield SubscriptionRequest(internalId, vrn),
     subscriptionRequest =>
       Json.obj(
-        credentialIdKey -> subscriptionRequest.credentialId,
-        vrnKey -> subscriptionRequest.vrn
+        internalIdKey -> subscriptionRequest.internalId,
+        vatNumberKey -> subscriptionRequest.vatNumber
       )
   )
 

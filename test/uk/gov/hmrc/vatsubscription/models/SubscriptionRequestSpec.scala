@@ -20,6 +20,7 @@ import java.util.UUID
 
 import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest._
 
 class SubscriptionRequestSpec extends UnitSpec {
   "mongoFormat" should {
@@ -28,13 +29,13 @@ class SubscriptionRequestSpec extends UnitSpec {
 
     "convert a SubscriptionRequest into a correctly formatted json model" in {
       val model = SubscriptionRequest(testCredentialId, Some(testVrn))
-      val expectedModel = Json.parse(s"""{"_id":"$testCredentialId","vrn":"$testVrn"}""")
+      val expectedModel = Json.parse(s"""{"$internalIdKey":"$testCredentialId","$vatNumberKey":"$testVrn"}""")
 
       SubscriptionRequest.mongoFormat.writes(model) shouldBe expectedModel
     }
 
     "convert a correctly formatted json model into a SubscriptionRequest" in {
-      val jsonModel = Json.parse(s"""{"_id":"$testCredentialId","vrn":"$testVrn"}""")
+      val jsonModel = Json.parse(s"""{"$internalIdKey":"$testCredentialId","$vatNumberKey":"$testVrn"}""")
       val expectedModel = SubscriptionRequest(testCredentialId, Some(testVrn))
 
       SubscriptionRequest.mongoFormat.reads(jsonModel) shouldBe JsSuccess(expectedModel)

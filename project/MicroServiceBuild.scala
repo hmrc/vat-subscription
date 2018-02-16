@@ -12,6 +12,8 @@ object MicroServiceBuild extends Build with MicroService {
   override lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
   private val scalaTestPlusVersion = "2.0.0"
+  private val wiremockVersion = "2.5.1"
+  private val mockitoVersion = "2.7.17"
 
   val compile = Seq(
     "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",
@@ -24,7 +26,9 @@ object MicroServiceBuild extends Build with MicroService {
     "org.scalatest" %% "scalatest" % "2.2.6" % scope,
     "org.pegdown" % "pegdown" % "1.6.0" % scope,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-    "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope
+    "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
+    "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope,
+    "org.mockito" % "mockito-core" % mockitoVersion % scope
   )
 
 }

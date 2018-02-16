@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.controllers
+package uk.gov.hmrc.vatsubscription.helpers
 
-import javax.inject.Singleton
+import java.util.UUID
 
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import play.api.mvc._
-
-import scala.concurrent.Future
-
-@Singleton()
-class MicroserviceHelloWorld extends BaseController {
-
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
-	}
-
+object TestConstants  {
+  val testInternalId: String = UUID.randomUUID().toString
+  val testVatNumber: String = UUID.randomUUID().toString
 }
