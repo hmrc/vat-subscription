@@ -23,27 +23,27 @@ import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
-import uk.gov.hmrc.vatsubscription.service.mocks.MockStoreVatNumberService
-import uk.gov.hmrc.vatsubscription.services.{StoreVatNumberSuccess, VatNumberDatabaseFailure}
+import uk.gov.hmrc.vatsubscription.service.mocks.MockStoreCompanyNumberService
+import uk.gov.hmrc.vatsubscription.services.{StoreCompanyNumberSuccess, CompanyNumberDatabaseFailure}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with MockStoreVatNumberService {
+class StoreCompanyNumberControllerSpec extends UnitSpec with MockAuthConnector with MockStoreCompanyNumberService {
 
-  object TestStoreVatNumberController
-    extends StoreVatNumberController(mockAuthConnector, mockStoreVatNumberService)
+  object TestStoreCompanyNumberController
+    extends StoreCompanyNumberController(mockAuthConnector, mockStoreCompanyNumberService)
 
   "storeVrn" when {
     "auth returns an internal ID" when {
       "the CRN has been stored correctly" should {
         "return NO_CONTENT" in {
           mockAuthorise(retrievals = Retrievals.internalId)(Future.successful(Some(testInternalId)))
-          mockStoreVatNumber(testInternalId, testVatNumber)(Future.successful(Right(StoreVatNumberSuccess)))
+          mockStoreCompanyNumber(testInternalId, testCompanyNumber)(Future.successful(Right(StoreCompanyNumberSuccess)))
 
-          val request = FakeRequest() withBody testVatNumber
+          val request = FakeRequest() withBody testCompanyNumber
 
-          val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+          val res: Result = await(TestStoreCompanyNumberController.storeCompanyNumber()(request))
 
           status(res) shouldBe NO_CONTENT
         }
@@ -52,11 +52,11 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
       "the CRN storage has failed" should {
         "return INTERNAL_SERVER_ERROR" in {
           mockAuthorise(retrievals = Retrievals.internalId)(Future.successful(Some(testInternalId)))
-          mockStoreVatNumber(testInternalId, testVatNumber)(Future.successful(Left(VatNumberDatabaseFailure)))
+          mockStoreCompanyNumber(testInternalId, testCompanyNumber)(Future.successful(Left(CompanyNumberDatabaseFailure)))
 
-          val request = FakeRequest() withBody testVatNumber
+          val request = FakeRequest() withBody testCompanyNumber
 
-          val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+          val res: Result = await(TestStoreCompanyNumberController.storeCompanyNumber()(request))
 
           status(res) shouldBe INTERNAL_SERVER_ERROR
         }
@@ -66,9 +66,9 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
       "return UNAUTHORIZED" in {
         mockAuthorise(retrievals = Retrievals.internalId)(Future.successful(None))
 
-        val request = FakeRequest() withBody testVatNumber
+        val request = FakeRequest() withBody testCompanyNumber
 
-        val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+        val res: Result = await(TestStoreCompanyNumberController.storeCompanyNumber()(request))
 
         status(res) shouldBe UNAUTHORIZED
       }

@@ -22,15 +22,12 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
   val repo: SubscriptionRequestRepository = app.injector.instanceOf[SubscriptionRequestRepository]
-
-  private val testInternalId: String = UUID.randomUUID().toString
-  private val testVatNumber: String = UUID.randomUUID().toString
-  private val testCompanyNumber: String = UUID.randomUUID().toString
 
   private val testSubscriptionRequest = SubscriptionRequest(
     internalId = testInternalId,

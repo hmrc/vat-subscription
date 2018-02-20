@@ -24,15 +24,15 @@ import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future
 
-trait MockStoreVatNumberService extends MockitoSugar {
+trait MockStoreCompanyNumberService extends MockitoSugar {
   self: Suite =>
 
-  val mockStoreVatNumberService: StoreVatNumberService = mock[StoreVatNumberService]
+  val mockStoreCompanyNumberService: StoreCompanyNumberService = mock[StoreCompanyNumberService]
 
-  def mockStoreVatNumber(internalId: String,
+  def mockStoreCompanyNumber(internalId: String,
                          vatNumber: String
-                        )(response: Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]]): Unit = {
-    when(mockStoreVatNumberService.storeVatNumber(
+                        )(response: Future[Either[StoreCompanyNumberFailure, StoreCompanyNumberSuccess.type]]): Unit = {
+    when(mockStoreCompanyNumberService.storeCompanyNumber(
       ArgumentMatchers.eq(internalId),
       ArgumentMatchers.eq(vatNumber)
     )) thenReturn response

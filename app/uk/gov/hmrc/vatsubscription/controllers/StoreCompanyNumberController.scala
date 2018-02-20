@@ -23,27 +23,27 @@ import play.api.mvc.Action
 import uk.gov.hmrc.auth.core.retrieve.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.vatNumberKey
-import uk.gov.hmrc.vatsubscription.services._
+import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.companyNumberKey
+import uk.gov.hmrc.vatsubscription.services.{CompanyNumberDatabaseFailure, StoreCompanyNumberService, StoreCompanyNumberSuccess}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StoreVatNumberController @Inject()(val authConnector: AuthConnector,
-                                         storeVatNumberService: StoreVatNumberService
+class StoreCompanyNumberController @Inject()(val authConnector: AuthConnector,
+                                             storeCompanyNumberService: StoreCompanyNumberService
                                         )(implicit ec: ExecutionContext)
   extends BaseController with AuthorisedFunctions {
 
-  val storeVatNumber: Action[String] =
-    Action.async(parse.json((JsPath \ vatNumberKey).read[String])) {
+  val storeCompanyNumber: Action[String] =
+    Action.async(parse.json((JsPath \ companyNumberKey).read[String])) {
       implicit req =>
         authorised().retrieve(internalId) {
           case Some(id) =>
-            val vatNumber = req.body
+            val companyNumber = req.body
 
-            storeVatNumberService.storeVatNumber(id, vatNumber) map {
-              case Right(StoreVatNumberSuccess) => NoContent
-              case Left(VatNumberDatabaseFailure) => InternalServerError
+            storeCompanyNumberService.storeCompanyNumber(id, companyNumber) map {
+              case Right(StoreCompanyNumberSuccess) => NoContent
+              case Left(CompanyNumberDatabaseFailure) => InternalServerError
             }
           case _ => Future.successful(Unauthorized)
         }
