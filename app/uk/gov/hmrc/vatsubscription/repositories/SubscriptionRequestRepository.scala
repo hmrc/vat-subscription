@@ -21,9 +21,8 @@ import javax.inject.Inject
 import play.api.libs.json.{Format, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.commands.UpdateWriteResult
-import reactivemongo.bson._
 import reactivemongo.play.json._
-import uk.gov.hmrc.mongo.{AtomicUpdate, ReactiveRepository}
+import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest._
 
@@ -35,18 +34,22 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
     mongo.mongoConnector.db,
     SubscriptionRequest.mongoFormat,
     implicitly[Format[String]]
-  ) with AtomicUpdate[SubscriptionRequest] {
+  ) {
 
-  def upsertVatNumber(internalId: String, vatNumber: String): Future[UpdateWriteResult] = {
+  private def upsert(internalId: String, elementKey: String, elementValue: String) = {
     collection.update(
       selector = Json.obj(internalIdKey -> internalId),
       update = Json.obj("$set" -> Json.obj(
-        vatNumberKey -> vatNumber
+        elementKey -> elementValue
       )),
       upsert = true
     )
   }
 
-  override def isInsertion(newRecordId: BSONObjectID, oldRecord: SubscriptionRequest): Boolean =
-    newRecordId.toString == oldRecord.internalId
+  def upsertVatNumber(internalId: String, vatNumber: String): Future[UpdateWriteResult] =
+    upsert(internalId, vatNumberKey, vatNumber)
+
+  def upsertCompanyNumber(internalId: String, companyNumber: String): Future[UpdateWriteResult] =
+    upsert(internalId, companyNumberKey, companyNumber)
+
 }
