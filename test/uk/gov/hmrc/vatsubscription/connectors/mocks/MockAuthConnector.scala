@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait MockAuthConnector extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val mockAuthConnector = mock[AuthConnector]
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   def mockAuthorise[T](predicate: Predicate = EmptyPredicate,
                        retrievals: Retrieval[T]

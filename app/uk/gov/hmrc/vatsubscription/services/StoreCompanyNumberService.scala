@@ -22,18 +22,18 @@ import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository
+class StoreCompanyNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository
                                      )(implicit ec: ExecutionContext) {
-  def storeVatNumber(internalId: String, vatNumber: String): Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]] =
-    subscriptionRequestRepository.upsertVatNumber(internalId, vatNumber) map {
-      _ => Right(StoreVatNumberSuccess)
+  def storeCompanyNumber(internalId: String, companyNumber: String): Future[Either[StoreCompanyNumberFailure, StoreCompanyNumberSuccess.type]] =
+    subscriptionRequestRepository.upsertCompanyNumber(internalId, companyNumber) map {
+      _ => Right(StoreCompanyNumberSuccess)
     } recover {
-      case _ => Left(VatNumberDatabaseFailure)
+      case _ => Left(CompanyNumberDatabaseFailure)
     }
 }
 
-object StoreVatNumberSuccess
+object StoreCompanyNumberSuccess
 
-sealed trait StoreVatNumberFailure
+sealed trait StoreCompanyNumberFailure
 
-object VatNumberDatabaseFailure extends StoreVatNumberFailure
+object CompanyNumberDatabaseFailure extends StoreCompanyNumberFailure

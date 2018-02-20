@@ -20,11 +20,10 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json, Writes}
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 
 object AuthStub extends WireMockMethods {
   val authority = "/auth/authorise"
-
-  val internalID = "internal"
 
   def stubAuth[T](status: Int, body: T)(implicit writes: Writes[T]): StubMapping = {
     when(method = POST, uri = authority)
@@ -40,7 +39,7 @@ object AuthStub extends WireMockMethods {
 
   val successfulAuthResponse: JsObject = {
     Json.obj(
-      "internalId" -> internalID
+      "internalId" -> testInternalId
     )
   }
 
