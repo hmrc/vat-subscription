@@ -16,29 +16,31 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import java.util.UUID
-
 import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest._
 
 class SubscriptionRequestSpec extends UnitSpec {
   "mongoFormat" should {
-    val testCredentialId = UUID.randomUUID().toString
-    val testVrn = UUID.randomUUID().toString
+    val testJson = Json.obj(
+      internalIdKey -> testInternalId,
+      vatNumberKey -> testVatNumber,
+      companyNumberKey -> testCompanyNumber
+    )
+
+    val testModel = SubscriptionRequest(
+      internalId = testInternalId,
+      vatNumber = Some(testVatNumber),
+      companyNumber = Some(testCompanyNumber)
+    )
 
     "convert a SubscriptionRequest into a correctly formatted json model" in {
-      val model = SubscriptionRequest(testCredentialId, Some(testVrn))
-      val expectedModel = Json.parse(s"""{"$internalIdKey":"$testCredentialId","$vatNumberKey":"$testVrn"}""")
-
-      SubscriptionRequest.mongoFormat.writes(model) shouldBe expectedModel
+      SubscriptionRequest.mongoFormat.writes(testModel) shouldBe testJson
     }
 
     "convert a correctly formatted json model into a SubscriptionRequest" in {
-      val jsonModel = Json.parse(s"""{"$internalIdKey":"$testCredentialId","$vatNumberKey":"$testVrn"}""")
-      val expectedModel = SubscriptionRequest(testCredentialId, Some(testVrn))
-
-      SubscriptionRequest.mongoFormat.reads(jsonModel) shouldBe JsSuccess(expectedModel)
+      SubscriptionRequest.mongoFormat.reads(testJson) shouldBe JsSuccess(testModel)
     }
   }
 }

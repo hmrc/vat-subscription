@@ -28,12 +28,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
   val repo: SubscriptionRequestRepository = app.injector.instanceOf[SubscriptionRequestRepository]
 
-  private val testCredential: String = UUID.randomUUID().toString
-  private val testVrn: String = UUID.randomUUID().toString
+  private val testInternalId: String = UUID.randomUUID().toString
+  private val testVatNumber: String = UUID.randomUUID().toString
+  private val testCompanyNumber: String = UUID.randomUUID().toString
 
   private val testSubscriptionRequest = SubscriptionRequest(
-    internalId = testCredential,
-    vatNumber = Some(testVrn)
+    internalId = testInternalId,
+    vatNumber = Some(testVatNumber),
+    companyNumber = Some(testCompanyNumber)
   )
 
   override def beforeEach: Unit = {
@@ -45,7 +47,7 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
     "successfully insert and retrieve a SubscriptionRequest model" in {
       val res = for {
         _ <- repo.insert(testSubscriptionRequest)
-        model <- repo.findById(testCredential)
+        model <- repo.findById(testInternalId)
       } yield model
 
       await(res) should contain(testSubscriptionRequest)
@@ -53,10 +55,15 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
   }
 
   "upsertVatNumber" should {
+    val testSubscriptionRequest = SubscriptionRequest(
+      internalId = testInternalId,
+      vatNumber = Some(testVatNumber)
+    )
+
     "insert the subscription request where there is not already one" in {
       val res = for {
-        _ <- repo.upsertVatNumber(testCredential, testVrn)
-        model <- repo.findById(testCredential)
+        _ <- repo.upsertVatNumber(testInternalId, testVatNumber)
+        model <- repo.findById(testInternalId)
       } yield model
 
       await(res) should contain(testSubscriptionRequest)
@@ -64,19 +71,66 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
 
     "update the subscription request where one already exists" in {
       val res = for {
-        _ <- repo.insert(SubscriptionRequest(testCredential, None))
-        _ <- repo.upsertVatNumber(testCredential, testVrn)
-        model <- repo.findById(testCredential)
+        _ <- repo.insert(SubscriptionRequest(testInternalId, None))
+        _ <- repo.upsertVatNumber(testInternalId, testVatNumber)
+        model <- repo.findById(testInternalId)
       } yield model
 
       await(res) should contain(testSubscriptionRequest)
     }
 
-    "replace an existing stored vrn" in {
+    "replace an existing stored vat number" in {
       val res = for {
         _ <- repo.insert(testSubscriptionRequest)
-        _ <- repo.upsertVatNumber(testCredential, testVrn)
-        model <- repo.findById(testCredential)
+        _ <- repo.upsertVatNumber(testInternalId, testVatNumber)
+        model <- repo.findById(testInternalId)
+      } yield model
+
+      await(res) should contain(testSubscriptionRequest)
+    }
+  }
+
+
+  "upsertCompanyNumber" should {
+    val testSubscriptionRequest = SubscriptionRequest(
+      internalId = testInternalId,
+      companyNumber = Some(testCompanyNumber)
+    )
+
+    "insert the subscription request where there is not already one" in {
+      val res = for {
+        _ <- repo.upsertCompanyNumber(testInternalId, testCompanyNumber)
+        model <- repo.findById(testInternalId)
+      } yield model
+
+      await(res) should contain(testSubscriptionRequest)
+    }
+
+    "update the subscription request where one already exists with an existing vat number" in {
+      val expectedSubscriptionRequest = SubscriptionRequest(
+        internalId = testInternalId,
+        vatNumber = Some(testVatNumber),
+        companyNumber = Some(testCompanyNumber)
+      )
+
+      val res = for {
+        _ <- repo.insert(SubscriptionRequest(
+          internalId = testInternalId,
+          vatNumber = Some(testVatNumber),
+          companyNumber = None
+        ))
+        _ <- repo.upsertCompanyNumber(testInternalId, testCompanyNumber)
+        model <- repo.findById(testInternalId)
+      } yield model
+
+      await(res) should contain(expectedSubscriptionRequest)
+    }
+
+    "replace an existing stored company number" in {
+      val res = for {
+        _ <- repo.insert(testSubscriptionRequest)
+        _ <- repo.upsertCompanyNumber(testInternalId, testCompanyNumber)
+        model <- repo.findById(testInternalId)
       } yield model
 
       await(res) should contain(testSubscriptionRequest)
