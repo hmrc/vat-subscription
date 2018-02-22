@@ -113,7 +113,47 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
         model <- repo.findById(testVatNumber)
       } yield model
 
-      await(res) should contain(SubscriptionRequest(testVatNumber, Some(newCompanyNumber)))
+      await(res) should contain(SubscriptionRequest(testVatNumber, companyNumber = Some(newCompanyNumber)))
     }
   }
+
+  "upsertEmail" should {
+    val testSubscriptionRequest = SubscriptionRequest(
+      vatNumber = testVatNumber,
+      email = Some(testEmail)
+    )
+
+    "insert the subscription request where the vat number doesn't exist" in {
+      val res = for {
+        _ <- repo.upsertEmail(testVatNumber, testEmail)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      intercept[NoSuchElementException] {
+        await(res)
+      }
+    }
+
+    "update the subscription request where there isn't already an email stored" in {
+      val res = for {
+        _ <- repo.insertVatNumber(testVatNumber)
+        _ <- repo.upsertEmail(testVatNumber, testEmail)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      await(res) should contain(testSubscriptionRequest)
+    }
+
+    "replace an existing stored email" in {
+      val newEmail = UUID.randomUUID().toString
+      val res = for {
+        _ <- repo.insert(testSubscriptionRequest)
+        _ <- repo.upsertEmail(testVatNumber, newEmail)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      await(res) should contain(SubscriptionRequest(testVatNumber, email = Some(newEmail)))
+    }
+  }
+
 }

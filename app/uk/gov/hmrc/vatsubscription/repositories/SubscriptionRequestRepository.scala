@@ -52,5 +52,7 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
   def upsertCompanyNumber(vatNumber: String, companyNumber: String): Future[UpdateWriteResult] =
     upsert(vatNumber, companyNumberKey, companyNumber)
 
+  def upsertEmail(vatNumber: String, email: String): Future[UpdateWriteResult] =
+    upsert(vatNumber, emailKey, email)
 
 }

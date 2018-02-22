@@ -25,12 +25,14 @@ class SubscriptionRequestSpec extends UnitSpec {
   "mongoFormat" should {
     val testJson = Json.obj(
       idKey -> testVatNumber,
-      companyNumberKey -> testCompanyNumber
+      companyNumberKey -> testCompanyNumber,
+      emailKey -> testEmail
     )
 
     val testModel = SubscriptionRequest(
       vatNumber = testVatNumber,
-      companyNumber = Some(testCompanyNumber)
+      companyNumber = Some(testCompanyNumber),
+      email = Some(testEmail)
     )
 
     "convert a SubscriptionRequest into a correctly formatted json model" in {
@@ -39,6 +41,17 @@ class SubscriptionRequestSpec extends UnitSpec {
 
     "convert a correctly formatted json model into a SubscriptionRequest" in {
       SubscriptionRequest.mongoFormat.reads(testJson) shouldBe JsSuccess(testModel)
+    }
+
+    "convert models with null fields to and from json correctly" in {
+      val noEmail = testModel.copy(email = None)
+      SubscriptionRequest.mongoFormat.reads(SubscriptionRequest.mongoFormat.writes(noEmail)).get shouldBe noEmail
+
+      val noCompanyNumber = testModel.copy(companyNumber = None)
+      SubscriptionRequest.mongoFormat.reads(SubscriptionRequest.mongoFormat.writes(noCompanyNumber)).get shouldBe noCompanyNumber
+
+      val onlyVat = testModel.copy(companyNumber = None, email = None)
+      SubscriptionRequest.mongoFormat.reads(SubscriptionRequest.mongoFormat.writes(onlyVat)).get shouldBe onlyVat
     }
   }
 }
