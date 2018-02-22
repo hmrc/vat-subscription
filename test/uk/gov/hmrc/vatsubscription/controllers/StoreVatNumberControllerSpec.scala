@@ -34,23 +34,23 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
   object TestStoreVatNumberController
     extends StoreVatNumberController(mockAuthConnector, mockStoreVatNumberService)
 
-  "storeVrn" when {
-    "the CRN has been stored correctly" should {
-      "return NO_CONTENT" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful())
+  "storeVatNumber" when {
+    "the VRN has been stored correctly" should {
+      "return CREATED" in {
+        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
         mockStoreVatNumber(testVatNumber)(Future.successful(Right(StoreVatNumberSuccess)))
 
         val request = FakeRequest() withBody testVatNumber
 
         val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
 
-        status(res) shouldBe NO_CONTENT
+        status(res) shouldBe CREATED
       }
     }
 
-    "the CRN storage has failed" should {
+    "the VRN storage has failed" should {
       "return INTERNAL_SERVER_ERROR" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful())
+        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
         mockStoreVatNumber(testVatNumber)(Future.successful(Left(VatNumberDatabaseFailure)))
 
         val request = FakeRequest() withBody testVatNumber
@@ -61,4 +61,5 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
       }
     }
   }
+
 }

@@ -40,7 +40,7 @@ class StoreVatNumberController @Inject()(val authConnector: AuthConnector,
         authorised() {
             val vatNumber = req.body
             storeVatNumberService.storeVatNumber(vatNumber) map {
-              case Right(StoreVatNumberSuccess) => NoContent
+              case Right(StoreVatNumberSuccess) => Created
               case Left(VatNumberDatabaseFailure) => InternalServerError
             }
         }

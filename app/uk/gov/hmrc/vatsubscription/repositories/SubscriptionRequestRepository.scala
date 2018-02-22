@@ -47,9 +47,7 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
   }
 
   def insertVatNumber(vatNumber: String): Future[WriteResult] =
-    collection.insert(
-      Json.obj(idKey -> vatNumber)
-    )
+    collection.insert(SubscriptionRequest(vatNumber))(mongoFormat, implicitly[ExecutionContext])
 
   def upsertCompanyNumber(vatNumber: String, companyNumber: String): Future[UpdateWriteResult] =
     upsert(vatNumber, companyNumberKey, companyNumber)

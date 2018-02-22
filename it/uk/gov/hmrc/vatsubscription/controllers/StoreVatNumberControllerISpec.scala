@@ -41,7 +41,7 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
       val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
       res should have(
-        httpStatus(NO_CONTENT),
+        httpStatus(CREATED),
         emptyBody
       )
     }

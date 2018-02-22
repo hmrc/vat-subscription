@@ -19,12 +19,12 @@ package uk.gov.hmrc.vatsubscription.controllers
 import play.api.http.Status._
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrievals}
+import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.service.mocks.MockStoreCompanyNumberService
-import uk.gov.hmrc.vatsubscription.services.{CompanyNumberDatabaseFailure, StoreCompanyNumberSuccess}
+import uk.gov.hmrc.vatsubscription.services.{CompanyNumberDatabaseFailure, StoreCompanyNumberSuccess, VatNumberNotFoundFailure}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,10 +34,10 @@ class StoreCompanyNumberControllerSpec extends UnitSpec with MockAuthConnector w
   object TestStoreCompanyNumberController
     extends StoreCompanyNumberController(mockAuthConnector, mockStoreCompanyNumberService)
 
-  "storeVrn" when {
+  "storeCompanyNumber" when {
     "the CRN has been stored correctly" should {
       "return NO_CONTENT" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful())
+        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
         mockStoreCompanyNumber(testVatNumber, testCompanyNumber)(Future.successful(Right(StoreCompanyNumberSuccess)))
 
         val request = FakeRequest() withBody testCompanyNumber
@@ -48,9 +48,22 @@ class StoreCompanyNumberControllerSpec extends UnitSpec with MockAuthConnector w
       }
     }
 
+    "if vat doesn't exist" should {
+      "return NOT_FOUND" in {
+        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
+        mockStoreCompanyNumber(testVatNumber, testCompanyNumber)(Future.successful(Left(VatNumberNotFoundFailure)))
+
+        val request = FakeRequest() withBody testCompanyNumber
+
+        val res: Result = await(TestStoreCompanyNumberController.storeCompanyNumber(testVatNumber)(request))
+
+        status(res) shouldBe NOT_FOUND
+      }
+    }
+
     "the CRN storage has failed" should {
       "return INTERNAL_SERVER_ERROR" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful())
+        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
         mockStoreCompanyNumber(testVatNumber, testCompanyNumber)(Future.successful(Left(CompanyNumberDatabaseFailure)))
 
         val request = FakeRequest() withBody testCompanyNumber
@@ -61,4 +74,5 @@ class StoreCompanyNumberControllerSpec extends UnitSpec with MockAuthConnector w
       }
     }
   }
+
 }
