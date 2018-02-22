@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+//$COVERAGE-OFF$Disabling scoverage
+
 package uk.gov.hmrc.vatsubscription.testonly.controllers
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.libs.json.JsPath
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.vatNumberKey
 import uk.gov.hmrc.vatsubscription.testonly.services.{DatabaseAdminService, DatabaseCallSuccess, DeleteRecordFailure}
 
 import scala.concurrent.ExecutionContext
@@ -31,10 +31,9 @@ class DBAdminController @Inject()(databaseAdminService: DatabaseAdminService
                                  )(implicit ec: ExecutionContext)
   extends BaseController {
 
-  val delete: Action[String] =
-    Action.async(parse.json((JsPath \ vatNumberKey).read[String])) {
+  def delete(vatNumber: String): Action[AnyContent] =
+    Action.async {
       implicit req =>
-        val vatNumber = req.body
         databaseAdminService.deleteRecord(vatNumber) map {
           case Right(DatabaseCallSuccess) => NoContent
           case Left(DeleteRecordFailure) => InternalServerError
@@ -42,3 +41,4 @@ class DBAdminController @Inject()(databaseAdminService: DatabaseAdminService
     }
 
 }
+// $COVERAGE-ON$

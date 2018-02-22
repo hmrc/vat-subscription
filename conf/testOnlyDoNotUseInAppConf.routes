@@ -12,7 +12,7 @@
 # Add all the application routes to the prod.routes file
 
 
-DELETE        /vat-subscription/test-only/vat-number        @uk.gov.hmrc.vatsubscription.testonly.controllers.DBAdminController.delete
+DELETE        /vat-subscription/test-only/vat-number/:vatNumber        @uk.gov.hmrc.vatsubscription.testonly.controllers.DBAdminController.delete(vatNumber:String)
 
 
-->            /                                             prod.Routes
+->            /                                                        prod.Routes

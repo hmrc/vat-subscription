@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+//$COVERAGE-OFF$Disabling scoverage
+
 package uk.gov.hmrc.vatsubscription.testonly.services
 
 import javax.inject.Inject
@@ -37,3 +39,5 @@ object DatabaseCallSuccess
 sealed trait DatabaseCallFailure
 
 case object DeleteRecordFailure extends DatabaseCallFailure
+
+// $COVERAGE-ON$
