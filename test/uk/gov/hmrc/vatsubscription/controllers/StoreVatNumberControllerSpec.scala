@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 import play.api.http.Status._
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import uk.gov.hmrc.auth.core.retrieve.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
@@ -34,44 +34,32 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
   object TestStoreVatNumberController
     extends StoreVatNumberController(mockAuthConnector, mockStoreVatNumberService)
 
-  "storeVrn" when {
-    "auth returns an internal ID" when {
-      "the CRN has been stored correctly" should {
-        "return NO_CONTENT" in {
-          mockAuthorise(retrievals = Retrievals.internalId)(Future.successful(Some(testInternalId)))
-          mockStoreVatNumber(testInternalId, testVatNumber)(Future.successful(Right(StoreVatNumberSuccess)))
-
-          val request = FakeRequest() withBody testVatNumber
-
-          val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
-
-          status(res) shouldBe NO_CONTENT
-        }
-      }
-
-      "the CRN storage has failed" should {
-        "return INTERNAL_SERVER_ERROR" in {
-          mockAuthorise(retrievals = Retrievals.internalId)(Future.successful(Some(testInternalId)))
-          mockStoreVatNumber(testInternalId, testVatNumber)(Future.successful(Left(VatNumberDatabaseFailure)))
-
-          val request = FakeRequest() withBody testVatNumber
-
-          val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
-
-          status(res) shouldBe INTERNAL_SERVER_ERROR
-        }
-      }
-    }
-    "auth fails to return the internal ID" should {
-      "return UNAUTHORIZED" in {
-        mockAuthorise(retrievals = Retrievals.internalId)(Future.successful(None))
+  "storeVatNumber" when {
+    "the VRN has been stored correctly" should {
+      "return CREATED" in {
+        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
+        mockStoreVatNumber(testVatNumber)(Future.successful(Right(StoreVatNumberSuccess)))
 
         val request = FakeRequest() withBody testVatNumber
 
         val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
 
-        status(res) shouldBe UNAUTHORIZED
+        status(res) shouldBe CREATED
+      }
+    }
+
+    "the VRN storage has failed" should {
+      "return INTERNAL_SERVER_ERROR" in {
+        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
+        mockStoreVatNumber(testVatNumber)(Future.successful(Left(VatNumberDatabaseFailure)))
+
+        val request = FakeRequest() withBody testVatNumber
+
+        val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+
+        status(res) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
+
 }

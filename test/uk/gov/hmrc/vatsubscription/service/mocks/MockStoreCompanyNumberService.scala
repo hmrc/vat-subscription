@@ -29,12 +29,12 @@ trait MockStoreCompanyNumberService extends MockitoSugar {
 
   val mockStoreCompanyNumberService: StoreCompanyNumberService = mock[StoreCompanyNumberService]
 
-  def mockStoreCompanyNumber(internalId: String,
-                         vatNumber: String
-                        )(response: Future[Either[StoreCompanyNumberFailure, StoreCompanyNumberSuccess.type]]): Unit = {
+  def mockStoreCompanyNumber(vatNumber: String,
+                             companyNumber: String
+                            )(response: Future[Either[StoreCompanyNumberFailure, StoreCompanyNumberSuccess.type]]): Unit = {
     when(mockStoreCompanyNumberService.storeCompanyNumber(
-      ArgumentMatchers.eq(internalId),
-      ArgumentMatchers.eq(vatNumber)
+      ArgumentMatchers.eq(vatNumber),
+      ArgumentMatchers.eq(companyNumber)
     )) thenReturn response
   }
 }

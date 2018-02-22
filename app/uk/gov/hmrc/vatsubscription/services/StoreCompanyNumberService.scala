@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
+import java.util.NoSuchElementException
 import javax.inject.Inject
 
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
@@ -23,11 +24,12 @@ import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 class StoreCompanyNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository
-                                     )(implicit ec: ExecutionContext) {
-  def storeCompanyNumber(internalId: String, companyNumber: String): Future[Either[StoreCompanyNumberFailure, StoreCompanyNumberSuccess.type]] =
-    subscriptionRequestRepository.upsertCompanyNumber(internalId, companyNumber) map {
+                                         )(implicit ec: ExecutionContext) {
+  def storeCompanyNumber(vatNumber: String, companyNumber: String): Future[Either[StoreCompanyNumberFailure, StoreCompanyNumberSuccess.type]] =
+    subscriptionRequestRepository.upsertCompanyNumber(vatNumber, companyNumber) map {
       _ => Right(StoreCompanyNumberSuccess)
     } recover {
+      case e: NoSuchElementException => Left(VatNumberNotFoundFailure)
       case _ => Left(CompanyNumberDatabaseFailure)
     }
 }
@@ -37,3 +39,5 @@ object StoreCompanyNumberSuccess
 sealed trait StoreCompanyNumberFailure
 
 object CompanyNumberDatabaseFailure extends StoreCompanyNumberFailure
+
+object VatNumberNotFoundFailure extends StoreCompanyNumberFailure

@@ -16,25 +16,32 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import java.util.UUID
-
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
-import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
+import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
+
+  val repo: SubscriptionRequestRepository = app.injector.instanceOf[SubscriptionRequestRepository]
+
+  override def beforeEach: Unit = {
+    super.beforeEach()
+    await(repo.drop)
+  }
 
   "PUT /subscription-request/vat-number" should {
     "return no content when the vat number has been stored successfully" in {
       stubAuth(OK, successfulAuthResponse)
 
-      val res = put("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+      val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
       res should have(
-        httpStatus(NO_CONTENT),
+        httpStatus(CREATED),
         emptyBody
       )
     }
@@ -42,7 +49,7 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
     "return BAD_REQUEST when the json is invalid" in {
       stubAuth(OK, successfulAuthResponse)
 
-      val res = put("/subscription-request/vat-number")(Json.obj())
+      val res = post("/subscription-request/vat-number")(Json.obj())
 
       res should have(
         httpStatus(BAD_REQUEST)

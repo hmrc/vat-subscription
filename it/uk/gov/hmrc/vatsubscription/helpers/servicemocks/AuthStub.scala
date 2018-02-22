@@ -37,10 +37,6 @@ object AuthStub extends WireMockMethods {
       .thenReturn(status = UNAUTHORIZED, headers = exceptionHeaders("MissingBearerToken"))
   }
 
-  val successfulAuthResponse: JsObject = {
-    Json.obj(
-      "internalId" -> testInternalId
-    )
-  }
+  val successfulAuthResponse: JsObject = Json.obj()
 
 }

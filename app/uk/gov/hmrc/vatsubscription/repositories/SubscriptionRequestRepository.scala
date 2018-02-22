@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import play.api.libs.json.{Format, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.api.commands.UpdateWriteResult
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.play.json._
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
@@ -36,20 +36,21 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
     implicitly[Format[String]]
   ) {
 
-  private def upsert(internalId: String, elementKey: String, elementValue: String) = {
+  private def upsert(vatNumber: String, elementKey: String, elementValue: String): Future[UpdateWriteResult] = {
     collection.update(
-      selector = Json.obj(internalIdKey -> internalId),
+      selector = Json.obj(idKey -> vatNumber),
       update = Json.obj("$set" -> Json.obj(
         elementKey -> elementValue
       )),
-      upsert = true
-    )
+      upsert = false
+    ).filter(_.n == 1)
   }
 
-  def upsertVatNumber(internalId: String, vatNumber: String): Future[UpdateWriteResult] =
-    upsert(internalId, vatNumberKey, vatNumber)
+  def insertVatNumber(vatNumber: String): Future[WriteResult] =
+    collection.insert(SubscriptionRequest(vatNumber))(mongoFormat, implicitly[ExecutionContext])
 
-  def upsertCompanyNumber(internalId: String, companyNumber: String): Future[UpdateWriteResult] =
-    upsert(internalId, companyNumberKey, companyNumber)
+  def upsertCompanyNumber(vatNumber: String, companyNumber: String): Future[UpdateWriteResult] =
+    upsert(vatNumber, companyNumberKey, companyNumber)
+
 
 }
