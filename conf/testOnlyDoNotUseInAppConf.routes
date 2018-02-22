@@ -10,4 +10,9 @@
 # Failing to follow this rule may result in test routes deployed in production.
 
 # Add all the application routes to the prod.routes file
-->         /                          prod.Routes
+
+
+DELETE        /vat-subscription/test-only/vat-number        @uk.gov.hmrc.vatsubscription.testonly.controllers.DBAdminController.delete
+
+
+->            /                                             prod.Routes
