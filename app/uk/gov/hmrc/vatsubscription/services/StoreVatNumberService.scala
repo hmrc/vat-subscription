@@ -24,8 +24,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository
                                      )(implicit ec: ExecutionContext) {
-  def storeVatNumber(internalId: String, vatNumber: String): Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]] =
-    subscriptionRequestRepository.upsertVatNumber(internalId, vatNumber) map {
+  def storeVatNumber(vatNumber: String): Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]] =
+    subscriptionRequestRepository.insertVatNumber(vatNumber) map {
       _ => Right(StoreVatNumberSuccess)
     } recover {
       case _ => Left(VatNumberDatabaseFailure)

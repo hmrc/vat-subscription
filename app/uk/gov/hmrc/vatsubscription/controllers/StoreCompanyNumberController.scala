@@ -20,32 +20,29 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.JsPath
 import play.api.mvc.Action
-import uk.gov.hmrc.auth.core.retrieve.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.companyNumberKey
-import uk.gov.hmrc.vatsubscription.services.{CompanyNumberDatabaseFailure, StoreCompanyNumberService, StoreCompanyNumberSuccess}
+import uk.gov.hmrc.vatsubscription.services.{CompanyNumberDatabaseFailure, StoreCompanyNumberService, StoreCompanyNumberSuccess, VatNumberNotFoundFailure}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class StoreCompanyNumberController @Inject()(val authConnector: AuthConnector,
                                              storeCompanyNumberService: StoreCompanyNumberService
-                                        )(implicit ec: ExecutionContext)
+                                            )(implicit ec: ExecutionContext)
   extends BaseController with AuthorisedFunctions {
 
-  val storeCompanyNumber: Action[String] =
+  def storeCompanyNumber(vatNumber: String): Action[String] =
     Action.async(parse.json((JsPath \ companyNumberKey).read[String])) {
       implicit req =>
-        authorised().retrieve(internalId) {
-          case Some(id) =>
-            val companyNumber = req.body
-
-            storeCompanyNumberService.storeCompanyNumber(id, companyNumber) map {
-              case Right(StoreCompanyNumberSuccess) => NoContent
-              case Left(CompanyNumberDatabaseFailure) => InternalServerError
-            }
-          case _ => Future.successful(Unauthorized)
+        authorised() {
+          val companyNumber = req.body
+          storeCompanyNumberService.storeCompanyNumber(vatNumber, companyNumber) map {
+            case Right(StoreCompanyNumberSuccess) => NoContent
+            case Left(VatNumberNotFoundFailure) => NotFound
+            case Left(CompanyNumberDatabaseFailure) => InternalServerError
+          }
         }
     }
 

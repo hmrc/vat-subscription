@@ -29,11 +29,9 @@ trait MockStoreVatNumberService extends MockitoSugar {
 
   val mockStoreVatNumberService: StoreVatNumberService = mock[StoreVatNumberService]
 
-  def mockStoreVatNumber(internalId: String,
-                         vatNumber: String
+  def mockStoreVatNumber(vatNumber: String
                         )(response: Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]]): Unit = {
     when(mockStoreVatNumberService.storeVatNumber(
-      ArgumentMatchers.eq(internalId),
       ArgumentMatchers.eq(vatNumber)
     )) thenReturn response
   }

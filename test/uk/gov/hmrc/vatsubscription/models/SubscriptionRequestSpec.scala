@@ -24,14 +24,12 @@ import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest._
 class SubscriptionRequestSpec extends UnitSpec {
   "mongoFormat" should {
     val testJson = Json.obj(
-      internalIdKey -> testInternalId,
-      vatNumberKey -> testVatNumber,
+      idKey -> testVatNumber,
       companyNumberKey -> testCompanyNumber
     )
 
     val testModel = SubscriptionRequest(
-      internalId = testInternalId,
-      vatNumber = Some(testVatNumber),
+      vatNumber = testVatNumber,
       companyNumber = Some(testCompanyNumber)
     )
 

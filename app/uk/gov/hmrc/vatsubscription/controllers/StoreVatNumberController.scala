@@ -37,15 +37,12 @@ class StoreVatNumberController @Inject()(val authConnector: AuthConnector,
   val storeVatNumber: Action[String] =
     Action.async(parse.json((JsPath \ vatNumberKey).read[String])) {
       implicit req =>
-        authorised().retrieve(internalId) {
-          case Some(id) =>
+        authorised() {
             val vatNumber = req.body
-
-            storeVatNumberService.storeVatNumber(id, vatNumber) map {
+            storeVatNumberService.storeVatNumber(vatNumber) map {
               case Right(StoreVatNumberSuccess) => NoContent
               case Left(VatNumberDatabaseFailure) => InternalServerError
             }
-          case _ => Future.successful(Unauthorized)
         }
     }
 

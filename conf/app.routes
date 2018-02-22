@@ -1,4 +1,5 @@
 # microservice specific routes
 
-PUT        /subscription-request/vat-number             @uk.gov.hmrc.vatsubscription.controllers.StoreVatNumberController.storeVatNumber
-PUT        /subscription-request/company-number         @uk.gov.hmrc.vatsubscription.controllers.StoreCompanyNumberController.storeCompanyNumber
+POST        /subscription-request/vat-number                                  @uk.gov.hmrc.vatsubscription.controllers.StoreVatNumberController.storeVatNumber
+PUT         /subscription-request/vat-number/:vatNumber/company-number        @uk.gov.hmrc.vatsubscription.controllers.StoreCompanyNumberController.storeCompanyNumber(vatNumber:String)
+

@@ -16,22 +16,31 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import java.util.UUID
-
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
-import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
+import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class StoreCompanyNumberControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
+  val repo: SubscriptionRequestRepository = app.injector.instanceOf[SubscriptionRequestRepository]
+
+  override def beforeEach: Unit = {
+    super.beforeEach()
+    await(repo.drop)
+  }
+
   "PUT /subscription-request/company-number" should {
-    "return no content when the company number has been stored successfully" in {
+    "if vat number exists return no content when the company number has been stored successfully" in {
       stubAuth(OK, successfulAuthResponse)
 
-      val res = put("/subscription-request/company-number")(Json.obj("companyNumber" -> testCompanyNumber))
+      repo.insertVatNumber(testVatNumber)
+
+      val res = put(s"/subscription-request/vat-number/$testVatNumber/company-number")(Json.obj("companyNumber" -> testCompanyNumber))
 
       res should have(
         httpStatus(NO_CONTENT),
@@ -39,14 +48,25 @@ class StoreCompanyNumberControllerISpec extends ComponentSpecBase with BeforeAnd
       )
     }
 
+    "if the vat number does not already exist then return NOT_FOUND" in {
+      stubAuth(OK, successfulAuthResponse)
+
+      val res = put(s"/subscription-request/vat-number/$testVatNumber/company-number")(Json.obj("companyNumber" -> testCompanyNumber))
+
+      res should have(
+        httpStatus(NOT_FOUND)
+      )
+    }
+
     "return BAD_REQUEST when the json is invalid" in {
       stubAuth(OK, successfulAuthResponse)
 
-      val res = put("/subscription-request/company-number")(Json.obj())
+      val res = put(s"/subscription-request/vat-number/$testVatNumber/company-number")(Json.obj())
 
       res should have(
         httpStatus(BAD_REQUEST)
       )
     }
   }
+
 }

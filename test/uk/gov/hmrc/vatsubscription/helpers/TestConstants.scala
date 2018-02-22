@@ -19,7 +19,6 @@ package uk.gov.hmrc.vatsubscription.helpers
 import java.util.UUID
 
 object TestConstants  {
-  val testInternalId: String = UUID.randomUUID().toString
   val testVatNumber: String = UUID.randomUUID().toString
   val testCompanyNumber: String = UUID.randomUUID().toString
 }
