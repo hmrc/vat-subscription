@@ -22,26 +22,26 @@ import play.api.libs.json.JsPath
 import play.api.mvc.Action
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.companyNumberKey
-import uk.gov.hmrc.vatsubscription.services.{CompanyNumberDatabaseFailure, StoreCompanyNumberService, StoreCompanyNumberSuccess, CompanyNumberDatabaseFailureNoVATNumber}
+import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.emailKey
+import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class StoreCompanyNumberController @Inject()(val authConnector: AuthConnector,
-                                             storeCompanyNumberService: StoreCompanyNumberService
-                                            )(implicit ec: ExecutionContext)
+class StoreEmailController @Inject()(val authConnector: AuthConnector,
+                                     storeEmailService: StoreEmailService
+                                    )(implicit ec: ExecutionContext)
   extends BaseController with AuthorisedFunctions {
 
-  def storeCompanyNumber(vatNumber: String): Action[String] =
-    Action.async(parse.json((JsPath \ companyNumberKey).read[String])) {
+  def storeEmail(vatNumber: String): Action[String] =
+    Action.async(parse.json((JsPath \ emailKey).read[String])) {
       implicit req =>
         authorised() {
-          val companyNumber = req.body
-          storeCompanyNumberService.storeCompanyNumber(vatNumber, companyNumber) map {
-            case Right(StoreCompanyNumberSuccess) => NoContent
-            case Left(CompanyNumberDatabaseFailureNoVATNumber) => NotFound
-            case Left(CompanyNumberDatabaseFailure) => InternalServerError
+          val email = req.body
+          storeEmailService.storeEmail(vatNumber, email) map {
+            case Right(StoreEmailSuccess) => NoContent
+            case Left(EmailDatabaseFailureNoVATNumber) => NotFound
+            case Left(EmailDatabaseFailure) => InternalServerError
           }
         }
     }
