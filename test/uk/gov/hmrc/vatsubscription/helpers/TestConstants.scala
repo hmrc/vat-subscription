@@ -21,4 +21,5 @@ import java.util.UUID
 object TestConstants  {
   val testVatNumber: String = UUID.randomUUID().toString
   val testCompanyNumber: String = UUID.randomUUID().toString
+  val testEmail: String = UUID.randomUUID().toString
 }
