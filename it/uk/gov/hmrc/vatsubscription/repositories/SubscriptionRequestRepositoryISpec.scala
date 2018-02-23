@@ -156,4 +156,19 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
     }
   }
 
+  "deleteRecord" should {
+    "delete the entry stored against the vrn" in {
+      val res = for {
+        _ <- repo.insertVatNumber(testVatNumber)
+        inserted <- repo.findById(testVatNumber)
+        _ <- repo.deleteRecord(testVatNumber)
+        postDelete <- repo.findById(testVatNumber)
+      } yield (inserted, postDelete)
+
+      val (inserted, postDelete) = await(res)
+      inserted should contain(SubscriptionRequest(testVatNumber))
+      postDelete shouldBe None
+    }
+  }
+
 }
