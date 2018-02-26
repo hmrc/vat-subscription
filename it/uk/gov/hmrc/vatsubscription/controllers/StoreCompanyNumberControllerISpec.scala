@@ -36,7 +36,7 @@ class StoreCompanyNumberControllerISpec extends ComponentSpecBase with BeforeAnd
 
   "PUT /subscription-request/:vrn/company-number" should {
     "if vat number exists return no content when the company number has been stored successfully" in {
-      stubAuth(OK, successfulAuthResponse)
+      stubAuth(OK, successfulAuthResponse())
 
       repo.insertVatNumber(testVatNumber)
 
@@ -49,7 +49,7 @@ class StoreCompanyNumberControllerISpec extends ComponentSpecBase with BeforeAnd
     }
 
     "if the vat number does not already exist then return NOT_FOUND" in {
-      stubAuth(OK, successfulAuthResponse)
+      stubAuth(OK, successfulAuthResponse())
 
       val res = put(s"/subscription-request/vat-number/$testVatNumber/company-number")(Json.obj("companyNumber" -> testCompanyNumber))
 
@@ -59,7 +59,7 @@ class StoreCompanyNumberControllerISpec extends ComponentSpecBase with BeforeAnd
     }
 
     "return BAD_REQUEST when the json is invalid" in {
-      stubAuth(OK, successfulAuthResponse)
+      stubAuth(OK, successfulAuthResponse())
 
       val res = put(s"/subscription-request/vat-number/$testVatNumber/company-number")(Json.obj())
 

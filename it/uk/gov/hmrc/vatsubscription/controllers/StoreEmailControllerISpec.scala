@@ -37,7 +37,7 @@ class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
 
   "PUT /subscription-request/vat-number/:vrn/email" should {
     "if vat number exists return no content when the company number has been stored successfully" in {
-      stubAuth(OK, successfulAuthResponse)
+      stubAuth(OK, successfulAuthResponse())
 
       repo.insertVatNumber(testVatNumber)
 
@@ -50,7 +50,7 @@ class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
     }
 
     "if the vat number does not already exist then return NOT_FOUND" in {
-      stubAuth(OK, successfulAuthResponse)
+      stubAuth(OK, successfulAuthResponse())
 
       val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
 
@@ -60,7 +60,7 @@ class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
     }
 
     "return BAD_REQUEST when the json is invalid" in {
-      stubAuth(OK, successfulAuthResponse)
+      stubAuth(OK, successfulAuthResponse())
 
       val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj())
 

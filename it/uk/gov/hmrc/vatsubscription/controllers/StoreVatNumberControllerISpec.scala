@@ -19,10 +19,14 @@ package uk.gov.hmrc.vatsubscription.controllers
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.vatsubscription.config.Constants
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers._
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AgentClientRelationshipsStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
+import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser.NoRelationshipCode
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
@@ -35,8 +39,9 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
   }
 
   "PUT /subscription-request/vat-number" should {
-    "return no content when the vat number has been stored successfully" in {
-      stubAuth(OK, successfulAuthResponse)
+    "return CREATED when the vat number has been stored successfully" in {
+      stubAuth(OK, successfulAuthResponse(agentEnrolment))
+      stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
 
       val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
@@ -46,8 +51,20 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
       )
     }
 
+    "return FORBIDDEN when there is no relationship" in {
+      stubAuth(OK, successfulAuthResponse(agentEnrolment))
+      stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(NOT_FOUND, Json.obj("code" -> NoRelationshipCode))
+
+      val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+
+      res should have(
+        httpStatus(FORBIDDEN),
+        jsonBodyAs(Json.obj(Constants.HttpCodeKey -> NoRelationshipCode))
+      )
+    }
+
     "return BAD_REQUEST when the json is invalid" in {
-      stubAuth(OK, successfulAuthResponse)
+      stubAuth(OK, successfulAuthResponse())
 
       val res = post("/subscription-request/vat-number")(Json.obj())
 
