@@ -23,7 +23,7 @@ import play.api.libs.json.{JsObject, Json, Writes}
 
 object AgentClientRelationshipsStub extends WireMockMethods {
   def checkAgentClientRelationship(agentNumber: String, vatNumber: String): String =
-    s"/agent/$agentNumber/service/HMCE-VATDEC-ORG/client/$vatNumber/"
+    s"/agent-client-relationships/agent/$agentNumber/service/HMCE-VATDEC-ORG/client/vrn/$vatNumber/"
 
   def stubCheckAgentClientRelationship[T](agentNumber: String, vatNumber: String)(status: Int, body: T)(implicit writes: Writes[T]): StubMapping = {
     when(method = GET, uri = checkAgentClientRelationship(agentNumber, vatNumber))
