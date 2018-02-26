@@ -17,8 +17,9 @@
 package uk.gov.hmrc.vatsubscription.httpparsers
 
 import play.api.http.Status._
+import play.libs.Json
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import uk.gov.hmrc.vatsubscription.models.{CheckAgentClientRelationshipSuccessResponse, CheckAgentClientRelationshipResponseFailure, HaveRelationshipResponse, NoRelationshipResponse}
+import uk.gov.hmrc.vatsubscription.models.{CheckAgentClientRelationshipResponseFailure, CheckAgentClientRelationshipSuccessResponse, HaveRelationshipResponse, NoRelationshipResponse}
 
 object AgentClientRelationshipsHttpParser {
   type CheckAgentClientRelationshipResponse = Either[CheckAgentClientRelationshipResponseFailure, CheckAgentClientRelationshipSuccessResponse]
@@ -28,8 +29,11 @@ object AgentClientRelationshipsHttpParser {
     override def read(method: String, url: String, response: HttpResponse): CheckAgentClientRelationshipResponse =
       response.status match {
         case OK => Right(HaveRelationshipResponse)
-        case NOT_FOUND => Right(NoRelationshipResponse)
-        case status => Left(CheckAgentClientRelationshipResponseFailure(status))
+        case NOT_FOUND =>
+          response.json
+          if ((response.json \ "code").asOpt[String].contains(NoRelationshipCode)) Right(NoRelationshipResponse)
+          else Left(CheckAgentClientRelationshipResponseFailure(NOT_FOUND, response.json))
+        case status => Left(CheckAgentClientRelationshipResponseFailure(status, response.json))
       }
   }
 

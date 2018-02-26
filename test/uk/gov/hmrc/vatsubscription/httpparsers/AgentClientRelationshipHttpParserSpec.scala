@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.httpparsers
 
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser._
@@ -45,12 +45,12 @@ class AgentClientRelationshipHttpParserSpec extends UnitSpec {
         res shouldBe Right(NoRelationshipResponse)
       }
 
-      "parse a NOT_FOUND response as a CheckAgentClientRelationshipResponseFailure" in {
-        val httpResponse = HttpResponse(NOT_FOUND, Some(Json.obj("code" -> NoRelationshipCode)))
+      "parse a NOT_FOUND response without the expected message as a CheckAgentClientRelationshipResponseFailure" in {
+        val httpResponse = HttpResponse(NOT_FOUND)
 
         val res = CheckAgentClientRelationshipHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Right(NoRelationshipResponse)
+        res shouldBe Left(CheckAgentClientRelationshipResponseFailure(httpResponse.status, null))
       }
 
       "parse any other response as a CheckAgentClientRelationshipResponseFailure" in {
@@ -58,7 +58,7 @@ class AgentClientRelationshipHttpParserSpec extends UnitSpec {
 
         val res = CheckAgentClientRelationshipHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Left(CheckAgentClientRelationshipResponseFailure(httpResponse.status))
+        res shouldBe Left(CheckAgentClientRelationshipResponseFailure(httpResponse.status, Json.obj()))
       }
     }
   }

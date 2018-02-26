@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
+import play.api.libs.json.JsValue
+
 sealed trait CheckAgentClientRelationshipResponse
 
 sealed trait CheckAgentClientRelationshipSuccessResponse extends CheckAgentClientRelationshipResponse
@@ -24,5 +26,5 @@ case object HaveRelationshipResponse extends CheckAgentClientRelationshipSuccess
 
 case object NoRelationshipResponse extends CheckAgentClientRelationshipSuccessResponse
 
-case class CheckAgentClientRelationshipResponseFailure(status: Int) extends CheckAgentClientRelationshipResponse
+case class CheckAgentClientRelationshipResponseFailure(status: Int, code: JsValue) extends CheckAgentClientRelationshipResponse
 
