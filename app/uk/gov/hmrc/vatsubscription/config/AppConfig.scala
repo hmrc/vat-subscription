@@ -30,6 +30,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val baseUrl: String = loadConfig("base.url")
 
-  lazy val agentClientRelationshipUrl: String = baseUrl("agent-client-relationships")
+  lazy val agentClientRelationshipUrl: String = baseUrl("agent-client-relationships") + "/agent-client-relationships"
 
 }
