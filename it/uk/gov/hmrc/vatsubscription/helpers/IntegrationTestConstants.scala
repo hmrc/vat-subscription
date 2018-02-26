@@ -22,4 +22,5 @@ object IntegrationTestConstants  {
   val testVatNumber: String = UUID.randomUUID().toString
   val testCompanyNumber: String = UUID.randomUUID().toString
   val testEmail: String = UUID.randomUUID().toString
+  val testAgentNumber: String = UUID.randomUUID().toString
 }

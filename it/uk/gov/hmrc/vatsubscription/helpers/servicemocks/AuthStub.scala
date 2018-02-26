@@ -21,6 +21,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json, Writes}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
+import uk.gov.hmrc.vatsubscription.config.Constants._
 
 object AuthStub extends WireMockMethods {
   val authority = "/auth/authorise"
@@ -37,6 +38,17 @@ object AuthStub extends WireMockMethods {
       .thenReturn(status = UNAUTHORIZED, headers = exceptionHeaders("MissingBearerToken"))
   }
 
-  val successfulAuthResponse: JsObject = Json.obj()
+  def successfulAuthResponse(enrolments: JsObject*): JsObject = Json.obj(
+    "allEnrolments" -> enrolments
+  )
 
+  val agentEnrolment: JsObject = Json.obj(
+    "key" -> AgentEnrolmentKey,
+    "identifiers" -> Json.arr(
+      Json.obj(
+        "key" -> "AgentReferenceNumber",
+        "value" -> testAgentNumber
+      )
+    )
+  )
 }

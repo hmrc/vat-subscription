@@ -18,13 +18,38 @@ package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.Inject
 
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.connectors.AgentClientRelationshipsConnector
+import uk.gov.hmrc.vatsubscription.models.{HaveRelationshipResponse, NoRelationshipResponse}
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository
+class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
+                                      agentClientRelationshipsConnector: AgentClientRelationshipsConnector
                                      )(implicit ec: ExecutionContext) {
-  def storeVatNumber(vatNumber: String): Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]] =
+  def storeVatNumber(vatNumber: String,
+                     optAgentReferenceNumber: Option[String]
+                    )(implicit hc: HeaderCarrier): Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]] = {
+    optAgentReferenceNumber match {
+      case Some(agentReferenceNumber) =>
+        storeDelegatedVatNumber(vatNumber, agentReferenceNumber)
+    }
+  }
+
+  private def storeDelegatedVatNumber(vatNumber: String, agentReferenceNumber: String)(implicit hc: HeaderCarrier) =
+    agentClientRelationshipsConnector.checkAgentClientRelationship(agentReferenceNumber, vatNumber) flatMap {
+      case Right(HaveRelationshipResponse) =>
+        insertVatNumber(vatNumber)
+      case Right(NoRelationshipResponse) =>
+        Future.successful(Left(RelationshipNotFound))
+      case _ =>
+        Future.successful(Left(AgentServicesConnectionFailure))
+    } recover {
+      case _ => Left(AgentServicesConnectionFailure)
+    }
+
+  private def insertVatNumber(vatNumber: String) =
     subscriptionRequestRepository.insertVatNumber(vatNumber) map {
       _ => Right(StoreVatNumberSuccess)
     } recover {
@@ -37,3 +62,7 @@ object StoreVatNumberSuccess
 sealed trait StoreVatNumberFailure
 
 object VatNumberDatabaseFailure extends StoreVatNumberFailure
+
+object RelationshipNotFound extends StoreVatNumberFailure
+
+object AgentServicesConnectionFailure extends StoreVatNumberFailure

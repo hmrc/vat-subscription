@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.helpers
+package uk.gov.hmrc.vatsubscription.config
 
-import java.util.UUID
-
-import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.vatsubscription.config.Constants.{AgentEnrolmentKey, AgentReferenceNumberKey}
-
-object TestConstants  {
-  val testVatNumber: String = UUID.randomUUID().toString
-  val testCompanyNumber: String = UUID.randomUUID().toString
-  val testEmail: String = UUID.randomUUID().toString
-  val testAgentReferenceNumber: String = UUID.randomUUID().toString
-
-  val testAgentEnrolment: Enrolment = Enrolment(AgentEnrolmentKey).withIdentifier(AgentReferenceNumberKey, testAgentReferenceNumber)
-
+object Constants {
+  val AgentEnrolmentKey: String = "HMRC-AS-AGENT"
+  val AgentReferenceNumberKey: String = "AgentReferenceNumber"
+  val HttpCodeKey: String = "CODE"
 }
