@@ -34,7 +34,7 @@ class AgentClientRelationshipsConnector @Inject()(val http: HttpClient,
                                   )(implicit hc: HeaderCarrier,
                                     ec: ExecutionContext): Future[CheckAgentClientRelationshipResponse] =
     http.GET[CheckAgentClientRelationshipResponse](
-      s"${applicationConfig.agentClientRelationshipUrl}/agent/$agentNumber/service/HMCE-VATDEC-ORG/client/$vatNumber/"
+      s"${applicationConfig.agentClientRelationshipUrl}/agent/$agentNumber/service/HMCE-VATDEC-ORG/client/vrn/$vatNumber/"
     )
 
 }
