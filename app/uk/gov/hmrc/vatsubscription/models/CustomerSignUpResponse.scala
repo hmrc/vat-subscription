@@ -14,23 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.config
+package uk.gov.hmrc.vatsubscription.models
 
-object Constants {
-  val AgentEnrolmentKey: String = "HMRC-AS-AGENT"
-  val AgentReferenceNumberKey: String = "AgentReferenceNumber"
-  val HttpCodeKey: String = "CODE"
+sealed trait CustomerSignUpResponse
 
-  object Des {
-    val IdTypeKey = "idType"
-    val IdValueKey = "idValue"
-    val CrnKey = "CRN"
-    val NinoKey = "NINO"
-    val VrnKey = "VRN"
-    val SafeIdKey = "SAFEID"
-    val emailKey = "EMAIL"
+case object CustomerSignUpResponseSuccess extends CustomerSignUpResponse
 
-    val RegistrationRequestKey = "registrationRequest"
-    val IdentificationKey = "identification"
-  }
-}
+case class CustomerSignUpResponseFailure(status: Int) extends CustomerSignUpResponse
