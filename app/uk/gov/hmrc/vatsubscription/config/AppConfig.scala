@@ -32,4 +32,9 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val agentClientRelationshipUrl: String = baseUrl("agent-client-relationships") + "/agent-client-relationships"
 
+
+  lazy val desUrl: String = loadConfig("des.url")
+  lazy val desAuthorisationToken: String = loadConfig("des.authorisation-token")
+  lazy val desEnvironment: String = loadConfig("des.environment")
+
 }
