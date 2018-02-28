@@ -18,11 +18,11 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
 
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.httpparsers.CustomerSignUpHttpParser._
-import uk.gov.hmrc.vatsubscription.models.SignUpRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,13 +34,42 @@ class CustomerSignUpConnector @Inject()(val http: HttpClient,
 
   private def url = applicationConfig.desUrl + "/customer/signup/VATC"
 
-  // TODO add additional headers
-  def checkAgentClientRelationship(signupRequest: SignUpRequest
-                                  )(implicit hc: HeaderCarrier,
-                                    ec: ExecutionContext): Future[CustomerSignUpResponse] =
-    http.POST[SignUpRequest, CustomerSignUpResponse](
-      url, signupRequest
-    )(implicitly, implicitly, implicitly[HeaderCarrier], implicitly)
+  import CustomerSignUpConnector._
+
+  def signUp(safeId: String, vatNumber: String, email: String, emailVerified: Boolean
+            )(implicit hc: HeaderCarrier,
+              ec: ExecutionContext): Future[CustomerSignUpResponse] =
+    http.POST[JsObject, CustomerSignUpResponse](
+      url, buildRequest(safeId, vatNumber, email, emailVerified)
+    )(implicitly, implicitly, implicitly[HeaderCarrier].withExtraHeaders(
+      applicationConfig.desAuthorisationToken,
+      applicationConfig.desEnvironment
+    ), implicitly)
 
 }
 
+object CustomerSignUpConnector {
+
+  import uk.gov.hmrc.vatsubscription.config.Constants.Des._
+
+  private[connectors] def buildRequest(safeId: String, vatNumber: String, email: String, emailVerified: Boolean): JsObject = {
+    Json.obj(
+      "signUpRequest" -> Json.obj(
+        "identification" ->
+          Json.arr(
+            Json.obj(IdTypeKey -> SafeIdKey, idNumberKey -> safeId),
+            Json.obj(IdTypeKey -> VrnKey, idNumberKey -> vatNumber)
+          ),
+        "additionalInformation" ->
+          Json.arr(
+            Json.obj(
+              "typeOfField" -> emailKey,
+              "fieldContents" -> email,
+              "infoVerified" -> emailVerified
+            )
+          )
+      )
+    )
+  }
+
+}

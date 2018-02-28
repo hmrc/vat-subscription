@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models
+package uk.gov.hmrc.vatsubscription.connectors
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.TestConstants.{testEmail, testSafeId, testVatNumber}
 
-class SignUpRequestSpec extends UnitSpec {
 
-  "SignUpRequest" should {
+class CustomerSignUpConnectorSpec extends UnitSpec {
+
+  "CustomerSignUpConnector" should {
+    import CustomerSignUpConnector._
     "convert the request into the correct DES format" in {
-      val requestJson = Json.toJson(SignUpRequest(testSafeId, testVatNumber, testEmail, emailVerified = true))
+      val requestJson = buildRequest(testSafeId, testVatNumber, testEmail, emailVerified = true)
       val expectedJson = Json.parse(
         s"""
            |{
