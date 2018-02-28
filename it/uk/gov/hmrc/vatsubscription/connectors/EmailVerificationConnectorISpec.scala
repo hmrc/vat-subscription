@@ -16,26 +16,25 @@
 
 package uk.gov.hmrc.vatsubscription.connectors
 
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.helpers.ComponentSpecBase
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.servicemocks.SignUpStub._
-import uk.gov.hmrc.vatsubscription.models.CustomerSignUpResponseSuccess
-import play.api.http.Status._
-import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.EmailVerificationStub._
+import uk.gov.hmrc.vatsubscription.httpparsers.EmailVerified
 
-class CustomerSignUpConnectorISpec extends ComponentSpecBase {
+class EmailVerificationConnectorISpec extends ComponentSpecBase {
 
-  lazy val connector: CustomerSignUpConnector = app.injector.instanceOf[CustomerSignUpConnector]
+  lazy val connector: EmailVerificationConnector = app.injector.instanceOf[EmailVerificationConnector]
+
+  private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   "customerSignUp" should {
     "add the additional headers to des" in {
-      implicit val hc = HeaderCarrier()
-      stubSignUp(OK)
+      stubGetEmailVerified(testEmail)
 
-      val res = connector.signUp(testSafeId, testVatNumber, testEmail, emailVerified = true)
+      val res = connector.getEmailVerificationState(testEmail)
 
-      await(res) shouldBe Right(CustomerSignUpResponseSuccess)
+      await(res) shouldBe Right(EmailVerified)
     }
   }
 
