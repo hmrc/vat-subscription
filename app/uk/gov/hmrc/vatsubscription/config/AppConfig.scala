@@ -32,7 +32,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val agentClientRelationshipUrl: String = baseUrl("agent-client-relationships") + "/agent-client-relationships"
 
-
   lazy val desUrl: String = loadConfig("microservice.services.des.url")
   lazy val desAuthorisationToken: (String, String) =
     "Authorization" -> s"Bearer ${loadConfig("microservice.services.des.authorisation-token")}"
