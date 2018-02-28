@@ -34,7 +34,10 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
 
   lazy val desUrl: String = loadConfig("microservice.services.des.url")
-  lazy val desAuthorisationToken: String = loadConfig("microservice.services.des.authorisation-token")
-  lazy val desEnvironment: String = loadConfig("microservice.services.des.environment")
+  lazy val desAuthorisationToken: (String, String) =
+    "Authorization" -> s"Bearer ${loadConfig("microservice.services.des.authorisation-token")}"
+  lazy val desEnvironment: (String, String) =
+    "Environment" -> loadConfig("microservice.services.des.environment")
 
+  lazy val registerWithMultipleIdentifiersUrl: String = s"$desUrl/cross-regime/register/VATC"
 }
