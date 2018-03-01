@@ -20,6 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionRequest(vatNumber: String,
                                companyNumber: Option[String] = None,
+                               nino: Option[String] = None,
                                email: Option[String] = None)
 
 object SubscriptionRequest {
@@ -27,6 +28,7 @@ object SubscriptionRequest {
   val vatNumberKey = "vatNumber"
   val idKey = "_id"
   val companyNumberKey = "companyNumber"
+  val ninoKey = "nino"
   val emailKey = "email"
 
   val mongoFormat: OFormat[SubscriptionRequest] = OFormat(
@@ -34,12 +36,14 @@ object SubscriptionRequest {
       for {
         vatNumber <- (json \ idKey).validate[String]
         companyNumber <- (json \ companyNumberKey).validateOpt[String]
+        nino <- (json \ ninoKey).validateOpt[String]
         email <- (json \ emailKey).validateOpt[String]
-      } yield SubscriptionRequest(vatNumber, companyNumber, email),
+      } yield SubscriptionRequest(vatNumber, companyNumber, nino, email),
     subscriptionRequest =>
       Json.obj(
         idKey -> subscriptionRequest.vatNumber,
         companyNumberKey -> subscriptionRequest.companyNumber,
+        ninoKey -> subscriptionRequest.nino,
         emailKey -> subscriptionRequest.email
       )
   )
