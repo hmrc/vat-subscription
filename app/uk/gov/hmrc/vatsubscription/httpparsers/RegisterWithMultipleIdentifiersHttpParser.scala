@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.vatsubscription.config.Constants.Des._
 
 object RegisterWithMultipleIdentifiersHttpParser {
-  type RegisterWithMultipleIdentifiersResponse = Either[RegistrationFailure, RegistrationSuccess]
+  type RegisterWithMultipleIdentifiersResponse = Either[RegisterWithMultipleIdsFailure, RegisterWithMultipleIdsSuccess]
 
   implicit object RegisterWithMultipleIdentifiersHttpReads extends HttpReads[RegisterWithMultipleIdentifiersResponse] {
     override def read(method: String, url: String, response: HttpResponse): RegisterWithMultipleIdentifiersResponse = {
@@ -33,21 +33,21 @@ object RegisterWithMultipleIdentifiersHttpParser {
             if idType == SafeIdKey
             safeId <- (response.json \ IdentificationKey \ 0 \ IdValueKey).validate[String]
           } yield safeId) match {
-            case JsSuccess(safeId, _) => Right(RegistrationSuccess(safeId))
+            case JsSuccess(safeId, _) => Right(RegisterWithMultipleIdsSuccess(safeId))
             case error: JsError => Left(InvalidJsonResponse(error))
           }
         case status =>
-          Left(RegistrationErrorResponse(status, response.body))
+          Left(RegisterWithMultipleIdsErrorResponse(status, response.body))
       }
     }
   }
 
 }
 
-sealed trait RegistrationFailure
+case class RegisterWithMultipleIdsSuccess(safeId: String)
 
-case class RegistrationSuccess(safeId: String)
+sealed trait RegisterWithMultipleIdsFailure
 
-case class InvalidJsonResponse(jsError: JsError) extends RegistrationFailure
+case class InvalidJsonResponse(jsError: JsError) extends RegisterWithMultipleIdsFailure
 
-case class RegistrationErrorResponse(status: Int, body: String) extends RegistrationFailure
+case class RegisterWithMultipleIdsErrorResponse(status: Int, body: String) extends RegisterWithMultipleIdsFailure

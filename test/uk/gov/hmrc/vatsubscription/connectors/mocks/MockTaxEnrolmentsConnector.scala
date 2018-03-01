@@ -58,8 +58,7 @@ trait MockTaxEnrolmentsConnector extends MockitoSugar with BeforeAndAfterEach {
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(safeId)
     )(
-      ArgumentMatchers.any[HeaderCarrier],
-      ArgumentMatchers.any[ExecutionContext]
+      ArgumentMatchers.any[HeaderCarrier]
     )) thenReturn response
   }
 }

@@ -22,18 +22,19 @@ import com.google.inject.Inject
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.config.Constants.TaxEnrolments._
 import uk.gov.hmrc.vatsubscription.httpparsers.TaxEnrolmentsHttpParser._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
-class TaxEnrolmentsConnector @Inject()(val http: HttpClient,
-                                       val applicationConfig: AppConfig) {
+class TaxEnrolmentsConnector @Inject()(http: HttpClient,
+                                       applicationConfig: AppConfig) {
 
   def registerEnrolment(vatNumber: String, safeId: String)
-                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxEnrolmentsResponse] = {
+                        (implicit hc: HeaderCarrier): Future[TaxEnrolmentsResponse] = {
 
     val enrolmentRequestBody ={
         Json.obj(
