@@ -34,4 +34,10 @@ object Constants {
     val RegistrationRequestKey = "registrationRequest"
     val IdentificationKey = "identification"
   }
+
+  object GGEnrolment {
+    val ServiceNameKey = "serviceName"
+    val ServiceName = "HMRC-MTD-VAT"
+    val EtmpId = "etmpId"
+  }
 }
