@@ -20,7 +20,6 @@ import java.util.UUID
 
 object IntegrationTestConstants  {
   val testVatNumber: String = UUID.randomUUID().toString
-  val testSafeIdNumber: String = UUID.randomUUID().toString
   val testCompanyNumber: String = UUID.randomUUID().toString
   val testEmail: String = "test@test.test"
   val testAgentNumber: String = UUID.randomUUID().toString
