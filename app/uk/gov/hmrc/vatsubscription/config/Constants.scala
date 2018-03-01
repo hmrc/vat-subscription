@@ -34,4 +34,8 @@ object Constants {
     val RegistrationRequestKey = "registrationRequest"
     val IdentificationKey = "identification"
   }
+
+  object TaxEnrolments {
+    val ServiceName = "HMRC-MTD-VAT"
+  }
 }
