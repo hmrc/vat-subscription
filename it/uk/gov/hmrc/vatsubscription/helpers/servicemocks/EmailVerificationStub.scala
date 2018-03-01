@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.helpers
+package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 
-import java.util.UUID
+import java.net.URLEncoder
 
-object IntegrationTestConstants  {
-  val testVatNumber: String = UUID.randomUUID().toString
-  val testCompanyNumber: String = UUID.randomUUID().toString
-  val testEmail: String = "test@test.test"
-  val testAgentNumber: String = UUID.randomUUID().toString
-  val testSafeId: String = UUID.randomUUID().toString
-  val testNino: String = UUID.randomUUID().toString
+import play.api.http.Status._
+
+object EmailVerificationStub extends WireMockMethods {
+  private def getEmailVerifiedUri(email: String) = s"/email-verification/verified-email-addresses/$email"
+
+  def stubGetEmailVerified(email: String): Unit = {
+    val encodedEmail = URLEncoder.encode(email, "UTF-8")
+
+    when(method = GET, uri = getEmailVerifiedUri(encodedEmail))
+      .thenReturn(OK)
+  }
 }

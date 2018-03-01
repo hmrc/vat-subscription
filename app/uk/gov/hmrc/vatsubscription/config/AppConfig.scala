@@ -24,19 +24,22 @@ import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
 class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
+
   override protected def mode: Mode = environment.mode
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
-
-  lazy val baseUrl: String = loadConfig("base.url")
 
   lazy val agentClientRelationshipUrl: String = baseUrl("agent-client-relationships") + "/agent-client-relationships"
 
   lazy val desUrl: String = loadConfig("microservice.services.des.url")
   lazy val desAuthorisationToken: (String, String) =
-    "Authorization" -> s"Bearer ${loadConfig("microservice.services.des.authorisation-token")}"
+  "Authorization" -> s"Bearer ${loadConfig("microservice.services.des.authorisation-token")}"
   lazy val desEnvironment: (String, String) =
-    "Environment" -> loadConfig("microservice.services.des.environment")
+  "Environment" -> loadConfig("microservice.services.des.environment")
 
   lazy val registerWithMultipleIdentifiersUrl: String = s"$desUrl/cross-regime/register/VATC"
+
+  lazy val emailVerificationUrl: String = baseUrl("email-verification")
+
+  def getEmailVerifiedUrl(email: String): String = s"$emailVerificationUrl/email-verification/verified-email-addresses/$email"
 }
