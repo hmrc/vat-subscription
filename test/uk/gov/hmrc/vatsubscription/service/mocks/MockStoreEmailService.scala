@@ -18,16 +18,21 @@ package uk.gov.hmrc.vatsubscription.service.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
-import org.scalatest.Suite
+import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future
 
-trait MockStoreEmailService extends MockitoSugar {
+trait MockStoreEmailService extends MockitoSugar with BeforeAndAfterEach {
   self: Suite =>
 
   val mockStoreEmailService: StoreEmailService = mock[StoreEmailService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockStoreEmailService)
+  }
 
   def mockStoreCompanyNumber(vatNumber: String,
                              email: String

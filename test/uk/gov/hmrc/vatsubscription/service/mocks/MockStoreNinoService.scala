@@ -24,22 +24,23 @@ import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future
 
-trait MockStoreCompanyNumberService extends MockitoSugar with BeforeAndAfterEach {
+trait MockStoreNinoService extends MockitoSugar with BeforeAndAfterEach {
   self: Suite =>
 
-  val mockStoreCompanyNumberService: StoreCompanyNumberService = mock[StoreCompanyNumberService]
+  val mockStoreNinoService: StoreNinoService = mock[StoreNinoService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockStoreCompanyNumberService)
+    reset(mockStoreNinoService)
   }
 
-  def mockStoreCompanyNumber(vatNumber: String,
-                             companyNumber: String
-                            )(response: Future[Either[StoreCompanyNumberFailure, StoreCompanyNumberSuccess.type]]): Unit = {
-    when(mockStoreCompanyNumberService.storeCompanyNumber(
+  def mockStoreNino(vatNumber: String,
+                    nino: String
+                   )(response: Future[Either[StoreNinoFailure, StoreNinoSuccess.type]]): Unit = {
+    when(mockStoreNinoService.storeNino(
       ArgumentMatchers.eq(vatNumber),
-      ArgumentMatchers.eq(companyNumber)
+      ArgumentMatchers.eq(nino)
     )) thenReturn response
   }
+
 }
