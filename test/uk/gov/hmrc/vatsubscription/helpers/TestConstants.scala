@@ -23,11 +23,14 @@ import uk.gov.hmrc.vatsubscription.config.Constants.{AgentEnrolmentKey, AgentRef
 
 object TestConstants  {
   val testVatNumber: String = UUID.randomUUID().toString
+  val testNino: String = UUID.randomUUID().toString
   val testCompanyNumber: String = UUID.randomUUID().toString
   val testEmail: String = UUID.randomUUID().toString
   val testAgentReferenceNumber: String = UUID.randomUUID().toString
   val testSafeId: String = UUID.randomUUID().toString
 
   val testAgentEnrolment: Enrolment = Enrolment(AgentEnrolmentKey).withIdentifier(AgentReferenceNumberKey, testAgentReferenceNumber)
+
+  val testErrorMsg = "this is an error"
 
 }
