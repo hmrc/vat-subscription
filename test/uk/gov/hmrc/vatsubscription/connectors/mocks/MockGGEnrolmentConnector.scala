@@ -36,7 +36,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.reset
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.vatsubscription.connectors.GGEnrolmentConnector
+import uk.gov.hmrc.vatsubscription.connectors.TaxEnrolmentsConnector
 import org.mockito.Mockito._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.httpparsers.GGEnrolmentHttpParser.GGEnrolmentResponse
@@ -51,10 +51,10 @@ trait MockGGEnrolmentConnector extends MockitoSugar with BeforeAndAfterEach {
     reset(mockGGEnrolmentConnector)
   }
 
-  val mockGGEnrolmentConnector: GGEnrolmentConnector = mock[GGEnrolmentConnector]
+  val mockGGEnrolmentConnector: TaxEnrolmentsConnector = mock[TaxEnrolmentsConnector]
 
   def mockEnrolWithGovernmentGateway(vatNumber: String, safeId: String)(response: Future[GGEnrolmentResponse]): Unit = {
-    when(mockGGEnrolmentConnector.enrolWithGovernmentGateway(
+    when(mockGGEnrolmentConnector.registerEnrolment(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(safeId)
     )(

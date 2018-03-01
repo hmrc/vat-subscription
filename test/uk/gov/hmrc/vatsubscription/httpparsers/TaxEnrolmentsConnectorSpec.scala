@@ -21,7 +21,7 @@ import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.httpparsers.GGEnrolmentHttpParser.GGEnrolmentHttpReads
 
-class GGEnrolmentConnectorSpec extends UnitSpec {
+class TaxEnrolmentsConnectorSpec extends UnitSpec {
   val testHttpVerb = "PUT"
   val testUri = "/"
 

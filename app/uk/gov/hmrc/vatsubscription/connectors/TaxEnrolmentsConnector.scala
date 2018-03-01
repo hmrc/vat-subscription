@@ -29,16 +29,16 @@ import uk.gov.hmrc.vatsubscription.httpparsers.GGEnrolmentHttpParser._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GGEnrolmentConnector @Inject()(val http: HttpClient,
-                                     val applicationConfig: AppConfig) {
+class TaxEnrolmentsConnector @Inject()(val http: HttpClient,
+                                       val applicationConfig: AppConfig) {
 
-  def enrolWithGovernmentGateway(vatNumber: String, safeId: String)
+  def registerEnrolment(vatNumber: String, safeId: String)
            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GGEnrolmentResponse] = {
 
     val enrolmentRequestBody ={
         Json.obj(
-          ServiceNameKey -> ServiceName,
-          EtmpId -> safeId
+          "serviceName" -> ServiceName,
+          "etmpId" -> safeId
         )
     }
 
