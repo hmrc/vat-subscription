@@ -23,8 +23,8 @@ import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.config.Constants.GGEnrolment._
-import uk.gov.hmrc.vatsubscription.httpparsers.GGEnrolmentHttpParser._
+import uk.gov.hmrc.vatsubscription.config.Constants.TaxEnrolments._
+import uk.gov.hmrc.vatsubscription.httpparsers.TaxEnrolmentsHttpParser._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,7 +33,7 @@ class TaxEnrolmentsConnector @Inject()(val http: HttpClient,
                                        val applicationConfig: AppConfig) {
 
   def registerEnrolment(vatNumber: String, safeId: String)
-           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GGEnrolmentResponse] = {
+           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxEnrolmentsResponse] = {
 
     val enrolmentRequestBody ={
         Json.obj(
@@ -42,7 +42,7 @@ class TaxEnrolmentsConnector @Inject()(val http: HttpClient,
         )
     }
 
-    http.PUT[JsObject, GGEnrolmentResponse](
+    http.PUT[JsObject, TaxEnrolmentsResponse](
       url = s"${applicationConfig.taxEnrolmentsUrl}/subscriptions/$vatNumber/subscriber",
       body = enrolmentRequestBody
     )

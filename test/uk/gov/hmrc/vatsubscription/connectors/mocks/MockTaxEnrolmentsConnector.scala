@@ -39,22 +39,22 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.vatsubscription.connectors.TaxEnrolmentsConnector
 import org.mockito.Mockito._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.httpparsers.GGEnrolmentHttpParser.GGEnrolmentResponse
+import uk.gov.hmrc.vatsubscription.httpparsers.TaxEnrolmentsHttpParser.TaxEnrolmentsResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockGGEnrolmentConnector extends MockitoSugar with BeforeAndAfterEach {
+trait MockTaxEnrolmentsConnector extends MockitoSugar with BeforeAndAfterEach {
   this: Suite =>
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockGGEnrolmentConnector)
+    reset(mockTaxEnrolmentsConnector)
   }
 
-  val mockGGEnrolmentConnector: TaxEnrolmentsConnector = mock[TaxEnrolmentsConnector]
+  val mockTaxEnrolmentsConnector: TaxEnrolmentsConnector = mock[TaxEnrolmentsConnector]
 
-  def mockEnrolWithGovernmentGateway(vatNumber: String, safeId: String)(response: Future[GGEnrolmentResponse]): Unit = {
-    when(mockGGEnrolmentConnector.registerEnrolment(
+  def mockRegisterEnrolment(vatNumber: String, safeId: String)(response: Future[TaxEnrolmentsResponse]): Unit = {
+    when(mockTaxEnrolmentsConnector.registerEnrolment(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(safeId)
     )(

@@ -35,7 +35,7 @@ object Constants {
     val IdentificationKey = "identification"
   }
 
-  object GGEnrolment {
+  object TaxEnrolments {
     val ServiceName = "HMRC-MTD-VAT"
   }
 }

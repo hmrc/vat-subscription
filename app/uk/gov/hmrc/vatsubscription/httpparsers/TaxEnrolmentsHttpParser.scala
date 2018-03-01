@@ -19,22 +19,22 @@ package uk.gov.hmrc.vatsubscription.httpparsers
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-object GGEnrolmentHttpParser {
-  type GGEnrolmentResponse = Either[FailedGGEnrolment, SuccessfulGGEnrolment.type]
+object TaxEnrolmentsHttpParser {
+  type TaxEnrolmentsResponse = Either[FailedTaxEnrolment, SuccessfulTaxEnrolment.type]
 
-  implicit object GGEnrolmentHttpReads extends HttpReads[GGEnrolmentResponse] {
-    override def read(method: String, url: String, response: HttpResponse): GGEnrolmentResponse =
+  implicit object TaxEnrolmentsHttpReads extends HttpReads[TaxEnrolmentsResponse] {
+    override def read(method: String, url: String, response: HttpResponse): TaxEnrolmentsResponse =
       response.status match {
-        case NO_CONTENT => Right(SuccessfulGGEnrolment)
-        case status => Left(FailedGGEnrolment(status))
+        case NO_CONTENT => Right(SuccessfulTaxEnrolment)
+        case status => Left(FailedTaxEnrolment(status))
       }
   }
 
 }
 
-sealed trait GGEnrolmentResponse
+sealed trait TaxEnrolmentsResponse
 
-case object SuccessfulGGEnrolment extends GGEnrolmentResponse
+case object SuccessfulTaxEnrolment extends TaxEnrolmentsResponse
 
-case class FailedGGEnrolment(status: Int) extends GGEnrolmentResponse
+case class FailedTaxEnrolment(status: Int) extends TaxEnrolmentsResponse
 

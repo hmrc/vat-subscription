@@ -19,28 +19,28 @@ package uk.gov.hmrc.vatsubscription.httpparsers
 import play.api.http.Status.{BAD_REQUEST, NO_CONTENT}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.httpparsers.GGEnrolmentHttpParser.GGEnrolmentHttpReads
+import uk.gov.hmrc.vatsubscription.httpparsers.TaxEnrolmentsHttpParser.TaxEnrolmentsHttpReads
 
 class TaxEnrolmentsConnectorSpec extends UnitSpec {
   val testHttpVerb = "PUT"
   val testUri = "/"
 
-  "GGEnrolmentHttpReads" when {
+  "TaxEnrolmentsHttpReads" when {
     "read" should {
-      "parse a NO_CONTENT response as a SuccessfulGGEnrolment" in {
+      "parse a NO_CONTENT response as a SuccessfulTaxEnrolment" in {
         val httpResponse = HttpResponse(NO_CONTENT)
 
-        val res = GGEnrolmentHttpReads.read(testHttpVerb, testUri, httpResponse)
+        val res = TaxEnrolmentsHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Right(SuccessfulGGEnrolment)
+        res shouldBe Right(SuccessfulTaxEnrolment)
       }
 
-      "parse any other response with the expected message as a FailedGGEnrolment" in {
+      "parse any other response with the expected message as a FailedTaxEnrolment" in {
         val httpResponse = HttpResponse(BAD_REQUEST)
 
-        val res = GGEnrolmentHttpReads.read(testHttpVerb, testUri, httpResponse)
+        val res = TaxEnrolmentsHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Left(FailedGGEnrolment(BAD_REQUEST))
+        res shouldBe Left(FailedTaxEnrolment(BAD_REQUEST))
       }
     }
   }
