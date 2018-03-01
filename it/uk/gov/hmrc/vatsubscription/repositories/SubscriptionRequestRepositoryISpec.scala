@@ -156,6 +156,45 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
     }
   }
 
+  "upsertNino" should {
+    val testSubscriptionRequest = SubscriptionRequest(
+      vatNumber = testVatNumber,
+      nino = Some(testNino)
+    )
+
+    "insert the subscription request where the vat number doesn't exist" in {
+      val res = for {
+        _ <- repo.upsertNino(testVatNumber, testNino)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      intercept[NoSuchElementException] {
+        await(res)
+      }
+    }
+
+    "update the subscription request where there isn't already a nino stored" in {
+      val res = for {
+        _ <- repo.insertVatNumber(testVatNumber)
+        _ <- repo.upsertNino(testVatNumber, testNino)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      await(res) should contain(testSubscriptionRequest)
+    }
+
+    "replace an existing stored nino" in {
+      val newNino = UUID.randomUUID().toString
+      val res = for {
+        _ <- repo.insert(testSubscriptionRequest)
+        _ <- repo.upsertNino(testVatNumber, newNino)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      await(res) should contain(SubscriptionRequest(testVatNumber, nino = Some(newNino)))
+    }
+  }
+
   "deleteRecord" should {
     "delete the entry stored against the vrn" in {
       val res = for {

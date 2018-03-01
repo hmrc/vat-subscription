@@ -55,6 +55,9 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
   def upsertEmail(vatNumber: String, email: String): Future[UpdateWriteResult] =
     upsert(vatNumber, emailKey, email)
 
+  def upsertNino(vatNumber: String, nino: String): Future[UpdateWriteResult] =
+    upsert(vatNumber, ninoKey, nino)
+
   def deleteRecord(vatNumber: String): Future[WriteResult] =
     collection.remove(selector = Json.obj(idKey -> vatNumber))
 

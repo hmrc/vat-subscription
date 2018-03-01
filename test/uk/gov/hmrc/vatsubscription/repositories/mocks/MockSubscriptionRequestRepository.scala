@@ -17,11 +17,11 @@
 package uk.gov.hmrc.vatsubscription.repositories.mocks
 
 import org.mockito.ArgumentMatchers
-import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.Future
 
@@ -37,4 +37,21 @@ trait MockSubscriptionRequestRepository extends MockitoSugar with BeforeAndAfter
   def mockInsertVatNumber(vatNumber: String)(response: Future[WriteResult]): Unit =
     when(mockSubscriptionRequestRepository.insertVatNumber(ArgumentMatchers.eq(vatNumber)))
       .thenReturn(response)
+
+  def mockUpsertCompanyNumber(vatNumber: String, companyNumber: String)(response: Future[UpdateWriteResult]): Unit =
+    when(mockSubscriptionRequestRepository.upsertCompanyNumber(ArgumentMatchers.eq(vatNumber), ArgumentMatchers.eq(companyNumber)))
+      .thenReturn(response)
+
+  def mockUpsertEmail(vatNumber: String, email: String)(response: Future[UpdateWriteResult]): Unit =
+    when(mockSubscriptionRequestRepository.upsertEmail(ArgumentMatchers.eq(vatNumber), ArgumentMatchers.eq(email)))
+      .thenReturn(response)
+
+  def mockUpsertNino(vatNumber: String, nino: String)(response: Future[UpdateWriteResult]): Unit =
+    when(mockSubscriptionRequestRepository.upsertNino(ArgumentMatchers.eq(vatNumber), ArgumentMatchers.eq(nino)))
+      .thenReturn(response)
+
+  def mockDeleteRecord(vatNumber: String)(response: Future[WriteResult]): Unit =
+    when(mockSubscriptionRequestRepository.deleteRecord(ArgumentMatchers.eq(vatNumber)))
+      .thenReturn(response)
+
 }

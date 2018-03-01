@@ -26,12 +26,14 @@ class SubscriptionRequestSpec extends UnitSpec {
     val testJson = Json.obj(
       idKey -> testVatNumber,
       companyNumberKey -> testCompanyNumber,
+      ninoKey -> testNino,
       emailKey -> testEmail
     )
 
     val testModel = SubscriptionRequest(
       vatNumber = testVatNumber,
       companyNumber = Some(testCompanyNumber),
+      nino = Some(testNino),
       email = Some(testEmail)
     )
 
@@ -50,8 +52,12 @@ class SubscriptionRequestSpec extends UnitSpec {
       val noCompanyNumber = testModel.copy(companyNumber = None)
       SubscriptionRequest.mongoFormat.reads(SubscriptionRequest.mongoFormat.writes(noCompanyNumber)).get shouldBe noCompanyNumber
 
+      val noNino = testModel.copy(nino = None)
+      SubscriptionRequest.mongoFormat.reads(SubscriptionRequest.mongoFormat.writes(noNino)).get shouldBe noNino
+
       val onlyVat = testModel.copy(companyNumber = None, email = None)
       SubscriptionRequest.mongoFormat.reads(SubscriptionRequest.mongoFormat.writes(onlyVat)).get shouldBe onlyVat
     }
   }
+
 }
