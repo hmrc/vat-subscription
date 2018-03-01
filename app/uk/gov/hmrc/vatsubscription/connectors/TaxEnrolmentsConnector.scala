@@ -33,7 +33,7 @@ class TaxEnrolmentsConnector @Inject()(val http: HttpClient,
                                        val applicationConfig: AppConfig) {
 
   def registerEnrolment(vatNumber: String, safeId: String)
-           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxEnrolmentsResponse] = {
+                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxEnrolmentsResponse] = {
 
     val enrolmentRequestBody ={
         Json.obj(
