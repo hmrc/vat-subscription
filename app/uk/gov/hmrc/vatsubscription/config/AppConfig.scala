@@ -43,5 +43,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val emailVerificationUrl: String = baseUrl("email-verification")
 
+  lazy val authenticatorUrl: String = baseUrl("authenticator")
+
   def getEmailVerifiedUrl(email: String): String = s"$emailVerificationUrl/email-verification/verified-email-addresses/$email"
 }
