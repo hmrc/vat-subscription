@@ -16,17 +16,12 @@
 
 package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 
-import java.net.URLEncoder
-
 import play.api.http.Status._
 
 object EmailVerificationStub extends WireMockMethods {
   private def getEmailVerifiedUri(email: String) = s"/email-verification/verified-email-addresses/$email"
 
-  def stubGetEmailVerified(email: String): Unit = {
-    val encodedEmail = URLEncoder.encode(email, "UTF-8")
-
-    when(method = GET, uri = getEmailVerifiedUri(encodedEmail))
+  def stubGetEmailVerified(email: String): Unit =
+    when(method = GET, uri = getEmailVerifiedUri(email))
       .thenReturn(OK)
-  }
 }
