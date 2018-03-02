@@ -40,7 +40,7 @@ class AuthenticatorConnectorISpec extends ComponentSpecBase {
   )
 
   "matchUser" when {
-    "Tax Enrolments returns a matched response" should {
+    "Authenticator returns a matched response" should {
       "return the nino returned" in {
         AuthenticatorStub.stubMatchUser(testUserDetails)(matched = true)
 
@@ -50,7 +50,7 @@ class AuthenticatorConnectorISpec extends ComponentSpecBase {
       }
     }
 
-    "Tax Enrolments returns a not matched response" should {
+    "Authenticator returns a not matched response" should {
       "return the nino returned" in {
         AuthenticatorStub.stubMatchUser(testUserDetails)(matched = false)
 
@@ -60,7 +60,7 @@ class AuthenticatorConnectorISpec extends ComponentSpecBase {
       }
     }
 
-    "Tax Enrolments returns a unsuceessful response" should {
+    "Authenticator returns a unsuceessful response" should {
       "return a UserMatchFailureResponseModel" in {
         AuthenticatorStub.stubMatchUserFailure(testUserDetails)
 
