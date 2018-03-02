@@ -30,7 +30,7 @@ class CustomerSignUpConnectorISpec extends ComponentSpecBase {
   "customerSignUp" should {
     "add the additional headers to des" in {
       implicit val hc = HeaderCarrier()
-      stubSignUp(OK)
+      stubSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(OK)
 
       val res = connector.signUp(testSafeId, testVatNumber, testEmail, emailVerified = true)
 

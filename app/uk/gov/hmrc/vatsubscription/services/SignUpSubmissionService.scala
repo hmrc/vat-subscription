@@ -25,6 +25,7 @@ import uk.gov.hmrc.vatsubscription.connectors.{CustomerSignUpConnector, EmailVer
 import uk.gov.hmrc.vatsubscription.httpparsers.{EmailNotVerified, EmailVerified, RegisterWithMultipleIdsSuccess, SuccessfulTaxEnrolment}
 import uk.gov.hmrc.vatsubscription.models.{CustomerSignUpResponseSuccess, SubscriptionRequest}
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import SignUpSubmissionService._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,7 +35,6 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                                         registrationConnector: RegistrationConnector,
                                         taxEnrolmentsConnector: TaxEnrolmentsConnector
                                        )(implicit ec: ExecutionContext) {
-  type SignUpRequestSubmissionResponse = Either[SignUpRequestSubmissionFailure, SignUpRequestSubmitted.type]
 
   def submitSignUpRequest(vatNumber: String)(implicit hc: HeaderCarrier): Future[SignUpRequestSubmissionResponse] =
     subscriptionRequestRepository.findById(vatNumber) flatMap {
@@ -87,18 +87,22 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
   }
 }
 
-case object SignUpRequestSubmitted
+object SignUpSubmissionService {
 
-sealed trait SignUpRequestSubmissionFailure
+  type SignUpRequestSubmissionResponse = Either[SignUpRequestSubmissionFailure, SignUpRequestSubmitted.type]
 
-case object InsufficientData extends SignUpRequestSubmissionFailure
+  case object SignUpRequestSubmitted
 
-case object EmailVerificationFailure extends SignUpRequestSubmissionFailure
+  sealed trait SignUpRequestSubmissionFailure
 
-case object SignUpFailure extends SignUpRequestSubmissionFailure
+  case object InsufficientData extends SignUpRequestSubmissionFailure
 
-case object RegistrationFailure extends SignUpRequestSubmissionFailure
+  case object EmailVerificationFailure extends SignUpRequestSubmissionFailure
 
-case object EnrolmentFailure extends SignUpRequestSubmissionFailure
+  case object SignUpFailure extends SignUpRequestSubmissionFailure
 
+  case object RegistrationFailure extends SignUpRequestSubmissionFailure
 
+  case object EnrolmentFailure extends SignUpRequestSubmissionFailure
+
+}
