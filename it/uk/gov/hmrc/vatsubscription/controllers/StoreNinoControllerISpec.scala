@@ -39,19 +39,8 @@ class StoreNinoControllerISpec extends ComponentSpecBase with BeforeAndAfterEach
     super.beforeEach()
     await(repo.drop)
   }
-//
-//  lazy val requestBody: String =
-//    s"""
-//       |{
-//       |   "firstName" -> "${UUID.randomUUID()}",
-//       |   "lastName" -> "${UUID.randomUUID()}",
-//       |   "dateOfBirth" -> "0000-12-30",
-//       |   "nino" -> "$testNino"
-//       |}
-//    """.stripMargin('|')
 
-
-  lazy val requestBody: UserDetailsModel =UserDetailsModel(
+  lazy val requestBody: UserDetailsModel = UserDetailsModel(
     UUID.randomUUID().toString,
     UUID.randomUUID().toString,
     LocalDate.now(),
