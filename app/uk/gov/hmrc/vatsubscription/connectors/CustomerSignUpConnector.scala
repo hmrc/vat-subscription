@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.httpparsers.CustomerSignUpHttpParser._
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,14 +38,15 @@ class CustomerSignUpConnector @Inject()(val http: HttpClient,
   import CustomerSignUpConnector._
 
   def signUp(safeId: String, vatNumber: String, email: String, emailVerified: Boolean
-            )(implicit hc: HeaderCarrier,
-              ec: ExecutionContext): Future[CustomerSignUpResponse] =
+            )(implicit hc: HeaderCarrier): Future[CustomerSignUpResponse] =
     http.POST[JsObject, CustomerSignUpResponse](
-      url, buildRequest(safeId, vatNumber, email, emailVerified)
-    )(implicitly, implicitly, implicitly[HeaderCarrier].withExtraHeaders(
-      applicationConfig.desAuthorisationToken,
-      applicationConfig.desEnvironment
-    ), implicitly)
+      url = url,
+      body = buildRequest(safeId, vatNumber, email, emailVerified),
+      headers = Seq(
+        applicationConfig.desAuthorisationToken,
+        applicationConfig.desEnvironment
+      )
+    )
 
 }
 

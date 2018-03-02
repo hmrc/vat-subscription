@@ -40,7 +40,7 @@ class RegisterWithMultipleIdentifiersHttpParserSpec extends UnitSpec with Either
             )))
           )
 
-          read("", "", httpResponse).right.value shouldBe RegistrationSuccess(testSafeId)
+          read("", "", httpResponse).right.value shouldBe RegisterWithMultipleIdsSuccess(testSafeId)
         }
       }
       "the JSON body is not correctly formatted" should {
@@ -61,7 +61,7 @@ class RegisterWithMultipleIdentifiersHttpParserSpec extends UnitSpec with Either
           responseStatus = BAD_REQUEST
         )
 
-        read("", "", httpResponse).left.value shouldBe RegistrationErrorResponse(BAD_REQUEST, httpResponse.body)
+        read("", "", httpResponse).left.value shouldBe RegisterWithMultipleIdsErrorResponse(BAD_REQUEST, httpResponse.body)
       }
     }
   }

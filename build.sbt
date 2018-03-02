@@ -32,3 +32,5 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("hmrc", "releases"),
   Resolver.jcenterRepo
 )
+
+scalacOptions += "-Ypartial-unification"

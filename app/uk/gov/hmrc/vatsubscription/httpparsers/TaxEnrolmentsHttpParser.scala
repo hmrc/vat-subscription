@@ -32,9 +32,8 @@ object TaxEnrolmentsHttpParser {
 
 }
 
-sealed trait TaxEnrolmentsResponse
 
-case object SuccessfulTaxEnrolment extends TaxEnrolmentsResponse
+case object SuccessfulTaxEnrolment
 
-case class FailedTaxEnrolment(status: Int) extends TaxEnrolmentsResponse
+case class FailedTaxEnrolment(status: Int)
 

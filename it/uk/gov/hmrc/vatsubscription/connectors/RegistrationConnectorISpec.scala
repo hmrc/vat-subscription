@@ -21,7 +21,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.helpers.ComponentSpecBase
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.RegistrationStub
-import uk.gov.hmrc.vatsubscription.httpparsers.RegistrationSuccess
+import uk.gov.hmrc.vatsubscription.httpparsers.RegisterWithMultipleIdsSuccess
 
 class RegistrationConnectorISpec extends ComponentSpecBase with EitherValues {
   private lazy val registrationConnector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
@@ -35,7 +35,7 @@ class RegistrationConnectorISpec extends ComponentSpecBase with EitherValues {
 
         val res = await(registrationConnector.registerCompany(testVatNumber, testCompanyNumber))
 
-        res.right.value shouldBe RegistrationSuccess(testSafeId)
+        res.right.value shouldBe RegisterWithMultipleIdsSuccess(testSafeId)
       }
     }
   }
@@ -47,7 +47,7 @@ class RegistrationConnectorISpec extends ComponentSpecBase with EitherValues {
 
         val res = await(registrationConnector.registerIndividual(testVatNumber, testNino))
 
-        res.right.value shouldBe RegistrationSuccess(testSafeId)
+        res.right.value shouldBe RegisterWithMultipleIdsSuccess(testSafeId)
       }
     }
   }

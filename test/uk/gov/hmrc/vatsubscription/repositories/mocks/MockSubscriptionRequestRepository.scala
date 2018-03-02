@@ -20,10 +20,12 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
+import reactivemongo.api.ReadPreference
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockSubscriptionRequestRepository extends MockitoSugar with BeforeAndAfterEach {
   this: Suite =>
@@ -54,4 +56,11 @@ trait MockSubscriptionRequestRepository extends MockitoSugar with BeforeAndAfter
     when(mockSubscriptionRequestRepository.deleteRecord(ArgumentMatchers.eq(vatNumber)))
       .thenReturn(response)
 
+  def mockFindById(vatNumber: String)(response: Future[Option[SubscriptionRequest]]): Unit =
+    when(mockSubscriptionRequestRepository.findById(
+      ArgumentMatchers.eq(vatNumber),
+      ArgumentMatchers.any[ReadPreference]
+    )(
+      ArgumentMatchers.any[ExecutionContext]
+    )) thenReturn response
 }
