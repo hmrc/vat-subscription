@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.connectors
 
-import java.net.URLEncoder
 import javax.inject.Inject
 
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,8 +29,6 @@ import scala.concurrent.Future
 class EmailVerificationConnector @Inject()(http: HttpClient,
                                            appConfig: AppConfig) {
   def getEmailVerificationState(emailAddress: String)(implicit hc: HeaderCarrier): Future[GetEmailVerificationStateResponse] = {
-    val encodedEmailAddress = URLEncoder.encode(emailAddress, "UTF-8")
-
-    http.GET(appConfig.getEmailVerifiedUrl(encodedEmailAddress))
+    http.GET(appConfig.getEmailVerifiedUrl(emailAddress))
   }
 }
