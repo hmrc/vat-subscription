@@ -16,13 +16,17 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
+import java.time.LocalDate
+import java.util.UUID
+
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
-import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.ninoKey
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthenticatorStub._
+import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,14 +39,32 @@ class StoreNinoControllerISpec extends ComponentSpecBase with BeforeAndAfterEach
     super.beforeEach()
     await(repo.drop)
   }
+//
+//  lazy val requestBody: String =
+//    s"""
+//       |{
+//       |   "firstName" -> "${UUID.randomUUID()}",
+//       |   "lastName" -> "${UUID.randomUUID()}",
+//       |   "dateOfBirth" -> "0000-12-30",
+//       |   "nino" -> "$testNino"
+//       |}
+//    """.stripMargin('|')
+
+
+  lazy val requestBody: UserDetailsModel =UserDetailsModel(
+    UUID.randomUUID().toString,
+    UUID.randomUUID().toString,
+    LocalDate.now(),
+    testNino
+  )
 
   "PUT /subscription-request/:vrn/nino" should {
     "if vat number exists return no content when the nino has been stored successfully" in {
       stubAuth(OK, successfulAuthResponse())
+      stubMatchUser(matched = true)
 
       repo.insertVatNumber(testVatNumber)
-
-      val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(Json.obj(ninoKey-> testCompanyNumber))
+      val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(requestBody)
 
       res should have(
         httpStatus(NO_CONTENT),
@@ -50,10 +72,23 @@ class StoreNinoControllerISpec extends ComponentSpecBase with BeforeAndAfterEach
       )
     }
 
+    "if the user is not matched in CID then return FORBIDDEN" in {
+      stubAuth(OK, successfulAuthResponse())
+      stubMatchUser(matched = false)
+
+      val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(requestBody)
+
+      res should have(
+        httpStatus(FORBIDDEN)
+      )
+    }
+
+
     "if the vat number does not already exist then return NOT_FOUND" in {
       stubAuth(OK, successfulAuthResponse())
+      stubMatchUser(matched = true)
 
-      val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(Json.obj(ninoKey -> testCompanyNumber))
+      val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(requestBody)
 
       res should have(
         httpStatus(NOT_FOUND)
