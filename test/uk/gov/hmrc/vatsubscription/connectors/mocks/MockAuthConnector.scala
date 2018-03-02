@@ -21,7 +21,7 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, Retrievals}
+import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrieval, Retrievals}
 import uk.gov.hmrc.auth.core.{AuthConnector, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
@@ -34,7 +34,7 @@ trait MockAuthConnector extends BeforeAndAfterEach with MockitoSugar {
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   def mockAuthorise[T](predicate: Predicate = EmptyPredicate,
-                       retrievals: Retrieval[T]
+                       retrievals: Retrieval[T] = EmptyRetrieval
                       )(response: Future[T]): Unit = {
     when(
       mockAuthConnector.authorise(

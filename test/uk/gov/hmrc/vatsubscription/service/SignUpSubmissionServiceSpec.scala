@@ -26,6 +26,7 @@ import uk.gov.hmrc.vatsubscription.httpparsers._
 import uk.gov.hmrc.vatsubscription.models.{CustomerSignUpResponseFailure, CustomerSignUpResponseSuccess, SubscriptionRequest}
 import uk.gov.hmrc.vatsubscription.repositories.mocks.MockSubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.services._
+import SignUpSubmissionService._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
