@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
-import uk.gov.hmrc.vatsubscription.httpparsers.UserMatchFailureResponseModel
+import uk.gov.hmrc.vatsubscription.httpparsers.{UserMatchFailureResponseModel, UserMatchUnexpectedError}
 import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
 
 object AuthenticatorStub extends WireMockMethods {
@@ -33,4 +33,7 @@ object AuthenticatorStub extends WireMockMethods {
         .thenReturn(UNAUTHORIZED, Map("Content-Type" -> "application/json"), UserMatchFailureResponseModel("failed"))
   }
 
+  def stubMatchUserFailure(userDetails: UserDetailsModel): Unit =
+    when(method = POST, uri = "/authenticator/match")
+      .thenReturn(UNAUTHORIZED, Map("Content-Type" -> "application/json"), UserMatchUnexpectedError)
 }
