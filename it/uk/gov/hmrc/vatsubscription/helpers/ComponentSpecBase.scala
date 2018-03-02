@@ -41,11 +41,13 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.agent-client-relationships.host" -> mockHost,
     "microservice.services.agent-client-relationships.port" -> mockPort,
-    "microservice.services.des.url" -> mockUrl,
+    "microservice.services.tax-enrolments.host" -> mockHost,
+    "microservice.services.tax-enrolments.port" -> mockPort,
     "microservice.services.email-verification.host" -> mockHost,
     "microservice.services.email-verification.port" -> mockPort,
-    "microservice.services.tax-enrolments.host" -> mockHost,
-    "microservice.services.tax-enrolments.port" -> mockPort
+    "microservice.services.des.url" -> mockUrl,
+    "microservice.services.authenticator.host" -> mockHost,
+    "microservice.services.authenticator.port" -> mockPort
   )
 
   override def beforeAll(): Unit = {

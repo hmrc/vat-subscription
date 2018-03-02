@@ -19,28 +19,51 @@ package uk.gov.hmrc.vatsubscription.services
 import javax.inject.Inject
 
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.connectors.AgentClientRelationshipsConnector
-import uk.gov.hmrc.vatsubscription.models.{HaveRelationshipResponse, NoRelationshipResponse}
+import uk.gov.hmrc.vatsubscription.connectors.AuthenticatorConnector
+import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class StoreNinoService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository
-                                     )(implicit ec: ExecutionContext) {
+class StoreNinoService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
+                                 authenticatorConnector: AuthenticatorConnector
+                                )(implicit ec: ExecutionContext) {
 
-  def storeNino(vatNumber: String, nino: String): Future[Either[StoreNinoFailure, StoreNinoSuccess.type]] =
+  def storeNino(vatNumber: String, userDetailsModel: UserDetailsModel)(implicit hc: HeaderCarrier): Future[Either[StoreNinoFailure, StoreNinoSuccess.type]] =
+    matchUser(userDetailsModel) flatMap {
+      case Right(nino) => storeNinoToMongo(vatNumber, nino)
+      case Left(failure) => Future.successful(Left(failure))
+    }
+
+  private def matchUser(userDetailsModel: UserDetailsModel)(implicit hc: HeaderCarrier): Future[Either[UserMatchingFailure, String]] =
+    authenticatorConnector.matchUser(userDetailsModel).map {
+      case Right(Some(nino)) => Right(nino)
+      case Right(None) => Left(NoMatchFoundFailure)
+      case _ => Left(AuthenticatorFailure)
+    }
+
+  private def storeNinoToMongo(vatNumber: String, nino: String): Future[Either[MongoFailure, StoreNinoSuccess.type]] =
     subscriptionRequestRepository.upsertNino(vatNumber, nino) map {
       _ => Right(StoreNinoSuccess)
     } recover {
       case e: NoSuchElementException => Left(NinoDatabaseFailureNoVATNumber)
       case _ => Left(NinoDatabaseFailure)
     }
+
 }
 
 case object StoreNinoSuccess
 
 sealed trait StoreNinoFailure
 
-case object NinoDatabaseFailure extends StoreNinoFailure
+sealed trait UserMatchingFailure extends StoreNinoFailure
 
-case object NinoDatabaseFailureNoVATNumber extends StoreNinoFailure
+sealed trait MongoFailure extends StoreNinoFailure
+
+case object AuthenticatorFailure extends UserMatchingFailure
+
+case object NoMatchFoundFailure extends UserMatchingFailure
+
+case object NinoDatabaseFailure extends MongoFailure
+
+case object NinoDatabaseFailureNoVATNumber extends MongoFailure

@@ -22,7 +22,7 @@ import play.api.libs.json.JsPath
 import play.api.mvc.Action
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.ninoKey
+import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.ExecutionContext
@@ -33,15 +33,17 @@ class StoreNinoController @Inject()(val authConnector: AuthConnector,
                                    )(implicit ec: ExecutionContext)
   extends BaseController with AuthorisedFunctions {
 
-  def storeNino(vatNumber: String): Action[String] =
-    Action.async(parse.json((JsPath \ ninoKey).read[String])) {
+  def storeNino(vatNumber: String): Action[UserDetailsModel] =
+    Action.async(parse.json(JsPath.read[UserDetailsModel])) {
       implicit req =>
         authorised() {
-          val nino = req.body
-          storeNinoService.storeNino(vatNumber, nino) map {
+          val userDetails = req.body
+          storeNinoService.storeNino(vatNumber, userDetails) map {
             case Right(StoreNinoSuccess) => NoContent
+            case Left(AuthenticatorFailure) => InternalServerError("calls to authenticator failed")
+            case Left(NoMatchFoundFailure) => Forbidden
             case Left(NinoDatabaseFailureNoVATNumber) => NotFound
-            case Left(NinoDatabaseFailure) => InternalServerError
+            case Left(NinoDatabaseFailure) => InternalServerError("calls to mongo failed")
           }
         }
     }
