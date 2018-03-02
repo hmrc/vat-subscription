@@ -20,12 +20,13 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.UserMatchFailureResponseModel
+import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
 
 object AuthenticatorStub extends WireMockMethods {
 
-  def stubMatchUser(matched: Boolean): Unit = {
+  def stubMatchUser(userDetails: UserDetailsModel)(matched: Boolean): Unit = {
     if (matched)
-      when(method = POST, uri = "/authenticator/match")
+      when(method = POST, uri = "/authenticator/match", body = userDetails)
         .thenReturn(OK, Map("Content-Type" -> "application/json"), Json.parse(s"""{"nino":"$testNino"}"""))
     else
       when(method = POST, uri = "/authenticator/match")

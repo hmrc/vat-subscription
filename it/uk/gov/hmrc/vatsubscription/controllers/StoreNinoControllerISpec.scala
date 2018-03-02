@@ -50,7 +50,7 @@ class StoreNinoControllerISpec extends ComponentSpecBase with BeforeAndAfterEach
   "PUT /subscription-request/:vrn/nino" should {
     "if vat number exists return no content when the nino has been stored successfully" in {
       stubAuth(OK, successfulAuthResponse())
-      stubMatchUser(matched = true)
+      stubMatchUser(requestBody)(matched = true)
 
       repo.insertVatNumber(testVatNumber)
       val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(requestBody)
@@ -63,7 +63,7 @@ class StoreNinoControllerISpec extends ComponentSpecBase with BeforeAndAfterEach
 
     "if the user is not matched in CID then return FORBIDDEN" in {
       stubAuth(OK, successfulAuthResponse())
-      stubMatchUser(matched = false)
+      stubMatchUser(requestBody)(matched = false)
 
       val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(requestBody)
 
@@ -75,7 +75,7 @@ class StoreNinoControllerISpec extends ComponentSpecBase with BeforeAndAfterEach
 
     "if the vat number does not already exist then return NOT_FOUND" in {
       stubAuth(OK, successfulAuthResponse())
-      stubMatchUser(matched = true)
+      stubMatchUser(requestBody)(matched = true)
 
       val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(requestBody)
 
