@@ -39,6 +39,7 @@ class TaxEnrolmentsConnector @Inject()(http: HttpClient,
     val enrolmentRequestBody ={
         Json.obj(
           "serviceName" -> ServiceName,
+          "callback" -> "", // This needs to be blank until tax-enrolments fix the callback field to be optional
           "etmpId" -> safeId
         )
     }
