@@ -28,6 +28,7 @@ object TaxEnrolmentsStub extends WireMockMethods {
 
     val registerEnrolmentJsonBody = Json.obj(
       "serviceName" -> Constants.TaxEnrolments.ServiceName,
+      "callback" -> "",
       "etmpId" -> safeId
     )
     when(
