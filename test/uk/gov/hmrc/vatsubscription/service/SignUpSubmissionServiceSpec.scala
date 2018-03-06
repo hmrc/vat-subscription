@@ -27,6 +27,7 @@ import uk.gov.hmrc.vatsubscription.models.{CustomerSignUpResponseFailure, Custom
 import uk.gov.hmrc.vatsubscription.repositories.mocks.MockSubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.services._
 import SignUpSubmissionService._
+import reactivemongo.api.commands.WriteResult
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -64,12 +65,13 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                 mockRegisterIndividual(testVatNumber, testNino)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
                 mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
                 mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                mockDeleteRecord(testVatNumber)(mock[WriteResult])
 
                 val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
 
                 res.right.value shouldBe SignUpRequestSubmitted
               }
-              "return a SignUpRequestSubmitted for a compnay sign up" in {
+              "return a SignUpRequestSubmitted for a company sign up" in {
                 val testSubscriptionRequest = SubscriptionRequest(
                   vatNumber = testVatNumber,
                   companyNumber = Some(testCompanyNumber),
@@ -81,6 +83,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                 mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
                 mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
                 mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                mockDeleteRecord(testVatNumber)(mock[WriteResult])
 
                 val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
 
@@ -166,6 +169,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                 mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
                 mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = false)(Future.successful(Right(CustomerSignUpResponseSuccess)))
                 mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                mockDeleteRecord(testVatNumber)(mock[WriteResult])
 
                 val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
 
