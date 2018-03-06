@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
@@ -57,11 +58,11 @@ class RegistrationConnector @Inject()(val http: HttpClient,
 
     http.POST[JsObject, RegisterWithMultipleIdentifiersResponse](
       url = applicationConfig.registerWithMultipleIdentifiersUrl,
-      body = buildRequest(vatNumber, companyNumber, nino),
-      headers = Seq(
-        applicationConfig.desAuthorisationToken,
-        applicationConfig.desEnvironment
-      )
+      body = buildRequest(vatNumber, companyNumber, nino)//,
+//      headers = Seq(
+//        applicationConfig.desAuthorisationToken,
+//        applicationConfig.desEnvironment
+//      )
     )
   }
 
