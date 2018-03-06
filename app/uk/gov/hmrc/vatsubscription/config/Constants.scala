@@ -38,4 +38,12 @@ object Constants {
   object TaxEnrolments {
     val ServiceName = "HMRC-MTD-VAT"
   }
+
+  object EmailVerification {
+    val EmailKey = "email"
+    val TemplateIdKey = "templateId"
+    val TemplateParametersKey = "templateParameters"
+    val LinkExpiryDurationKey = "linkExpiryDuration"
+    val ContinueUrlKey = "continueUrl"
+  }
 }
