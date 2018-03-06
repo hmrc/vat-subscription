@@ -50,13 +50,29 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
     collection.insert(SubscriptionRequest(vatNumber))(mongoFormat, implicitly[ExecutionContext])
 
   def upsertCompanyNumber(vatNumber: String, companyNumber: String): Future[UpdateWriteResult] =
-    upsert(vatNumber, companyNumberKey, companyNumber)
+    collection.update(
+      selector = Json.obj(idKey -> vatNumber),
+      update = Json.obj("$set" -> Json.obj(
+        companyNumberKey -> companyNumber
+      ), "$unset" -> Json.obj(
+        ninoKey -> ""
+      )),
+      upsert = false
+    ).filter(_.n == 1)
 
   def upsertEmail(vatNumber: String, email: String): Future[UpdateWriteResult] =
     upsert(vatNumber, emailKey, email)
 
   def upsertNino(vatNumber: String, nino: String): Future[UpdateWriteResult] =
-    upsert(vatNumber, ninoKey, nino)
+    collection.update(
+      selector = Json.obj(idKey -> vatNumber),
+      update = Json.obj("$set" -> Json.obj(
+        ninoKey -> nino
+      ), "$unset" -> Json.obj(
+        companyNumberKey -> ""
+      )),
+      upsert = false
+    ).filter(_.n == 1)
 
   def deleteRecord(vatNumber: String): Future[WriteResult] =
     collection.remove(selector = Json.obj(idKey -> vatNumber))
