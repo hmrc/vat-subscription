@@ -22,8 +22,8 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import reactivemongo.core.errors.DatabaseException
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
+import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -84,7 +84,7 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
       companyNumber = Some(testCompanyNumber)
     )
 
-    "insert the subscription request where the vat number doesn't exist" in {
+    "throw NoSuchElementException where the vat number doesn't exist" in {
       val res = for {
         _ <- repo.upsertCompanyNumber(testVatNumber, testCompanyNumber)
         model <- repo.findById(testVatNumber)
@@ -105,6 +105,21 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
       await(res) should contain(testSubscriptionRequest)
     }
 
+    "delete the nino if it already exists" in {
+      val res = for {
+        _ <- repo.insertVatNumber(testVatNumber)
+        _ <- repo.upsertNino(testVatNumber, testNino)
+        withNino <- repo.findById(testVatNumber)
+        _ <- repo.upsertCompanyNumber(testVatNumber, testCompanyNumber)
+        withoutNino <- repo.findById(testVatNumber)
+      } yield (withNino, withoutNino)
+
+      val (withNino, withoutNino) = await(res)
+
+      withNino should contain(testSubscriptionRequest.copy(nino = Some(testNino), companyNumber = None))
+      withoutNino should contain(testSubscriptionRequest)
+    }
+
     "replace an existing stored company number" in {
       val newCompanyNumber = UUID.randomUUID().toString
       val res = for {
@@ -123,7 +138,7 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
       email = Some(testEmail)
     )
 
-    "insert the subscription request where the vat number doesn't exist" in {
+    "throw NoSuchElementException where the vat number doesn't exist" in {
       val res = for {
         _ <- repo.upsertEmail(testVatNumber, testEmail)
         model <- repo.findById(testVatNumber)
@@ -162,7 +177,7 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
       nino = Some(testNino)
     )
 
-    "insert the subscription request where the vat number doesn't exist" in {
+    "throw NoSuchElementException where the vat number doesn't exist" in {
       val res = for {
         _ <- repo.upsertNino(testVatNumber, testNino)
         model <- repo.findById(testVatNumber)
@@ -182,6 +197,22 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
 
       await(res) should contain(testSubscriptionRequest)
     }
+
+    "delete the company number if it already exists" in {
+      val res = for {
+        _ <- repo.insertVatNumber(testVatNumber)
+        _ <- repo.upsertCompanyNumber(testVatNumber, testCompanyNumber)
+        withCompanyNumber <- repo.findById(testVatNumber)
+        _ <- repo.upsertNino(testVatNumber, testNino)
+        withoutCompanyNumber <- repo.findById(testVatNumber)
+      } yield (withCompanyNumber, withoutCompanyNumber)
+
+      val (withCompanyNumber, withoutCompanyNumber) = await(res)
+
+      withCompanyNumber should contain(testSubscriptionRequest.copy(companyNumber = Some(testCompanyNumber), nino = None))
+      withoutCompanyNumber should contain(testSubscriptionRequest)
+    }
+
 
     "replace an existing stored nino" in {
       val newNino = UUID.randomUUID().toString
