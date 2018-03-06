@@ -74,7 +74,7 @@ object RegistrationStub extends WireMockMethods {
     when(
       method = POST,
       uri = registerUri,
-      headers = desHeaders,
+//      headers = desHeaders,
       body = registerCompanyJsonBody(vatNumber, companyNumber)
     ) thenReturn(OK, registerResponseBody(safeId))
   }
@@ -83,7 +83,7 @@ object RegistrationStub extends WireMockMethods {
     when(
       method = POST,
       uri = registerUri,
-      headers = desHeaders,
+//      headers = desHeaders,
       body = registerIndividualJsonBody(vatNumber, nino)
     ) thenReturn(OK, registerResponseBody(safeId))
   }
