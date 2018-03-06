@@ -47,6 +47,15 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
         } yield SignUpRequestSubmitted
 
         result.value
+      case Some(SubscriptionRequest(_, None, Some(nino), Some(emailAddress))) =>
+        val result = for {
+          emailAddressVerified <- isEmailAddressVerified(emailAddress)
+          safeId <- registerIndividual(vatNumber, nino)
+          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified)
+          _ <- registerEnrolment(vatNumber, safeId)
+        } yield SignUpRequestSubmitted
+
+        result.value
       case _ =>
         Future.successful(Left(InsufficientData))
     }
@@ -64,6 +73,15 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                               companyNumber: String
                              )(implicit hc: HeaderCarrier): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerCompany(vatNumber, companyNumber)) bimap( {
+      _ => RegistrationFailure
+    }, {
+      case RegisterWithMultipleIdsSuccess(safeId) => safeId
+    })
+
+  private def registerIndividual(vatNumber: String,
+                                 nino: String
+                                )(implicit hc: HeaderCarrier): EitherT[Future, SignUpRequestSubmissionFailure, String] =
+    EitherT(registrationConnector.registerIndividual(vatNumber, nino)) bimap( {
       _ => RegistrationFailure
     }, {
       case RegisterWithMultipleIdsSuccess(safeId) => safeId

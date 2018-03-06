@@ -52,7 +52,24 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
         "the registration request is successful" when {
           "the sign up request is successful" when {
             "the enrolment call is successful" should {
-              "return a SignUpRequestSubmitted" in {
+              "return a SignUpRequestSubmitted for an individual signup" in {
+                val testSubscriptionRequest = SubscriptionRequest(
+                  vatNumber = testVatNumber,
+                  nino = Some(testNino),
+                  email = Some(testEmail)
+                )
+
+                mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+                mockRegisterIndividual(testVatNumber, testNino)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+
+                val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
+
+                res.right.value shouldBe SignUpRequestSubmitted
+              }
+              "return a SignUpRequestSubmitted for a compnay sign up" in {
                 val testSubscriptionRequest = SubscriptionRequest(
                   vatNumber = testVatNumber,
                   companyNumber = Some(testCompanyNumber),

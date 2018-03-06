@@ -17,8 +17,8 @@
 package uk.gov.hmrc.vatsubscription.connectors.mocks
 
 import org.mockito.ArgumentMatchers
-import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.RegistrationConnector
@@ -42,6 +42,15 @@ trait MockRegistrationConnector extends MockitoSugar with BeforeAndAfterEach {
     when(mockRegistrationConnector.registerCompany(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(companyNumber)
+    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+  }
+
+  def mockRegisterIndividual(vatNumber: String,
+                             nino: String
+                            )(response: Future[RegisterWithMultipleIdentifiersResponse]): Unit = {
+    when(mockRegistrationConnector.registerIndividual(
+      ArgumentMatchers.eq(vatNumber),
+      ArgumentMatchers.eq(nino)
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
   }
 
