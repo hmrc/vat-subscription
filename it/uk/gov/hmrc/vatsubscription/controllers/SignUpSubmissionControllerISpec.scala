@@ -38,15 +38,38 @@ class SignUpSubmissionControllerISpec extends ComponentSpecBase with BeforeAndAf
 
   private val repo = app.injector.instanceOf[SubscriptionRequestRepository]
 
-  private val testSubscriptionRequest = SubscriptionRequest(
-    vatNumber = testVatNumber,
-    companyNumber = Some(testCompanyNumber),
-    email = Some(testEmail)
-  )
 
   "/subscription-request/vat-number/:vatNumber/submit" when {
     "all downstream services behave as expected" should {
-      "return NO_CONTENT" in {
+      "return NO_CONTENT for indiviudal sign up" in {
+        val testSubscriptionRequest = SubscriptionRequest(
+          vatNumber = testVatNumber,
+          nino = Some(testNino),
+          email = Some(testEmail)
+        )
+
+        stubAuth(OK, successfulAuthResponse())
+        stubGetEmailVerified(testEmail)
+        stubRegisterIndividual(testVatNumber, testNino)(testSafeId)
+        stubSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(OK)
+        stubRegisterEnrolment(testVatNumber, testSafeId)(NO_CONTENT)
+
+        await(repo.insert(testSubscriptionRequest))
+        val res = await(post(s"/subscription-request/vat-number/$testVatNumber/submit")(Json.obj()))
+
+        res should have(
+          httpStatus(NO_CONTENT),
+          emptyBody
+        )
+      }
+
+      "return NO_CONTENT for company sign up" in {
+        val testSubscriptionRequest = SubscriptionRequest(
+          vatNumber = testVatNumber,
+          companyNumber = Some(testCompanyNumber),
+          email = Some(testEmail)
+        )
+
         stubAuth(OK, successfulAuthResponse())
         stubGetEmailVerified(testEmail)
         stubRegisterCompany(testVatNumber, testCompanyNumber)(testSafeId)
