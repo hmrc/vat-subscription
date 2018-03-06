@@ -44,6 +44,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
           safeId <- registerCompany(vatNumber, companyNumber)
           _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified)
           _ <- registerEnrolment(vatNumber, safeId)
+          _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
 
         result.value
@@ -53,6 +54,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
           safeId <- registerIndividual(vatNumber, nino)
           _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified)
           _ <- registerEnrolment(vatNumber, safeId)
+          _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
 
         result.value
@@ -103,11 +105,21 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
       _ => EnrolmentFailure
     }
   }
+
+  private def deleteRecord(vatNumber: String): EitherT[Future, SignUpRequestSubmissionFailure, SignUpRequestDeleted.type] = {
+    val delete: Future[Either[SignUpRequestSubmissionFailure, SignUpRequestDeleted.type]] =
+      subscriptionRequestRepository.deleteRecord(vatNumber).map(_ => Right(SignUpRequestDeleted))
+    EitherT(delete) leftMap {
+      _ => DeleteRecordFailure
+    }
+  }
 }
 
 object SignUpSubmissionService {
 
   type SignUpRequestSubmissionResponse = Either[SignUpRequestSubmissionFailure, SignUpRequestSubmitted.type]
+
+  case object SignUpRequestDeleted
 
   case object SignUpRequestSubmitted
 
@@ -122,5 +134,7 @@ object SignUpSubmissionService {
   case object RegistrationFailure extends SignUpRequestSubmissionFailure
 
   case object EnrolmentFailure extends SignUpRequestSubmissionFailure
+
+  case object DeleteRecordFailure extends SignUpRequestSubmissionFailure
 
 }
