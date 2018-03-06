@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.Inject
 
+import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -52,6 +53,8 @@ class RegistrationConnector @Inject()(val http: HttpClient,
                                               companyNumber: Option[String],
                                               nino: Option[String]
                                              )(implicit hc: HeaderCarrier) = {
+    Logger.info(s"Calling register API with url ${applicationConfig.registerWithMultipleIdentifiersUrl}")
+
     http.POST[JsObject, RegisterWithMultipleIdentifiersResponse](
       url = applicationConfig.registerWithMultipleIdentifiersUrl,
       body = buildRequest(vatNumber, companyNumber, nino),
