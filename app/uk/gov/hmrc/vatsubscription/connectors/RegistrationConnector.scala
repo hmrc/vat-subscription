@@ -19,16 +19,16 @@ package uk.gov.hmrc.vatsubscription.connectors
 import javax.inject.Inject
 
 import play.api.Logger
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, Json, Reads, Writes}
 import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.config.{AppConfig, Constants}
 import uk.gov.hmrc.vatsubscription.config.Constants.Des._
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.vatsubscription.httpparsers.RegisterWithMultipleIdentifiersHttpParser._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationConnector @Inject()(val http: HttpClient,
                                       val applicationConfig: AppConfig) {
@@ -54,15 +54,18 @@ class RegistrationConnector @Inject()(val http: HttpClient,
                                               companyNumber: Option[String],
                                               nino: Option[String]
                                              )(implicit hc: HeaderCarrier) = {
-    Logger.info(s"Calling register API with url ${applicationConfig.registerWithMultipleIdentifiersUrl}")
+    val headerCarrier = hc
+        .withExtraHeaders(applicationConfig.desEnvironmentHeader)
+      .copy(authorization = Some(Authorization(applicationConfig.desAuthorisationToken)))
 
     http.POST[JsObject, RegisterWithMultipleIdentifiersResponse](
       url = applicationConfig.registerWithMultipleIdentifiersUrl,
-      body = buildRequest(vatNumber, companyNumber, nino)//,
-//      headers = Seq(
-//        applicationConfig.desAuthorisationToken,
-//        applicationConfig.desEnvironment
-//      )
+      body = buildRequest(vatNumber, companyNumber, nino)
+    )(
+      implicitly[Writes[JsObject]],
+      implicitly[HttpReads[RegisterWithMultipleIdentifiersResponse]],
+      headerCarrier,
+      implicitly[ExecutionContext]
     )
   }
 

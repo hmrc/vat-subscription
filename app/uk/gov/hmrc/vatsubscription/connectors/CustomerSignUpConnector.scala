@@ -18,12 +18,13 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.{JsObject, Json, Writes}
+import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.httpparsers.CustomerSignUpHttpParser._
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,16 +38,23 @@ class CustomerSignUpConnector @Inject()(val http: HttpClient,
 
   import CustomerSignUpConnector._
 
+
   def signUp(safeId: String, vatNumber: String, email: String, emailVerified: Boolean
-            )(implicit hc: HeaderCarrier): Future[CustomerSignUpResponse] =
+            )(implicit hc: HeaderCarrier): Future[CustomerSignUpResponse] = {
+    val headerCarrier = hc
+      .withExtraHeaders(applicationConfig.desEnvironmentHeader)
+      .copy(authorization = Some(Authorization(applicationConfig.desAuthorisationToken)))
+
     http.POST[JsObject, CustomerSignUpResponse](
       url = url,
-      body = buildRequest(safeId, vatNumber, email, emailVerified),
-      headers = Seq(
-        applicationConfig.desAuthorisationToken,
-        applicationConfig.desEnvironment
-      )
+      body = buildRequest(safeId, vatNumber, email, emailVerified)
+    )(
+      implicitly[Writes[JsObject]],
+      implicitly[HttpReads[CustomerSignUpResponse]],
+      headerCarrier,
+      implicitly[ExecutionContext]
     )
+  }
 
 }
 
