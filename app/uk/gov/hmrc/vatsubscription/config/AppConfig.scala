@@ -40,9 +40,13 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val registerWithMultipleIdentifiersUrl: String = s"$desUrl/cross-regime/register/VATC"
 
-  lazy val emailVerificationUrl: String = baseUrl("email-verification")
-
   lazy val authenticatorUrl: String = baseUrl("authenticator")
 
+  lazy val emailVerificationUrl: String = baseUrl("email-verification")
+
   def getEmailVerifiedUrl(email: String): String = s"$emailVerificationUrl/email-verification/verified-email-addresses/$email"
+
+  lazy val verifyEmailUrl = s"$emailVerificationUrl/email-verification/verification-requests"
+
+  lazy val verifyEmailContinueUrl = ""
 }

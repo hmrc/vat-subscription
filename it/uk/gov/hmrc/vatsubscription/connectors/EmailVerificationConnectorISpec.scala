@@ -17,9 +17,11 @@
 package uk.gov.hmrc.vatsubscription.connectors
 
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.helpers.ComponentSpecBase
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.EmailVerificationStub._
+import uk.gov.hmrc.vatsubscription.httpparsers.CreateEmailVerificationRequestHttpParser.EmailVerificationRequestSent
 import uk.gov.hmrc.vatsubscription.httpparsers.EmailVerified
 
 class EmailVerificationConnectorISpec extends ComponentSpecBase {
@@ -28,13 +30,25 @@ class EmailVerificationConnectorISpec extends ComponentSpecBase {
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-  "customerSignUp" should {
-    "add the additional headers to des" in {
+  "getEmailVerificationState" should {
+    "return the email verification state" in {
       stubGetEmailVerified(testEmail)
 
       val res = connector.getEmailVerificationState(testEmail)
 
       await(res) shouldBe Right(EmailVerified)
+    }
+  }
+
+  "createEmailVerificationRequest" should {
+    "return EmailVerificationRequestSent" in {
+      val continueUrl = app.injector.instanceOf[AppConfig].verifyEmailContinueUrl
+
+      stubVerifyEmail(testEmail, continueUrl)
+
+      val res = connector.createEmailVerificationRequest(testEmail)
+
+      await(res) shouldBe Right(EmailVerificationRequestSent)
     }
   }
 
