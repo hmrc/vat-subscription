@@ -16,15 +16,19 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import play.api.http.Status._
+import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.config.Constants.EmailVerification.EmailVerifiedKey
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.service.mocks.MockStoreEmailService
-import uk.gov.hmrc.vatsubscription.services._
+import uk.gov.hmrc.vatsubscription.services.StoreEmailService._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,17 +38,23 @@ class StoreEmailControllerSpec extends UnitSpec with MockAuthConnector with Mock
   object TestStoreEmailController
     extends StoreEmailController(mockAuthConnector, mockStoreEmailService)
 
+  implicit private val system: ActorSystem = ActorSystem()
+  implicit private val materializer: ActorMaterializer = ActorMaterializer()
+
   "storeCompanyNumber" when {
     "the CRN has been stored correctly" should {
-      "return NO_CONTENT" in {
+      "return OK with the email verification state" in {
+        val emailVerified = true
+
         mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreCompanyNumber(testVatNumber, testEmail)(Future.successful(Right(StoreEmailSuccess)))
+        mockStoreCompanyNumber(testVatNumber, testEmail)(Future.successful(Right(StoreEmailSuccess(emailVerified))))
 
         val request = FakeRequest() withBody testEmail
 
         val res: Result = await(TestStoreEmailController.storeEmail(testVatNumber)(request))
 
-        status(res) shouldBe NO_CONTENT
+        status(res) shouldBe OK
+        jsonBodyOf(res) shouldBe Json.obj(EmailVerifiedKey -> emailVerified)
       }
     }
 

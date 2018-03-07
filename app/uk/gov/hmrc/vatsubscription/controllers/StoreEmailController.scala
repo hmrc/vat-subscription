@@ -18,11 +18,13 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, Json}
 import play.api.mvc.Action
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.vatsubscription.config.Constants.EmailVerification.EmailVerifiedKey
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.emailKey
+import uk.gov.hmrc.vatsubscription.services.StoreEmailService._
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.ExecutionContext
@@ -39,9 +41,13 @@ class StoreEmailController @Inject()(val authConnector: AuthConnector,
         authorised() {
           val email = req.body
           storeEmailService.storeEmail(vatNumber, email) map {
-            case Right(StoreEmailSuccess) => NoContent
+            case Right(StoreEmailSuccess(emailVerified)) =>
+              Ok(Json.obj(
+                EmailVerifiedKey -> emailVerified
+              ))
             case Left(EmailDatabaseFailureNoVATNumber) => NotFound
             case Left(EmailDatabaseFailure) => InternalServerError
+            case Left(EmailVerificationFailure) => BadGateway
           }
         }
     }

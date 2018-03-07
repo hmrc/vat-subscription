@@ -22,6 +22,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.vatsubscription.connectors.EmailVerificationConnector
 import org.mockito.Mockito._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.httpparsers.CreateEmailVerificationRequestHttpParser.CreateEmailVerificationRequestResponse
 import uk.gov.hmrc.vatsubscription.httpparsers.GetEmailVerificationStateHttpParser.GetEmailVerificationStateResponse
 
 import scala.concurrent.Future
@@ -38,6 +39,11 @@ trait MockEmailVerificationConnector extends MockitoSugar with BeforeAndAfterEac
 
   def mockGetEmailVerificationState(emailAddress: String)(response: Future[GetEmailVerificationStateResponse]): Unit =
     when(mockEmailVerificationConnector.getEmailVerificationState(
+      ArgumentMatchers.eq(emailAddress)
+    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+
+  def mockCreateEmailVerificationRequest(emailAddress: String)(response: Future[CreateEmailVerificationRequestResponse]): Unit =
+    when(mockEmailVerificationConnector.createEmailVerificationRequest(
       ArgumentMatchers.eq(emailAddress)
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
 }

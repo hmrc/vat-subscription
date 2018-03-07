@@ -18,8 +18,10 @@ package uk.gov.hmrc.vatsubscription.service.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
-import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterEach, Suite}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.services.StoreEmailService._
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future
@@ -36,10 +38,12 @@ trait MockStoreEmailService extends MockitoSugar with BeforeAndAfterEach {
 
   def mockStoreCompanyNumber(vatNumber: String,
                              email: String
-                            )(response: Future[Either[StoreEmailFailure, StoreEmailSuccess.type]]): Unit = {
+                            )(response: Future[Either[StoreEmailFailure, StoreEmailSuccess]]): Unit = {
     when(mockStoreEmailService.storeEmail(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(email)
+    )(
+      ArgumentMatchers.any[HeaderCarrier]
     )) thenReturn response
   }
 }

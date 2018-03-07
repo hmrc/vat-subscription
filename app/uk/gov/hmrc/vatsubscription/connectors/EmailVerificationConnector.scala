@@ -40,7 +40,7 @@ class EmailVerificationConnector @Inject()(http: HttpClient,
       Json.obj(
         EmailKey -> emailAddress,
         TemplateIdKey -> "verifyEmailAddress",
-        TemplateParametersKey -> Json.arr(),
+        TemplateParametersKey -> Json.obj(),
         LinkExpiryDurationKey -> "P1D",
         ContinueUrlKey -> appConfig.verifyEmailContinueUrl
       )
