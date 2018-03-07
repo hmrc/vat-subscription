@@ -19,16 +19,22 @@ package uk.gov.hmrc.vatsubscription.controllers
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.EmailVerificationStub
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.EmailVerificationStub.stubVerifyEmail
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.config.Constants.EmailVerification.EmailVerifiedKey
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
   val repo: SubscriptionRequestRepository = app.injector.instanceOf[SubscriptionRequestRepository]
+  val continueUrl = app.injector.instanceOf[AppConfig].verifyEmailContinueUrl
 
   override def beforeEach: Unit = {
     super.beforeEach()
@@ -36,16 +42,17 @@ class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
   }
 
   "PUT /subscription-request/vat-number/:vrn/email" should {
-    "if vat number exists return no content when the company number has been stored successfully" in {
+    "if vat number exists return OK when the company number has been stored successfully" in {
       stubAuth(OK, successfulAuthResponse())
 
       repo.insertVatNumber(testVatNumber)
+      stubVerifyEmail(testEmail, continueUrl)
 
       val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
 
       res should have(
-        httpStatus(NO_CONTENT),
-        emptyBody
+        httpStatus(OK),
+        jsonBodyAs(Json.obj(EmailVerifiedKey -> false))
       )
     }
 

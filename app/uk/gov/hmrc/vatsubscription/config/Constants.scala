@@ -45,5 +45,6 @@ object Constants {
     val TemplateParametersKey = "templateParameters"
     val LinkExpiryDurationKey = "linkExpiryDuration"
     val ContinueUrlKey = "continueUrl"
+    val EmailVerifiedKey = "emailVerified"
   }
 }
