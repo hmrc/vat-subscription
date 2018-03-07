@@ -16,11 +16,14 @@
 
 package uk.gov.hmrc.vatsubscription.service
 
+import java.util.UUID
+
 import org.scalatest.EitherValues
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import reactivemongo.api.commands.WriteResult
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
@@ -43,48 +46,83 @@ class StoreVatNumberServiceSpec
 
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)
 
-  "storeVatNumber" when {
-    "there is an agent-client relationship" when {
-      "the vat number is stored successfully" should {
-        "return a StoreVatNumberSuccess" in {
-          mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
-          mockInsertVatNumber(testVatNumber)(Future.successful(mock[WriteResult]))
+  val agentUser = Enrolments(Set(testAgentEnrolment))
+  val principalUser = Enrolments(Set(testPrincipalEnrolment))
 
-          val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, Some(testAgentReferenceNumber)))
+  "storeVatNumber" when {
+    "the user is an agent" when {
+      "there is an agent-client relationship" when {
+        "the vat number is stored successfully" should {
+          "return a StoreVatNumberSuccess" in {
+            mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
+            mockInsertVatNumber(testVatNumber)(Future.successful(mock[WriteResult]))
+
+            val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
+            res.right.value shouldBe StoreVatNumberSuccess
+          }
+        }
+        "the vat number is not stored successfully" should {
+          "return a VatNumberDatabaseFailure" in {
+            mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
+            mockInsertVatNumber(testVatNumber)(Future.failed(new Exception))
+
+            val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
+            res.left.value shouldBe VatNumberDatabaseFailure
+          }
+        }
+      }
+
+      "there is not an agent-client-relationship" should {
+        "return a RelationshipNotFound" in {
+          mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(NoRelationshipResponse)))
+
+          val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
+          res.left.value shouldBe RelationshipNotFound
+        }
+      }
+
+      "the call to agent-client-relationships-fails" should {
+        "return an AgentServicesConnectionFailure" in {
+          mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(
+            Future.successful(Left(CheckAgentClientRelationshipResponseFailure(INTERNAL_SERVER_ERROR, Json.obj())))
+          )
+
+          val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
+          res.left.value shouldBe AgentServicesConnectionFailure
+        }
+      }
+    }
+
+    "the user is a principal user" when {
+      "the vat number is stored successfully" should {
+        "return DoesNotMatchEnrolment" in {
+          mockInsertVatNumber(testVatNumber)(Future.successful(mock[WriteResult]))
+          val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, principalUser))
           res.right.value shouldBe StoreVatNumberSuccess
         }
       }
       "the vat number is not stored successfully" should {
         "return a VatNumberDatabaseFailure" in {
-          mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
           mockInsertVatNumber(testVatNumber)(Future.failed(new Exception))
 
-          val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, Some(testAgentReferenceNumber)))
+          val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, principalUser))
           res.left.value shouldBe VatNumberDatabaseFailure
+        }
+      }
+      "the vat number does not match enrolment" should {
+        "return DoesNotMatchEnrolment" in {
+          val res = await(TestStoreVatNumberService.storeVatNumber(UUID.randomUUID().toString, principalUser))
+          res.left.value shouldBe DoesNotMatchEnrolment
         }
       }
     }
 
-    "there is not an agent-client-relationship" should {
-      "return a RelationshipNotFound" in {
-        mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(NoRelationshipResponse)))
-
-        val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, Some(testAgentReferenceNumber)))
-        res.left.value shouldBe RelationshipNotFound
-      }
-    }
-
-    "the call to agent-client-relationships-fails" should {
-      "return an AgentServicesConnectionFailure" in {
-        mockCheckAgentClientRelationship(testAgentReferenceNumber,
-          testVatNumber
-        )(
-          Future.successful(Left(CheckAgentClientRelationshipResponseFailure(INTERNAL_SERVER_ERROR, Json.obj())))
-        )
-
-        val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, Some(testAgentReferenceNumber)))
-        res.left.value shouldBe AgentServicesConnectionFailure
+    "the user does not have either enrolment" should {
+      "return InsufficientEnrolments" in {
+        val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, Enrolments(Set.empty)))
+        res.left.value shouldBe InsufficientEnrolments
       }
     }
   }
+
 }

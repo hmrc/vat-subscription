@@ -22,6 +22,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.config.Constants.HttpCodeKey
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
@@ -41,11 +42,13 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
   implicit val system: ActorSystem = ActorSystem()
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
+  val enrolments = Enrolments(Set(testAgentEnrolment))
+
   "storeVatNumber" when {
     "the VAT number has been stored correctly" should {
       "return CREATED" in {
         mockAuthRetrieveAgentEnrolment()
-        mockStoreVatNumber(testVatNumber, Some(testAgentReferenceNumber))(Future.successful(Right(StoreVatNumberSuccess)))
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Right(StoreVatNumberSuccess)))
 
         val request = FakeRequest() withBody testVatNumber
 
@@ -58,7 +61,7 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
     "the VAT number storage has failed" should {
       "return INTERNAL_SERVER_ERROR" in {
         mockAuthRetrieveAgentEnrolment()
-        mockStoreVatNumber(testVatNumber, Some(testAgentReferenceNumber))(Future.successful(Left(VatNumberDatabaseFailure)))
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(VatNumberDatabaseFailure)))
 
         val request = FakeRequest() withBody testVatNumber
 
@@ -68,10 +71,38 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
       }
     }
 
+    "the vat number does not match enrolment" should {
+      "return FORBIDDEN" in {
+        mockAuthRetrieveAgentEnrolment()
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(DoesNotMatchEnrolment)))
+
+        val request = FakeRequest() withBody testVatNumber
+
+        val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+
+        status(res) shouldBe FORBIDDEN
+        jsonBodyOf(res) shouldBe Json.obj(HttpCodeKey -> "DoesNotMatchEnrolment")
+      }
+    }
+
+    "insufficient enrolment" should {
+      "return FORBIDDEN" in {
+        mockAuthRetrieveAgentEnrolment()
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(InsufficientEnrolments)))
+
+        val request = FakeRequest() withBody testVatNumber
+
+        val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+
+        status(res) shouldBe FORBIDDEN
+        jsonBodyOf(res) shouldBe Json.obj(HttpCodeKey -> "InsufficientEnrolments")
+      }
+    }
+
     "no agent client relationship exists for a delegated call" should {
       "return FORBIDDEN" in {
         mockAuthRetrieveAgentEnrolment()
-        mockStoreVatNumber(testVatNumber, Some(testAgentReferenceNumber))(Future.successful(Left(RelationshipNotFound)))
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(RelationshipNotFound)))
 
         val request = FakeRequest() withBody testVatNumber
 
@@ -85,7 +116,7 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
     "the call to agent services failed" should {
       "return FORBIDDEN" in {
         mockAuthRetrieveAgentEnrolment()
-        mockStoreVatNumber(testVatNumber, Some(testAgentReferenceNumber))(Future.successful(Left(AgentServicesConnectionFailure)))
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(AgentServicesConnectionFailure)))
 
         val request = FakeRequest() withBody testVatNumber
 

@@ -18,7 +18,9 @@ package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.Inject
 
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.connectors.AgentClientRelationshipsConnector
 import uk.gov.hmrc.vatsubscription.models.{HaveRelationshipResponse, NoRelationshipResponse}
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
@@ -28,12 +30,31 @@ import scala.concurrent.{ExecutionContext, Future}
 class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
                                       agentClientRelationshipsConnector: AgentClientRelationshipsConnector
                                      )(implicit ec: ExecutionContext) {
+
   def storeVatNumber(vatNumber: String,
-                     optAgentReferenceNumber: Option[String]
+                     enrolments: Enrolments
                     )(implicit hc: HeaderCarrier): Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]] = {
-    optAgentReferenceNumber match {
-      case Some(agentReferenceNumber) =>
+
+    val optAgentReferenceNumber: Option[String] =
+      enrolments getEnrolment AgentEnrolmentKey flatMap {
+        agentEnrolment =>
+          agentEnrolment getIdentifier AgentReferenceNumberKey map (_.value)
+      }
+
+    val optVatEnrolment: Option[String] =
+      enrolments getEnrolment VATEnrolmentKey flatMap {
+        agentEnrolment =>
+          agentEnrolment getIdentifier VATReferenceKey map (_.value)
+      }
+
+    (optVatEnrolment, optAgentReferenceNumber) match {
+      case (Some(vatNumberFromEnrolment), _) if vatNumber == vatNumberFromEnrolment =>
+        insertVatNumber(vatNumber)
+      case (Some(vatNumberFromEnrolment), _) =>
+        Future.successful(Left(DoesNotMatchEnrolment))
+      case (_, Some(agentReferenceNumber)) =>
         storeDelegatedVatNumber(vatNumber, agentReferenceNumber)
+      case _ => Future.successful(Left(InsufficientEnrolments))
     }
   }
 
@@ -61,8 +82,12 @@ object StoreVatNumberSuccess
 
 sealed trait StoreVatNumberFailure
 
-object VatNumberDatabaseFailure extends StoreVatNumberFailure
+object DoesNotMatchEnrolment extends StoreVatNumberFailure
+
+object InsufficientEnrolments extends StoreVatNumberFailure
 
 object RelationshipNotFound extends StoreVatNumberFailure
 
 object AgentServicesConnectionFailure extends StoreVatNumberFailure
+
+object VatNumberDatabaseFailure extends StoreVatNumberFailure
