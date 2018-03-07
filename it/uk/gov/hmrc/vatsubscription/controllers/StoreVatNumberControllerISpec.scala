@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
+import java.util.UUID
+
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -38,39 +40,89 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
     await(repo.drop)
   }
 
-  "PUT /subscription-request/vat-number" should {
-    "return CREATED when the vat number has been stored successfully" in {
-      stubAuth(OK, successfulAuthResponse(agentEnrolment))
-      stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
+  "PUT /subscription-request/vat-number" when {
+    "the user is an agent" should {
+      "return CREATED when the vat number has been stored successfully" in {
+        stubAuth(OK, successfulAuthResponse(agentEnrolment))
+        stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
 
-      val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+        val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
-      res should have(
-        httpStatus(CREATED),
-        emptyBody
-      )
+        res should have(
+          httpStatus(CREATED),
+          emptyBody
+        )
+      }
+
+      "return FORBIDDEN when there is no relationship" in {
+        stubAuth(OK, successfulAuthResponse(agentEnrolment))
+        stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(NOT_FOUND, Json.obj("code" -> NoRelationshipCode))
+
+        val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+
+        res should have(
+          httpStatus(FORBIDDEN),
+          jsonBodyAs(Json.obj(Constants.HttpCodeKey -> NoRelationshipCode))
+        )
+      }
+
+      "return BAD_REQUEST when the json is invalid" in {
+        stubAuth(OK, successfulAuthResponse())
+
+        val res = post("/subscription-request/vat-number")(Json.obj())
+
+        res should have(
+          httpStatus(BAD_REQUEST)
+        )
+      }
     }
 
-    "return FORBIDDEN when there is no relationship" in {
-      stubAuth(OK, successfulAuthResponse(agentEnrolment))
-      stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(NOT_FOUND, Json.obj("code" -> NoRelationshipCode))
+    "the user is a principal user" should {
+      "return CREATED when the vat number has been stored successfully" in {
+        stubAuth(OK, successfulAuthResponse(principalEnrolment))
+
+        val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+
+        res should have(
+          httpStatus(CREATED),
+          emptyBody
+        )
+      }
+
+      "return FORBIDDEN when vat number does not match the one in enrolment" in {
+        stubAuth(OK, successfulAuthResponse(principalEnrolment))
+
+        val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> UUID.randomUUID().toString))
+
+        res should have(
+          httpStatus(FORBIDDEN),
+          jsonBodyAs(Json.obj(Constants.HttpCodeKey -> "DoesNotMatchEnrolment"))
+        )
+      }
+
+      "return BAD_REQUEST when the json is invalid" in {
+        stubAuth(OK, successfulAuthResponse())
+
+        val res = post("/subscription-request/vat-number")(Json.obj())
+
+        res should have(
+          httpStatus(BAD_REQUEST)
+        )
+      }
+    }
+  }
+
+  "the user does not have VAT or Agent enrolments" should {
+    "return FORBIDDEN" in {
+      stubAuth(OK, successfulAuthResponse())
 
       val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
       res should have(
         httpStatus(FORBIDDEN),
-        jsonBodyAs(Json.obj(Constants.HttpCodeKey -> NoRelationshipCode))
-      )
-    }
-
-    "return BAD_REQUEST when the json is invalid" in {
-      stubAuth(OK, successfulAuthResponse())
-
-      val res = post("/subscription-request/vat-number")(Json.obj())
-
-      res should have(
-        httpStatus(BAD_REQUEST)
+        jsonBodyAs(Json.obj(Constants.HttpCodeKey -> "InsufficientEnrolments"))
       )
     }
   }
+
 }

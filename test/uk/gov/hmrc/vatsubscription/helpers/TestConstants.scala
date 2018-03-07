@@ -19,9 +19,9 @@ package uk.gov.hmrc.vatsubscription.helpers
 import java.util.UUID
 
 import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.vatsubscription.config.Constants.{AgentEnrolmentKey, AgentReferenceNumberKey}
+import uk.gov.hmrc.vatsubscription.config.Constants.{AgentEnrolmentKey, AgentReferenceNumberKey, VATEnrolmentKey, VATReferenceKey}
 
-object TestConstants  {
+object TestConstants {
   val testVatNumber: String = UUID.randomUUID().toString
   val testNino: String = UUID.randomUUID().toString
   val testCompanyNumber: String = UUID.randomUUID().toString
@@ -30,6 +30,7 @@ object TestConstants  {
   val testSafeId: String = UUID.randomUUID().toString
 
   val testAgentEnrolment: Enrolment = Enrolment(AgentEnrolmentKey).withIdentifier(AgentReferenceNumberKey, testAgentReferenceNumber)
+  val testPrincipalEnrolment: Enrolment = Enrolment(VATEnrolmentKey).withIdentifier(VATReferenceKey, testVatNumber)
 
   val testErrorMsg = "this is an error"
 

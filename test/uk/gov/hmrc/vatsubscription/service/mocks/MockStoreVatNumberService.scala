@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.services._
 
@@ -30,11 +31,11 @@ trait MockStoreVatNumberService extends MockitoSugar {
 
   val mockStoreVatNumberService: StoreVatNumberService = mock[StoreVatNumberService]
 
-  def mockStoreVatNumber(vatNumber: String, optAgentReferenceNumber: Option[String] = None
+  def mockStoreVatNumber(vatNumber: String, enrolments: Enrolments
                         )(response: Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]]): Unit = {
     when(mockStoreVatNumberService.storeVatNumber(
       ArgumentMatchers.eq(vatNumber),
-      ArgumentMatchers.eq(optAgentReferenceNumber)
+      ArgumentMatchers.any[Enrolments]
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
   }
 }
