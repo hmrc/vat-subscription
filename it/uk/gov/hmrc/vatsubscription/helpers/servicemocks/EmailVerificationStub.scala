@@ -29,12 +29,12 @@ object EmailVerificationStub extends WireMockMethods {
     when(method = GET, uri = getEmailVerifiedUri(email))
       .thenReturn(OK)
 
-  def stubVerifyEmail(emailAddress: String, continueUrl: String): Unit =
+  def stubVerifyEmail(emailAddress: String, continueUrl: String)(response: Int): Unit =
     when(
       method = POST,
       uri = verifyEmailUri,
       body = verifyEmailBody(emailAddress, continueUrl)
-    ) thenReturn CREATED
+    ) thenReturn response
 
   private def verifyEmailBody(emailAddress: String, continueUrl: String) =
     Json.obj(

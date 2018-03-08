@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.{JsPath, Json}
 import play.api.mvc.Action
+import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.config.Constants.EmailVerification.EmailVerifiedKey
@@ -38,17 +39,18 @@ class StoreEmailController @Inject()(val authConnector: AuthConnector,
   def storeEmail(vatNumber: String): Action[String] =
     Action.async(parse.json((JsPath \ emailKey).read[String])) {
       implicit req =>
-        authorised() {
-          val email = req.body
-          storeEmailService.storeEmail(vatNumber, email) map {
-            case Right(StoreEmailSuccess(emailVerified)) =>
-              Ok(Json.obj(
-                EmailVerifiedKey -> emailVerified
-              ))
-            case Left(EmailDatabaseFailureNoVATNumber) => NotFound
-            case Left(EmailDatabaseFailure) => InternalServerError
-            case Left(EmailVerificationFailure) => BadGateway
-          }
+        authorised().retrieve(Retrievals.allEnrolments) {
+          enrolments =>
+            val email = req.body
+            storeEmailService.storeEmail(vatNumber, email, enrolments) map {
+              case Right(StoreEmailSuccess(emailVerified)) =>
+                Ok(Json.obj(
+                  EmailVerifiedKey -> emailVerified
+                ))
+              case Left(EmailDatabaseFailureNoVATNumber) => NotFound
+              case Left(EmailDatabaseFailure) => InternalServerError
+              case Left(EmailVerificationFailure) => BadGateway
+            }
         }
     }
 

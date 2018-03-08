@@ -34,46 +34,88 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
   val repo: SubscriptionRequestRepository = app.injector.instanceOf[SubscriptionRequestRepository]
-  val continueUrl = app.injector.instanceOf[AppConfig].verifyEmailContinueUrl
+  val delegatedContinueUrl = app.injector.instanceOf[AppConfig].delegatedVerifyEmailContinueUrl
+  val principalContinueUrl = app.injector.instanceOf[AppConfig].principalVerifyEmailContinueUrl
 
   override def beforeEach: Unit = {
     super.beforeEach()
     await(repo.drop)
   }
 
-  "PUT /subscription-request/vat-number/:vrn/email" should {
-    "if vat number exists return OK when the company number has been stored successfully" in {
-      stubAuth(OK, successfulAuthResponse())
+  "PUT /subscription-request/vat-number/:vrn/email" when {
+    "the vat number exists" when {
+      "the company number has been stored successfully" when {
+        "the email verification request has been sent successfully" when {
+          "the user is an agent" should {
+            "return OK with the verification state" in {
+              stubAuth(OK, successfulAuthResponse(agentEnrolment))
 
-      repo.insertVatNumber(testVatNumber)
-      stubVerifyEmail(testEmail, continueUrl)
+              repo.insertVatNumber(testVatNumber)
+              stubVerifyEmail(testEmail, delegatedContinueUrl)(CREATED)
 
-      val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
+              val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
 
-      res should have(
-        httpStatus(OK),
-        jsonBodyAs(Json.obj(EmailVerifiedKey -> false))
-      )
+              res should have(
+                httpStatus(OK),
+                jsonBodyAs(Json.obj(EmailVerifiedKey -> false))
+              )
+            }
+          }
+          "the user is on the principal journey" should {
+            "return OK with the verification state" in {
+              stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
+
+              repo.insertVatNumber(testVatNumber)
+              stubVerifyEmail(testEmail, principalContinueUrl)(CREATED)
+
+              val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
+
+              res should have(
+                httpStatus(OK),
+                jsonBodyAs(Json.obj(EmailVerifiedKey -> false))
+              )
+            }
+          }
+        }
+        "the email has already been verified" should {
+          "return OK with the verification state as true" in {
+            stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
+
+            repo.insertVatNumber(testVatNumber)
+            stubVerifyEmail(testEmail, principalContinueUrl)(CONFLICT)
+
+            val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
+
+            res should have(
+              httpStatus(OK),
+              jsonBodyAs(Json.obj(EmailVerifiedKey -> true))
+            )
+          }
+        }
+      }
+    }
+    "the vat number does not exist" should {
+      "return NOT_FOUND" in {
+        stubAuth(OK, successfulAuthResponse())
+
+        val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
+
+        res should have(
+          httpStatus(NOT_FOUND)
+        )
+      }
     }
 
-    "if the vat number does not already exist then return NOT_FOUND" in {
-      stubAuth(OK, successfulAuthResponse())
+    "the json is invalid" should {
+      "return BAD_REQUEST" in {
+        stubAuth(OK, successfulAuthResponse())
 
-      val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
+        val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj())
 
-      res should have(
-        httpStatus(NOT_FOUND)
-      )
-    }
-
-    "return BAD_REQUEST when the json is invalid" in {
-      stubAuth(OK, successfulAuthResponse())
-
-      val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj())
-
-      res should have(
-        httpStatus(BAD_REQUEST)
-      )
+        res should have(
+          httpStatus(BAD_REQUEST)
+        )
+      }
     }
   }
 

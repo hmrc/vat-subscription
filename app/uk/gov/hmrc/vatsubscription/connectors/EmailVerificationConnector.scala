@@ -35,14 +35,14 @@ class EmailVerificationConnector @Inject()(http: HttpClient,
     http.GET[GetEmailVerificationStateResponse](appConfig.getEmailVerifiedUrl(emailAddress))
   }
 
-  def createEmailVerificationRequest(emailAddress: String)(implicit hc: HeaderCarrier): Future[CreateEmailVerificationRequestResponse] = {
+  def createEmailVerificationRequest(emailAddress: String, continueUrl: String)(implicit hc: HeaderCarrier): Future[CreateEmailVerificationRequestResponse] = {
     val jsonBody =
       Json.obj(
         EmailKey -> emailAddress,
         TemplateIdKey -> "verifyEmailAddress",
         TemplateParametersKey -> Json.obj(),
         LinkExpiryDurationKey -> "P1D",
-        ContinueUrlKey -> appConfig.verifyEmailContinueUrl
+        ContinueUrlKey -> continueUrl
       )
 
     http.POST[JsObject, CreateEmailVerificationRequestResponse](appConfig.verifyEmailUrl, jsonBody)

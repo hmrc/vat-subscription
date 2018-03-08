@@ -19,34 +19,48 @@ package uk.gov.hmrc.vatsubscription.services
 import java.util.NoSuchElementException
 import javax.inject.Inject
 
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.connectors.EmailVerificationConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.CreateEmailVerificationRequestHttpParser.{EmailAlreadyVerified, EmailVerificationRequestSent}
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.services.StoreEmailService._
+import uk.gov.hmrc.vatsubscription.config.Constants.AgentEnrolmentKey
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class StoreEmailService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
-                                  emailVerificationConnector: EmailVerificationConnector
+                                  emailVerificationConnector: EmailVerificationConnector,
+                                  appConfig: AppConfig
                                  )(implicit ec: ExecutionContext) {
-  def storeEmail(vatNumber: String, emailAddress: String)(implicit hc: HeaderCarrier): Future[Either[StoreEmailFailure, StoreEmailSuccess]] =
-    subscriptionRequestRepository.upsertEmail(vatNumber, emailAddress) flatMap {
-      _ =>
-        emailVerificationConnector.createEmailVerificationRequest(emailAddress) map {
-          case Right(EmailVerificationRequestSent) =>
-            Right(StoreEmailSuccess(emailVerified = false))
-          case Right(EmailAlreadyVerified) =>
-            Right(StoreEmailSuccess(emailVerified = true))
-          case _ =>
-            Left(EmailVerificationFailure)
-        }
-    } recover {
-      case e: NoSuchElementException =>
-        Left(EmailDatabaseFailureNoVATNumber)
-      case _ =>
-        Left(EmailDatabaseFailure)
+  def storeEmail(vatNumber: String,
+                 emailAddress: String,
+                 enrolments: Enrolments
+                )(implicit hc: HeaderCarrier): Future[Either[StoreEmailFailure, StoreEmailSuccess]] = {
+    val continueUrl = if (enrolments.getEnrolment(AgentEnrolmentKey).isDefined) {
+      appConfig.delegatedVerifyEmailContinueUrl
+    } else {
+      appConfig.principalVerifyEmailContinueUrl
     }
+
+      subscriptionRequestRepository.upsertEmail(vatNumber, emailAddress) flatMap {
+        _ =>
+          emailVerificationConnector.createEmailVerificationRequest(emailAddress, continueUrl) map {
+            case Right(EmailVerificationRequestSent) =>
+              Right(StoreEmailSuccess(emailVerified = false))
+            case Right(EmailAlreadyVerified) =>
+              Right(StoreEmailSuccess(emailVerified = true))
+            case _ =>
+              Left(EmailVerificationFailure)
+          }
+      } recover {
+        case e: NoSuchElementException =>
+          Left(EmailDatabaseFailureNoVATNumber)
+        case _ =>
+          Left(EmailDatabaseFailure)
+      }
+  }
 }
 
 object StoreEmailService {
