@@ -79,7 +79,7 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
 
     "the user is a principal user" should {
       "return CREATED when the vat number has been stored successfully" in {
-        stubAuth(OK, successfulAuthResponse(principalEnrolment))
+        stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
 
         val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
@@ -90,7 +90,7 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
       }
 
       "return FORBIDDEN when vat number does not match the one in enrolment" in {
-        stubAuth(OK, successfulAuthResponse(principalEnrolment))
+        stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
 
         val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> UUID.randomUUID().toString))
 

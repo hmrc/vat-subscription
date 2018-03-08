@@ -48,5 +48,8 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val verifyEmailUrl = s"$emailVerificationUrl/email-verification/verification-requests"
 
-  lazy val verifyEmailContinueUrl = ""
+  lazy val principalVerifyEmailContinueUrl = loadConfig("microservice.services.email-verification.principal-continue-url")
+
+  lazy val delegatedVerifyEmailContinueUrl = loadConfig("microservice.services.email-verification.delegated-continue-url")
+
 }

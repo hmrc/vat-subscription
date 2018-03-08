@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.connectors
 
+import play.api.http.Status._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.helpers.ComponentSpecBase
@@ -42,11 +43,11 @@ class EmailVerificationConnectorISpec extends ComponentSpecBase {
 
   "createEmailVerificationRequest" should {
     "return EmailVerificationRequestSent" in {
-      val continueUrl = app.injector.instanceOf[AppConfig].verifyEmailContinueUrl
+      val continueUrl = app.injector.instanceOf[AppConfig].delegatedVerifyEmailContinueUrl
 
-      stubVerifyEmail(testEmail, continueUrl)
+      stubVerifyEmail(testEmail, continueUrl)(CREATED)
 
-      val res = connector.createEmailVerificationRequest(testEmail)
+      val res = connector.createEmailVerificationRequest(testEmail, continueUrl)
 
       await(res) shouldBe Right(EmailVerificationRequestSent)
     }

@@ -42,8 +42,9 @@ trait MockEmailVerificationConnector extends MockitoSugar with BeforeAndAfterEac
       ArgumentMatchers.eq(emailAddress)
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
 
-  def mockCreateEmailVerificationRequest(emailAddress: String)(response: Future[CreateEmailVerificationRequestResponse]): Unit =
+  def mockCreateEmailVerificationRequest(emailAddress: String, continueUrl: String)(response: Future[CreateEmailVerificationRequestResponse]): Unit =
     when(mockEmailVerificationConnector.createEmailVerificationRequest(
-      ArgumentMatchers.eq(emailAddress)
+      ArgumentMatchers.eq(emailAddress),
+      ArgumentMatchers.eq(continueUrl)
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
 }
