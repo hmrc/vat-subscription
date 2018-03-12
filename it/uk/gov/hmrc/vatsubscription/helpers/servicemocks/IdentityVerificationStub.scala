@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.helpers
+package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 
-import java.util.UUID
+import play.api.http.Status._
+import play.api.libs.json.Json
 
-object IntegrationTestConstants  {
-  val testVatNumber: String = UUID.randomUUID().toString
-  val testCompanyNumber: String = UUID.randomUUID().toString
-  val testEmail: String = "test@test.test"
-  val testAgentNumber: String = UUID.randomUUID().toString
-  val testSafeId: String = UUID.randomUUID().toString
-  val testNino: String = UUID.randomUUID().toString
+object IdentityVerificationStub extends WireMockMethods {
+
   val testToken = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+
+  private def getIdentityVerifiedUri(journeyId: String) = s"/mdtp/journey/journeyId/$journeyId"
+
+  def stubGetIdentityVerifiedOutcome(journeyId: String)(code: String): Unit =
+    when(method = GET, uri = getIdentityVerifiedUri(journeyId))
+      .thenReturn(OK, Map("Content-Type" -> "application/json"), Json.obj("result" -> code,
+                                                                          "token" -> testToken))
+
 }
