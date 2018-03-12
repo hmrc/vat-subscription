@@ -21,6 +21,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.helpers.TestConstants.testToken
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerificationHttpParser.GetIdentityVerificationOutcomeHttpReads.read
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerificationHttpParser._
 
@@ -33,7 +34,7 @@ class IdentityVerificationHttpParserSpec extends UnitSpec with EitherValues {
           val httpResponse = HttpResponse(
             responseStatus = OK,
             responseJson = Some(Json.obj("result" -> SuccessCode,
-                                         "token" -> "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                                         "token" -> testToken))
           )
 
           read("", "", httpResponse).right.value shouldBe IdentityVerified
@@ -48,7 +49,7 @@ class IdentityVerificationHttpParserSpec extends UnitSpec with EitherValues {
           val httpResponse = HttpResponse(
             responseStatus = OK,
             responseJson = Some(Json.obj("result" -> notVerifiedResultCode,
-                                         "token" -> "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                                         "token" -> testToken))
           )
 
           read("", "", httpResponse).right.value shouldBe IdentityNotVerified(resultCode)

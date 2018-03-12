@@ -28,6 +28,7 @@ object TestConstants {
   val testEmail: String = UUID.randomUUID().toString
   val testAgentReferenceNumber: String = UUID.randomUUID().toString
   val testSafeId: String = UUID.randomUUID().toString
+  val testToken =  UUID.randomUUID().toString
 
   val testAgentEnrolment: Enrolment = Enrolment(AgentEnrolmentKey).withIdentifier(AgentReferenceNumberKey, testAgentReferenceNumber)
   val testPrincipalEnrolment: Enrolment = Enrolment(VATEnrolmentKey).withIdentifier(VATReferenceKey, testVatNumber)
