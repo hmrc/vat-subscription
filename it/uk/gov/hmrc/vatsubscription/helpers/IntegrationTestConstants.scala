@@ -26,4 +26,5 @@ object IntegrationTestConstants  {
   val testSafeId: String = UUID.randomUUID().toString
   val testNino: String = UUID.randomUUID().toString
   val testToken =  UUID.randomUUID().toString
+  val testJourneyLink = s"/mdtp/journey/journeyId/${UUID.randomUUID().toString}"
 }

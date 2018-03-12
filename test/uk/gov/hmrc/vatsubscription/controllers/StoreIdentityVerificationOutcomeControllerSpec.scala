@@ -46,9 +46,9 @@ class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockA
       "return NoContent" in {
 
         mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyId)(Future.successful(Right(IdentityVerified)))
+        mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink)(Future.successful(Right(IdentityVerified)))
 
-        val request = FakeRequest() withBody testJourneyId
+        val request = FakeRequest() withBody testJourneyLink
 
         val res: Result = await(TestStoreIdentityVerificationOutcomeController.storeIdentityVerificationOutcome(testVatNumber)(request))
 
@@ -60,9 +60,9 @@ class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockA
       "return Forbidden" in {
 
         mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyId)(Future.successful(Left(IdentityNotVerified)))
+        mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink)(Future.successful(Left(IdentityNotVerified)))
 
-        val request = FakeRequest() withBody testJourneyId
+        val request = FakeRequest() withBody testJourneyLink
 
         val res: Result = await(TestStoreIdentityVerificationOutcomeController.storeIdentityVerificationOutcome(testVatNumber)(request))
 
@@ -75,9 +75,9 @@ class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockA
         "return InternalServerError" in {
 
           mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-          mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyId)(Future.successful(Left(IdentityVerificationDatabaseFailure)))
+          mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink)(Future.successful(Left(IdentityVerificationDatabaseFailure)))
 
-          val request = FakeRequest() withBody testJourneyId
+          val request = FakeRequest() withBody testJourneyLink
 
           val res: Result = await(TestStoreIdentityVerificationOutcomeController.storeIdentityVerificationOutcome(testVatNumber)(request))
 
@@ -88,9 +88,9 @@ class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockA
         "return BadGateway" in {
 
           mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-          mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyId)(Future.successful(Left(IdentityVerificationConnectionFailure)))
+          mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink)(Future.successful(Left(IdentityVerificationConnectionFailure)))
 
-          val request = FakeRequest() withBody testJourneyId
+          val request = FakeRequest() withBody testJourneyLink
 
           val res: Result = await(TestStoreIdentityVerificationOutcomeController.storeIdentityVerificationOutcome(testVatNumber)(request))
 

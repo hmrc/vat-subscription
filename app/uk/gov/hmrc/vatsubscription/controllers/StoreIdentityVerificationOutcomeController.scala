@@ -34,14 +34,14 @@ class StoreIdentityVerificationOutcomeController @Inject()(val authConnector: Au
                                                           (implicit ec: ExecutionContext)
   extends BaseController with AuthorisedFunctions {
 
-  private val journeyIdKey = "journeyId"
+  private val journeyLinkKey = "journeyLink"
 
   def storeIdentityVerificationOutcome(vatNumber: String): Action[String] =
-    Action.async(parse.json((JsPath \ journeyIdKey).read[String])) {
+    Action.async(parse.json((JsPath \ journeyLinkKey).read[String])) {
       implicit req =>
         authorised() {
-            val journeyId = req.body
-            identityVerificationOrchestrationService.checkIdentityVerification(vatNumber, journeyId) map {
+            val journeyLink = req.body
+            identityVerificationOrchestrationService.checkIdentityVerification(vatNumber, journeyLink) map {
               case Right(IdentityVerified) => NoContent
               case Left(IdentityNotVerified) => Forbidden
               case Left(IdentityVerificationDatabaseFailure) => InternalServerError

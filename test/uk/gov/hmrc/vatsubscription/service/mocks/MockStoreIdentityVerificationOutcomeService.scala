@@ -36,10 +36,10 @@ trait MockStoreIdentityVerificationOutcomeService extends MockitoSugar with Befo
     reset(mockIdentityVerificationOrchestrationService)
   }
 
-  def mockStoreIdentityVerificationOutcome(vatNumber: String, journeyId: String)(response: Future[IdentityVerificationOrchestrationResponse]): Unit = {
+  def mockStoreIdentityVerificationOutcome(vatNumber: String, journeyLink: String)(response: Future[IdentityVerificationOrchestrationResponse]): Unit = {
     when(mockIdentityVerificationOrchestrationService.checkIdentityVerification(
       ArgumentMatchers.eq(vatNumber),
-      ArgumentMatchers.eq(journeyId)
+      ArgumentMatchers.eq(journeyLink)
     )(
       ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[ExecutionContext]

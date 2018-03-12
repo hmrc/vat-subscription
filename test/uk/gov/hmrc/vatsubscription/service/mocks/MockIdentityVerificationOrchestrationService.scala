@@ -37,11 +37,11 @@ trait MockIdentityVerificationOrchestrationService extends MockitoSugar with Bef
   }
 
   def mockCheckIdentityVerification(vatNumber: String,
-                                    journeyId: String
+                                    journeyLink: String
                                    )(response: Future[IdentityVerificationOrchestrationResponse]): Unit = {
     when(mockIdentityVerificationOrchestrationService.checkIdentityVerification(
       ArgumentMatchers.eq(vatNumber),
-      ArgumentMatchers.eq(journeyId)
+      ArgumentMatchers.eq(journeyLink)
     )(ArgumentMatchers.any[HeaderCarrier], ArgumentMatchers.any[ExecutionContext])) thenReturn response
   }
 

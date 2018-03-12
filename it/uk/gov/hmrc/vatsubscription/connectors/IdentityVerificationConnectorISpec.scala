@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.helpers.ComponentSpecBase
-import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.testToken
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.testJourneyLink
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.IdentityVerificationStub._
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerified
 
@@ -30,9 +30,9 @@ class IdentityVerificationConnectorISpec extends ComponentSpecBase {
 
   "getIdentityVerificationOutcome" should {
     "return whether the users identity has been verified" in {
-      stubGetIdentityVerifiedOutcome(testToken)("Success")
+      stubGetIdentityVerifiedOutcome(testJourneyLink)("Success")
 
-      val res = connector.getIdentityVerificationOutcome(testToken)
+      val res = connector.getIdentityVerificationOutcome(testJourneyLink)
 
       await(res) shouldBe Right(IdentityVerified)
     }
