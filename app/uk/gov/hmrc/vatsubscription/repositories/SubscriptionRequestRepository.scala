@@ -74,6 +74,15 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
       upsert = false
     ).filter(_.n == 1)
 
+  def upsertIdentityVerified(vatNumber: String): Future[UpdateWriteResult] =
+    collection.update(
+      selector = Json.obj(idKey -> vatNumber),
+      update = Json.obj("$set" -> Json.obj(
+        identityVerifiedKey -> true
+      )),
+      upsert = false
+    ).filter(_.n == 1)
+
   def deleteRecord(vatNumber: String): Future[WriteResult] =
     collection.remove(selector = Json.obj(idKey -> vatNumber))
 

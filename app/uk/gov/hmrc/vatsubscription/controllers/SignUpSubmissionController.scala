@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 import javax.inject.Inject
 
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.services.SignUpSubmissionService
@@ -30,14 +31,18 @@ class SignUpSubmissionController @Inject()(val authConnector: AuthConnector,
                                            signUpSubmissionService: SignUpSubmissionService)
                                           (implicit ec: ExecutionContext)
   extends BaseController with AuthorisedFunctions {
+
   def submitSignUpRequest(vatNumber: String): Action[AnyContent] = Action.async {
     implicit request =>
-      authorised()(signUpSubmissionService.submitSignUpRequest(vatNumber)) map {
-        case Right(SignUpRequestSubmitted) => NoContent
-        case Left(InsufficientData) => BadRequest
-        case _ => BadGateway
-      } recover {
-        case _ => InternalServerError
+      authorised().retrieve(Retrievals.allEnrolments) {
+        enrolments =>
+          signUpSubmissionService.submitSignUpRequest(vatNumber, enrolments) map {
+            case Right(SignUpRequestSubmitted) => NoContent
+            case Left(InsufficientData) => BadRequest
+            case _ => BadGateway
+          } recover {
+            case _ => InternalServerError
+          }
       }
   }
 

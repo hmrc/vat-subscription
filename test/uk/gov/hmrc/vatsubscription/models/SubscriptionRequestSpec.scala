@@ -27,14 +27,17 @@ class SubscriptionRequestSpec extends UnitSpec {
       idKey -> testVatNumber,
       companyNumberKey -> testCompanyNumber,
       ninoKey -> testNino,
-      emailKey -> testEmail
+      emailKey -> testEmail,
+      identityVerifiedKey -> true
     )
 
     val testModel = SubscriptionRequest(
       vatNumber = testVatNumber,
       companyNumber = Some(testCompanyNumber),
       nino = Some(testNino),
-      email = Some(testEmail)
+      email = Some(testEmail),
+      identityVerified = true
+
     )
 
     "convert a SubscriptionRequest into a correctly formatted json model" in {

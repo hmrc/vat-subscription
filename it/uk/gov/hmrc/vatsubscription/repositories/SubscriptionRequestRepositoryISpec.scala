@@ -226,6 +226,32 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
     }
   }
 
+  "upsertIdentityVerified" should {
+    "throw NoSuchElementException where the vat number doesn't exist" in {
+      val res = for {
+        _ <- repo.upsertIdentityVerified(testVatNumber)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      intercept[NoSuchElementException] {
+        await(res)
+      }
+    }
+
+    "update the subscription request with IdentityVerified" in {
+      val res = for {
+        _ <- repo.insertVatNumber(testVatNumber)
+        _ <- repo.upsertIdentityVerified(testVatNumber)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      await(res) should contain(SubscriptionRequest(
+        vatNumber = testVatNumber,
+        identityVerified = true
+      ))
+    }
+  }
+
   "deleteRecord" should {
     "delete the entry stored against the vrn" in {
       val res = for {

@@ -28,6 +28,7 @@ import uk.gov.hmrc.vatsubscription.repositories.mocks.MockSubscriptionRequestRep
 import uk.gov.hmrc.vatsubscription.services._
 import SignUpSubmissionService._
 import reactivemongo.api.commands.WriteResult
+import uk.gov.hmrc.auth.core.Enrolments
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -48,50 +49,73 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "submitSignUpRequest" when {
-    "there is a complete company sign up request in storage" when {
-      "the e-mail verification request returns that the e-mail address is verified" when {
-        "the registration request is successful" when {
-          "the sign up request is successful" when {
-            "the enrolment call is successful" should {
-              "return a SignUpRequestSubmitted for an individual signup" in {
-                val testSubscriptionRequest = SubscriptionRequest(
-                  vatNumber = testVatNumber,
-                  nino = Some(testNino),
-                  email = Some(testEmail)
-                )
+    "the user is a delegate and " when {
+      val enrolments = Enrolments(Set(testAgentEnrolment))
 
-                mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
-                mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
-                mockRegisterIndividual(testVatNumber, testNino)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
-                mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
-                mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
-                mockDeleteRecord(testVatNumber)(mock[WriteResult])
+      "there is a complete company sign up request in storage" when {
+        "the e-mail verification request returns that the e-mail address is verified" when {
+          "the registration request is successful" when {
+            "the sign up request is successful" when {
+              "the enrolment call is successful" should {
+                "return a SignUpRequestSubmitted for an individual signup" in {
+                  val testSubscriptionRequest = SubscriptionRequest(
+                    vatNumber = testVatNumber,
+                    nino = Some(testNino),
+                    email = Some(testEmail)
+                  )
 
-                val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
+                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+                  mockRegisterIndividual(testVatNumber, testNino)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                  mockDeleteRecord(testVatNumber)(mock[WriteResult])
 
-                res.right.value shouldBe SignUpRequestSubmitted
+                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+                  res.right.value shouldBe SignUpRequestSubmitted
+                }
+                "return a SignUpRequestSubmitted for a company sign up" in {
+                  val testSubscriptionRequest = SubscriptionRequest(
+                    vatNumber = testVatNumber,
+                    companyNumber = Some(testCompanyNumber),
+                    email = Some(testEmail)
+                  )
+
+                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+                  mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                  mockDeleteRecord(testVatNumber)(mock[WriteResult])
+
+                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+                  res.right.value shouldBe SignUpRequestSubmitted
+                }
               }
-              "return a SignUpRequestSubmitted for a company sign up" in {
-                val testSubscriptionRequest = SubscriptionRequest(
-                  vatNumber = testVatNumber,
-                  companyNumber = Some(testCompanyNumber),
-                  email = Some(testEmail)
-                )
+              "the enrolment call fails" should {
+                "return an EnrolmentFailure" in {
+                  val testSubscriptionRequest = SubscriptionRequest(
+                    vatNumber = testVatNumber,
+                    companyNumber = Some(testCompanyNumber),
+                    email = Some(testEmail)
+                  )
 
-                mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
-                mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
-                mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
-                mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
-                mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
-                mockDeleteRecord(testVatNumber)(mock[WriteResult])
+                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+                  mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Left(FailedTaxEnrolment(BAD_REQUEST))))
 
-                val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
+                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
-                res.right.value shouldBe SignUpRequestSubmitted
+                  res.left.value shouldBe EnrolmentFailure
+                }
               }
             }
-            "the enrolment call fails" should {
-              "return an EnrolmentFailure" in {
+            "the sign up request fails" should {
+              "return a SignUpFailure" in {
                 val testSubscriptionRequest = SubscriptionRequest(
                   vatNumber = testVatNumber,
                   companyNumber = Some(testCompanyNumber),
@@ -101,36 +125,66 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                 mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
                 mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
                 mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
-                mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
-                mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Left(FailedTaxEnrolment(BAD_REQUEST))))
+                mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Left(CustomerSignUpResponseFailure(BAD_REQUEST))))
 
-                val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
+                val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
-                res.left.value shouldBe EnrolmentFailure
+                res.left.value shouldBe SignUpFailure
               }
             }
           }
-          "the sign up request fails" should {
-            "return a SignUpFailure" in {
+          "the registration request fails" should {
+            "return a RegistrationFailure" in {
               val testSubscriptionRequest = SubscriptionRequest(
                 vatNumber = testVatNumber,
                 companyNumber = Some(testCompanyNumber),
                 email = Some(testEmail)
               )
 
-              mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
-              mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
-              mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
-              mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Left(CustomerSignUpResponseFailure(BAD_REQUEST))))
+              mockFindById(testVatNumber)(
+                Future.successful(Some(testSubscriptionRequest))
+              )
+              mockGetEmailVerificationState(testEmail)(
+                Future.successful(Right(EmailVerified))
+              )
+              mockRegisterCompany(testVatNumber, testCompanyNumber)(
+                Future.successful(Left(RegisterWithMultipleIdsErrorResponse(BAD_REQUEST, "")))
+              )
 
-              val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
+              val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
-              res.left.value shouldBe SignUpFailure
+              res.left.value shouldBe RegistrationFailure
             }
           }
         }
-        "the registration request fails" should {
-          "return a RegistrationFailure" in {
+        "the email verification request returns that the email is not verified" when {
+          "the registration request is successful" when {
+            "the sign up request is successful" when {
+              "the enrolment call is successful" should {
+                "return a SignUpRequestSubmitted" in {
+                  val testSubscriptionRequest = SubscriptionRequest(
+                    vatNumber = testVatNumber,
+                    companyNumber = Some(testCompanyNumber),
+                    email = Some(testEmail)
+                  )
+
+                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailNotVerified)))
+                  mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = false)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                  mockDeleteRecord(testVatNumber)(mock[WriteResult])
+
+                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+                  res.right.value shouldBe SignUpRequestSubmitted
+                }
+              }
+            }
+          }
+        }
+        "the email verification request fails" should {
+          "return an EmailVerificationFailure" in {
             val testSubscriptionRequest = SubscriptionRequest(
               vatNumber = testVatNumber,
               companyNumber = Some(testCompanyNumber),
@@ -141,93 +195,258 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
               Future.successful(Some(testSubscriptionRequest))
             )
             mockGetEmailVerificationState(testEmail)(
-              Future.successful(Right(EmailVerified))
-            )
-            mockRegisterCompany(testVatNumber, testCompanyNumber)(
-              Future.successful(Left(RegisterWithMultipleIdsErrorResponse(BAD_REQUEST, "")))
+              Future.successful(Left(GetEmailVerificationStateErrorResponse(BAD_REQUEST, "")))
             )
 
-            val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
+            val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
-            res.left.value shouldBe RegistrationFailure
+            res.left.value shouldBe EmailVerificationFailure
           }
         }
+
       }
-      "the email verification request returns that the email is not verified" when {
-        "the registration request is successful" when {
-          "the sign up request is successful" when {
-            "the enrolment call is successful" should {
-              "return a SignUpRequestSubmitted" in {
-                val testSubscriptionRequest = SubscriptionRequest(
-                  vatNumber = testVatNumber,
-                  companyNumber = Some(testCompanyNumber),
-                  email = Some(testEmail)
-                )
-
-                mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
-                mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailNotVerified)))
-                mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
-                mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = false)(Future.successful(Right(CustomerSignUpResponseSuccess)))
-                mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
-                mockDeleteRecord(testVatNumber)(mock[WriteResult])
-
-                val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
-
-                res.right.value shouldBe SignUpRequestSubmitted
-              }
-            }
-          }
-        }
-      }
-      "the email verification request fails" should {
-        "return an EmailVerificationFailure" in {
-          val testSubscriptionRequest = SubscriptionRequest(
+      "there is insufficient data in storage" should {
+        "return an InsufficientData error" in {
+          val incompleteSubscriptionRequest = SubscriptionRequest(
             vatNumber = testVatNumber,
-            companyNumber = Some(testCompanyNumber),
+            companyNumber = None,
             email = Some(testEmail)
           )
 
           mockFindById(testVatNumber)(
-            Future.successful(Some(testSubscriptionRequest))
-          )
-          mockGetEmailVerificationState(testEmail)(
-            Future.successful(Left(GetEmailVerificationStateErrorResponse(BAD_REQUEST, "")))
+            Future.successful(Some(incompleteSubscriptionRequest))
           )
 
-          val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
+          val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
-          res.left.value shouldBe EmailVerificationFailure
+          res.left.value shouldBe InsufficientData
         }
       }
 
-    }
-    "there is insufficient data in storage" should {
-      "return an InsufficentData error" in {
-        val incompleteSubscriptionRequest = SubscriptionRequest(
-          vatNumber = testVatNumber,
-          companyNumber = None,
-          email = Some(testEmail)
-        )
+      "there is no data in storage" should {
+        "return an InsufficientData error" in {
+          mockFindById(testVatNumber)(
+            Future.successful(None)
+          )
 
-        mockFindById(testVatNumber)(
-          Future.successful(Some(incompleteSubscriptionRequest))
-        )
+          val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber,enrolments))
 
-        val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
-
-        res.left.value shouldBe InsufficientData
+          res.left.value shouldBe InsufficientData
+        }
       }
     }
 
-    "there is no data in storage" should {
-      "return an InsufficentData error" in {
-        mockFindById(testVatNumber)(
-          Future.successful(None)
-        )
+    "the user is principal and " when {
+      val enrolments = Enrolments(Set(testPrincipalEnrolment))
 
-        val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber))
+      "there is a complete company sign up request in storage" when {
+        "the e-mail verification request returns that the e-mail address is verified" when {
+          "the registration request is successful" when {
+            "the sign up request is successful" when {
+              "the enrolment call is successful" should {
+                "return a SignUpRequestSubmitted for an individual signup" in {
+                  val testSubscriptionRequest = SubscriptionRequest(
+                    vatNumber = testVatNumber,
+                    nino = Some(testNino),
+                    email = Some(testEmail),
+                    identityVerified = true
+                  )
 
-        res.left.value shouldBe InsufficientData
+                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+                  mockRegisterIndividual(testVatNumber, testNino)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                  mockDeleteRecord(testVatNumber)(mock[WriteResult])
+
+                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+                  res.right.value shouldBe SignUpRequestSubmitted
+                }
+                "return a SignUpRequestSubmitted for a company sign up" in {
+                  val testSubscriptionRequest = SubscriptionRequest(
+                    vatNumber = testVatNumber,
+                    companyNumber = Some(testCompanyNumber),
+                    email = Some(testEmail),
+                    identityVerified = true
+                  )
+
+                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+                  mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                  mockDeleteRecord(testVatNumber)(mock[WriteResult])
+
+                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+                  res.right.value shouldBe SignUpRequestSubmitted
+                }
+              }
+              "the enrolment call fails" should {
+                "return an EnrolmentFailure" in {
+                  val testSubscriptionRequest = SubscriptionRequest(
+                    vatNumber = testVatNumber,
+                    companyNumber = Some(testCompanyNumber),
+                    email = Some(testEmail),
+                    identityVerified = true
+                  )
+
+                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+                  mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Left(FailedTaxEnrolment(BAD_REQUEST))))
+
+                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+                  res.left.value shouldBe EnrolmentFailure
+                }
+              }
+            }
+            "the sign up request fails" should {
+              "return a SignUpFailure" in {
+                val testSubscriptionRequest = SubscriptionRequest(
+                  vatNumber = testVatNumber,
+                  companyNumber = Some(testCompanyNumber),
+                  email = Some(testEmail),
+                  identityVerified = true
+                )
+
+                mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailVerified)))
+                mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Left(CustomerSignUpResponseFailure(BAD_REQUEST))))
+
+                val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+                res.left.value shouldBe SignUpFailure
+              }
+            }
+          }
+          "the registration request fails" should {
+            "return a RegistrationFailure" in {
+              val testSubscriptionRequest = SubscriptionRequest(
+                vatNumber = testVatNumber,
+                companyNumber = Some(testCompanyNumber),
+                email = Some(testEmail),
+                identityVerified = true
+              )
+
+              mockFindById(testVatNumber)(
+                Future.successful(Some(testSubscriptionRequest))
+              )
+              mockGetEmailVerificationState(testEmail)(
+                Future.successful(Right(EmailVerified))
+              )
+              mockRegisterCompany(testVatNumber, testCompanyNumber)(
+                Future.successful(Left(RegisterWithMultipleIdsErrorResponse(BAD_REQUEST, "")))
+              )
+
+              val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+              res.left.value shouldBe RegistrationFailure
+            }
+          }
+        }
+        "the email verification request returns that the email is not verified" when {
+          "the registration request is successful" when {
+            "the sign up request is successful" when {
+              "the enrolment call is successful" should {
+                "return a SignUpRequestSubmitted" in {
+                  val testSubscriptionRequest = SubscriptionRequest(
+                    vatNumber = testVatNumber,
+                    companyNumber = Some(testCompanyNumber),
+                    email = Some(testEmail),
+                    identityVerified = true
+                  )
+
+                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailNotVerified)))
+                  mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
+                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = false)(Future.successful(Right(CustomerSignUpResponseSuccess)))
+                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
+                  mockDeleteRecord(testVatNumber)(mock[WriteResult])
+
+                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+                  res.right.value shouldBe SignUpRequestSubmitted
+                }
+              }
+            }
+          }
+        }
+        "the email verification request fails" should {
+          "return an EmailVerificationFailure" in {
+            val testSubscriptionRequest = SubscriptionRequest(
+              vatNumber = testVatNumber,
+              companyNumber = Some(testCompanyNumber),
+              email = Some(testEmail),
+              identityVerified = true
+            )
+
+            mockFindById(testVatNumber)(
+              Future.successful(Some(testSubscriptionRequest))
+            )
+            mockGetEmailVerificationState(testEmail)(
+              Future.successful(Left(GetEmailVerificationStateErrorResponse(BAD_REQUEST, "")))
+            )
+
+            val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+            res.left.value shouldBe EmailVerificationFailure
+          }
+        }
+
+      }
+      "there is insufficient data in storage" should {
+        "return an InsufficientData error" in {
+          val incompleteSubscriptionRequest = SubscriptionRequest(
+            vatNumber = testVatNumber,
+            companyNumber = None,
+            email = Some(testEmail),
+            identityVerified = true
+          )
+
+          mockFindById(testVatNumber)(
+            Future.successful(Some(incompleteSubscriptionRequest))
+          )
+
+          val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+          res.left.value shouldBe InsufficientData
+        }
+      }
+
+      "identity not verified" should {
+        "return an InsufficientData error" in {
+          val incompleteSubscriptionRequest = SubscriptionRequest(
+            vatNumber = testVatNumber,
+            companyNumber = Some(testCompanyNumber),
+            email = Some(testEmail),
+            identityVerified = false
+          )
+
+          mockFindById(testVatNumber)(
+            Future.successful(Some(incompleteSubscriptionRequest))
+          )
+
+          val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+          res.left.value shouldBe InsufficientData
+        }
+      }
+
+      "there is no data in storage" should {
+        "return an InsufficientData error" in {
+          mockFindById(testVatNumber)(
+            Future.successful(None)
+          )
+
+          val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+
+          res.left.value shouldBe InsufficientData
+        }
       }
     }
   }
