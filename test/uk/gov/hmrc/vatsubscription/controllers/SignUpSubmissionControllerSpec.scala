@@ -18,14 +18,14 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import play.api.http.Status._
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
-import uk.gov.hmrc.vatsubscription.service.mocks.MockSignUpSubmissionService
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
+import uk.gov.hmrc.vatsubscription.service.mocks.MockSignUpSubmissionService
 import uk.gov.hmrc.vatsubscription.services.SignUpSubmissionService._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class SignUpSubmissionControllerSpec extends UnitSpec
@@ -37,44 +37,90 @@ class SignUpSubmissionControllerSpec extends UnitSpec
   )
 
   "submitSignUpRequest" when {
-    "the sign up service returns a success" should {
-      "return NO_CONTENT" in {
-        mockAuthorise()(Future.successful(Unit))
-        mockSubmitSignUpRequest(testVatNumber)(Future.successful(Right(SignUpRequestSubmitted)))
+    "the user is a delegate and" when {
+      val enrolments = Enrolments(Set(testAgentEnrolment))
+      "the sign up service returns a success" should {
+        "return NO_CONTENT" in {
+          mockAuthRetrieveAgentEnrolment()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.successful(Right(SignUpRequestSubmitted)))
 
-        val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
+          val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
 
-        status(res) shouldBe NO_CONTENT
+          status(res) shouldBe NO_CONTENT
+        }
+      }
+      "the sign up service returns InsufficientData" should {
+        "return BAD_REQUEST" in {
+          mockAuthRetrieveAgentEnrolment()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.successful(Left(InsufficientData)))
+
+          val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
+
+          status(res) shouldBe BAD_REQUEST
+        }
+      }
+      "the sign up service returns any other error" should {
+        "return BAD_GATEWAY" in {
+          mockAuthRetrieveAgentEnrolment()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.successful(Left(EmailVerificationFailure)))
+
+          val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
+
+          status(res) shouldBe BAD_GATEWAY
+        }
+      }
+      "the sign up service throws an exception" should {
+        "return INTERNAL_SERVER_ERROR" in {
+          mockAuthRetrieveAgentEnrolment()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.failed(new Exception()))
+
+          val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
+
+          status(res) shouldBe INTERNAL_SERVER_ERROR
+        }
       }
     }
-    "the sign up service returns InsufficientData" should {
-      "return BAD_REQUEST"in {
-        mockAuthorise()(Future.successful(Unit))
-        mockSubmitSignUpRequest(testVatNumber)(Future.successful(Left(InsufficientData)))
+    "the user is principal and" when {
+      val enrolments = Enrolments(Set(testPrincipalEnrolment))
+      "the sign up service returns a success" should {
+        "return NO_CONTENT" in {
+          mockAuthRetrievePrincipalEnrolment()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.successful(Right(SignUpRequestSubmitted)))
 
-        val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
+          val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
 
-        status(res) shouldBe BAD_REQUEST
+          status(res) shouldBe NO_CONTENT
+        }
       }
-    }
-    "the sign up service returns any other error" should {
-      "return BAD_GATEWAY" in {
-        mockAuthorise()(Future.successful(Unit))
-        mockSubmitSignUpRequest(testVatNumber)(Future.successful(Left(EmailVerificationFailure)))
+      "the sign up service returns InsufficientData" should {
+        "return BAD_REQUEST" in {
+          mockAuthRetrievePrincipalEnrolment()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.successful(Left(InsufficientData)))
 
-        val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
+          val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
 
-        status(res) shouldBe BAD_GATEWAY
+          status(res) shouldBe BAD_REQUEST
+        }
       }
-    }
-    "the sign up service throws an exception" should {
-      "return INTERNAL_SERVER_ERROR" in {
-        mockAuthorise()(Future.successful(Unit))
-        mockSubmitSignUpRequest(testVatNumber)(Future.failed(new Exception()))
+      "the sign up service returns any other error" should {
+        "return BAD_GATEWAY" in {
+          mockAuthRetrievePrincipalEnrolment()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.successful(Left(EmailVerificationFailure)))
 
-        val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
+          val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
 
-        status(res) shouldBe INTERNAL_SERVER_ERROR
+          status(res) shouldBe BAD_GATEWAY
+        }
+      }
+      "the sign up service throws an exception" should {
+        "return INTERNAL_SERVER_ERROR" in {
+          mockAuthRetrievePrincipalEnrolment()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.failed(new Exception()))
+
+          val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
+
+          status(res) shouldBe INTERNAL_SERVER_ERROR
+        }
       }
     }
   }

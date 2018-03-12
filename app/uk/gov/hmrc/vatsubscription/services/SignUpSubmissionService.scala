@@ -26,6 +26,8 @@ import uk.gov.hmrc.vatsubscription.httpparsers.{EmailNotVerified, EmailVerified,
 import uk.gov.hmrc.vatsubscription.models.{CustomerSignUpResponseSuccess, SubscriptionRequest}
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import SignUpSubmissionService._
+import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.vatsubscription.config.Constants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,9 +38,11 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                                         taxEnrolmentsConnector: TaxEnrolmentsConnector
                                        )(implicit ec: ExecutionContext) {
 
-  def submitSignUpRequest(vatNumber: String)(implicit hc: HeaderCarrier): Future[SignUpRequestSubmissionResponse] =
+  def submitSignUpRequest(vatNumber: String, enrolments: Enrolments)(implicit hc: HeaderCarrier): Future[SignUpRequestSubmissionResponse] = {
+    val isDelegated = enrolments getEnrolment AgentEnrolmentKey nonEmpty
+
     subscriptionRequestRepository.findById(vatNumber) flatMap {
-      case Some(SubscriptionRequest(_, Some(companyNumber), None, Some(emailAddress))) =>
+      case Some(SubscriptionRequest(_, Some(companyNumber), None, Some(emailAddress), identityVerified)) if isDelegated || identityVerified =>
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
           safeId <- registerCompany(vatNumber, companyNumber)
@@ -48,7 +52,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
         } yield SignUpRequestSubmitted
 
         result.value
-      case Some(SubscriptionRequest(_, None, Some(nino), Some(emailAddress))) =>
+      case Some(SubscriptionRequest(_, None, Some(nino), Some(emailAddress), identityVerified)) if isDelegated || identityVerified =>
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
           safeId <- registerIndividual(vatNumber, nino)
@@ -61,6 +65,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
       case _ =>
         Future.successful(Left(InsufficientData))
     }
+  }
 
   private def isEmailAddressVerified(emailAddress: String
                                     )(implicit hc: HeaderCarrier): EitherT[Future, SignUpRequestSubmissionFailure, Boolean] =

@@ -22,6 +22,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.vatsubscription.services.SignUpSubmissionService
 import uk.gov.hmrc.vatsubscription.services.SignUpSubmissionService._
 import org.mockito.Mockito._
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -36,8 +37,9 @@ trait MockSignUpSubmissionService extends MockitoSugar with BeforeAndAfterEach {
 
   val mockSignUpSubmissionService: SignUpSubmissionService = mock[SignUpSubmissionService]
 
-  def mockSubmitSignUpRequest(vatNumber: String)(response: Future[SignUpRequestSubmissionResponse]): Unit =
+  def mockSubmitSignUpRequest(vatNumber: String, enrolments:Enrolments)(response: Future[SignUpRequestSubmissionResponse]): Unit =
     when(mockSignUpSubmissionService.submitSignUpRequest(
-      ArgumentMatchers.eq(vatNumber)
+      ArgumentMatchers.eq(vatNumber),
+      ArgumentMatchers.eq(enrolments)
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
 }
