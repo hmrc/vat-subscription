@@ -17,7 +17,8 @@
 package uk.gov.hmrc.vatsubscription.connectors
 
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, IntegrationTestConstants}
+import uk.gov.hmrc.vatsubscription.helpers.ComponentSpecBase
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.testToken
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.IdentityVerificationStub._
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerified
 

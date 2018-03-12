@@ -18,10 +18,9 @@ package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.testToken
 
 object IdentityVerificationStub extends WireMockMethods {
-
-  val testToken = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
 
   private def getIdentityVerifiedUri(journeyId: String) = s"/mdtp/journey/journeyId/$journeyId"
 
