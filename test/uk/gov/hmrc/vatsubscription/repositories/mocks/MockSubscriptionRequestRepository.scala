@@ -52,6 +52,10 @@ trait MockSubscriptionRequestRepository extends MockitoSugar with BeforeAndAfter
     when(mockSubscriptionRequestRepository.upsertNino(ArgumentMatchers.eq(vatNumber), ArgumentMatchers.eq(nino)))
       .thenReturn(response)
 
+  def mockUpsertIdentityVerified(vatNumber: String)(response: Future[UpdateWriteResult]): Unit =
+    when(mockSubscriptionRequestRepository.upsertIdentityVerified(ArgumentMatchers.eq(vatNumber)))
+      .thenReturn(response)
+
   def mockDeleteRecord(vatNumber: String)(response: Future[WriteResult]): Unit =
     when(mockSubscriptionRequestRepository.deleteRecord(ArgumentMatchers.eq(vatNumber)))
       .thenReturn(response)

@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.IdentityVerificationConnector
+import uk.gov.hmrc.vatsubscription.httpparsers
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerified
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
@@ -29,10 +30,17 @@ class IdentityVerificationOrchestrationService @Inject()(subscriptionRequestRepo
                                                          identityVerificationConnector: IdentityVerificationConnector
                                                         )(implicit ec: ExecutionContext) {
 
-  import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService.IdentityVerificationOrchestrationResponse
+  import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService._
 
-  def checkIdentityVerification(vatNumber: String, journeyId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[IdentityVerificationOrchestrationResponse] =
-    ???
+  def checkIdentityVerification(vatNumber: String, journeyId: String
+                               )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[IdentityVerificationOrchestrationResponse] =
+    identityVerificationConnector.getIdentityVerificationOutcome(journeyId) flatMap {
+      case Right(IdentityVerified) => subscriptionRequestRepository.upsertIdentityVerified(vatNumber)
+        .map(_ => Right(IdentityVerified))
+        .recover { case _ => Left(IdentityVerificationDatabaseFailure) }
+      case Right(httpparsers.IdentityNotVerified(_)) => Future.successful(Left(IdentityNotVerified))
+      case _ => Future.successful(Left(IdentityVerificationConnectionFailure))
+    }
 
 }
 
