@@ -49,8 +49,4 @@ object Constants {
     val ContinueUrlKey = "continueUrl"
     val EmailVerifiedKey = "emailVerified"
   }
-
-  object IdentityVerification {
-    val IdentityVerifiedKey = "identityVerified"
-  }
 }
