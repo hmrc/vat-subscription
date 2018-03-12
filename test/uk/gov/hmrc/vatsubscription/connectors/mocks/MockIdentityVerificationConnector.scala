@@ -36,9 +36,9 @@ trait MockIdentityVerificationConnector extends MockitoSugar with BeforeAndAfter
 
   val mockIdentityVerificationConnector: IdentityVerificationConnector = mock[IdentityVerificationConnector]
 
-  def mockGetIdentityVerificationOutcome(journeyId: String)(response: Future[GetIdentityVerificationOutcome]): Unit =
+  def mockGetIdentityVerificationOutcome(journeyLink: String)(response: Future[GetIdentityVerificationOutcome]): Unit =
     when(mockIdentityVerificationConnector.getIdentityVerificationOutcome(
-      ArgumentMatchers.eq(journeyId)
+      ArgumentMatchers.eq(journeyLink)
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
 
 }

@@ -22,10 +22,8 @@ import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.testToken
 
 object IdentityVerificationStub extends WireMockMethods {
 
-  private def getIdentityVerifiedUri(journeyId: String) = s"/mdtp/journey/journeyId/$journeyId"
-
-  def stubGetIdentityVerifiedOutcome(journeyId: String)(code: String): Unit =
-    when(method = GET, uri = getIdentityVerifiedUri(journeyId))
+  def stubGetIdentityVerifiedOutcome(journeyLink: String)(code: String): Unit =
+    when(method = GET, uri = journeyLink)
       .thenReturn(OK, Map("Content-Type" -> "application/json"), Json.obj("result" -> code,
                                                                           "token" -> testToken))
 
