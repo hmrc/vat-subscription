@@ -29,15 +29,15 @@ import scala.concurrent.{ExecutionContext, Future}
 trait MockStoreIdentityVerificationOutcomeService extends MockitoSugar with BeforeAndAfterEach {
   self: Suite =>
 
-  val mockStoreIdentityVerificationOutcomeService: IdentityVerificationOrchestrationService = mock[IdentityVerificationOrchestrationService]
+  val mockIdentityVerificationOrchestrationService: IdentityVerificationOrchestrationService = mock[IdentityVerificationOrchestrationService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockStoreIdentityVerificationOutcomeService)
+    reset(mockIdentityVerificationOrchestrationService)
   }
 
   def mockStoreIdentityVerificationOutcome(vatNumber: String, journeyId: String)(response: Future[IdentityVerificationOrchestrationResponse]): Unit = {
-    when(mockStoreIdentityVerificationOutcomeService.checkIdentityVerification(
+    when(mockIdentityVerificationOrchestrationService.checkIdentityVerification(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(journeyId)
     )(

@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockAuthConnector with MockStoreIdentityVerificationOutcomeService {
 
   object TestStoreIdentityVerificationOutcomeController
-    extends StoreIdentityVerificationOutcomeController(mockAuthConnector, mockStoreIdentityVerificationOutcomeService)
+    extends StoreIdentityVerificationOutcomeController(mockAuthConnector, mockIdentityVerificationOrchestrationService)
 
   implicit private val system: ActorSystem = ActorSystem()
   implicit private val materializer: ActorMaterializer = ActorMaterializer()
