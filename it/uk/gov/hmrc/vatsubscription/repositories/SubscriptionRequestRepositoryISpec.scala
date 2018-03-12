@@ -213,6 +213,21 @@ class SubscriptionRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSui
       withoutCompanyNumber should contain(testSubscriptionRequest)
     }
 
+    "set identity verification to false" in {
+      val res = for {
+        _ <- repo.insertVatNumber(testVatNumber)
+        _ <- repo.upsertIdentityVerified(testVatNumber)
+        identityVerified <- repo.findById(testVatNumber)
+        _ <- repo.upsertNino(testVatNumber, testNino)
+        identityNotVerified <- repo.findById(testVatNumber)
+      } yield (identityVerified, identityNotVerified)
+
+      val (identityVerified, identityNotVerified) = await(res)
+
+      identityVerified should contain(testSubscriptionRequest.copy(identityVerified = true, nino = None))
+      identityNotVerified should contain(testSubscriptionRequest)
+    }
+
 
     "replace an existing stored nino" in {
       val newNino = UUID.randomUUID().toString

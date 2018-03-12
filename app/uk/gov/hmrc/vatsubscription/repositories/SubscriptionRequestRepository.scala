@@ -67,7 +67,8 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
     collection.update(
       selector = Json.obj(idKey -> vatNumber),
       update = Json.obj("$set" -> Json.obj(
-        ninoKey -> nino
+        ninoKey -> nino,
+        identityVerifiedKey -> false
       ), "$unset" -> Json.obj(
         companyNumberKey -> ""
       )),
