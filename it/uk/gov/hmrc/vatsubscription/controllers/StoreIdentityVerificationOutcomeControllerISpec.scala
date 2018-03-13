@@ -45,7 +45,7 @@ class StoreIdentityVerificationOutcomeControllerISpec extends ComponentSpecBase 
           repo.insertVatNumber(testVatNumber)
           stubGetIdentityVerifiedOutcome(testJourneyLink)("Success")
 
-          val res = put(s"/subscription-request/vat-number/$testVatNumber/identity-verification-outcome")(Json.obj("journeyLink" -> testJourneyLink))
+          val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))
 
           res should have(
             httpStatus(NO_CONTENT)
@@ -60,7 +60,7 @@ class StoreIdentityVerificationOutcomeControllerISpec extends ComponentSpecBase 
         repo.insertVatNumber(testVatNumber)
         stubGetIdentityVerifiedOutcome(testJourneyLink)("Incomplete")
 
-        val res = put(s"/subscription-request/vat-number/$testVatNumber/identity-verification-outcome")(Json.obj("journeyLink" -> testJourneyLink))
+        val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -74,7 +74,7 @@ class StoreIdentityVerificationOutcomeControllerISpec extends ComponentSpecBase 
 
         stubGetIdentityVerifiedOutcome(testJourneyLink)("Success")
 
-        val res = put(s"/subscription-request/vat-number/$testVatNumber/identity-verification-outcome")(Json.obj("journeyLink" -> testJourneyLink))
+        val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
@@ -85,7 +85,7 @@ class StoreIdentityVerificationOutcomeControllerISpec extends ComponentSpecBase 
       "return BAD_REQUEST" in {
         stubAuth(OK, successfulAuthResponse())
 
-        val res = put(s"/subscription-request/vat-number/$testVatNumber/identity-verification-outcome")(Json.obj())
+        val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj())
 
         res should have(
           httpStatus(BAD_REQUEST)
