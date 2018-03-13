@@ -19,12 +19,12 @@ package uk.gov.hmrc.vatsubscription.controllers
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.IdentityVerificationStub.stubGetIdentityVerifiedOutcome
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
-
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -38,19 +38,33 @@ class StoreIdentityVerificationOutcomeControllerISpec extends ComponentSpecBase 
   }
 
   "PUT /subscription-request/vat-number/:vatNumber/identity-verification-outcome" when {
-      "the identity has been successfully verified" should {
-        "return NoContent" in {
-          stubAuth(OK, successfulAuthResponse())
+    "the identity has been successfully verified" should {
+      "return NoContent" in {
+        stubAuth(OK, successfulAuthResponse())
 
-          repo.insertVatNumber(testVatNumber)
-          stubGetIdentityVerifiedOutcome(testJourneyLink)("Success")
+        repo.insertVatNumber(testVatNumber)
+        stubGetIdentityVerifiedOutcome(testJourneyLink)("Success")
 
           val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))
 
-          res should have(
-            httpStatus(NO_CONTENT)
-          )
-        }
+        res should have(
+          httpStatus(NO_CONTENT)
+        )
+      }
+    }
+
+    "the confidence level is 200 or greater" should {
+      "return NoContent" in {
+        stubAuth(OK, successfulAuthResponse(L200))
+
+        repo.insertVatNumber(testVatNumber)
+
+        val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))
+
+        res should have(
+          httpStatus(NO_CONTENT)
+        )
+      }
     }
 
     "the identity has been not been successfully verified" should {

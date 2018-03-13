@@ -20,12 +20,12 @@ import javax.inject.Inject
 
 import play.api.libs.json.JsPath
 import play.api.mvc.Action
+import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerified
 import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService
-import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService.
-{IdentityNotVerified, IdentityVerificationConnectionFailure, IdentityVerificationDatabaseFailure}
+import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService.{IdentityNotVerified, IdentityVerificationConnectionFailure, IdentityVerificationDatabaseFailure}
 
 import scala.concurrent.ExecutionContext
 
@@ -39,9 +39,10 @@ class StoreIdentityVerificationOutcomeController @Inject()(val authConnector: Au
   def storeIdentityVerificationOutcome(vatNumber: String): Action[String] =
     Action.async(parse.json((JsPath \ journeyLinkKey).read[String])) {
       implicit req =>
-        authorised() {
+        authorised().retrieve(Retrievals.confidenceLevel) {
+          confidenceLevel =>
             val journeyLink = req.body
-            identityVerificationOrchestrationService.checkIdentityVerification(vatNumber, journeyLink) map {
+            identityVerificationOrchestrationService.updateIdentityVerificationState(vatNumber, journeyLink, confidenceLevel) map {
               case Right(IdentityVerified) => NoContent
               case Left(IdentityNotVerified) => Forbidden
               case Left(IdentityVerificationDatabaseFailure) => InternalServerError

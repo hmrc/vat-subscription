@@ -18,11 +18,14 @@ package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.Inject
 
+import cats.data.EitherT
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.IdentityVerificationConnector
 import uk.gov.hmrc.vatsubscription.httpparsers
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerified
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import cats.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,16 +35,34 @@ class IdentityVerificationOrchestrationService @Inject()(subscriptionRequestRepo
 
   import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService._
 
-  def checkIdentityVerification(vatNumber: String, journeyLink: String
-                               )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[IdentityVerificationOrchestrationResponse] =
-    identityVerificationConnector.getIdentityVerificationOutcome(journeyLink) flatMap {
-      case Right(IdentityVerified) => subscriptionRequestRepository.upsertIdentityVerified(vatNumber)
-        .map(_ => Right(IdentityVerified))
-        .recover { case _ => Left(IdentityVerificationDatabaseFailure) }
-      case Right(httpparsers.IdentityNotVerified(_)) => Future.successful(Left(IdentityNotVerified))
-      case _ => Future.successful(Left(IdentityVerificationConnectionFailure))
-    }
+  def updateIdentityVerificationState(vatNumber: String,
+                                      journeyLink: String,
+                                      confidenceLevel: ConfidenceLevel
+                                     )(implicit hc: HeaderCarrier): Future[IdentityVerificationOrchestrationResponse] = {
+    for {
+      _ <- checkIdentityVerification(journeyLink, confidenceLevel)
+      _ <- upsertIdentityVerified(vatNumber)
+    } yield IdentityVerified
+  }.value
 
+
+  private def checkIdentityVerification(journeyLink: String,
+                                        confidenceLevel: ConfidenceLevel
+                                       )(implicit hc: HeaderCarrier): EitherT[Future, IdentityVerificationOrchestrationFailure, IdentityVerified.type] =
+    EitherT(if (confidenceLevel < ConfidenceLevel.L200) {
+      identityVerificationConnector.getIdentityVerificationOutcome(journeyLink) map {
+        case Right(IdentityVerified) => Right(IdentityVerified)
+        case Right(httpparsers.IdentityNotVerified(_)) => Left(IdentityNotVerified)
+        case _ => Left(IdentityVerificationConnectionFailure)
+      }
+    } else {
+      Future.successful(Right(IdentityVerified))
+    })
+
+  private def upsertIdentityVerified(vatNumber: String): EitherT[Future, IdentityVerificationOrchestrationFailure, IdentityVerified.type] =
+    EitherT(subscriptionRequestRepository.upsertIdentityVerified(vatNumber)
+      .map(_ => Right(IdentityVerified))
+      .recover { case _ => Left(IdentityVerificationDatabaseFailure) })
 }
 
 object IdentityVerificationOrchestrationService {
