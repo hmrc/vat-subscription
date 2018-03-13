@@ -26,14 +26,15 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerified
-import uk.gov.hmrc.vatsubscription.service.mocks.MockStoreIdentityVerificationOutcomeService
+import uk.gov.hmrc.vatsubscription.service.mocks.MockIdentityVerificationOrchestrationService
 import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService.
 {IdentityNotVerified, IdentityVerificationConnectionFailure, IdentityVerificationDatabaseFailure}
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockAuthConnector with MockStoreIdentityVerificationOutcomeService {
+class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockAuthConnector with MockIdentityVerificationOrchestrationService {
 
   object TestStoreIdentityVerificationOutcomeController
     extends StoreIdentityVerificationOutcomeController(mockAuthConnector, mockIdentityVerificationOrchestrationService)
@@ -44,9 +45,8 @@ class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockA
   "storeIdentityVerificationOutcome" when {
     "a successful identity verification journey has been stored correctly" should {
       "return NoContent" in {
-
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink)(Future.successful(Right(IdentityVerified)))
+        mockAuthRetrieveConfidenceLevel(L200)
+        mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink, L200)(Future.successful(Right(IdentityVerified)))
 
         val request = FakeRequest() withBody testJourneyLink
 
@@ -58,9 +58,8 @@ class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockA
 
     "a failed identity verification journey has not been stored" should {
       "return Forbidden" in {
-
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink)(Future.successful(Left(IdentityNotVerified)))
+        mockAuthRetrieveConfidenceLevel(L200)
+        mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink, L200)(Future.successful(Left(IdentityNotVerified)))
 
         val request = FakeRequest() withBody testJourneyLink
 
@@ -73,9 +72,8 @@ class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockA
     "a identity verification journey has failed to be stored" when {
       "the database fails" should {
         "return InternalServerError" in {
-
-          mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-          mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink)(Future.successful(Left(IdentityVerificationDatabaseFailure)))
+          mockAuthRetrieveConfidenceLevel(L200)
+          mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink, L200)(Future.successful(Left(IdentityVerificationDatabaseFailure)))
 
           val request = FakeRequest() withBody testJourneyLink
 
@@ -86,9 +84,8 @@ class StoreIdentityVerificationOutcomeControllerSpec extends UnitSpec with MockA
       }
       "the connection to identity verification fails" should {
         "return BadGateway" in {
-
-          mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-          mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink)(Future.successful(Left(IdentityVerificationConnectionFailure)))
+          mockAuthRetrieveConfidenceLevel(L200)
+          mockStoreIdentityVerificationOutcome(testVatNumber, testJourneyLink, L200)(Future.successful(Left(IdentityVerificationConnectionFailure)))
 
           val request = FakeRequest() withBody testJourneyLink
 

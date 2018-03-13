@@ -20,6 +20,8 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json, Writes}
+import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L0
 import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 
@@ -38,9 +40,13 @@ object AuthStub extends WireMockMethods {
       .thenReturn(status = UNAUTHORIZED, headers = exceptionHeaders("MissingBearerToken"))
   }
 
-  def successfulAuthResponse(enrolments: JsObject*): JsObject = Json.obj(
-    "allEnrolments" -> enrolments
+  def successfulAuthResponse(confidenceLevel: ConfidenceLevel, enrolments: JsObject*): JsObject = Json.obj(
+    "allEnrolments" -> enrolments,
+    "confidenceLevel" -> confidenceLevel.level
   )
+
+  def successfulAuthResponse(enrolments: JsObject*): JsObject =
+    successfulAuthResponse(L0, enrolments:_*)
 
   val agentEnrolment: JsObject = Json.obj(
     "key" -> AgentEnrolmentKey,

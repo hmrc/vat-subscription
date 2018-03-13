@@ -20,11 +20,12 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService.IdentityVerificationOrchestrationResponse
 import uk.gov.hmrc.vatsubscription.services._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait MockIdentityVerificationOrchestrationService extends MockitoSugar with BeforeAndAfterEach {
   self: Suite =>
@@ -36,13 +37,16 @@ trait MockIdentityVerificationOrchestrationService extends MockitoSugar with Bef
     reset(mockIdentityVerificationOrchestrationService)
   }
 
-  def mockCheckIdentityVerification(vatNumber: String,
-                                    journeyLink: String
-                                   )(response: Future[IdentityVerificationOrchestrationResponse]): Unit = {
-    when(mockIdentityVerificationOrchestrationService.checkIdentityVerification(
+  def mockStoreIdentityVerificationOutcome(vatNumber: String,
+                                           journeyLink: String,
+                                           confidenceLevel: ConfidenceLevel
+                                          )(response: Future[IdentityVerificationOrchestrationResponse]): Unit = {
+    when(mockIdentityVerificationOrchestrationService.updateIdentityVerificationState(
       ArgumentMatchers.eq(vatNumber),
-      ArgumentMatchers.eq(journeyLink)
-    )(ArgumentMatchers.any[HeaderCarrier], ArgumentMatchers.any[ExecutionContext])) thenReturn response
+      ArgumentMatchers.eq(journeyLink),
+      ArgumentMatchers.eq(confidenceLevel)
+    )(
+      ArgumentMatchers.any[HeaderCarrier]
+    )) thenReturn response
   }
-
 }
