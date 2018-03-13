@@ -29,8 +29,8 @@ import scala.concurrent.Future
 
 class IdentityVerificationConnector @Inject()(http: HttpClient,
                                            appConfig: AppConfig) {
-  def getIdentityVerificationOutcome(journeyId: String)(implicit hc: HeaderCarrier): Future[GetIdentityVerificationOutcome] = {
-    http.GET[GetIdentityVerificationOutcome](appConfig.identityVerificationOutcomeUrl(journeyId))
+  def getIdentityVerificationOutcome(journeyLink: String)(implicit hc: HeaderCarrier): Future[GetIdentityVerificationOutcome] = {
+    http.GET[GetIdentityVerificationOutcome](s"${appConfig.identityVerificationFrontendUrl}$journeyLink")
   }
 }
 

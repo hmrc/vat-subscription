@@ -32,9 +32,9 @@ class IdentityVerificationOrchestrationService @Inject()(subscriptionRequestRepo
 
   import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationService._
 
-  def checkIdentityVerification(vatNumber: String, journeyId: String
+  def checkIdentityVerification(vatNumber: String, journeyLink: String
                                )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[IdentityVerificationOrchestrationResponse] =
-    identityVerificationConnector.getIdentityVerificationOutcome(journeyId) flatMap {
+    identityVerificationConnector.getIdentityVerificationOutcome(journeyLink) flatMap {
       case Right(IdentityVerified) => subscriptionRequestRepository.upsertIdentityVerified(vatNumber)
         .map(_ => Right(IdentityVerified))
         .recover { case _ => Left(IdentityVerificationDatabaseFailure) }

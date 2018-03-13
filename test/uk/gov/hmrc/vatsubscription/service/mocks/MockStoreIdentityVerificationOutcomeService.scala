@@ -26,7 +26,7 @@ import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockIdentityVerificationOrchestrationService extends MockitoSugar with BeforeAndAfterEach {
+trait MockStoreIdentityVerificationOutcomeService extends MockitoSugar with BeforeAndAfterEach {
   self: Suite =>
 
   val mockIdentityVerificationOrchestrationService: IdentityVerificationOrchestrationService = mock[IdentityVerificationOrchestrationService]
@@ -36,13 +36,13 @@ trait MockIdentityVerificationOrchestrationService extends MockitoSugar with Bef
     reset(mockIdentityVerificationOrchestrationService)
   }
 
-  def mockCheckIdentityVerification(vatNumber: String,
-                                    journeyLink: String
-                                   )(response: Future[IdentityVerificationOrchestrationResponse]): Unit = {
+  def mockStoreIdentityVerificationOutcome(vatNumber: String, journeyLink: String)(response: Future[IdentityVerificationOrchestrationResponse]): Unit = {
     when(mockIdentityVerificationOrchestrationService.checkIdentityVerification(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(journeyLink)
-    )(ArgumentMatchers.any[HeaderCarrier], ArgumentMatchers.any[ExecutionContext])) thenReturn response
+    )(
+      ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[ExecutionContext]
+    )) thenReturn response
   }
-
 }

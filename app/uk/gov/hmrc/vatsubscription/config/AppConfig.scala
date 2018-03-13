@@ -52,8 +52,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val delegatedVerifyEmailContinueUrl = loadConfig("microservice.services.email-verification.delegated-continue-url")
 
-  def identityVerificationOutcomeUrl(journeyId: String): String = s"$identityVerificationFrontendUrl/mdtp/journey/journeyId/$journeyId"
-
   lazy val identityVerificationFrontendUrl: String = baseUrl("identity-verification-frontend")
 
 }

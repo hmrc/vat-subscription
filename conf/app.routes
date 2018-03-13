@@ -1,8 +1,8 @@
 # microservice specific routes
 
-POST        /subscription-request/vat-number                                  @uk.gov.hmrc.vatsubscription.controllers.StoreVatNumberController.storeVatNumber
-PUT         /subscription-request/vat-number/:vatNumber/company-number        @uk.gov.hmrc.vatsubscription.controllers.StoreCompanyNumberController.storeCompanyNumber(vatNumber:String)
-PUT         /subscription-request/vat-number/:vatNumber/email                 @uk.gov.hmrc.vatsubscription.controllers.StoreEmailController.storeEmail(vatNumber:String)
-PUT         /subscription-request/vat-number/:vatNumber/nino                  @uk.gov.hmrc.vatsubscription.controllers.StoreNinoController.storeNino(vatNumber:String)
-POST        /subscription-request/vat-number/:vatNumber/submit                @uk.gov.hmrc.vatsubscription.controllers.SignUpSubmissionController.submitSignUpRequest(vatNumber:String)
-
+POST        /subscription-request/vat-number                                                                            @uk.gov.hmrc.vatsubscription.controllers.StoreVatNumberController.storeVatNumber
+PUT         /subscription-request/vat-number/:vatNumber/company-number                                                  @uk.gov.hmrc.vatsubscription.controllers.StoreCompanyNumberController.storeCompanyNumber(vatNumber:String)
+PUT         /subscription-request/vat-number/:vatNumber/email                                                           @uk.gov.hmrc.vatsubscription.controllers.StoreEmailController.storeEmail(vatNumber:String)
+PUT         /subscription-request/vat-number/:vatNumber/nino                                                            @uk.gov.hmrc.vatsubscription.controllers.StoreNinoController.storeNino(vatNumber:String)
+POST        /subscription-request/vat-number/:vatNumber/submit                                                          @uk.gov.hmrc.vatsubscription.controllers.SignUpSubmissionController.submitSignUpRequest(vatNumber:String)
+PUT         /subscription-request/vat-number/:vatNumber/identity-verification-outcome                                   @uk.gov.hmrc.vatsubscription.controllers.StoreIdentityVerificationOutcomeController.storeIdentityVerificationOutcome(vatNumber:String)
