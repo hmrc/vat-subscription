@@ -50,7 +50,7 @@ class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
             "return OK with the verification state" in {
               stubAuth(OK, successfulAuthResponse(agentEnrolment))
 
-              repo.insertVatNumber(testVatNumber)
+              await(repo.upsertVatNumber(testVatNumber))
               stubVerifyEmail(testEmail, delegatedContinueUrl)(CREATED)
 
               val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
@@ -65,7 +65,7 @@ class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
             "return OK with the verification state" in {
               stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
 
-              repo.insertVatNumber(testVatNumber)
+              await(repo.upsertVatNumber(testVatNumber))
               stubVerifyEmail(testEmail, principalContinueUrl)(CREATED)
 
               val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))
@@ -81,7 +81,7 @@ class StoreEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
           "return OK with the verification state as true" in {
             stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
 
-            repo.insertVatNumber(testVatNumber)
+            await(repo.upsertVatNumber(testVatNumber))
             stubVerifyEmail(testEmail, principalContinueUrl)(CONFLICT)
 
             val res = put(s"/subscription-request/vat-number/$testVatNumber/email")(Json.obj("email" -> testEmail))

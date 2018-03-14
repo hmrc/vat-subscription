@@ -42,10 +42,10 @@ class StoreIdentityVerificationOutcomeControllerISpec extends ComponentSpecBase 
       "return NoContent" in {
         stubAuth(OK, successfulAuthResponse())
 
-        repo.insertVatNumber(testVatNumber)
+        await(repo.upsertVatNumber(testVatNumber))
         stubGetIdentityVerifiedOutcome(testJourneyLink)("Success")
 
-          val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))
+        val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))
 
         res should have(
           httpStatus(NO_CONTENT)
@@ -57,7 +57,7 @@ class StoreIdentityVerificationOutcomeControllerISpec extends ComponentSpecBase 
       "return NoContent" in {
         stubAuth(OK, successfulAuthResponse(L200))
 
-        repo.insertVatNumber(testVatNumber)
+        await(repo.upsertVatNumber(testVatNumber))
 
         val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))
 
@@ -71,7 +71,7 @@ class StoreIdentityVerificationOutcomeControllerISpec extends ComponentSpecBase 
       "return Forbidden" in {
         stubAuth(OK, successfulAuthResponse())
 
-        repo.insertVatNumber(testVatNumber)
+        await(repo.upsertVatNumber(testVatNumber))
         stubGetIdentityVerifiedOutcome(testJourneyLink)("Incomplete")
 
         val res = post(s"/subscription-request/vat-number/$testVatNumber/identity-verification")(Json.obj("journeyLink" -> testJourneyLink))

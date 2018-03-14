@@ -18,9 +18,10 @@ package uk.gov.hmrc.vatsubscription.repositories
 
 import javax.inject.Inject
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import reactivemongo.play.json.JSONSerializationPack.Writer
 import reactivemongo.play.json._
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
@@ -46,8 +47,13 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
     ).filter(_.n == 1)
   }
 
-  def insertVatNumber(vatNumber: String): Future[WriteResult] =
-    collection.insert(SubscriptionRequest(vatNumber))(mongoFormat, implicitly[ExecutionContext])
+  def upsertVatNumber(vatNumber: String): Future[UpdateWriteResult] = {
+    collection.update(
+      selector = Json.obj(idKey -> vatNumber),
+      update = SubscriptionRequest(vatNumber),
+      upsert = true
+    )(implicitly[Writer[JsObject]], mongoFormat, implicitly[ExecutionContext])
+  }
 
   def upsertCompanyNumber(vatNumber: String, companyNumber: String): Future[UpdateWriteResult] =
     collection.update(

@@ -19,13 +19,13 @@ package uk.gov.hmrc.vatsubscription.services
 import javax.inject.Inject
 
 import cats.data.EitherT
+import cats.implicits._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.IdentityVerificationConnector
 import uk.gov.hmrc.vatsubscription.httpparsers
 import uk.gov.hmrc.vatsubscription.httpparsers.IdentityVerified
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
-import cats.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -22,7 +22,7 @@ import org.scalatest.EitherValues
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.commands.UpdateWriteResult
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -55,7 +55,7 @@ class StoreVatNumberServiceSpec
         "the vat number is stored successfully" should {
           "return a StoreVatNumberSuccess" in {
             mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
-            mockInsertVatNumber(testVatNumber)(Future.successful(mock[WriteResult]))
+            mockUpsertVatNumber(testVatNumber)(Future.successful(mock[UpdateWriteResult]))
 
             val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
             res.right.value shouldBe StoreVatNumberSuccess
@@ -64,7 +64,7 @@ class StoreVatNumberServiceSpec
         "the vat number is not stored successfully" should {
           "return a VatNumberDatabaseFailure" in {
             mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
-            mockInsertVatNumber(testVatNumber)(Future.failed(new Exception))
+            mockUpsertVatNumber(testVatNumber)(Future.failed(new Exception))
 
             val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
             res.left.value shouldBe VatNumberDatabaseFailure
@@ -96,14 +96,14 @@ class StoreVatNumberServiceSpec
     "the user is a principal user" when {
       "the vat number is stored successfully" should {
         "return DoesNotMatchEnrolment" in {
-          mockInsertVatNumber(testVatNumber)(Future.successful(mock[WriteResult]))
+          mockUpsertVatNumber(testVatNumber)(Future.successful(mock[UpdateWriteResult]))
           val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, principalUser))
           res.right.value shouldBe StoreVatNumberSuccess
         }
       }
       "the vat number is not stored successfully" should {
         "return a VatNumberDatabaseFailure" in {
-          mockInsertVatNumber(testVatNumber)(Future.failed(new Exception))
+          mockUpsertVatNumber(testVatNumber)(Future.failed(new Exception))
 
           val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, principalUser))
           res.left.value shouldBe VatNumberDatabaseFailure
