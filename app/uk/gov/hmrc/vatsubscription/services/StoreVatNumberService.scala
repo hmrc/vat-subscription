@@ -71,7 +71,7 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
     }
 
   private def insertVatNumber(vatNumber: String) =
-    subscriptionRequestRepository.insertVatNumber(vatNumber) map {
+    subscriptionRequestRepository.upsertVatNumber(vatNumber) map {
       _ => Right(StoreVatNumberSuccess)
     } recover {
       case _ => Left(VatNumberDatabaseFailure)

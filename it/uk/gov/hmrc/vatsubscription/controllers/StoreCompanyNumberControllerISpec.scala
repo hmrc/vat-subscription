@@ -38,7 +38,7 @@ class StoreCompanyNumberControllerISpec extends ComponentSpecBase with BeforeAnd
     "if vat number exists return no content when the company number has been stored successfully" in {
       stubAuth(OK, successfulAuthResponse())
 
-      repo.insertVatNumber(testVatNumber)
+      await(repo.upsertVatNumber(testVatNumber))
 
       val res = put(s"/subscription-request/vat-number/$testVatNumber/company-number")(Json.obj("companyNumber" -> testCompanyNumber))
 

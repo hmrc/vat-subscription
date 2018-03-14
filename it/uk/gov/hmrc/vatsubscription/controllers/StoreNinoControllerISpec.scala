@@ -52,7 +52,7 @@ class StoreNinoControllerISpec extends ComponentSpecBase with BeforeAndAfterEach
       stubAuth(OK, successfulAuthResponse())
       stubMatchUser(requestBody)(matched = true)
 
-      repo.insertVatNumber(testVatNumber)
+      await(repo.upsertVatNumber(testVatNumber))
       val res = put(s"/subscription-request/vat-number/$testVatNumber/nino")(requestBody)
 
       res should have(
