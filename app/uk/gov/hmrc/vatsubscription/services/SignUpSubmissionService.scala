@@ -46,7 +46,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
           safeId <- registerCompany(vatNumber, companyNumber)
-          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified)
+          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, isDelegated)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
@@ -56,7 +56,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
           safeId <- registerIndividual(vatNumber, nino)
-          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified)
+          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, isDelegated)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
@@ -97,11 +97,15 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
   private def signUp(safeId: String,
                      vatNumber: String,
                      emailAddress: String,
-                     emailAddressVerified: Boolean
+                     emailAddressVerified: Boolean,
+                     isDelegated: Boolean
                     )(implicit hc: HeaderCarrier): EitherT[Future, SignUpRequestSubmissionFailure, CustomerSignUpResponseSuccess.type] =
-    EitherT(customerSignUpConnector.signUp(safeId, vatNumber, emailAddress, emailAddressVerified)) leftMap {
-      _ => SignUpFailure
-    }
+    if(isDelegated || emailAddressVerified)
+      EitherT(customerSignUpConnector.signUp(safeId, vatNumber, emailAddress, emailAddressVerified)) leftMap {
+        _ => SignUpFailure
+      }
+    else EitherT.leftT(UnVerifiedPrincipalEmailFailure)
+
 
   private def registerEnrolment(vatNumber: String,
                                 safeId: String
@@ -133,6 +137,8 @@ object SignUpSubmissionService {
   case object InsufficientData extends SignUpRequestSubmissionFailure
 
   case object EmailVerificationFailure extends SignUpRequestSubmissionFailure
+
+  case object UnVerifiedPrincipalEmailFailure extends SignUpRequestSubmissionFailure
 
   case object SignUpFailure extends SignUpRequestSubmissionFailure
 
