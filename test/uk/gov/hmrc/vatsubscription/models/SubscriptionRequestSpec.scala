@@ -37,11 +37,10 @@ class SubscriptionRequestSpec extends UnitSpec {
       nino = Some(testNino),
       email = Some(testEmail),
       identityVerified = true
-
     )
 
     "convert a SubscriptionRequest into a correctly formatted json model" in {
-      SubscriptionRequest.mongoFormat.writes(testModel) shouldBe testJson
+      SubscriptionRequest.mongoFormat.writes(testModel).-(creationTimestampKey) shouldBe testJson
     }
 
     "convert a correctly formatted json model into a SubscriptionRequest" in {
