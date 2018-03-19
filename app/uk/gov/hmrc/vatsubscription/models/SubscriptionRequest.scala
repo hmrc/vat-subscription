@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
+import java.time.Instant
+
 import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionRequest(vatNumber: String,
@@ -32,6 +34,7 @@ object SubscriptionRequest {
   val ninoKey = "nino"
   val emailKey = "email"
   val identityVerifiedKey = "identityVerified"
+  val creationTimestampKey = "creationTimestamp"
 
   val mongoFormat: OFormat[SubscriptionRequest] = OFormat(
     json =>
@@ -48,7 +51,8 @@ object SubscriptionRequest {
         companyNumberKey -> subscriptionRequest.companyNumber,
         ninoKey -> subscriptionRequest.nino,
         emailKey -> subscriptionRequest.email,
-        identityVerifiedKey -> subscriptionRequest.identityVerified
+        identityVerifiedKey -> subscriptionRequest.identityVerified,
+        creationTimestampKey -> Json.obj("$date" -> Instant.now.toEpochMilli)
       )
   )
 

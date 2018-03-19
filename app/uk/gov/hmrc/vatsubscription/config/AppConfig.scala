@@ -56,4 +56,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val identityVerificationFrontendUrl: String = baseUrl("identity-verification-frontend")
 
+  lazy val timeToLiveSeconds: Long = loadConfig("mongodb.timeToLiveSeconds").toLong
+
 }

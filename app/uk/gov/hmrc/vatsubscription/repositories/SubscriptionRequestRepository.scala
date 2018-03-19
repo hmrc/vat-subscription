@@ -21,15 +21,20 @@ import javax.inject.Inject
 import play.api.libs.json.{Format, JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import reactivemongo.api.indexes.IndexType.Ascending
+import reactivemongo.api.indexes.{Index, IndexType}
+import reactivemongo.bson.BSONDocument
 import reactivemongo.play.json.JSONSerializationPack.Writer
 import reactivemongo.play.json._
 import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(implicit ec: ExecutionContext)
+class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent,
+                                              appConfig: AppConfig)(implicit ec: ExecutionContext)
   extends ReactiveRepository[SubscriptionRequest, String](
     "subscriptionRequestRepository",
     mongo.mongoConnector.db,
@@ -92,5 +97,30 @@ class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent)(imp
 
   def deleteRecord(vatNumber: String): Future[WriteResult] =
     collection.remove(selector = Json.obj(idKey -> vatNumber))
+
+  private lazy val ttlIndex = Index(
+    Seq((creationTimestampKey, IndexType(Ascending.value))),
+    name = Some("subscriptionRequestExpires"),
+    unique = false,
+    background = false,
+    dropDups = false,
+    sparse = false,
+    version = None,
+    options = BSONDocument("expireAfterSeconds" -> appConfig.timeToLiveSeconds)
+  )
+
+  private def setIndex(): Unit = {
+    collection.indexesManager.drop(ttlIndex.name.get) onComplete {
+      _ => collection.indexesManager.ensure(ttlIndex)
+    }
+  }
+
+  setIndex()
+
+  override def drop(implicit ec: ExecutionContext): Future[Boolean] =
+    collection.drop(failIfNotFound = false).map { r =>
+      setIndex()
+      r
+    }
 
 }
