@@ -349,31 +349,22 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
             }
           }
         }
-        "the email verification request returns that the email is not verified" when {
-          "the registration request is successful" when {
-            "the sign up request is successful" when {
-              "the enrolment call is successful" should {
-                "return a SignUpRequestSubmitted" in {
-                  val testSubscriptionRequest = SubscriptionRequest(
-                    vatNumber = testVatNumber,
-                    companyNumber = Some(testCompanyNumber),
-                    email = Some(testEmail),
-                    identityVerified = true
-                  )
+        "the email verification request returns that the email is not verified" should {
+          "return a UnVerifiedPrincipalEmailFailure" in {
+            val testSubscriptionRequest = SubscriptionRequest(
+              vatNumber = testVatNumber,
+              companyNumber = Some(testCompanyNumber),
+              email = Some(testEmail),
+              identityVerified = true
+            )
 
-                  mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
-                  mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailNotVerified)))
-                  mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
-                  mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = false)(Future.successful(Right(CustomerSignUpResponseSuccess)))
-                  mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
-                  mockDeleteRecord(testVatNumber)(mock[WriteResult])
+            mockFindById(testVatNumber)(Future.successful(Some(testSubscriptionRequest)))
+            mockGetEmailVerificationState(testEmail)(Future.successful(Right(EmailNotVerified)))
+            mockRegisterCompany(testVatNumber, testCompanyNumber)(Future.successful(Right(RegisterWithMultipleIdsSuccess(testSafeId))))
 
-                  val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
+            val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
-                  res.right.value shouldBe SignUpRequestSubmitted
-                }
-              }
-            }
+            res.left.value shouldBe UnVerifiedPrincipalEmailFailure
           }
         }
         "the email verification request fails" should {
