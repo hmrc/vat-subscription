@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.repositories
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.{Format, JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
@@ -33,6 +33,7 @@ import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class SubscriptionRequestRepository @Inject()(mongo: ReactiveMongoComponent,
                                               appConfig: AppConfig)(implicit ec: ExecutionContext)
   extends ReactiveRepository[SubscriptionRequest, String](

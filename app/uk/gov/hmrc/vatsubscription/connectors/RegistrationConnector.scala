@@ -16,20 +16,20 @@
 
 package uk.gov.hmrc.vatsubscription.connectors
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
-import play.api.Logger
-import play.api.libs.json.{JsObject, Json, Reads, Writes}
+import play.api.libs.json.{JsObject, Json, Writes}
 import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.vatsubscription.config.{AppConfig, Constants}
-import uk.gov.hmrc.vatsubscription.config.Constants.Des._
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.config.Constants.Des._
 import uk.gov.hmrc.vatsubscription.httpparsers.RegisterWithMultipleIdentifiersHttpParser._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class RegistrationConnector @Inject()(val http: HttpClient,
                                       val applicationConfig: AppConfig) {
   def registerCompany(vatNumber: String,
