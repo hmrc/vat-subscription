@@ -18,12 +18,13 @@
 
 package uk.gov.hmrc.vatsubscription.testonly.services
 
-import javax.inject.Inject
+import javax.inject.{Inject,Singleton}
 
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class DatabaseAdminService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository
                                     )(implicit ec: ExecutionContext) {
   def deleteRecord(vatNumber: String): Future[Either[DatabaseCallFailure, DatabaseCallSuccess.type]] =

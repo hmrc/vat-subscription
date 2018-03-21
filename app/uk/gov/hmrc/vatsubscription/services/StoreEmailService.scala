@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.services
 
 import java.util.NoSuchElementException
-import javax.inject.Inject
+import javax.inject.{Inject,Singleton}
 
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,6 +30,7 @@ import uk.gov.hmrc.vatsubscription.config.Constants.AgentEnrolmentKey
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class StoreEmailService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
                                   emailVerificationConnector: EmailVerificationConnector,
                                   appConfig: AppConfig

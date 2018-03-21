@@ -17,12 +17,13 @@
 package uk.gov.hmrc.vatsubscription.services
 
 import java.util.NoSuchElementException
-import javax.inject.Inject
+import javax.inject.{Inject,Singleton}
 
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class StoreCompanyNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository
                                          )(implicit ec: ExecutionContext) {
   def storeCompanyNumber(vatNumber: String, companyNumber: String): Future[Either[StoreCompanyNumberFailure, StoreCompanyNumberSuccess.type]] =

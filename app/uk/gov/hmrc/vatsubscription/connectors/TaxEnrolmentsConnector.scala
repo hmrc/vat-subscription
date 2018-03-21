@@ -16,9 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.connectors
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
-import com.google.inject.Inject
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient

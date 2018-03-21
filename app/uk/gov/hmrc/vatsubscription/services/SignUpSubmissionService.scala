@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
-import javax.inject.Inject
+import javax.inject.{Inject,Singleton}
 
 import cats.data._
 import cats.implicits._
@@ -31,6 +31,7 @@ import uk.gov.hmrc.vatsubscription.config.Constants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class SignUpSubmissionService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
                                         emailVerificationConnector: EmailVerificationConnector,
                                         customerSignUpConnector: CustomerSignUpConnector,

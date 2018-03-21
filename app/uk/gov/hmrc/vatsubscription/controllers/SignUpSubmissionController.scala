@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import javax.inject.Inject
+import javax.inject.{Inject,Singleton}
 
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
@@ -27,6 +27,7 @@ import uk.gov.hmrc.vatsubscription.services.SignUpSubmissionService._
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class SignUpSubmissionController @Inject()(val authConnector: AuthConnector,
                                            signUpSubmissionService: SignUpSubmissionService)
                                           (implicit ec: ExecutionContext)

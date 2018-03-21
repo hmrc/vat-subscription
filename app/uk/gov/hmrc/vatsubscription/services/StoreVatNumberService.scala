@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
-import javax.inject.Inject
+import javax.inject.{Inject,Singleton}
 
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,6 +27,7 @@ import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
                                       agentClientRelationshipsConnector: AgentClientRelationshipsConnector
                                      )(implicit ec: ExecutionContext) {

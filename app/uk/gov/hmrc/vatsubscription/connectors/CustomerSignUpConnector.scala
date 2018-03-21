@@ -28,11 +28,9 @@ import uk.gov.hmrc.vatsubscription.httpparsers.CustomerSignUpHttpParser._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
 class CustomerSignUpConnector @Inject()(val http: HttpClient,
                                         val applicationConfig: AppConfig) {
-
 
   private def url = applicationConfig.desUrl + "/customer/signup/VATC"
 

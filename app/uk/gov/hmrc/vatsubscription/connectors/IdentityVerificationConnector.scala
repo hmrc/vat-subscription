@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.connectors
 
-import javax.inject.Inject
+import javax.inject.{Inject,Singleton}
 
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.Future
 
+@Singleton
 class IdentityVerificationConnector @Inject()(http: HttpClient,
                                            appConfig: AppConfig) {
   def getIdentityVerificationOutcome(journeyLink: String)(implicit hc: HeaderCarrier): Future[GetIdentityVerificationOutcome] = {

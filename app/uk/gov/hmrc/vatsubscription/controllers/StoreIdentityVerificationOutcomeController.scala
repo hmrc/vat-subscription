@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import javax.inject.Inject
+import javax.inject.{Inject,Singleton}
 
 import play.api.libs.json.JsPath
 import play.api.mvc.Action
@@ -29,6 +29,7 @@ import uk.gov.hmrc.vatsubscription.services.IdentityVerificationOrchestrationSer
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class StoreIdentityVerificationOutcomeController @Inject()(val authConnector: AuthConnector,
                                                            identityVerificationOrchestrationService: IdentityVerificationOrchestrationService)
                                                           (implicit ec: ExecutionContext)
