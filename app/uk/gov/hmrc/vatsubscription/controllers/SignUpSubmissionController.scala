@@ -40,8 +40,6 @@ class SignUpSubmissionController @Inject()(val authConnector: AuthConnector,
             case Right(SignUpRequestSubmitted) => NoContent
             case Left(InsufficientData) => BadRequest
             case _ => BadGateway
-          } recover {
-            case _ => InternalServerError
           }
       }
   }
