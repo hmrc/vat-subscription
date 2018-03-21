@@ -70,13 +70,15 @@ class SignUpSubmissionControllerSpec extends UnitSpec
         }
       }
       "the sign up service throws an exception" should {
-        "return INTERNAL_SERVER_ERROR" in {
+        "return the exception" in {
           mockAuthRetrieveAgentEnrolment()
-          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.failed(new Exception()))
+
+          val testException = new Exception()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.failed(testException))
 
           val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
 
-          status(res) shouldBe INTERNAL_SERVER_ERROR
+          intercept[Exception](status(res)) shouldBe testException
         }
       }
     }
@@ -113,13 +115,15 @@ class SignUpSubmissionControllerSpec extends UnitSpec
         }
       }
       "the sign up service throws an exception" should {
-        "return INTERNAL_SERVER_ERROR" in {
+        "return the exception" in {
           mockAuthRetrievePrincipalEnrolment()
-          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.failed(new Exception()))
+
+          val testException = new Exception()
+          mockSubmitSignUpRequest(testVatNumber, enrolments)(Future.failed(testException))
 
           val res = TestSignUpSubmissionController.submitSignUpRequest(testVatNumber)(FakeRequest())
 
-          status(res) shouldBe INTERNAL_SERVER_ERROR
+          intercept[Exception](status(res)) shouldBe testException
         }
       }
     }
