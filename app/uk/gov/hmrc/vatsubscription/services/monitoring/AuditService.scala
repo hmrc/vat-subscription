@@ -34,8 +34,8 @@ class AuditService @Inject()(configuration: Configuration,
   private lazy val appName: String = configuration.getString("appName")
     .getOrElse(throw new Exception(s"Missing configuration key: appName"))
 
-  def audit[A](dataSource: A, path: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, canAudit: CanAudit[A]): Unit =
-    auditConnector.sendEvent(toDataEvent(appName, canAudit.apply(dataSource), path))
+  def audit[A](dataSource: AuditModel, path: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+    auditConnector.sendEvent(toDataEvent(appName, dataSource, path))
 
   def toDataEvent(appName: String, auditModel: AuditModel, path: String)(implicit hc: HeaderCarrier): DataEvent = {
     val auditType: String = auditModel.auditType
@@ -56,9 +56,4 @@ trait AuditModel {
   val auditType: String
   val transactionName: String
   val detail: Map[String, String]
-}
-
-@implicitNotFound("No member of type class CanAudit in scope for ${A}")
-trait CanAudit[A] {
-  def apply(dataSource: A): AuditModel
 }

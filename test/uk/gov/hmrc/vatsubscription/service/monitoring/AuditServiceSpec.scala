@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import scala.concurrent.ExecutionContext
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.services.monitoring.{AuditModel, AuditService, CanAudit}
+import uk.gov.hmrc.vatsubscription.services.monitoring.{AuditModel, AuditService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -40,12 +40,11 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val testAuditModel: String => AuditModel =
-    dataSource => new AuditModel{
-    override val auditType = s"${dataSource}AuditType"
-    override val transactionName = s"${dataSource}TransactionName"
+  val testAuditModel = new AuditModel{
+    override val auditType = "testAuditType"
+    override val transactionName = "testTransactionName"
     override val detail = Map[String, String]()
-    }
+  }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -58,13 +57,9 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "given a auditable data type" should {
       "extract the data and pass it into the AuditConnector" in {
 
-        implicit object TestAuditableString extends CanAudit[String] {
-          override def apply(dataSource: String): AuditModel = testAuditModel(dataSource)
-        }
+        val expectedData = testAuditService.toDataEvent(testAppName, testAuditModel, "testUrl")
 
-        val expectedData = testAuditService.toDataEvent(testAppName, testAuditModel("testString"), "testUrl")
-
-        testAuditService.audit("testString", "testUrl")
+        testAuditService.audit(testAuditModel, "testUrl")
 
         verify(mockAuditConnector)
           .sendEvent(
