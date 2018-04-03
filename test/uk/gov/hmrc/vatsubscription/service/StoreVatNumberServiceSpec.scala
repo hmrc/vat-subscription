@@ -76,7 +76,6 @@ class StoreVatNumberServiceSpec
             val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
             res.left.value shouldBe VatNumberDatabaseFailure
 
-
             verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, isSuccess = true))
           }
         }
@@ -88,6 +87,8 @@ class StoreVatNumberServiceSpec
 
           val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
           res.left.value shouldBe RelationshipNotFound
+
+          verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, isSuccess = false))
         }
       }
 
