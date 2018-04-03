@@ -57,9 +57,9 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "given a auditable data type" should {
       "extract the data and pass it into the AuditConnector" in {
 
-        val expectedData = testAuditService.toDataEvent(testAppName, testAuditModel, "testUrl")
+        val expectedData = testAuditService.toDataEvent(testAppName, testAuditModel)
 
-        testAuditService.audit(testAuditModel, "testUrl")
+        testAuditService.audit(testAuditModel)
 
         verify(mockAuditConnector)
           .sendEvent(

@@ -16,20 +16,23 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
-import javax.inject.{Inject,Singleton}
+import javax.inject.{Inject, Singleton}
 
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.connectors.AgentClientRelationshipsConnector
+import uk.gov.hmrc.vatsubscription.models.monitoring.AgentClientRelationshipAuditing.AgentClientRelationshipAuditModel
 import uk.gov.hmrc.vatsubscription.models.{HaveRelationshipResponse, NoRelationshipResponse}
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
-                                      agentClientRelationshipsConnector: AgentClientRelationshipsConnector
+                                      agentClientRelationshipsConnector: AgentClientRelationshipsConnector,
+                                      auditService: AuditService
                                      )(implicit ec: ExecutionContext) {
 
   def storeVatNumber(vatNumber: String,
@@ -62,8 +65,10 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
   private def storeDelegatedVatNumber(vatNumber: String, agentReferenceNumber: String)(implicit hc: HeaderCarrier) =
     agentClientRelationshipsConnector.checkAgentClientRelationship(agentReferenceNumber, vatNumber) flatMap {
       case Right(HaveRelationshipResponse) =>
+        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, isSuccess = true))
         insertVatNumber(vatNumber)
       case Right(NoRelationshipResponse) =>
+        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, isSuccess = false))
         Future.successful(Left(RelationshipNotFound))
       case _ =>
         Future.successful(Left(AgentServicesConnectionFailure))

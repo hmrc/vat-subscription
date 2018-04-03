@@ -29,15 +29,15 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AuditService @Inject()(configuration: Configuration,
-                                auditConnector: AuditConnector) {
+                             auditConnector: AuditConnector) {
 
   private lazy val appName: String = configuration.getString("appName")
     .getOrElse(throw new Exception(s"Missing configuration key: appName"))
 
-  def audit[A](dataSource: AuditModel, path: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
-    auditConnector.sendEvent(toDataEvent(appName, dataSource, path))
+  def audit[A](dataSource: AuditModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+    auditConnector.sendEvent(toDataEvent(appName, dataSource))
 
-  def toDataEvent(appName: String, auditModel: AuditModel, path: String)(implicit hc: HeaderCarrier): DataEvent = {
+  def toDataEvent(appName: String, auditModel: AuditModel)(implicit hc: HeaderCarrier): DataEvent = {
     val auditType: String = auditModel.auditType
     val transactionName: String = auditModel.transactionName
     val detail: Map[String, String] = auditModel.detail
@@ -46,7 +46,7 @@ class AuditService @Inject()(configuration: Configuration,
     DataEvent(
       auditSource = appName,
       auditType = auditType,
-      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(transactionName, path) ++ tags,
+      tags = tags,
       detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails(detail.toSeq: _*)
     )
   }
