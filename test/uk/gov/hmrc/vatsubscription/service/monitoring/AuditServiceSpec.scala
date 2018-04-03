@@ -21,6 +21,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.Configuration
+import play.api.test.FakeRequest
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 import scala.concurrent.ExecutionContext
@@ -39,6 +40,7 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   val testAuditService = new AuditService(mockConfiguration, mockAuditConnector)
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val request = FakeRequest("POST", "testUrl")
 
   val testAuditModel = new AuditModel{
     override val auditType = "testAuditType"
@@ -59,7 +61,7 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
         val expectedData = testAuditService.toDataEvent(testAppName, testAuditModel, "testUrl")
 
-        testAuditService.audit(testAuditModel, "testUrl")
+        testAuditService.audit(testAuditModel)
 
         verify(mockAuditConnector)
           .sendEvent(

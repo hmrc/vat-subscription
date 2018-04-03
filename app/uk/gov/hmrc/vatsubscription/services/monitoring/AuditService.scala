@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.services.monitoring
 import javax.inject.{Inject, Singleton}
 
 import play.api.Configuration
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -29,13 +30,13 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AuditService @Inject()(configuration: Configuration,
-                                auditConnector: AuditConnector) {
+                             auditConnector: AuditConnector) {
 
   private lazy val appName: String = configuration.getString("appName")
     .getOrElse(throw new Exception(s"Missing configuration key: appName"))
 
-  def audit[A](dataSource: AuditModel, path: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
-    auditConnector.sendEvent(toDataEvent(appName, dataSource, path))
+  def audit[A](dataSource: AuditModel)(implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Unit =
+    auditConnector.sendEvent(toDataEvent(appName, dataSource, request.path))
 
   def toDataEvent(appName: String, auditModel: AuditModel, path: String)(implicit hc: HeaderCarrier): DataEvent = {
     val auditType: String = auditModel.auditType

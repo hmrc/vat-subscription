@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
+import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.services._
@@ -36,6 +37,7 @@ trait MockStoreVatNumberService extends MockitoSugar {
     when(mockStoreVatNumberService.storeVatNumber(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.any[Enrolments]
-    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+    )(ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[Request[_]])) thenReturn response
   }
 }

@@ -28,23 +28,28 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAgentClientRelationshipsConnector
+import uk.gov.hmrc.vatsubscription.helpers.TestConstants
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
+import uk.gov.hmrc.vatsubscription.models.monitoring.AgentClientRelationshipAuditing.AgentClientRelationshipAuditModel
 import uk.gov.hmrc.vatsubscription.models.{CheckAgentClientRelationshipResponseFailure, HaveRelationshipResponse, NoRelationshipResponse}
 import uk.gov.hmrc.vatsubscription.repositories.mocks.MockSubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.service.mocks.monitoring.MockAuditService
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class StoreVatNumberServiceSpec
-  extends UnitSpec with MockAgentClientRelationshipsConnector with MockSubscriptionRequestRepository with EitherValues {
+  extends UnitSpec with MockAgentClientRelationshipsConnector with MockSubscriptionRequestRepository with MockAuditService with EitherValues {
 
   object TestStoreVatNumberService extends StoreVatNumberService(
     mockSubscriptionRequestRepository,
-    mockAgentClientRelationshipsConnector
+    mockAgentClientRelationshipsConnector,
+    mockAuditService
   )
 
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)
+  implicit val request = FakeRequest("POST", "testUrl")
 
   val agentUser = Enrolments(Set(testAgentEnrolment))
   val principalUser = Enrolments(Set(testPrincipalEnrolment))
@@ -59,6 +64,8 @@ class StoreVatNumberServiceSpec
 
             val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
             res.right.value shouldBe StoreVatNumberSuccess
+
+            verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, isSuccess = true))
           }
         }
         "the vat number is not stored successfully" should {
@@ -68,6 +75,8 @@ class StoreVatNumberServiceSpec
 
             val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
             res.left.value shouldBe VatNumberDatabaseFailure
+
+            verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, isSuccess = true))
           }
         }
       }
@@ -78,6 +87,8 @@ class StoreVatNumberServiceSpec
 
           val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
           res.left.value shouldBe RelationshipNotFound
+
+          verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, isSuccess = false))
         }
       }
 
