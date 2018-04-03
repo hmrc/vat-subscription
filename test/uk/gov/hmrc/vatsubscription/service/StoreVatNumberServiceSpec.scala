@@ -49,6 +49,7 @@ class StoreVatNumberServiceSpec
   )
 
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)
+  implicit val request = FakeRequest("POST", "testUrl")
 
   val agentUser = Enrolments(Set(testAgentEnrolment))
   val principalUser = Enrolments(Set(testPrincipalEnrolment))

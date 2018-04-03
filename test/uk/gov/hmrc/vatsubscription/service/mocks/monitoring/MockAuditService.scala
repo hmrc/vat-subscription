@@ -19,6 +19,7 @@ import org.mockito.ArgumentMatchers
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
+import play.api.mvc.Request
 
 import scala.concurrent.ExecutionContext
 import uk.gov.hmrc.http.HeaderCarrier
@@ -38,6 +39,7 @@ trait MockAuditService extends MockitoSugar with BeforeAndAfterEach {
       ArgumentMatchers.eq(model)
     )(
       ArgumentMatchers.any[HeaderCarrier],
-      ArgumentMatchers.any[ExecutionContext]
+      ArgumentMatchers.any[ExecutionContext],
+      ArgumentMatchers.any[Request[_]]
     )
 }
