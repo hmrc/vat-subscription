@@ -22,6 +22,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.vatsubscription.services.SignUpSubmissionService
 import uk.gov.hmrc.vatsubscription.services.SignUpSubmissionService._
 import org.mockito.Mockito._
+import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -41,5 +42,6 @@ trait MockSignUpSubmissionService extends MockitoSugar with BeforeAndAfterEach {
     when(mockSignUpSubmissionService.submitSignUpRequest(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(enrolments)
-    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+    )(ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[Request[_]])) thenReturn response
 }

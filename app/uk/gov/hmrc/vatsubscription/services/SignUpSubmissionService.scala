@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
-import javax.inject.{Inject,Singleton}
+import javax.inject.{Inject, Singleton}
 
 import cats.data._
 import cats.implicits._
@@ -26,8 +26,11 @@ import uk.gov.hmrc.vatsubscription.httpparsers.{EmailNotVerified, EmailVerified,
 import uk.gov.hmrc.vatsubscription.models.{CustomerSignUpResponseSuccess, SubscriptionRequest}
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import SignUpSubmissionService._
+import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.vatsubscription.config.Constants._
+import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.{RegisterWithMultipleIDsCompanyAuditModel, RegisterWithMultipleIDsIndividualAuditModel}
+import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,10 +39,11 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                                         emailVerificationConnector: EmailVerificationConnector,
                                         customerSignUpConnector: CustomerSignUpConnector,
                                         registrationConnector: RegistrationConnector,
-                                        taxEnrolmentsConnector: TaxEnrolmentsConnector
+                                        taxEnrolmentsConnector: TaxEnrolmentsConnector,
+                                        auditService: AuditService
                                        )(implicit ec: ExecutionContext) {
 
-  def submitSignUpRequest(vatNumber: String, enrolments: Enrolments)(implicit hc: HeaderCarrier): Future[SignUpRequestSubmissionResponse] = {
+  def submitSignUpRequest(vatNumber: String, enrolments: Enrolments)(implicit hc: HeaderCarrier, request: Request[_]): Future[SignUpRequestSubmissionResponse] = {
     val isDelegated = enrolments getEnrolment AgentEnrolmentKey nonEmpty
 
     subscriptionRequestRepository.findById(vatNumber) flatMap {
@@ -79,20 +83,32 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
 
   private def registerCompany(vatNumber: String,
                               companyNumber: String
-                             )(implicit hc: HeaderCarrier): EitherT[Future, SignUpRequestSubmissionFailure, String] =
+                             )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerCompany(vatNumber, companyNumber)) bimap( {
-      _ => RegistrationFailure
+      _ => {
+        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, isSuccess = false))
+        RegistrationFailure
+      }
     }, {
-      case RegisterWithMultipleIdsSuccess(safeId) => safeId
+      case RegisterWithMultipleIdsSuccess(safeId) => {
+        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, isSuccess = true))
+        safeId
+      }
     })
 
   private def registerIndividual(vatNumber: String,
                                  nino: String
-                                )(implicit hc: HeaderCarrier): EitherT[Future, SignUpRequestSubmissionFailure, String] =
+                                )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerIndividual(vatNumber, nino)) bimap( {
-      _ => RegistrationFailure
+      _ => {
+        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, isSuccess = false))
+        RegistrationFailure
+      }
     }, {
-      case RegisterWithMultipleIdsSuccess(safeId) => safeId
+      case RegisterWithMultipleIdsSuccess(safeId) => {
+        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, isSuccess = true))
+        safeId
+      }
     })
 
   private def signUp(safeId: String,
