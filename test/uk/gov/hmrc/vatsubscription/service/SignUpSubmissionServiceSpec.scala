@@ -27,8 +27,12 @@ import uk.gov.hmrc.vatsubscription.models.{CustomerSignUpResponseFailure, Custom
 import uk.gov.hmrc.vatsubscription.repositories.mocks.MockSubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.services._
 import SignUpSubmissionService._
+import play.api.test.FakeRequest
 import reactivemongo.api.commands.WriteResult
 import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.vatsubscription.helpers.TestConstants
+import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.{RegisterWithMultipleIDsCompanyAuditModel, RegisterWithMultipleIDsIndividualAuditModel}
+import uk.gov.hmrc.vatsubscription.service.mocks.monitoring.MockAuditService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,17 +40,19 @@ import scala.concurrent.Future
 class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
   with MockSubscriptionRequestRepository with MockEmailVerificationConnector
   with MockCustomerSignUpConnector with MockRegistrationConnector
-  with MockTaxEnrolmentsConnector {
+  with MockTaxEnrolmentsConnector with MockAuditService{
 
   object TestSignUpSubmissionService extends SignUpSubmissionService(
     mockSubscriptionRequestRepository,
     mockEmailVerificationConnector,
     mockCustomerSignUpConnector,
     mockRegistrationConnector,
-    mockTaxEnrolmentsConnector
+    mockTaxEnrolmentsConnector,
+    mockAuditService
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
+  private implicit val request = FakeRequest("POST", "testUrl")
 
   "submitSignUpRequest" when {
     "the user is a delegate and " when {
@@ -74,6 +80,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                   res.right.value shouldBe SignUpRequestSubmitted
+
+                  verifyAudit(RegisterWithMultipleIDsIndividualAuditModel(TestConstants.testVatNumber,TestConstants.testNino, isSuccess = true))
                 }
                 "return a SignUpRequestSubmitted for a company sign up" in {
                   val testSubscriptionRequest = SubscriptionRequest(
@@ -92,6 +100,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                   res.right.value shouldBe SignUpRequestSubmitted
+
+                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
                 }
               }
               "the enrolment call fails" should {
@@ -111,6 +121,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                   res.left.value shouldBe EnrolmentFailure
+
+                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
                 }
               }
             }
@@ -130,6 +142,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                 val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                 res.left.value shouldBe SignUpFailure
+
+                verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
               }
             }
           }
@@ -154,6 +168,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
               val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
               res.left.value shouldBe RegistrationFailure
+
+              verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = false))
             }
           }
         }
@@ -178,6 +194,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                   res.right.value shouldBe SignUpRequestSubmitted
+
+                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
                 }
               }
             }
@@ -262,6 +280,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                   res.right.value shouldBe SignUpRequestSubmitted
+
+                  verifyAudit(RegisterWithMultipleIDsIndividualAuditModel(TestConstants.testVatNumber,TestConstants.testNino, isSuccess = true))
                 }
                 "return a SignUpRequestSubmitted for a company sign up" in {
                   val testSubscriptionRequest = SubscriptionRequest(
@@ -281,6 +301,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                   res.right.value shouldBe SignUpRequestSubmitted
+
+                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
                 }
               }
               "the enrolment call fails" should {
@@ -301,6 +323,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                   res.left.value shouldBe EnrolmentFailure
+
+                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
                 }
               }
             }
@@ -321,6 +345,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                 val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
                 res.left.value shouldBe SignUpFailure
+
+                verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
               }
             }
           }
@@ -346,6 +372,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
               val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
               res.left.value shouldBe RegistrationFailure
+
+              verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = false))
             }
           }
         }
@@ -365,6 +393,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
             val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
             res.left.value shouldBe UnVerifiedPrincipalEmailFailure
+
+            verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
           }
         }
         "the email verification request fails" should {
