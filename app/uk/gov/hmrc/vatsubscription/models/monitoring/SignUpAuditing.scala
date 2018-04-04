@@ -31,12 +31,12 @@ object SignUpAuditing {
 
     override val transactionName: String = signUpTransactionName
     override val detail: Map[String, String] = Map(
-      "safeId" -> Option(safeId),
-      "vatNumber" -> Option(vatNumber),
-      "emailAddress" -> Option(emailAddress),
-      "emailAddressVerified" -> Option(emailAddressVerified.toString),
+      "safeId" -> Some(safeId),
+      "vatNumber" -> Some(vatNumber),
+      "emailAddress" -> Some(emailAddress),
+      "emailAddressVerified" -> Some(emailAddressVerified.toString),
       "agentReferenceNumber" -> agentReferenceNumber,
-      "matchSuccess" -> Option(s"$isSuccess")
+      "matchSuccess" -> Some(s"$isSuccess")
     ).collect { case (key, Some(value)) => key -> value }
 
     override val auditType: String = signUpAuditType

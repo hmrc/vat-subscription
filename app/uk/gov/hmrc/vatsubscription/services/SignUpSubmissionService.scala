@@ -45,7 +45,6 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                                        )(implicit ec: ExecutionContext) {
 
   def submitSignUpRequest(vatNumber: String, enrolments: Enrolments)(implicit hc: HeaderCarrier, request: Request[_]): Future[SignUpRequestSubmissionResponse] = {
-    val isDelegated = enrolments getEnrolment AgentEnrolmentKey nonEmpty
 
     val optAgentReferenceNumber: Option[String] =
       enrolments getEnrolment AgentEnrolmentKey flatMap {
@@ -54,21 +53,21 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
       }
 
     subscriptionRequestRepository.findById(vatNumber) flatMap {
-      case Some(SubscriptionRequest(_, Some(companyNumber), None, Some(emailAddress), identityVerified)) if isDelegated || identityVerified =>
+      case Some(SubscriptionRequest(_, Some(companyNumber), None, Some(emailAddress), identityVerified)) if optAgentReferenceNumber.isDefined || identityVerified =>
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
           safeId <- registerCompany(vatNumber, companyNumber)
-          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, isDelegated, optAgentReferenceNumber)
+          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
 
         result.value
-      case Some(SubscriptionRequest(_, None, Some(nino), Some(emailAddress), identityVerified)) if isDelegated || identityVerified =>
+      case Some(SubscriptionRequest(_, None, Some(nino), Some(emailAddress), identityVerified)) if optAgentReferenceNumber.isDefined || identityVerified =>
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
           safeId <- registerIndividual(vatNumber, nino)
-          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, isDelegated, optAgentReferenceNumber)
+          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
@@ -122,10 +121,9 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                      vatNumber: String,
                      emailAddress: String,
                      emailAddressVerified: Boolean,
-                     isDelegated: Boolean,
                      agentReferenceNumber: Option[String]
                     )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, CustomerSignUpResponseSuccess.type] =
-    if (isDelegated || emailAddressVerified)
+    if (agentReferenceNumber.isDefined || emailAddressVerified)
       EitherT(customerSignUpConnector.signUp(safeId, vatNumber, emailAddress, emailAddressVerified)) bimap( {
         _ => {
           auditService.audit(SignUpAuditModel(safeId, vatNumber, emailAddress, emailAddressVerified, agentReferenceNumber, false))
