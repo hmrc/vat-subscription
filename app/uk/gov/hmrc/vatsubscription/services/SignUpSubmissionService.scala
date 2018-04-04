@@ -29,7 +29,7 @@ import SignUpSubmissionService._
 import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.vatsubscription.config.Constants._
-import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.{RegisterWithMultipleIDsCompanyAuditModel, RegisterWithMultipleIDsIndividualAuditModel}
+import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.RegisterWithMultipleIDsAuditModel
 import uk.gov.hmrc.vatsubscription.models.monitoring.SignUpAuditing.SignUpAuditModel
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 
@@ -93,12 +93,12 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                              )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerCompany(vatNumber, companyNumber)) bimap( {
       _ => {
-        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, agentReferenceNumber, isSuccess = false))
+        auditService.audit(RegisterWithMultipleIDsAuditModel(vatNumber, Some(companyNumber), None, agentReferenceNumber, isSuccess = false))
         RegistrationFailure
       }
     }, {
       case RegisterWithMultipleIdsSuccess(safeId) => {
-        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, agentReferenceNumber, isSuccess = true))
+        auditService.audit(RegisterWithMultipleIDsAuditModel(vatNumber, Some(companyNumber), None, agentReferenceNumber, isSuccess = true))
         safeId
       }
     })
@@ -109,12 +109,12 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                                 )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerIndividual(vatNumber, nino)) bimap( {
       _ => {
-        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, agentReferenceNumber, isSuccess = false))
+        auditService.audit(RegisterWithMultipleIDsAuditModel(vatNumber, None, Some(nino), agentReferenceNumber, isSuccess = false))
         RegistrationFailure
       }
     }, {
       case RegisterWithMultipleIdsSuccess(safeId) => {
-        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, agentReferenceNumber, isSuccess = true))
+        auditService.audit(RegisterWithMultipleIDsAuditModel(vatNumber, None, Some(nino), agentReferenceNumber, isSuccess = true))
         safeId
       }
     })

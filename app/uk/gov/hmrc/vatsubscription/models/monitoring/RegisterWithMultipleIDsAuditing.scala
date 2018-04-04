@@ -19,38 +19,25 @@ package uk.gov.hmrc.vatsubscription.models.monitoring
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditModel
 
 object RegisterWithMultipleIDsAuditing {
-  val registerWithMultipleIDsTransactionName : String => String =
-    businessEntity => s"VATRegister${businessEntity}WithMultipleIDs"
-  val registerWithMultipleIDsAuditType : String => String =
-    businessEntity => s"mtdVatRegister${businessEntity}WithMultipleIDs"
+  val registerWithMultipleIDsTransactionName = "VATRegisterWithMultipleIDs"
+  val registerWithMultipleIDsAuditType = "mtdVatRegisterWithMultipleIDs"
 
-  case class RegisterWithMultipleIDsCompanyAuditModel(vatNumber: String,
-                                                      companyNumber: String,
-                                                      agentReferenceNumber: Option[String],
-                                                      isSuccess: Boolean) extends AuditModel {
-    override val transactionName: String = registerWithMultipleIDsTransactionName("Company")
+  case class RegisterWithMultipleIDsAuditModel(vatNumber: String,
+                                               companyNumber: Option[String],
+                                               nino: Option[String],
+                                               agentReferenceNumber: Option[String],
+                                               isSuccess: Boolean) extends AuditModel {
+
+    override val transactionName: String = registerWithMultipleIDsTransactionName
     override val detail: Map[String, String] = Map(
       "vatNumber" -> Some(vatNumber),
-      "companyNumber" -> Some(companyNumber),
+      "companyNumber" -> companyNumber,
+      "nino" -> nino,
       "agentReferenceNumber" -> agentReferenceNumber,
       "matchSuccess" -> Some(s"$isSuccess")
     ).collect { case (key, Some(value)) => key -> value }
 
-    override val auditType: String = registerWithMultipleIDsAuditType("Company")
+    override val auditType: String = registerWithMultipleIDsAuditType
   }
 
-  case class RegisterWithMultipleIDsIndividualAuditModel(vatNumber: String,
-                                                         nino: String,
-                                                         agentReferenceNumber: Option[String],
-                                                         isSuccess: Boolean) extends AuditModel {
-    override val transactionName: String = registerWithMultipleIDsTransactionName("Individual")
-    override val detail: Map[String, String] = Map(
-      "vatNumber" -> Some(vatNumber),
-      "nino" -> Some(nino),
-      "agentReferenceNumber" -> agentReferenceNumber,
-      "matchSuccess" -> Some(s"$isSuccess")
-    ).collect { case (key, Some(value)) => key -> value }
-
-    override val auditType: String = registerWithMultipleIDsAuditType("Individual")
-  }
 }
