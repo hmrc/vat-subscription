@@ -20,30 +20,36 @@ import java.time.LocalDate
 import java.util.UUID
 
 import org.scalatest.EitherValues
+import play.api.mvc.Request
 import play.api.test.FakeRequest
 import reactivemongo.api.commands.UpdateWriteResult
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthenticatorConnector
+import uk.gov.hmrc.vatsubscription.helpers.TestConstants
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
+import uk.gov.hmrc.vatsubscription.models.monitoring.UserMatchingAuditing.UserMatchingAuditModel
 import uk.gov.hmrc.vatsubscription.repositories.mocks.MockSubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.service.mocks.monitoring.MockAuditService
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class StoreNinoServiceSpec
-  extends UnitSpec with MockAuthenticatorConnector with MockSubscriptionRequestRepository with EitherValues {
+  extends UnitSpec with MockAuthenticatorConnector with MockSubscriptionRequestRepository with MockAuditService with EitherValues {
 
 
   object TestStoreNinoService extends StoreNinoService(
     mockSubscriptionRequestRepository,
-    mockAuthenticatorConnector
+    mockAuthenticatorConnector,
+    mockAuditService
   )
 
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)
+  implicit val request = FakeRequest("POST", "testUrl")
 
   val testUserDetails = UserDetailsModel(
     firstName = UUID.randomUUID().toString,
@@ -60,6 +66,8 @@ class StoreNinoServiceSpec
 
         val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails)
         await(res) shouldBe Right(StoreNinoSuccess)
+
+        verifyAudit(UserMatchingAuditModel(testUserDetails, isSuccess = true))
       }
     }
 
@@ -69,6 +77,8 @@ class StoreNinoServiceSpec
 
         val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails)
         await(res) shouldBe Left(NoMatchFoundFailure)
+
+        verifyAudit(UserMatchingAuditModel(testUserDetails, isSuccess = false))
       }
     }
 

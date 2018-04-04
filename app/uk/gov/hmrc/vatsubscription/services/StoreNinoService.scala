@@ -16,30 +16,42 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
-import javax.inject.{Inject,Singleton}
+import javax.inject.{Inject, Singleton}
 
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.AuthenticatorConnector
 import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
+import uk.gov.hmrc.vatsubscription.models.monitoring.UserMatchingAuditing
+import uk.gov.hmrc.vatsubscription.models.monitoring.UserMatchingAuditing.UserMatchingAuditModel
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StoreNinoService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
-                                 authenticatorConnector: AuthenticatorConnector
+                                 authenticatorConnector: AuthenticatorConnector,
+                                 auditService: AuditService
                                 )(implicit ec: ExecutionContext) {
 
-  def storeNino(vatNumber: String, userDetailsModel: UserDetailsModel)(implicit hc: HeaderCarrier): Future[Either[StoreNinoFailure, StoreNinoSuccess.type]] =
+  def storeNino(vatNumber: String, userDetailsModel: UserDetailsModel)
+               (implicit hc: HeaderCarrier, request: Request[_]): Future[Either[StoreNinoFailure, StoreNinoSuccess.type]] =
     matchUser(userDetailsModel) flatMap {
       case Right(nino) => storeNinoToMongo(vatNumber, nino)
       case Left(failure) => Future.successful(Left(failure))
     }
 
-  private def matchUser(userDetailsModel: UserDetailsModel)(implicit hc: HeaderCarrier): Future[Either[UserMatchingFailure, String]] =
+  private def matchUser(userDetailsModel: UserDetailsModel)(implicit hc: HeaderCarrier, request: Request[_]): Future[Either[UserMatchingFailure, String]] =
     authenticatorConnector.matchUser(userDetailsModel).map {
-      case Right(Some(nino)) => Right(nino)
-      case Right(None) => Left(NoMatchFoundFailure)
+      case Right(Some(nino)) => {
+        auditService.audit(UserMatchingAuditModel(userDetailsModel, true))
+        Right(nino)
+      }
+      case Right(None) => {
+        auditService.audit(UserMatchingAuditModel(userDetailsModel, false))
+        Left(NoMatchFoundFailure)
+      }
       case _ => Left(AuthenticatorFailure)
     }
 
