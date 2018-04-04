@@ -34,11 +34,11 @@ class CustomerSignUpConnectorSpec extends UnitSpec {
            |    "identification": [
            |      {
            |        "idType": "SAFEID",
-           |        "idNumber": "$testSafeId"
+           |        "idValue": "$testSafeId"
            |      },
            |     {
            |        "idType": "VRN",
-           |        "idNumber": "$testVatNumber"
+           |        "idValue": "$testVatNumber"
            |      }
            |    ],
            |    "additionalInformation": [

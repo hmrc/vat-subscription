@@ -24,13 +24,13 @@ import uk.gov.hmrc.vatsubscription.config.Constants.Des._
 object SignUpStub extends WireMockMethods {
 
   def stubSignUp[T](safeId: String, vatNumber: String, email: String, emailVerified: Boolean)(status: Int): StubMapping =
-    when(method = POST, uri = "/customer/signup/VATC",
+    when(method = POST, uri = "/cross-regime/signup/VATC",
       body = Json.obj(
         "signUpRequest" -> Json.obj(
           "identification" ->
             Json.arr(
-              Json.obj(IdTypeKey -> SafeIdKey, idNumberKey -> safeId),
-              Json.obj(IdTypeKey -> VrnKey, idNumberKey -> vatNumber)
+              Json.obj(IdTypeKey -> SafeIdKey, IdValueKey -> safeId),
+              Json.obj(IdTypeKey -> VrnKey, IdValueKey -> vatNumber)
             ),
           "additionalInformation" ->
             Json.arr(
