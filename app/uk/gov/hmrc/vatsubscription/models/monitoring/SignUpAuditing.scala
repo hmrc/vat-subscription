@@ -36,7 +36,7 @@ object SignUpAuditing {
       "emailAddress" -> Some(emailAddress),
       "emailAddressVerified" -> Some(emailAddressVerified.toString),
       "agentReferenceNumber" -> agentReferenceNumber,
-      "matchSuccess" -> Some(s"$isSuccess")
+      "isSuccess" -> Some(s"$isSuccess")
     ).collect { case (key, Some(value)) => key -> value }
 
     override val auditType: String = signUpAuditType

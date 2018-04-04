@@ -34,7 +34,7 @@ object RegisterWithMultipleIDsAuditing {
       "companyNumber" -> companyNumber,
       "nino" -> nino,
       "agentReferenceNumber" -> agentReferenceNumber,
-      "matchSuccess" -> Some(s"$isSuccess")
+      "isSuccess" -> Some(s"$isSuccess")
     ).collect { case (key, Some(value)) => key -> value }
 
     override val auditType: String = registerWithMultipleIDsAuditType

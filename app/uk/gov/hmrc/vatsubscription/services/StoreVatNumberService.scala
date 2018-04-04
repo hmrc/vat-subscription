@@ -66,10 +66,10 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
   private def storeDelegatedVatNumber(vatNumber: String, agentReferenceNumber: String)(implicit hc: HeaderCarrier, request: Request[_]) =
     agentClientRelationshipsConnector.checkAgentClientRelationship(agentReferenceNumber, vatNumber) flatMap {
       case Right(HaveRelationshipResponse) =>
-        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, isSuccess = true))
+        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = true))
         insertVatNumber(vatNumber)
       case Right(NoRelationshipResponse) =>
-        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, isSuccess = false))
+        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = false))
         Future.successful(Left(RelationshipNotFound))
       case _ =>
         Future.successful(Left(AgentServicesConnectionFailure))

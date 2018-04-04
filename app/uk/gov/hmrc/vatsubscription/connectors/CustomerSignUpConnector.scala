@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CustomerSignUpConnector @Inject()(val http: HttpClient,
                                         val applicationConfig: AppConfig) {
 
-  private def url = applicationConfig.desUrl + "/customer/signup/VATC"
+  private def url = applicationConfig.desUrl + "/cross-regime/signup/VATC"
 
   import CustomerSignUpConnector._
 
@@ -65,8 +65,8 @@ object CustomerSignUpConnector {
       "signUpRequest" -> Json.obj(
         "identification" ->
           Json.arr(
-            Json.obj(IdTypeKey -> SafeIdKey, idNumberKey -> safeId),
-            Json.obj(IdTypeKey -> VrnKey, idNumberKey -> vatNumber)
+            Json.obj(IdTypeKey -> SafeIdKey, IdValueKey -> safeId),
+            Json.obj(IdTypeKey -> VrnKey, IdValueKey -> vatNumber)
           ),
         "additionalInformation" ->
           Json.arr(

@@ -26,7 +26,6 @@ object Constants {
   object Des {
     val IdTypeKey = "idType"
     val IdValueKey = "idValue"
-    val idNumberKey = "idNumber"
     val CrnKey = "CRN"
     val NinoKey = "NINO"
     val VrnKey = "VRN"
