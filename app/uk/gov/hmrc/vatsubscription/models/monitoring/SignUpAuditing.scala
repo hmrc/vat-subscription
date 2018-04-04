@@ -26,16 +26,19 @@ object SignUpAuditing {
                               vatNumber: String,
                               emailAddress: String,
                               emailAddressVerified: Boolean,
+                              agentReferenceNumber: Option[String],
                               isSuccess: Boolean) extends AuditModel {
 
     override val transactionName: String = signUpTransactionName
     override val detail: Map[String, String] = Map(
-      "safeId" -> safeId,
-      "vatNumber" -> vatNumber,
-      "emailAddress" -> emailAddress,
-      "emailAddressVerified" -> emailAddressVerified.toString,
-      "matchSuccess" -> s"$isSuccess"
-    )
+      "safeId" -> Option(safeId),
+      "vatNumber" -> Option(vatNumber),
+      "emailAddress" -> Option(emailAddress),
+      "emailAddressVerified" -> Option(emailAddressVerified.toString),
+      "agentReferenceNumber" -> agentReferenceNumber,
+      "matchSuccess" -> Option(s"$isSuccess")
+    ).collect { case (key, Some(value)) => key -> value }
+
     override val auditType: String = signUpAuditType
   }
 }
