@@ -28,17 +28,21 @@ object UserMatchingAuditing {
   val dateFormatter =  DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT)
 
   case class UserMatchingAuditModel(userDetailsModel: UserDetailsModel,
+                                    agentReferenceNumber: Option[String],
                                     isSuccess: Boolean) extends AuditModel {
 
 
     override val transactionName: String = userMatchingTransactionName
+
     override val detail: Map[String, String] = Map(
-      "firstName" -> userDetailsModel.firstName,
-      "lastName" -> userDetailsModel.lastName,
-      "dateOfBirth" -> userDetailsModel.dateOfBirth.format(dateFormatter),
-      "nino" -> userDetailsModel.nino,
-      "isSuccess" -> s"$isSuccess"
-    )
+      "firstName" -> Some(userDetailsModel.firstName),
+      "lastName" -> Some(userDetailsModel.lastName),
+      "dateOfBirth" -> Some(userDetailsModel.dateOfBirth.format(dateFormatter)),
+      "nino" -> Some(userDetailsModel.nino),
+      "agentReferenceNumber" -> agentReferenceNumber,
+      "matchSuccess" -> Some(s"$isSuccess")
+    ).collect { case (key, Some(value)) => key -> value }
+
     override val auditType: String = userMatchingAuditType
   }
 }

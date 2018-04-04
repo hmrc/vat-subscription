@@ -19,10 +19,11 @@ package uk.gov.hmrc.vatsubscription.services
 import javax.inject.{Inject, Singleton}
 
 import play.api.mvc.Request
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.AuthenticatorConnector
 import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
-import uk.gov.hmrc.vatsubscription.models.monitoring.UserMatchingAuditing
+import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.models.monitoring.UserMatchingAuditing.UserMatchingAuditModel
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
@@ -35,21 +36,31 @@ class StoreNinoService @Inject()(subscriptionRequestRepository: SubscriptionRequ
                                  auditService: AuditService
                                 )(implicit ec: ExecutionContext) {
 
-  def storeNino(vatNumber: String, userDetailsModel: UserDetailsModel)
-               (implicit hc: HeaderCarrier, request: Request[_]): Future[Either[StoreNinoFailure, StoreNinoSuccess.type]] =
-    matchUser(userDetailsModel) flatMap {
+
+  def storeNino(vatNumber: String, userDetailsModel: UserDetailsModel, enrolments: Enrolments)
+               (implicit hc: HeaderCarrier, request: Request[_]): Future[Either[StoreNinoFailure, StoreNinoSuccess.type]] = {
+
+    val optAgentReferenceNumber: Option[String] =
+      enrolments getEnrolment AgentEnrolmentKey flatMap {
+        agentEnrolment =>
+          agentEnrolment getIdentifier AgentReferenceNumberKey map (_.value)
+      }
+
+    matchUser(userDetailsModel, optAgentReferenceNumber) flatMap {
       case Right(nino) => storeNinoToMongo(vatNumber, nino)
       case Left(failure) => Future.successful(Left(failure))
     }
+  }
 
-  private def matchUser(userDetailsModel: UserDetailsModel)(implicit hc: HeaderCarrier, request: Request[_]): Future[Either[UserMatchingFailure, String]] =
+  private def matchUser(userDetailsModel: UserDetailsModel, agentReferenceNumber: Option[String])
+                       (implicit hc: HeaderCarrier, request: Request[_]): Future[Either[UserMatchingFailure, String]] =
     authenticatorConnector.matchUser(userDetailsModel).map {
       case Right(Some(nino)) => {
-        auditService.audit(UserMatchingAuditModel(userDetailsModel, true))
+        auditService.audit(UserMatchingAuditModel(userDetailsModel, agentReferenceNumber, true))
         Right(nino)
       }
       case Right(None) => {
-        auditService.audit(UserMatchingAuditModel(userDetailsModel, false))
+        auditService.audit(UserMatchingAuditModel(userDetailsModel, agentReferenceNumber, false))
         Left(NoMatchFoundFailure)
       }
       case _ => Left(AuthenticatorFailure)

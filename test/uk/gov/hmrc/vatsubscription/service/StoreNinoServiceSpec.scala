@@ -23,6 +23,7 @@ import org.scalatest.EitherValues
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import reactivemongo.api.commands.UpdateWriteResult
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
@@ -48,6 +49,9 @@ class StoreNinoServiceSpec
     mockAuditService
   )
 
+  val agentUser = Enrolments(Set(testAgentEnrolment))
+  val principalUser = Enrolments(Set(testPrincipalEnrolment))
+
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)
   implicit val request = FakeRequest("POST", "testUrl")
 
@@ -64,10 +68,10 @@ class StoreNinoServiceSpec
         mockMatchUserMatched(testUserDetails)
         mockUpsertNino(testVatNumber, testNino)(Future.successful(mock[UpdateWriteResult]))
 
-        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails)
+        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails, agentUser)
         await(res) shouldBe Right(StoreNinoSuccess)
 
-        verifyAudit(UserMatchingAuditModel(testUserDetails, isSuccess = true))
+        verifyAudit(UserMatchingAuditModel(testUserDetails, Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
       }
     }
 
@@ -75,10 +79,10 @@ class StoreNinoServiceSpec
       "return NoMatchFoundFailure" in {
         mockMatchUserNotMatched(testUserDetails)
 
-        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails)
+        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails, principalUser)
         await(res) shouldBe Left(NoMatchFoundFailure)
 
-        verifyAudit(UserMatchingAuditModel(testUserDetails, isSuccess = false))
+        verifyAudit(UserMatchingAuditModel(testUserDetails, None, isSuccess = false))
       }
     }
 
@@ -86,7 +90,7 @@ class StoreNinoServiceSpec
       "return AuthenticatorFailure" in {
         mockMatchUserFailure(testUserDetails)
 
-        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails)
+        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails, principalUser)
         await(res) shouldBe Left(AuthenticatorFailure)
       }
     }
@@ -96,7 +100,7 @@ class StoreNinoServiceSpec
         mockMatchUserMatched(testUserDetails)
         mockUpsertNino(testVatNumber, testNino)(Future.failed(new NoSuchElementException))
 
-        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails)
+        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails, principalUser)
         await(res) shouldBe Left(NinoDatabaseFailureNoVATNumber)
       }
     }
@@ -106,7 +110,7 @@ class StoreNinoServiceSpec
         mockMatchUserMatched(testUserDetails)
         mockUpsertNino(testVatNumber, testNino)(Future.failed(new Exception))
 
-        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails)
+        val res = TestStoreNinoService.storeNino(testVatNumber, testUserDetails, principalUser)
         await(res) shouldBe Left(NinoDatabaseFailure)
       }
     }

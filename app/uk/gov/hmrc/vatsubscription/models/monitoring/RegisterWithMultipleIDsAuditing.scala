@@ -24,21 +24,33 @@ object RegisterWithMultipleIDsAuditing {
   val registerWithMultipleIDsAuditType : String => String =
     businessEntity => s"mtdVatRegister${businessEntity}WithMultipleIDs"
 
-  case class RegisterWithMultipleIDsCompanyAuditModel(vatNumber: String, companyNumber: String, isSuccess: Boolean) extends AuditModel {
+  case class RegisterWithMultipleIDsCompanyAuditModel(vatNumber: String,
+                                                      companyNumber: String,
+                                                      agentReferenceNumber: Option[String],
+                                                      isSuccess: Boolean) extends AuditModel {
     override val transactionName: String = registerWithMultipleIDsTransactionName("Company")
     override val detail: Map[String, String] = Map(
-      "vatNumber" -> vatNumber,
-      "companyNumber" -> companyNumber
-    )
+      "vatNumber" -> Some(vatNumber),
+      "companyNumber" -> Some(companyNumber),
+      "agentReferenceNumber" -> agentReferenceNumber,
+      "matchSuccess" -> Some(s"$isSuccess")
+    ).collect { case (key, Some(value)) => key -> value }
+
     override val auditType: String = registerWithMultipleIDsAuditType("Company")
   }
 
-  case class RegisterWithMultipleIDsIndividualAuditModel(vatNumber: String, nino: String, isSuccess: Boolean) extends AuditModel {
+  case class RegisterWithMultipleIDsIndividualAuditModel(vatNumber: String,
+                                                         nino: String,
+                                                         agentReferenceNumber: Option[String],
+                                                         isSuccess: Boolean) extends AuditModel {
     override val transactionName: String = registerWithMultipleIDsTransactionName("Individual")
     override val detail: Map[String, String] = Map(
-      "vatNumber" -> vatNumber,
-      "nino" -> nino
-    )
+      "vatNumber" -> Some(vatNumber),
+      "nino" -> Some(nino),
+      "agentReferenceNumber" -> agentReferenceNumber,
+      "matchSuccess" -> Some(s"$isSuccess")
+    ).collect { case (key, Some(value)) => key -> value }
+
     override val auditType: String = registerWithMultipleIDsAuditType("Individual")
   }
 }

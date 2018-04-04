@@ -56,7 +56,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
       case Some(SubscriptionRequest(_, Some(companyNumber), None, Some(emailAddress), identityVerified)) if optAgentReferenceNumber.isDefined || identityVerified =>
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
-          safeId <- registerCompany(vatNumber, companyNumber)
+          safeId <- registerCompany(vatNumber, companyNumber, optAgentReferenceNumber)
           _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
@@ -66,7 +66,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
       case Some(SubscriptionRequest(_, None, Some(nino), Some(emailAddress), identityVerified)) if optAgentReferenceNumber.isDefined || identityVerified =>
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
-          safeId <- registerIndividual(vatNumber, nino)
+          safeId <- registerIndividual(vatNumber, nino, optAgentReferenceNumber)
           _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
@@ -88,31 +88,33 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
     })
 
   private def registerCompany(vatNumber: String,
-                              companyNumber: String
+                              companyNumber: String,
+                              agentReferenceNumber: Option[String]
                              )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerCompany(vatNumber, companyNumber)) bimap( {
       _ => {
-        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, isSuccess = false))
+        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, agentReferenceNumber, isSuccess = false))
         RegistrationFailure
       }
     }, {
       case RegisterWithMultipleIdsSuccess(safeId) => {
-        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, isSuccess = true))
+        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, agentReferenceNumber, isSuccess = true))
         safeId
       }
     })
 
   private def registerIndividual(vatNumber: String,
-                                 nino: String
+                                 nino: String,
+                                 agentReferenceNumber: Option[String]
                                 )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerIndividual(vatNumber, nino)) bimap( {
       _ => {
-        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, isSuccess = false))
+        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, agentReferenceNumber, isSuccess = false))
         RegistrationFailure
       }
     }, {
       case RegisterWithMultipleIdsSuccess(safeId) => {
-        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, isSuccess = true))
+        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, agentReferenceNumber, isSuccess = true))
         safeId
       }
     })

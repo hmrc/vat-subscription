@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.JsPath
 import play.api.mvc.Action
+import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
@@ -36,16 +37,16 @@ class StoreNinoController @Inject()(val authConnector: AuthConnector,
   def storeNino(vatNumber: String): Action[UserDetailsModel] =
     Action.async(parse.json(JsPath.read[UserDetailsModel])) {
       implicit req =>
-        authorised() {
-          val userDetails = req.body
-          storeNinoService.storeNino(vatNumber, userDetails) map {
-            case Right(StoreNinoSuccess) => NoContent
-            case Left(AuthenticatorFailure) => InternalServerError("calls to authenticator failed")
-            case Left(NoMatchFoundFailure) => Forbidden
-            case Left(NinoDatabaseFailureNoVATNumber) => NotFound
-            case Left(NinoDatabaseFailure) => InternalServerError("calls to mongo failed")
-          }
+        authorised().retrieve(Retrievals.allEnrolments) {
+          enrolments =>
+            val userDetails = req.body
+            storeNinoService.storeNino(vatNumber, userDetails, enrolments) map {
+              case Right(StoreNinoSuccess) => NoContent
+              case Left(AuthenticatorFailure) => InternalServerError("calls to authenticator failed")
+              case Left(NoMatchFoundFailure) => Forbidden
+              case Left(NinoDatabaseFailureNoVATNumber) => NotFound
+              case Left(NinoDatabaseFailure) => InternalServerError("calls to mongo failed")
+            }
         }
     }
-
 }
