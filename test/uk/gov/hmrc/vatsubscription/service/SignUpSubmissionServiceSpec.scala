@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import reactivemongo.api.commands.WriteResult
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants
-import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.{RegisterWithMultipleIDsCompanyAuditModel, RegisterWithMultipleIDsIndividualAuditModel}
+import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.RegisterWithMultipleIDsAuditModel
 import uk.gov.hmrc.vatsubscription.models.monitoring.SignUpAuditing.SignUpAuditModel
 import uk.gov.hmrc.vatsubscription.service.mocks.monitoring.MockAuditService
 
@@ -82,7 +82,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                   res.right.value shouldBe SignUpRequestSubmitted
 
-                  verifyAudit(RegisterWithMultipleIDsIndividualAuditModel(TestConstants.testVatNumber,TestConstants.testNino, isSuccess = true))
+                  verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber,None, Some(TestConstants.testNino),
+                    Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
                 }
                 "return a SignUpRequestSubmitted for a company sign up" in {
                   val testSubscriptionRequest = SubscriptionRequest(
@@ -102,8 +103,10 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                   res.right.value shouldBe SignUpRequestSubmitted
 
-                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
-                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,  isSuccess = true))
+                  verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None,
+                    Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
+                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,
+                    Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
                 }
               }
               "the enrolment call fails" should {
@@ -124,8 +127,10 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                   res.left.value shouldBe EnrolmentFailure
 
-                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
-                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,  isSuccess = true))
+                  verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None,
+                    Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
+                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,
+                    Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
                 }
               }
             }
@@ -146,8 +151,10 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                 res.left.value shouldBe SignUpFailure
 
-                verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
-                verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,  isSuccess = false))
+                verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None,
+                  Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
+                verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,
+                  Some(TestConstants.testAgentReferenceNumber), isSuccess = false))
               }
             }
           }
@@ -173,7 +180,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
               res.left.value shouldBe RegistrationFailure
 
-              verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = false))
+              verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None,
+                Some(TestConstants.testAgentReferenceNumber), isSuccess = false))
             }
           }
         }
@@ -199,8 +207,10 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                   res.right.value shouldBe SignUpRequestSubmitted
 
-                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
-                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, false,  isSuccess = true))
+                  verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None,
+                    Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
+                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, false,
+                    Some(TestConstants.testAgentReferenceNumber), isSuccess = true))
                 }
               }
             }
@@ -286,8 +296,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                   res.right.value shouldBe SignUpRequestSubmitted
 
-                  verifyAudit(RegisterWithMultipleIDsIndividualAuditModel(TestConstants.testVatNumber,TestConstants.testNino, isSuccess = true))
-                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,  isSuccess = true))
+                  verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber,None, Some(TestConstants.testNino), None, isSuccess = true))
+                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true, None, isSuccess = true))
                 }
                 "return a SignUpRequestSubmitted for a company sign up" in {
                   val testSubscriptionRequest = SubscriptionRequest(
@@ -308,8 +318,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                   res.right.value shouldBe SignUpRequestSubmitted
 
-                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
-                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,  isSuccess = true))
+                  verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None, None, isSuccess = true))
+                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true, None, isSuccess = true))
                 }
               }
               "the enrolment call fails" should {
@@ -331,8 +341,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                   res.left.value shouldBe EnrolmentFailure
 
-                  verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
-                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,  isSuccess = true))
+                  verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None,  None, isSuccess = true))
+                  verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true, None, isSuccess = true))
                 }
               }
             }
@@ -354,8 +364,8 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
                 res.left.value shouldBe SignUpFailure
 
-                verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
-                verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,  isSuccess = false))
+                verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None, None, isSuccess = true))
+                verifyAudit(SignUpAuditModel(TestConstants.testSafeId, TestConstants.testVatNumber, TestConstants.testEmail, true,  None, isSuccess = false))
               }
             }
           }
@@ -382,7 +392,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
               res.left.value shouldBe RegistrationFailure
 
-              verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = false))
+              verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None, None, isSuccess = false))
             }
           }
         }
@@ -403,7 +413,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
 
             res.left.value shouldBe UnVerifiedPrincipalEmailFailure
 
-            verifyAudit(RegisterWithMultipleIDsCompanyAuditModel(TestConstants.testVatNumber,TestConstants.testCompanyNumber, isSuccess = true))
+            verifyAudit(RegisterWithMultipleIDsAuditModel(TestConstants.testVatNumber, Some(TestConstants.testCompanyNumber), None,  None, isSuccess = true))
           }
         }
         "the email verification request fails" should {

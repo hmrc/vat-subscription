@@ -22,7 +22,7 @@ import java.util.UUID
 import play.api.http.Status._
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
@@ -44,12 +44,14 @@ class StoreNinoControllerSpec extends UnitSpec with MockAuthConnector with MockS
     dateOfBirth = LocalDate.now(),
     nino = testNino
   )
+  
+  val enrolments = Enrolments(Set(testPrincipalEnrolment))
 
   "storeNino" when {
     "the Nino has been stored correctly" should {
       "return NO_CONTENT" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreNino(testVatNumber, testUserDetails)(Future.successful(Right(StoreNinoSuccess)))
+        mockAuthRetrievePrincipalEnrolment()
+        mockStoreNino(testVatNumber, testUserDetails, enrolments)(Future.successful(Right(StoreNinoSuccess)))
 
         val request = FakeRequest() withBody testUserDetails
 
@@ -61,8 +63,8 @@ class StoreNinoControllerSpec extends UnitSpec with MockAuthConnector with MockS
 
     "if user doesn't match with a record in CID" should {
       "return FORBIDDEN" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreNino(testVatNumber, testUserDetails)(Future.successful(Left(NoMatchFoundFailure)))
+        mockAuthRetrievePrincipalEnrolment()
+        mockStoreNino(testVatNumber, testUserDetails, enrolments)(Future.successful(Left(NoMatchFoundFailure)))
 
         val request = FakeRequest() withBody testUserDetails
 
@@ -74,8 +76,8 @@ class StoreNinoControllerSpec extends UnitSpec with MockAuthConnector with MockS
 
     "if calls to CID failed" should {
       "return INTERNAL_SERVER_ERROR" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreNino(testVatNumber, testUserDetails)(Future.successful(Left(AuthenticatorFailure)))
+        mockAuthRetrievePrincipalEnrolment()
+        mockStoreNino(testVatNumber, testUserDetails, enrolments)(Future.successful(Left(AuthenticatorFailure)))
 
         val request = FakeRequest() withBody testUserDetails
 
@@ -87,8 +89,8 @@ class StoreNinoControllerSpec extends UnitSpec with MockAuthConnector with MockS
 
     "if the vat doesn't exist in mongo" should {
       "return NOT_FOUND" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreNino(testVatNumber, testUserDetails)(Future.successful(Left(NinoDatabaseFailureNoVATNumber)))
+        mockAuthRetrievePrincipalEnrolment()
+        mockStoreNino(testVatNumber, testUserDetails, enrolments)(Future.successful(Left(NinoDatabaseFailureNoVATNumber)))
 
         val request = FakeRequest() withBody testUserDetails
 
@@ -100,8 +102,8 @@ class StoreNinoControllerSpec extends UnitSpec with MockAuthConnector with MockS
 
     "the Nino storage has failed" should {
       "return INTERNAL_SERVER_ERROR" in {
-        mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockStoreNino(testVatNumber, testUserDetails)(Future.successful(Left(NinoDatabaseFailure)))
+        mockAuthRetrievePrincipalEnrolment()
+        mockStoreNino(testVatNumber, testUserDetails, enrolments)(Future.successful(Left(NinoDatabaseFailure)))
 
         val request = FakeRequest() withBody testUserDetails
 

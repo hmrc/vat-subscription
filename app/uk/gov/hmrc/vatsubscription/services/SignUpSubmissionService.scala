@@ -29,7 +29,7 @@ import SignUpSubmissionService._
 import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.vatsubscription.config.Constants._
-import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.{RegisterWithMultipleIDsCompanyAuditModel, RegisterWithMultipleIDsIndividualAuditModel}
+import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.RegisterWithMultipleIDsAuditModel
 import uk.gov.hmrc.vatsubscription.models.monitoring.SignUpAuditing.SignUpAuditModel
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 
@@ -45,24 +45,29 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                                        )(implicit ec: ExecutionContext) {
 
   def submitSignUpRequest(vatNumber: String, enrolments: Enrolments)(implicit hc: HeaderCarrier, request: Request[_]): Future[SignUpRequestSubmissionResponse] = {
-    val isDelegated = enrolments getEnrolment AgentEnrolmentKey nonEmpty
+
+    val optAgentReferenceNumber: Option[String] =
+      enrolments getEnrolment AgentEnrolmentKey flatMap {
+        agentEnrolment =>
+          agentEnrolment getIdentifier AgentReferenceNumberKey map (_.value)
+      }
 
     subscriptionRequestRepository.findById(vatNumber) flatMap {
-      case Some(SubscriptionRequest(_, Some(companyNumber), None, Some(emailAddress), identityVerified)) if isDelegated || identityVerified =>
+      case Some(SubscriptionRequest(_, Some(companyNumber), None, Some(emailAddress), identityVerified)) if optAgentReferenceNumber.isDefined || identityVerified =>
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
-          safeId <- registerCompany(vatNumber, companyNumber)
-          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, isDelegated)
+          safeId <- registerCompany(vatNumber, companyNumber, optAgentReferenceNumber)
+          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
 
         result.value
-      case Some(SubscriptionRequest(_, None, Some(nino), Some(emailAddress), identityVerified)) if isDelegated || identityVerified =>
+      case Some(SubscriptionRequest(_, None, Some(nino), Some(emailAddress), identityVerified)) if optAgentReferenceNumber.isDefined || identityVerified =>
         val result = for {
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
-          safeId <- registerIndividual(vatNumber, nino)
-          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, isDelegated)
+          safeId <- registerIndividual(vatNumber, nino, optAgentReferenceNumber)
+          _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
@@ -83,31 +88,33 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
     })
 
   private def registerCompany(vatNumber: String,
-                              companyNumber: String
+                              companyNumber: String,
+                              agentReferenceNumber: Option[String]
                              )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerCompany(vatNumber, companyNumber)) bimap( {
       _ => {
-        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, isSuccess = false))
+        auditService.audit(RegisterWithMultipleIDsAuditModel(vatNumber, Some(companyNumber), None, agentReferenceNumber, isSuccess = false))
         RegistrationFailure
       }
     }, {
       case RegisterWithMultipleIdsSuccess(safeId) => {
-        auditService.audit(RegisterWithMultipleIDsCompanyAuditModel(vatNumber, companyNumber, isSuccess = true))
+        auditService.audit(RegisterWithMultipleIDsAuditModel(vatNumber, Some(companyNumber), None, agentReferenceNumber, isSuccess = true))
         safeId
       }
     })
 
   private def registerIndividual(vatNumber: String,
-                                 nino: String
+                                 nino: String,
+                                 agentReferenceNumber: Option[String]
                                 )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, String] =
     EitherT(registrationConnector.registerIndividual(vatNumber, nino)) bimap( {
       _ => {
-        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, isSuccess = false))
+        auditService.audit(RegisterWithMultipleIDsAuditModel(vatNumber, None, Some(nino), agentReferenceNumber, isSuccess = false))
         RegistrationFailure
       }
     }, {
       case RegisterWithMultipleIdsSuccess(safeId) => {
-        auditService.audit(RegisterWithMultipleIDsIndividualAuditModel(vatNumber, nino, isSuccess = true))
+        auditService.audit(RegisterWithMultipleIDsAuditModel(vatNumber, None, Some(nino), agentReferenceNumber, isSuccess = true))
         safeId
       }
     })
@@ -116,17 +123,17 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                      vatNumber: String,
                      emailAddress: String,
                      emailAddressVerified: Boolean,
-                     isDelegated: Boolean
+                     agentReferenceNumber: Option[String]
                     )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, CustomerSignUpResponseSuccess.type] =
-    if (isDelegated || emailAddressVerified)
+    if (agentReferenceNumber.isDefined || emailAddressVerified)
       EitherT(customerSignUpConnector.signUp(safeId, vatNumber, emailAddress, emailAddressVerified)) bimap( {
         _ => {
-          auditService.audit(SignUpAuditModel(safeId, vatNumber, emailAddress, emailAddressVerified, false))
+          auditService.audit(SignUpAuditModel(safeId, vatNumber, emailAddress, emailAddressVerified, agentReferenceNumber, false))
           SignUpFailure
         }
       }, {
         customerSignUpSuccess => {
-          auditService.audit(SignUpAuditModel(safeId, vatNumber, emailAddress, emailAddressVerified, true))
+          auditService.audit(SignUpAuditModel(safeId, vatNumber, emailAddress, emailAddressVerified, agentReferenceNumber, true))
           customerSignUpSuccess
         }
       })
