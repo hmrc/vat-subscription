@@ -30,6 +30,7 @@ import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.{RegisterWithMultipleIDsCompanyAuditModel, RegisterWithMultipleIDsIndividualAuditModel}
+import uk.gov.hmrc.vatsubscription.models.monitoring.SignUpAuditing.SignUpAuditModel
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -116,11 +117,19 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
                      emailAddress: String,
                      emailAddressVerified: Boolean,
                      isDelegated: Boolean
-                    )(implicit hc: HeaderCarrier): EitherT[Future, SignUpRequestSubmissionFailure, CustomerSignUpResponseSuccess.type] =
-    if(isDelegated || emailAddressVerified)
-      EitherT(customerSignUpConnector.signUp(safeId, vatNumber, emailAddress, emailAddressVerified)) leftMap {
-        _ => SignUpFailure
-      }
+                    )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, SignUpRequestSubmissionFailure, CustomerSignUpResponseSuccess.type] =
+    if (isDelegated || emailAddressVerified)
+      EitherT(customerSignUpConnector.signUp(safeId, vatNumber, emailAddress, emailAddressVerified)) bimap( {
+        _ => {
+          auditService.audit(SignUpAuditModel(safeId, vatNumber, emailAddress, emailAddressVerified, false))
+          SignUpFailure
+        }
+      }, {
+        customerSignUpSuccess => {
+          auditService.audit(SignUpAuditModel(safeId, vatNumber, emailAddress, emailAddressVerified, true))
+          customerSignUpSuccess
+        }
+      })
     else EitherT.leftT(UnVerifiedPrincipalEmailFailure)
 
 
