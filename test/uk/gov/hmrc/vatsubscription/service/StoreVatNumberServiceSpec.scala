@@ -65,7 +65,7 @@ class StoreVatNumberServiceSpec
             val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
             res.right.value shouldBe StoreVatNumberSuccess
 
-            verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, isSuccess = true))
+            verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, haveRelationship = true))
           }
         }
         "the vat number is not stored successfully" should {
@@ -76,7 +76,7 @@ class StoreVatNumberServiceSpec
             val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
             res.left.value shouldBe VatNumberDatabaseFailure
 
-            verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, isSuccess = true))
+            verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, haveRelationship = true))
           }
         }
       }
@@ -88,7 +88,7 @@ class StoreVatNumberServiceSpec
           val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
           res.left.value shouldBe RelationshipNotFound
 
-          verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, isSuccess = false))
+          verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber,TestConstants.testAgentReferenceNumber, haveRelationship = false))
         }
       }
 

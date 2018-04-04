@@ -22,12 +22,12 @@ object AgentClientRelationshipAuditing {
   val agentClientRelationshipTransactionName = "VATAgentClientRelationshipRequest"
   val agentClientRelationshipAuditType = "AgentClientRelationshipCheckSubmitted"
 
-  case class AgentClientRelationshipAuditModel(vatNumber: String, agentReferenceNumber: String, isSuccess: Boolean) extends AuditModel {
+  case class AgentClientRelationshipAuditModel(vatNumber: String, agentReferenceNumber: String, haveRelationship: Boolean) extends AuditModel {
     override val transactionName: String = agentClientRelationshipTransactionName
     override val detail: Map[String, String] = Map(
       "vatNumber" -> vatNumber,
       "agentReferenceNumber" -> agentReferenceNumber,
-      "haveRelationship" -> s"$isSuccess"
+      "haveRelationship" -> s"$haveRelationship"
     )
     override val auditType: String = agentClientRelationshipAuditType
   }
