@@ -28,7 +28,7 @@ object UserMatchingAuditing {
   val dateFormatter =  DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT)
 
   case class UserMatchingAuditModel(userDetailsModel: UserDetailsModel,
-                                isSuccess: Boolean) extends AuditModel {
+                                    isSuccess: Boolean) extends AuditModel {
 
 
     override val transactionName: String = userMatchingTransactionName
