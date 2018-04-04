@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.models.UserDetailsModel
 import uk.gov.hmrc.vatsubscription.services._
@@ -42,7 +43,8 @@ trait MockStoreNinoService extends MockitoSugar with BeforeAndAfterEach {
     when(mockStoreNinoService.storeNino(
       ArgumentMatchers.eq(vatNumber),
       ArgumentMatchers.eq(userDetails)
-    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+    )(ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[Request[_]])) thenReturn response
   }
 
 }
