@@ -32,7 +32,6 @@ import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.RegisterWithMultipleIDsAuditModel
 import uk.gov.hmrc.vatsubscription.models.monitoring.SignUpAuditing.SignUpAuditModel
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
-import uk.gov.hmrc.vatsubscription.httpparsers._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,7 +58,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
           safeId <- registerCompany(vatNumber, companyNumber, optAgentReferenceNumber)
           _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
-          _ <- registerEnrolment(vatNumber, safeId, optAgentReferenceNumber)
+          _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
 
@@ -69,7 +68,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
           emailAddressVerified <- isEmailAddressVerified(emailAddress)
           safeId <- registerIndividual(vatNumber, nino, optAgentReferenceNumber)
           _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
-          _ <- registerEnrolment(vatNumber, safeId, optAgentReferenceNumber)
+          _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
         } yield SignUpRequestSubmitted
 
@@ -142,15 +141,10 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
 
 
   private def registerEnrolment(vatNumber: String,
-                                safeId: String,
-                                optAgentReferenceNumber: Option[String]
+                                safeId: String
                                )(implicit hc: HeaderCarrier): EitherT[Future, SignUpRequestSubmissionFailure, SuccessfulTaxEnrolment.type] = {
-    if (optAgentReferenceNumber.isDefined) {
-      EitherT[Future, SignUpRequestSubmissionFailure, SuccessfulTaxEnrolment.type](Future.successful(Right(SuccessfulTaxEnrolment)))
-    } else {
-      EitherT(taxEnrolmentsConnector.registerEnrolment(vatNumber, safeId)) leftMap {
-        _ => EnrolmentFailure
-      }
+    EitherT(taxEnrolmentsConnector.registerEnrolment(vatNumber, safeId)) leftMap {
+      _ => EnrolmentFailure
     }
   }
 

@@ -53,6 +53,7 @@ class SignUpSubmissionControllerISpec extends ComponentSpecBase with BeforeAndAf
           stubGetEmailVerified(testEmail)
           stubRegisterIndividual(testVatNumber, testNino)(testSafeId)
           stubSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(OK)
+          stubRegisterEnrolment(testVatNumber, testSafeId)(NO_CONTENT)
 
           await(repo.insert(testSubscriptionRequest))
           val res = await(post(s"/subscription-request/vat-number/$testVatNumber/submit")(Json.obj()))
@@ -74,6 +75,7 @@ class SignUpSubmissionControllerISpec extends ComponentSpecBase with BeforeAndAf
           stubGetEmailVerified(testEmail)
           stubRegisterCompany(testVatNumber, testCompanyNumber)(testSafeId)
           stubSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(OK)
+          stubRegisterEnrolment(testVatNumber, testSafeId)(NO_CONTENT)
 
           await(repo.insert(testSubscriptionRequest))
           val res = await(post(s"/subscription-request/vat-number/$testVatNumber/submit")(Json.obj()))
