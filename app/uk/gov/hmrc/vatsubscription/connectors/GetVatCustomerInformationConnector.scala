@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
                                                    val applicationConfig: AppConfig) {
 
-  private def url(vatNumber: String) = s"${applicationConfig.desUrl}vat/customer/vrn/$vatNumber/information"
+  private def url(vatNumber: String) = s"${applicationConfig.desUrl}/vat/customer/vrn/$vatNumber/information"
 
   def getInformation(vatNumber: String)(implicit hc: HeaderCarrier): Future[GetVatCustomerInformationHttpParserResponse] = {
     val headerCarrier = hc
