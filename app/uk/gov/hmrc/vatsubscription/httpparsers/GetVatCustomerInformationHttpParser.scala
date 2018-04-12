@@ -31,6 +31,8 @@ object GetVatCustomerInformationHttpParser {
           case JsSuccess(vatCustomerInformation, _) => Right(vatCustomerInformation)
           case _ => Left(UnexpectedGetVatCustomerInformationFailure(OK, response.body))
         }
+        case BAD_REQUEST => Left(InvalidVatNumber)
+        case NOT_FOUND => Left(VatNumberNotFound)
         case status => Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
       }
   }
