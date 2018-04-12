@@ -45,10 +45,10 @@ class MandationStatusSpec extends UnitSpec {
 
   "writer" should {
     "write the status correctly" in {
-      MandationStatus.writer.writes(MTDfBMandated) shouldBe JsString(MTDfBMandated.toString)
-      MandationStatus.writer.writes(MTDfBVoluntary) shouldBe JsString(MTDfBVoluntary.toString)
-      MandationStatus.writer.writes(NonMTDfB) shouldBe JsString(NonMTDfB.toString)
-      MandationStatus.writer.writes(NonDigital) shouldBe JsString(NonDigital.toString)
+      MandationStatus.writer.writes(MTDfBMandated) shouldBe JsString(MTDfBMandated.Name)
+      MandationStatus.writer.writes(MTDfBVoluntary) shouldBe JsString(MTDfBVoluntary.Name)
+      MandationStatus.writer.writes(NonMTDfB) shouldBe JsString(NonMTDfB.Name)
+      MandationStatus.writer.writes(NonDigital) shouldBe JsString(NonDigital.Name)
     }
   }
 
