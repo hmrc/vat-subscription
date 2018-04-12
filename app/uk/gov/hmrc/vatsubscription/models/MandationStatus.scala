@@ -19,53 +19,53 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.json._
 
 sealed trait MandationStatus {
-  val desString: String
+  def DesString: String
 
-  def toString: String
+  def Name: String
 }
 
 case object MTDfBMandated extends MandationStatus {
-  val desString: String = "1"
+  override val DesString: String = "1"
 
-  override def toString: String = "MTDfB Mandated"
+  override val Name: String = "MTDfB Mandated"
 }
 
 case object MTDfBVoluntary extends MandationStatus {
-  val desString: String = "2"
+  override val DesString: String = "2"
 
-  override def toString: String = "MTDfB Voluntary"
+  override val Name: String = "MTDfB Voluntary"
 }
 
 
 case object NonMTDfB extends MandationStatus {
-  val desString: String = "3"
+  override val DesString: String = "3"
 
-  override def toString: String = "Non MTDfB"
+  override val Name: String = "Non MTDfB"
 }
 
 
 case object NonDigital extends MandationStatus {
-  val desString: String = "4"
+  override val DesString: String = "4"
 
-  override def toString: String = "Non Digital"
+  override val Name: String = "Non Digital"
 }
 
 
 object MandationStatus {
 
-  def unapply(arg: MandationStatus): Option[String] = Some(arg.toString)
+  def unapply(arg: MandationStatus): Option[String] = Some(arg.Name)
 
   val desReader: Reads[MandationStatus] = for {
     value <- JsPath.read[String].map {
-      case MTDfBMandated.desString => MTDfBMandated
-      case MTDfBVoluntary.desString => MTDfBVoluntary
-      case NonMTDfB.desString => NonMTDfB
-      case NonDigital.desString => NonDigital
+      case MTDfBMandated.DesString => MTDfBMandated
+      case MTDfBVoluntary.DesString => MTDfBVoluntary
+      case NonMTDfB.DesString => NonMTDfB
+      case NonDigital.DesString => NonDigital
     }
   } yield value
 
   val writer: Writes[MandationStatus] = Writes(
-    (status: MandationStatus) => JsString(status.toString)
+    (status: MandationStatus) => JsString(status.Name)
   )
 
   implicit val format: Format[MandationStatus] = Format[MandationStatus](
