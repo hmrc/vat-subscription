@@ -62,6 +62,12 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
     super.afterAll()
   }
 
+  def get[T](uri: String): WSResponse = {
+    await(
+      buildClient(uri).get
+    )
+  }
+
   def post[T](uri: String)(body: T)(implicit writes: Writes[T]): WSResponse = {
     await(
       buildClient(uri)
