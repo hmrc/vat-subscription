@@ -22,25 +22,25 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.vatsubscription.models._
 
 object GetVatCustomerInformationHttpParser {
-  type GetVatCustomerInformationHttpParserResponse = Either[CustomerSignUpResponseFailure, VatCustomerInformation]
+  type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
 
   implicit object GetVatCustomerInformationHttpReads extends HttpReads[GetVatCustomerInformationHttpParserResponse] {
     override def read(method: String, url: String, response: HttpResponse): GetVatCustomerInformationHttpParserResponse =
       response.status match {
         case OK => response.json.validate(VatCustomerInformation.desReader) match {
           case JsSuccess(vatCustomerInformation, _) => Right(vatCustomerInformation)
-          case _ => Left(GetVatCustomerInformationFailure(OK, response.body))
+          case _ => Left(UnexpectedGetVatCustomerInformationFailure(OK, response.body))
         }
-        case status => Left(GetVatCustomerInformationFailure(status, response.body))
+        case status => Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
       }
   }
 
 }
 
-sealed trait CustomerSignUpResponseFailure
+sealed trait GetVatCustomerInformationFailure
 
-case object InvalidVatNumber extends CustomerSignUpResponseFailure
+case object InvalidVatNumber extends GetVatCustomerInformationFailure
 
-case object VatNumberNotFound extends CustomerSignUpResponseFailure
+case object VatNumberNotFound extends GetVatCustomerInformationFailure
 
-case class GetVatCustomerInformationFailure(status: Int, body: String) extends CustomerSignUpResponseFailure
+case class UnexpectedGetVatCustomerInformationFailure(status: Int, body: String) extends GetVatCustomerInformationFailure
