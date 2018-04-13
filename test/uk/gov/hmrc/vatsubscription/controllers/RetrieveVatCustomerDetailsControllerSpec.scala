@@ -99,11 +99,16 @@ class RetrieveVatCustomerDetailsControllerSpec extends UnitSpec with MockAuthCon
     "another failure occurred" should {
       "return the corresponding failure" in {
         mockAuthorise(retrievals = EmptyRetrieval)(Future.successful(Unit))
-        mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, ""))))
+
+        val responseBody = "error"
+
+        mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody))))
 
         val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
-        status(res) shouldBe INTERNAL_SERVER_ERROR
+        status(res) shouldBe BAD_GATEWAY
+        jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
+
       }
     }
   }

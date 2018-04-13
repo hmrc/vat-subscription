@@ -42,7 +42,7 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
           case Right(status) => Ok(Json.obj(mandationStatusKey -> status))
           case Left(InvalidVatNumber) => BadRequest
           case Left(VatNumberNotFound) => NotFound
-          case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => InternalServerError(Json.obj("status" -> status, "body" -> body))
+          case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
         }
       }
   }

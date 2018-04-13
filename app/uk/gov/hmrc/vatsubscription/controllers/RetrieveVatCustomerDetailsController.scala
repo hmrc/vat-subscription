@@ -40,7 +40,7 @@ class RetrieveVatCustomerDetailsController @Inject()(val authConnector: AuthConn
           case Right(customerDetails) => Ok(Json.toJson(customerDetails))
           case Left(InvalidVatNumber) => BadRequest
           case Left(VatNumberNotFound) => NotFound
-          case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => Status(status)(Json.toJson(body))
+          case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
         }
       }
   }

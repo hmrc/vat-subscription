@@ -81,7 +81,7 @@ class MandationStatusControllerSpec extends UnitSpec
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(OK, "failure"))))
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
-      status(res) shouldBe INTERNAL_SERVER_ERROR
+      status(res) shouldBe BAD_GATEWAY
 
       jsonBodyOf(await(res)) shouldBe Json.obj("status" -> OK, "body" -> "failure")
     }
