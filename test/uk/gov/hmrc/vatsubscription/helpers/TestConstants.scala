@@ -20,6 +20,7 @@ import java.util.UUID
 
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.vatsubscription.config.Constants.{AgentEnrolmentKey, AgentReferenceNumberKey, VATEnrolmentKey, VATReferenceKey}
+import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, MTDfBMandated, MandationStatus, VatCustomerInformation}
 
 object TestConstants {
   val testVatNumber: String = UUID.randomUUID().toString
@@ -35,5 +36,12 @@ object TestConstants {
   val testPrincipalEnrolment: Enrolment = Enrolment(VATEnrolmentKey).withIdentifier(VATReferenceKey, testVatNumber)
 
   val testErrorMsg = "this is an error"
+
+  val testCustomerDetails = CustomerDetails(Some("testFirstName"),
+    Some("testLastName"),
+    Some("testOrganisationName"),
+    Some("testTradingName"))
+
+  val testCustomerInformation = VatCustomerInformation(MTDfBMandated, testCustomerDetails)
 
 }

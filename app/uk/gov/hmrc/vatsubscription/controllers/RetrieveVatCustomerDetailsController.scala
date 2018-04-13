@@ -21,30 +21,27 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.httpparsers.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
-import uk.gov.hmrc.vatsubscription.services.MandationStatusService
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class MandationStatusController @Inject()(val authConnector: AuthConnector,
-                                          mandationStatusService: MandationStatusService
-                                         )(implicit ec: ExecutionContext)
+class RetrieveVatCustomerDetailsController @Inject()(val authConnector: AuthConnector,
+                                                     vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService)
+                                                    (implicit ec: ExecutionContext)
   extends BaseController with AuthorisedFunctions {
 
-  val mandationStatusKey = "mandationStatus"
-
-  def getMandationStatus(vatNumber: String): Action[AnyContent] = Action.async {
+  def retrieveVatCustomerDetails(vatNumber: String): Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
-        mandationStatusService.getMandationStatus(vatNumber) map {
-          case Right(status) => Ok(Json.obj(mandationStatusKey -> status))
+        vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vatNumber) map {
+          case Right(customerDetails) => Ok(Json.toJson(customerDetails))
           case Left(InvalidVatNumber) => BadRequest
           case Left(VatNumberNotFound) => NotFound
           case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
         }
       }
   }
-
 }

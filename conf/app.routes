@@ -8,3 +8,5 @@ POST        /subscription-request/vat-number/:vatNumber/submit                  
 POST        /subscription-request/vat-number/:vatNumber/identity-verification        @uk.gov.hmrc.vatsubscription.controllers.StoreIdentityVerificationOutcomeController.storeIdentityVerificationOutcome(vatNumber: String)
 
 GET         /:vatNumber/mandation-status                                             @uk.gov.hmrc.vatsubscription.controllers.MandationStatusController.getMandationStatus(vatNumber: String)
+
+GET         /:vatNumber/customer-details                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(vatNumber: String)

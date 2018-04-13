@@ -18,9 +18,9 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json.{Json, OFormat}
 
-
 case class CustomerDetails(firstName: Option[String], lastName: Option[String], organisationName: Option[String], tradingName: Option[String])
 
 object CustomerDetails {
   implicit val format: OFormat[CustomerDetails] = Json.format[CustomerDetails]
 }
+
