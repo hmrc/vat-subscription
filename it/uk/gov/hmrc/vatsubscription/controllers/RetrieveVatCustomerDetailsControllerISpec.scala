@@ -66,7 +66,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       }
     }
 
-    "calls to DES returend BAD_REQUEST" should {
+    "calls to DES returned BAD_REQUEST" should {
       "return BAD_REQUEST with the status" in {
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
@@ -79,7 +79,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       }
     }
 
-    "calls to DES returend NOT_FOUND" should {
+    "calls to DES returned NOT_FOUND" should {
       "return NOT_FOUND with the status" in {
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
@@ -92,7 +92,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       }
     }
 
-    "calls to DES returend anything else" should {
+    "calls to DES returned anything else" should {
       "return INTERNAL_SERVER_ERROR with the status" in {
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
