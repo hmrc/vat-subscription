@@ -19,8 +19,8 @@ package uk.gov.hmrc.vatsubscription.config
 object Constants {
   val AgentEnrolmentKey: String = "HMRC-AS-AGENT"
   val AgentReferenceNumberKey: String = "AgentReferenceNumber"
-  val VATEnrolmentKey: String = "HMCE-VATDEC-ORG"
-  val VATReferenceKey: String = "VATRegNo"
+  val VatDecEnrolmentKey: String = "HMCE-VATDEC-ORG"
+  val VatReferenceKey: String = "VATRegNo"
   val HttpCodeKey: String = "CODE"
 
   object Des {

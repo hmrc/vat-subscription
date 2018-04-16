@@ -34,11 +34,16 @@ object GetMandationStatusHttpParser {
           case MTDfBVoluntary.Name => MTDfBVoluntary
           case NonMTDfB.Name => NonMTDfB
           case NonDigital.Name => NonDigital
-        } toRight GetMandationStatusFailure(OK, response.body)
+        } toRight GetMandationStatusHttpFailure(OK, response.body)
+        case NOT_FOUND =>
+          Left(VatNumberNotFound)
         case status =>
-          Left(GetMandationStatusFailure(status, response.body))
+          Left(GetMandationStatusHttpFailure(status, response.body))
       }
   }
 
-  case class GetMandationStatusFailure(status: Int, body: String)
+  sealed trait GetMandationStatusFailure
+  case object VatNumberNotFound extends GetMandationStatusFailure
+  case class GetMandationStatusHttpFailure(status: Int, body: String) extends GetMandationStatusFailure
+
 }

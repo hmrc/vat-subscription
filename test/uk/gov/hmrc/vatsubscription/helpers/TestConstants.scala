@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.helpers
 import java.util.UUID
 
 import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.vatsubscription.config.Constants.{AgentEnrolmentKey, AgentReferenceNumberKey, VATEnrolmentKey, VATReferenceKey}
+import uk.gov.hmrc.vatsubscription.config.Constants.{AgentEnrolmentKey, AgentReferenceNumberKey, VatDecEnrolmentKey, VatReferenceKey}
 import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, MTDfBMandated, MandationStatus, VatCustomerInformation}
 
 object TestConstants {
@@ -33,7 +33,7 @@ object TestConstants {
   val testJourneyLink = s"/mdtp/journey/journeyId/${UUID.randomUUID().toString}"
 
   val testAgentEnrolment: Enrolment = Enrolment(AgentEnrolmentKey).withIdentifier(AgentReferenceNumberKey, testAgentReferenceNumber)
-  val testPrincipalEnrolment: Enrolment = Enrolment(VATEnrolmentKey).withIdentifier(VATReferenceKey, testVatNumber)
+  val testPrincipalEnrolment: Enrolment = Enrolment(VatDecEnrolmentKey).withIdentifier(VatReferenceKey, testVatNumber)
 
   val testErrorMsg = "this is an error"
 
