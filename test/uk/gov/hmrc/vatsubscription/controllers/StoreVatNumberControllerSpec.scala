@@ -29,7 +29,7 @@ import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser
 import uk.gov.hmrc.vatsubscription.service.mocks.MockStoreVatNumberService
-import uk.gov.hmrc.vatsubscription.services._
+import uk.gov.hmrc.vatsubscription.services.StoreVatNumberService._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

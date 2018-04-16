@@ -27,6 +27,7 @@ import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser.NoRelationshipCode
 import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.vatNumberKey
 import uk.gov.hmrc.vatsubscription.services._
+import StoreVatNumberService._
 
 import scala.concurrent.ExecutionContext
 
@@ -52,9 +53,11 @@ class StoreVatNumberController @Inject()(val authConnector: AuthConnector,
                 Forbidden(Json.obj(HttpCodeKey -> "InsufficientEnrolments"))
               case Left(RelationshipNotFound) =>
                 Forbidden(Json.obj(HttpCodeKey -> NoRelationshipCode))
+              case Left(AlreadySubscribed) =>
+                Conflict
               case Left(VatNumberDatabaseFailure) =>
                 InternalServerError
-              case Left(AgentServicesConnectionFailure) =>
+              case Left(AgentServicesConnectionFailure | VatSubscriptionConnectionFailure) =>
                 BadGateway
             }
         }

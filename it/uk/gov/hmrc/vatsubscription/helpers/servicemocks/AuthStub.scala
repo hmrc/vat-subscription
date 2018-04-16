@@ -59,10 +59,10 @@ object AuthStub extends WireMockMethods {
   )
 
   val vatDecEnrolment: JsObject = Json.obj(
-    "key" -> VATEnrolmentKey,
+    "key" -> VatDecEnrolmentKey,
     "identifiers" -> Json.arr(
       Json.obj(
-        "key" -> VATReferenceKey,
+        "key" -> VatReferenceKey,
         "value" -> testVatNumber
       )
     )

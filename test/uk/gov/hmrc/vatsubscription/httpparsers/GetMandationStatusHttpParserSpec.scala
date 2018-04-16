@@ -21,7 +21,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.httpparsers.GetMandationStatusHttpParser.GetMandationStatusFailure
+import uk.gov.hmrc.vatsubscription.httpparsers.GetMandationStatusHttpParser.GetMandationStatusHttpFailure
 import uk.gov.hmrc.vatsubscription.httpparsers.GetMandationStatusHttpParser.GetMandationStatusHttpReads.read
 import uk.gov.hmrc.vatsubscription.models.{MTDfBMandated, MTDfBVoluntary, NonDigital, NonMTDfB}
 
@@ -60,18 +60,26 @@ class GetMandationStatusHttpParserSpec extends UnitSpec with EitherValues {
         }
       }
       s"the json is invalid" should {
-        "return GetMandationStatusFailure" in {
+        "return GetMandationStatusHttpFailure" in {
           val testResponse = HttpResponse(OK, Some(Json.obj("mandationStatus" -> "invalid")))
 
-          read(testMethod, testUrl, testResponse).left.value shouldBe GetMandationStatusFailure(testResponse.status, testResponse.body)
+          read(testMethod, testUrl, testResponse).left.value shouldBe GetMandationStatusHttpFailure(testResponse.status, testResponse.body)
         }
       }
     }
+    "the http status is NOT_FOUND" should {
+      "return VatNumberNotFound" in {
+        val testResponse = HttpResponse(NOT_FOUND)
+
+        read(testMethod, testUrl, testResponse).left.value shouldBe GetMandationStatusHttpParser.VatNumberNotFound
+      }
+    }
+
     "the http status is anything else" should {
-      "return GetMandationStatusFailure" in {
+      "return GetMandationStatusHttpFailure" in {
         val testResponse = HttpResponse(BAD_REQUEST)
 
-        read(testMethod, testUrl, testResponse).left.value shouldBe GetMandationStatusFailure(testResponse.status, testResponse.body)
+        read(testMethod, testUrl, testResponse).left.value shouldBe GetMandationStatusHttpFailure(testResponse.status, testResponse.body)
       }
     }
   }

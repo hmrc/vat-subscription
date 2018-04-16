@@ -28,6 +28,8 @@ import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AgentClientRelationships
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser.NoRelationshipCode
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetMandationStatusStub._
+import uk.gov.hmrc.vatsubscription.models.{MTDfBVoluntary, NonMTDfB}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -45,11 +47,25 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
       "return CREATED when the vat number has been stored successfully" in {
         stubAuth(OK, successfulAuthResponse(agentEnrolment))
         stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
 
         val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
         res should have(
           httpStatus(CREATED),
+          emptyBody
+        )
+      }
+
+      "return CONFLICT when the client is already subscribed" in {
+        stubAuth(OK, successfulAuthResponse(agentEnrolment))
+        stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(MTDfBVoluntary))
+
+        val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+
+        res should have(
+          httpStatus(CONFLICT),
           emptyBody
         )
       }
@@ -80,11 +96,25 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
     "the user is a principal user" should {
       "return CREATED when the vat number has been stored successfully" in {
         stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
 
         val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
         res should have(
           httpStatus(CREATED),
+          emptyBody
+        )
+      }
+
+      "return CONFLICT when the user is already subscribed" in {
+        stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
+        stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(MTDfBVoluntary))
+
+        val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+
+        res should have(
+          httpStatus(CONFLICT),
           emptyBody
         )
       }

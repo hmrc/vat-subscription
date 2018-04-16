@@ -16,85 +16,103 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
+import cats.data._
+import cats.implicits._
 import javax.inject.{Inject, Singleton}
-
-import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.config.Constants._
-import uk.gov.hmrc.vatsubscription.connectors.AgentClientRelationshipsConnector
+import uk.gov.hmrc.vatsubscription.connectors.{AgentClientRelationshipsConnector, MandationStatusConnector}
+import uk.gov.hmrc.vatsubscription.httpparsers.GetMandationStatusHttpParser.VatNumberNotFound
+import uk.gov.hmrc.vatsubscription.models._
 import uk.gov.hmrc.vatsubscription.models.monitoring.AgentClientRelationshipAuditing.AgentClientRelationshipAuditModel
-import uk.gov.hmrc.vatsubscription.models.{HaveRelationshipResponse, NoRelationshipResponse}
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
+import uk.gov.hmrc.vatsubscription.utils.EnrolmentUtils._
+import StoreVatNumberService._
+import play.api.mvc.Request
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
                                       agentClientRelationshipsConnector: AgentClientRelationshipsConnector,
+                                      mandationStatusConnector: MandationStatusConnector,
                                       auditService: AuditService
                                      )(implicit ec: ExecutionContext) {
 
   def storeVatNumber(vatNumber: String,
                      enrolments: Enrolments
                     )(implicit hc: HeaderCarrier, request: Request[_]): Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]] = {
+      for {
+        _ <- checkUserAuthority(vatNumber, enrolments)
+        _ <- checkExistingVatSubscription(vatNumber)
+        _ <- insertVatNumber(vatNumber)
+      } yield StoreVatNumberSuccess
+    }.value
 
-    val optAgentReferenceNumber: Option[String] =
-      enrolments getEnrolment AgentEnrolmentKey flatMap {
-        agentEnrolment =>
-          agentEnrolment getIdentifier AgentReferenceNumberKey map (_.value)
-      }
-
-    val optVatEnrolment: Option[String] =
-      enrolments getEnrolment VATEnrolmentKey flatMap {
-        agentEnrolment =>
-          agentEnrolment getIdentifier VATReferenceKey map (_.value)
-      }
-
-    (optVatEnrolment, optAgentReferenceNumber) match {
-      case (Some(vatNumberFromEnrolment), _) if vatNumber == vatNumberFromEnrolment =>
-        insertVatNumber(vatNumber)
+  private def checkUserAuthority(vatNumber: String,
+                                 enrolments: Enrolments
+                                )(implicit request: Request[_], hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, Any] = {
+    EitherT((enrolments.vatNumber, enrolments.agentReferenceNumber) match {
       case (Some(vatNumberFromEnrolment), _) =>
-        Future.successful(Left(DoesNotMatchEnrolment))
+        if (vatNumber == vatNumberFromEnrolment) Future.successful(Right(UserHasMatchingEnrolment))
+        else Future.successful(Left(DoesNotMatchEnrolment))
       case (_, Some(agentReferenceNumber)) =>
-        storeDelegatedVatNumber(vatNumber, agentReferenceNumber)
-      case _ => Future.successful(Left(InsufficientEnrolments))
-    }
+        agentClientRelationshipsConnector.checkAgentClientRelationship(agentReferenceNumber, vatNumber) map {
+          case Right(HaveRelationshipResponse) =>
+            auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = true))
+            Right(HaveRelationshipResponse)
+          case Right(NoRelationshipResponse) =>
+            auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = false))
+            Left(RelationshipNotFound)
+          case _ =>
+            Left(AgentServicesConnectionFailure)
+        }
+      case _ =>
+        Future.successful(Left(InsufficientEnrolments))
+    })
+
   }
 
-  private def storeDelegatedVatNumber(vatNumber: String, agentReferenceNumber: String)(implicit hc: HeaderCarrier, request: Request[_]) =
-    agentClientRelationshipsConnector.checkAgentClientRelationship(agentReferenceNumber, vatNumber) flatMap {
-      case Right(HaveRelationshipResponse) =>
-        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = true))
-        insertVatNumber(vatNumber)
-      case Right(NoRelationshipResponse) =>
-        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = false))
-        Future.successful(Left(RelationshipNotFound))
-      case _ =>
-        Future.successful(Left(AgentServicesConnectionFailure))
-    } recover {
-      case _ => Left(AgentServicesConnectionFailure)
-    }
+  private def checkExistingVatSubscription(vatNumber: String
+                                          )(implicit hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, NotSubscribed.type] =
+    EitherT(mandationStatusConnector.getMandationStatus(vatNumber) map {
+      case Right(NonMTDfB | NonDigital) | Left(VatNumberNotFound) => Right(NotSubscribed)
+      case Right(MTDfBMandated | MTDfBVoluntary) => Left(AlreadySubscribed)
+      case _ => Left(VatSubscriptionConnectionFailure)
+    })
 
-  private def insertVatNumber(vatNumber: String) =
-    subscriptionRequestRepository.upsertVatNumber(vatNumber) map {
+  private def insertVatNumber(vatNumber: String
+                             )(implicit hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, StoreVatNumberSuccess.type] =
+    EitherT(subscriptionRequestRepository.upsertVatNumber(vatNumber) map {
       _ => Right(StoreVatNumberSuccess)
     } recover {
       case _ => Left(VatNumberDatabaseFailure)
-    }
+    })
 }
 
-object StoreVatNumberSuccess
+object StoreVatNumberService {
+  case object StoreVatNumberSuccess
 
-sealed trait StoreVatNumberFailure
+  case object NotSubscribed
 
-object DoesNotMatchEnrolment extends StoreVatNumberFailure
+  case object UserHasMatchingEnrolment
 
-object InsufficientEnrolments extends StoreVatNumberFailure
+  sealed trait StoreVatNumberFailure
 
-object RelationshipNotFound extends StoreVatNumberFailure
+  case object AlreadySubscribed extends StoreVatNumberFailure
 
-object AgentServicesConnectionFailure extends StoreVatNumberFailure
+  case object DoesNotMatchEnrolment extends StoreVatNumberFailure
 
-object VatNumberDatabaseFailure extends StoreVatNumberFailure
+  case object InsufficientEnrolments extends StoreVatNumberFailure
+
+  case object RelationshipNotFound extends StoreVatNumberFailure
+
+  case object AgentServicesConnectionFailure extends StoreVatNumberFailure
+
+  case object VatSubscriptionConnectionFailure extends StoreVatNumberFailure
+
+  case object VatNumberDatabaseFailure extends StoreVatNumberFailure
+}
+
+

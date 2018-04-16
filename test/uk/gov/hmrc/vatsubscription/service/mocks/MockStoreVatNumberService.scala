@@ -23,6 +23,7 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.services.StoreVatNumberService._
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future
