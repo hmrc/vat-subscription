@@ -29,7 +29,7 @@ object KnownFactsAndControlListInformationHttpParser {
 
       response.status match {
         case OK => response.json.validate[KnownFactsAndControlListInformation] match {
-          case JsSuccess(knownFactsControlList, _) => Right(knownFactsControlList)
+          case JsSuccess(knownFactsAndControlListInformation, _) => Right(knownFactsAndControlListInformation)
           case _ => Left(UnexpectedKnownFactsAndControlListInformationFailure(OK, response.body))
         }
         case BAD_REQUEST => Left(KnownFactsInvalidVatNumber)

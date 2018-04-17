@@ -24,9 +24,9 @@ import uk.gov.hmrc.vatsubscription.helpers.servicemocks.KnownFactsAndControlList
 import uk.gov.hmrc.vatsubscription.httpparsers.{ControlListInformationVatNumberNotFound, KnownFactsInvalidVatNumber}
 import uk.gov.hmrc.vatsubscription.models.KnownFactsAndControlListInformation
 
-class KnownFactsControlListInformationConnectorISpec extends ComponentSpecBase with EitherValues {
+class KnownFactsAndControlListInformationConnectorISpec extends ComponentSpecBase with EitherValues {
 
-  private lazy val knownFactsControlListInformationConnector: KnownFactsAndControlListInformationConnector =
+  private lazy val KnownFactsAndControlListInformationConnector: KnownFactsAndControlListInformationConnector =
     app.injector.instanceOf[KnownFactsAndControlListInformationConnector]
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
@@ -36,7 +36,7 @@ class KnownFactsControlListInformationConnectorISpec extends ComponentSpecBase w
       "return the known facts and control list information" in {
         KnownFactsAndControlListInformationStub.stubSuccessGetKnownFactsAndControlListInformation(testVatNumber)
 
-        val res = await(knownFactsControlListInformationConnector.getKnownFactsAndControlListInformation(testVatNumber))
+        val res = await(KnownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(testVatNumber))
 
         res.right.value shouldBe KnownFactsAndControlListInformation(Some(testPostCode),Some(testDateOfRegistration), testControlListInformation)
       }
@@ -48,7 +48,7 @@ class KnownFactsControlListInformationConnectorISpec extends ComponentSpecBase w
       "return a KnownFactsInvalidVatNumber" in {
         KnownFactsAndControlListInformationStub.stubFailureKnownFactsInvalidVatNumber(testVatNumber)
 
-        val res = await(knownFactsControlListInformationConnector.getKnownFactsAndControlListInformation(testVatNumber))
+        val res = await(KnownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(testVatNumber))
 
         res.left.value shouldBe KnownFactsInvalidVatNumber
       }
@@ -60,7 +60,7 @@ class KnownFactsControlListInformationConnectorISpec extends ComponentSpecBase w
       "return a ControlListInformationVatNumberNotFound" in {
         KnownFactsAndControlListInformationStub.stubFailureControlListVatNumberNotFound(testVatNumber)
 
-        val res = await(knownFactsControlListInformationConnector.getKnownFactsAndControlListInformation(testVatNumber))
+        val res = await(KnownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(testVatNumber))
 
         res.left.value shouldBe ControlListInformationVatNumberNotFound
       }
