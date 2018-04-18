@@ -27,4 +27,8 @@ object IntegrationTestConstants  {
   val testNino: String = UUID.randomUUID().toString
   val testToken =  UUID.randomUUID().toString
   val testJourneyLink = s"/mdtp/journey/journeyId/${UUID.randomUUID().toString}"
+
+  val testPostCode = "ZZ11 1ZZ"
+  val testDateOfRegistration = "2017-01-01"
+  val testControlListInformation = "10101010101010101010101010101010"
 }
