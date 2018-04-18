@@ -17,13 +17,13 @@
 package uk.gov.hmrc.vatsubscription.config
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.vatsubscription.config.featureswitch.{FeatureSwitch, FeatureSwitching}
 
 @Singleton
-class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
+class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig with FeatureSwitching {
 
   override protected def mode: Mode = environment.mode
 
@@ -61,4 +61,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val vatSubscriptionUrl: String = baseUrl("vat-subscription")
 
   def mandationStatusUrl(vatNumber: String): String = s"$vatSubscriptionUrl/vat-subscription/$vatNumber/mandation-status"
+
+  override def isEnabled(featureSwitch: FeatureSwitch): Boolean = super.isEnabled(featureSwitch)
 }

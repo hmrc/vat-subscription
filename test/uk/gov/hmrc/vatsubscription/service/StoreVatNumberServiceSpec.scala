@@ -27,6 +27,8 @@ import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.config.featureswitch.AlreadySubscribedCheck
+import uk.gov.hmrc.vatsubscription.config.mocks.MockConfig
 import uk.gov.hmrc.vatsubscription.connectors.mocks.{MockAgentClientRelationshipsConnector, MockMandationStatusConnector}
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
@@ -42,13 +44,14 @@ import scala.concurrent.Future
 
 class StoreVatNumberServiceSpec
   extends UnitSpec with MockAgentClientRelationshipsConnector with MockSubscriptionRequestRepository
-    with MockAuditService with EitherValues with MockMandationStatusConnector {
+    with MockAuditService with EitherValues with MockMandationStatusConnector with MockConfig {
 
   object TestStoreVatNumberService extends StoreVatNumberService(
     mockSubscriptionRequestRepository,
     mockAgentClientRelationshipsConnector,
     mockMandationStatusConnector,
-    mockAuditService
+    mockAuditService,
+    mockConfig
   )
 
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)
@@ -63,6 +66,8 @@ class StoreVatNumberServiceSpec
         "the vat number is not already subscribed for MTD-VAT" when {
           "the vat number is stored successfully" should {
             "return a StoreVatNumberSuccess" in {
+              enable(AlreadySubscribedCheck)
+
               mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
               mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
               mockUpsertVatNumber(testVatNumber)(Future.successful(mock[UpdateWriteResult]))
@@ -75,6 +80,8 @@ class StoreVatNumberServiceSpec
           }
           "the vat number is not stored successfully" should {
             "return a VatNumberDatabaseFailure" in {
+              enable(AlreadySubscribedCheck)
+
               mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
               mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonDigital)))
               mockUpsertVatNumber(testVatNumber)(Future.failed(new Exception))
@@ -88,6 +95,8 @@ class StoreVatNumberServiceSpec
         }
         "the VAT number is already voluntarily subscribed for MTD-VAT" should {
           "return AlreadySubscribed" in {
+            enable(AlreadySubscribedCheck)
+
             mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(MTDfBVoluntary)))
 
@@ -99,11 +108,26 @@ class StoreVatNumberServiceSpec
         }
         "the VAT number is already mandated for MTD-VAT" should {
           "return AlreadySubscribed" in {
+            enable(AlreadySubscribedCheck)
+
             mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(MTDfBMandated)))
 
             val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
             res.left.value shouldBe AlreadySubscribed
+
+            verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber, TestConstants.testAgentReferenceNumber, haveRelationship = true))
+          }
+        }
+        "the already subscribed check feature switch is turned off" should {
+          "always treat the user as not subscribed" in {
+            disable(AlreadySubscribedCheck)
+
+            mockCheckAgentClientRelationship(testAgentReferenceNumber, testVatNumber)(Future.successful(Right(HaveRelationshipResponse)))
+            mockUpsertVatNumber(testVatNumber)(Future.successful(mock[UpdateWriteResult]))
+
+            val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, agentUser))
+            res.right.value shouldBe StoreVatNumberSuccess
 
             verifyAudit(AgentClientRelationshipAuditModel(TestConstants.testVatNumber, TestConstants.testAgentReferenceNumber, haveRelationship = true))
           }
@@ -137,6 +161,8 @@ class StoreVatNumberServiceSpec
       "the vat number is not already subscribed for MTD-VAT" when {
         "the vat number is stored successfully" should {
           "return StoreVatNumberSuccess" in {
+            enable(AlreadySubscribedCheck)
+
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
             mockUpsertVatNumber(testVatNumber)(Future.successful(mock[UpdateWriteResult]))
 
@@ -146,6 +172,8 @@ class StoreVatNumberServiceSpec
         }
         "the vat number is not stored successfully" should {
           "return a VatNumberDatabaseFailure" in {
+            enable(AlreadySubscribedCheck)
+
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonDigital)))
             mockUpsertVatNumber(testVatNumber)(Future.failed(new Exception))
 
@@ -156,6 +184,8 @@ class StoreVatNumberServiceSpec
       }
       "the VAT number is already subscribed for MTD-VAT" should {
         "return AlreadySubscribed" in {
+          enable(AlreadySubscribedCheck)
+
           mockGetMandationStatus(testVatNumber)(Future.successful(Right(MTDfBVoluntary)))
 
           val res = await(TestStoreVatNumberService.storeVatNumber(testVatNumber, principalUser))
