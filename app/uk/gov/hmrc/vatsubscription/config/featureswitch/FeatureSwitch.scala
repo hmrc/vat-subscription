@@ -51,5 +51,5 @@ object MTDEligibilityCheck extends FeatureSwitch {
 
 object AlreadySubscribedCheck extends FeatureSwitch {
   override val name: String = "Enable check for already subscribed VAT numbers (API 1363)"
-  override val displayName: String = s"$prefix.control-list-check"
+  override val displayName: String = s"$prefix.already-subscribed-check"
 }
