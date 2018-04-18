@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.featureswitch
+package uk.gov.hmrc.vatsubscription.testonly.controllers
 
 import javax.inject.Inject
 import play.api.i18n.MessagesApi
