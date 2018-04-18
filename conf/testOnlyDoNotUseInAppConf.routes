@@ -13,6 +13,7 @@
 
 
 DELETE        /vat-subscription/test-only/vat-number/:vatNumber        @uk.gov.hmrc.vatsubscription.testonly.controllers.DBAdminController.delete(vatNumber:String)
-
+GET           /vat-subscription/test-only/feature-switch               @uk.gov.hmrc.vatsubscription.testonly.controllers.FeatureSwitchController.get
+POST          /vat-subscription/test-only/feature-switch               @uk.gov.hmrc.vatsubscription.testonly.controllers.FeatureSwitchController.update
 
 ->            /                                                        prod.Routes
