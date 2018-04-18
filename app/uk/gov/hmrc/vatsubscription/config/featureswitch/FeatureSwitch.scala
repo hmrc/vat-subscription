@@ -26,7 +26,10 @@ sealed trait FeatureSwitch {
 object FeatureSwitch {
   val prefix = "feature-switch"
 
-  val switches: Set[FeatureSwitch] = Set(MTDEligibilityCheck)
+  val switches: Set[FeatureSwitch] = Set(
+    MTDEligibilityCheck,
+    AlreadySubscribedCheck
+  )
 
   def apply(str: String): FeatureSwitch =
     switches find (_.name == str) match {
@@ -43,5 +46,10 @@ object FeatureSwitch {
 
 object MTDEligibilityCheck extends FeatureSwitch {
   val displayName = s"Enable MTD VAT control list eligibility check"
-  val name = s"$prefix.stub-des"
+  val name = s"$prefix.control-list-check"
+}
+
+object AlreadySubscribedCheck extends FeatureSwitch {
+  override val name: String = "Enable check for already subscribed VAT numbers (API 1363)"
+  override val displayName: String = s"$prefix.control-list-check"
 }

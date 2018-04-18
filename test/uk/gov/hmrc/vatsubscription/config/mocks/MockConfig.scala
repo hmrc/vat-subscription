@@ -16,12 +16,19 @@
 
 package uk.gov.hmrc.vatsubscription.config.mocks
 
-import org.scalatest.TestSuite
+import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.config.featureswitch.{FeatureSwitch, FeatureSwitching}
 
-trait MockConfig extends GuiceOneAppPerSuite {
+trait MockConfig extends GuiceOneAppPerSuite with BeforeAndAfterEach with FeatureSwitching {
   this: TestSuite =>
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    FeatureSwitch.switches foreach disable
+  }
+
   //TODO: Replace with mock config
   val mockConfig: AppConfig = app.injector.instanceOf[AppConfig]
 }

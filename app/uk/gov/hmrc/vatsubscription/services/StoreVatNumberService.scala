@@ -30,6 +30,8 @@ import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 import uk.gov.hmrc.vatsubscription.utils.EnrolmentUtils._
 import StoreVatNumberService._
 import play.api.mvc.Request
+import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.config.featureswitch.AlreadySubscribedCheck
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,7 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
                                       agentClientRelationshipsConnector: AgentClientRelationshipsConnector,
                                       mandationStatusConnector: MandationStatusConnector,
-                                      auditService: AuditService
+                                      auditService: AuditService,
+                                      appConfig: AppConfig
                                      )(implicit ec: ExecutionContext) {
 
   def storeVatNumber(vatNumber: String,
@@ -76,11 +79,15 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
 
   private def checkExistingVatSubscription(vatNumber: String
                                           )(implicit hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, NotSubscribed.type] =
-    EitherT(mandationStatusConnector.getMandationStatus(vatNumber) map {
-      case Right(NonMTDfB | NonDigital) | Left(VatNumberNotFound) => Right(NotSubscribed)
-      case Right(MTDfBMandated | MTDfBVoluntary) => Left(AlreadySubscribed)
-      case _ => Left(VatSubscriptionConnectionFailure)
-    })
+    if(appConfig.isEnabled(AlreadySubscribedCheck)) {
+      EitherT(mandationStatusConnector.getMandationStatus(vatNumber) map {
+        case Right(NonMTDfB | NonDigital) | Left(VatNumberNotFound) => Right(NotSubscribed)
+        case Right(MTDfBMandated | MTDfBVoluntary) => Left(AlreadySubscribed)
+        case _ => Left(VatSubscriptionConnectionFailure)
+      })
+    } else {
+      EitherT.pure(NotSubscribed)
+    }
 
   private def insertVatNumber(vatNumber: String
                              )(implicit hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, StoreVatNumberSuccess.type] =

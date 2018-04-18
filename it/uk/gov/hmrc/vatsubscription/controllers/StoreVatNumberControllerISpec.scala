@@ -22,6 +22,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.config.Constants
+import uk.gov.hmrc.vatsubscription.config.featureswitch.AlreadySubscribedCheck
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AgentClientRelationshipsStub._
@@ -45,6 +46,8 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
   "PUT /subscription-request/vat-number" when {
     "the user is an agent" should {
       "return CREATED when the vat number has been stored successfully" in {
+        enable(AlreadySubscribedCheck)
+
         stubAuth(OK, successfulAuthResponse(agentEnrolment))
         stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
         stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
@@ -58,6 +61,8 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
       }
 
       "return CONFLICT when the client is already subscribed" in {
+        enable(AlreadySubscribedCheck)
+
         stubAuth(OK, successfulAuthResponse(agentEnrolment))
         stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
         stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(MTDfBVoluntary))
@@ -95,6 +100,8 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
 
     "the user is a principal user" should {
       "return CREATED when the vat number has been stored successfully" in {
+        enable(AlreadySubscribedCheck)
+
         stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
         stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
 
@@ -107,6 +114,8 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
       }
 
       "return CONFLICT when the user is already subscribed" in {
+        enable(AlreadySubscribedCheck)
+
         stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
         stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
         stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(MTDfBVoluntary))
