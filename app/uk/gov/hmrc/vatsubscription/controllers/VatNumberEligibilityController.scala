@@ -33,7 +33,7 @@ class VatNumberEligibilityController @Inject()(val authConnector: AuthConnector,
   def checkVatNumberEligibility(vatNumber: String): Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
-        if (vatNumberEligibilityService.stubVatNumberEligibility) Future.successful(NoContent)
+        if (vatNumberEligibilityService.checkVatNumberEligibility) Future.successful(NoContent)
         else Future.successful(BadRequest)
       }
   }

@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.services
+package uk.gov.hmrc.vatsubscription.service.mocks
 
-import javax.inject.{Inject, Singleton}
+import org.mockito.Mockito._
+import org.scalatest.Suite
+import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.vatsubscription.services._
 
-@Singleton
-class VatNumberEligibilityService @Inject()() {
+trait MockVatNumberEligibilityService extends MockitoSugar {
+  self: Suite =>
 
-  // todo Update when eligibility requirements known
-  val checkVatNumberEligibility: Boolean = true
+  val mockVatNumberEligibilityService: VatNumberEligibilityService = mock[VatNumberEligibilityService]
+
+  def mockCheckVatNumberEligibility(response: Boolean): Unit = {
+    when(mockVatNumberEligibilityService.checkVatNumberEligibility) thenReturn response
+  }
 }

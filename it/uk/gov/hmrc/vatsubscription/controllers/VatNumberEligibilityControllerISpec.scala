@@ -36,7 +36,7 @@ class VatNumberEligibilityControllerISpec extends ComponentSpecBase with BeforeA
         val res = await(get(s"/subscription-request/vat-number/$testVatNumber/mtdfb-eligibility"))
 
         res should have(
-          httpStatus(OK)
+          httpStatus(NO_CONTENT)
         )
       }
     }

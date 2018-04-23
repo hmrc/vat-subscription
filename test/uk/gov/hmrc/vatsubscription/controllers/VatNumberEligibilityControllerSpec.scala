@@ -17,26 +17,32 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import play.api.http.Status._
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
-import uk.gov.hmrc.vatsubscription.services.VatNumberEligibilityService
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants.testVatNumber
+import uk.gov.hmrc.vatsubscription.service.mocks.MockVatNumberEligibilityService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class VatNumberEligibilityControllerSpec extends UnitSpec with MockAuthConnector {
+class VatNumberEligibilityControllerSpec extends UnitSpec with MockAuthConnector with MockVatNumberEligibilityService{
 
-  object TestVatNumberEligibilityController extends VatNumberEligibilityController(mockAuthConnector, new VatNumberEligibilityService)
+  object TestVatNumberEligibilityController extends VatNumberEligibilityController(mockAuthConnector, mockVatNumberEligibilityService)
 
   "checkVatNumberEligibility" should {
     "return NO_CONTENT when successful" in {
       mockAuthorise()(Future.successful(Unit))
-      TestVatNumberEligibilityController
+      mockCheckVatNumberEligibility(true)
       val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
       status(res) shouldBe NO_CONTENT
+    }
+
+    "return BAD_REQUEST when successful" in {
+      mockAuthorise()(Future.successful(Unit))
+      mockCheckVatNumberEligibility(false)
+      val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
+      status(res) shouldBe BAD_REQUEST
     }
   }
 
