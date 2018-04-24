@@ -23,7 +23,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.Enrolments
-import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrievals, ~}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.config.Constants.EmailVerification.EmailVerifiedKey
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
