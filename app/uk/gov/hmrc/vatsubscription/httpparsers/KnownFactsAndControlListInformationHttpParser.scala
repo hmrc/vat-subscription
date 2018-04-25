@@ -27,6 +27,7 @@ object KnownFactsAndControlListInformationHttpParser {
   implicit object KnownFactsAndControlListInformationHttpReads extends HttpReads[KnownFactsAndControlListInformationHttpParserResponse] {
     override def read(method: String, url: String, response: HttpResponse): KnownFactsAndControlListInformationHttpParserResponse = {
 
+      // TODO parse control information string into ControlListInformation
       response.status match {
         case OK => response.json.validate[KnownFactsAndControlListInformation] match {
           case JsSuccess(knownFactsAndControlListInformation, _) => Right(knownFactsAndControlListInformation)
