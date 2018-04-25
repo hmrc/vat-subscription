@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json.Json
 
+// TODO change controlListInformation to ControlListInformation type
 case class KnownFactsAndControlListInformation(postcode: Option[String],
                                                dateOfReg: Option[String],
                                                controlListInformation: String)
