@@ -21,7 +21,6 @@ import uk.gov.hmrc.vatsubscription.models.ControlListInformation.{BusinessEntity
 import scala.util.Try
 
 case class ControlListInformation(belowVatThreshold: Boolean,
-                                  annualAccounting: Boolean,
                                   missingReturns: Boolean,
                                   centralAssessments: Boolean,
                                   criminalInvestigationInhibits: Boolean,
@@ -48,7 +47,9 @@ object ControlListInformation {
 
   sealed trait Stagger
 
-  case object Stagger0 extends Stagger
+  case object AnnualStagger extends Stagger
+
+  case object MonthlyStagger extends Stagger
 
   case object Stagger1 extends Stagger
 
@@ -89,14 +90,16 @@ object ControlListInformation {
   private[models] val CONTROL_INFORMATION_STRING_LENGTH = 32
 
   private def parseStagger(controlList: Seq[Boolean]): Either[StaggerConflict.type, Stagger] = {
-    (controlList(STAGGER_0),
+    (controlList(ANNUAL_STAGGER),
+      controlList(MONTHLY_STAGGER),
       controlList(STAGGER_1),
       controlList(STAGGER_2),
       controlList(STAGGER_3)) match {
-      case (true, false, false, false) => Right(Stagger0)
-      case (false, true, false, false) => Right(Stagger1)
-      case (false, false, true, false) => Right(Stagger2)
-      case (false, false, false, true) => Right(Stagger3)
+      case (true, false, false, false, false) => Right(AnnualStagger)
+      case (false, true, false, false, false) => Right(MonthlyStagger)
+      case (false, false, true, false, false) => Right(Stagger1)
+      case (false, false, false, true, false) => Right(Stagger2)
+      case (false, false, false, false, true) => Right(Stagger3)
       case _ => Left(StaggerConflict)
     }
   }
@@ -137,7 +140,6 @@ object ControlListInformation {
         case (Right(stagger), Right(businessEntity)) =>
           Right(ControlListInformation(
             belowVatThreshold = controlListSeq(BELOW_VAT_THRESHOLD),
-            annualAccounting = controlListSeq(ANNUAL_ACCOUNTING),
             missingReturns = controlListSeq(MISSING_RETURNS),
             centralAssessments = controlListSeq(CENTRAL_ASSESSMENTS),
             criminalInvestigationInhibits = controlListSeq(CRIMINAL_INVESTIGATION_INHIBITS),
@@ -167,7 +169,7 @@ object ControlListInformation {
 
 object ControlListInformationIndicies {
   val BELOW_VAT_THRESHOLD = 0
-  val ANNUAL_ACCOUNTING = 1
+  val ANNUAL_STAGGER = 1
   val MISSING_RETURNS = 2
   val CENTRAL_ASSESSMENTS = 3
   val CRIMINAL_INVESTIGATION_INHIBITS = 4
@@ -179,7 +181,7 @@ object ControlListInformationIndicies {
   val EU_SALES_OR_PURCHASES = 10
   val LARGE_BUSINESS = 11
   val MISSING_TRADER = 12
-  val STAGGER_0 = 13
+  val MONTHLY_STAGGER = 13
   val NONE_STANDARD_TAX_PERIOD = 14
   val OVERSEAS_TRADER = 15
   val POA_TRADER = 16

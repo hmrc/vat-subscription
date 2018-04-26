@@ -24,9 +24,9 @@ import uk.gov.hmrc.vatsubscription.models.ControlListInformationIndicies._
 class ControlInformationSpec extends UnitSpec {
 
   val allFalse: String = "1" * CONTROL_INFORMATION_STRING_LENGTH
-  val valid: String = setupTestDataCore(allFalse)(STAGGER_0 -> '0', COMPANY -> '0')
+  val valid: String = setupTestDataCore(allFalse)(ANNUAL_STAGGER -> '0', COMPANY -> '0')
   val businessEntityConflict: String = setupTestData(COMPANY -> '0', SOLE_TRADER -> '0')
-  val staggerConflict: String = setupTestData(STAGGER_0 -> '0', STAGGER_1 -> '0')
+  val staggerConflict: String = setupTestData(ANNUAL_STAGGER -> '0', STAGGER_1 -> '0')
 
   private def setupTestDataCore(startString: String)(amendments: (Int, Character)*): String = {
     require(amendments.forall { case (index, _) => index >= 0 && index < CONTROL_INFORMATION_STRING_LENGTH })
@@ -50,11 +50,6 @@ class ControlInformationSpec extends UnitSpec {
         "parse below VAT threshold correctly" in {
           ControlListInformation.tryParse(setupTestData(BELOW_VAT_THRESHOLD -> '0')).right.get.belowVatThreshold shouldBe true
           ControlListInformation.tryParse(setupTestData(BELOW_VAT_THRESHOLD -> '1')).right.get.belowVatThreshold shouldBe false
-        }
-
-        "parse annual accounting correctly" in {
-          ControlListInformation.tryParse(setupTestData(ANNUAL_ACCOUNTING -> '0')).right.get.annualAccounting shouldBe true
-          ControlListInformation.tryParse(setupTestData(ANNUAL_ACCOUNTING -> '1')).right.get.annualAccounting shouldBe false
         }
 
         "parse missing returns correctly" in {
@@ -113,10 +108,11 @@ class ControlInformationSpec extends UnitSpec {
         }
 
         "parse Stagger correctly" in {
-          ControlListInformation.tryParse(setupTestData(STAGGER_0 -> '0')).right.get.staggerType shouldBe Stagger0
-          ControlListInformation.tryParse(setupTestData(STAGGER_0 -> '1', STAGGER_1 -> '0')).right.get.staggerType shouldBe Stagger1
-          ControlListInformation.tryParse(setupTestData(STAGGER_0 -> '1', STAGGER_2 -> '0')).right.get.staggerType shouldBe Stagger2
-          ControlListInformation.tryParse(setupTestData(STAGGER_0 -> '1', STAGGER_3 -> '0')).right.get.staggerType shouldBe Stagger3
+          ControlListInformation.tryParse(setupTestData(ANNUAL_STAGGER -> '0')).right.get.staggerType shouldBe AnnualStagger
+          ControlListInformation.tryParse(setupTestData(ANNUAL_STAGGER -> '1', MONTHLY_STAGGER -> '0')).right.get.staggerType shouldBe MonthlyStagger
+          ControlListInformation.tryParse(setupTestData(ANNUAL_STAGGER -> '1', STAGGER_1 -> '0')).right.get.staggerType shouldBe Stagger1
+          ControlListInformation.tryParse(setupTestData(ANNUAL_STAGGER -> '1', STAGGER_2 -> '0')).right.get.staggerType shouldBe Stagger2
+          ControlListInformation.tryParse(setupTestData(ANNUAL_STAGGER -> '1', STAGGER_3 -> '0')).right.get.staggerType shouldBe Stagger3
         }
 
         "parse none standard tax period correctly" in {
