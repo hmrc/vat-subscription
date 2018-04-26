@@ -21,7 +21,6 @@ import uk.gov.hmrc.vatsubscription.models.ControlListInformation.{BusinessEntity
 import scala.util.Try
 
 case class ControlListInformation(belowVatThreshold: Boolean,
-                                  annualAccounting: Boolean,
                                   missingReturns: Boolean,
                                   centralAssessments: Boolean,
                                   criminalInvestigationInhibits: Boolean,
@@ -30,25 +29,27 @@ case class ControlListInformation(belowVatThreshold: Boolean,
                                   deRegOrDeath: Boolean,
                                   debtMigration: Boolean,
                                   directDebit: Boolean,
-                                  eu: Boolean,
+                                  euSalesOrPurchases: Boolean,
                                   largeBusiness: Boolean,
-                                  missing: Boolean,
+                                  missingTrader: Boolean,
                                   staggerType: Stagger,
-                                  nonStandard: Boolean,
-                                  overseas: Boolean,
-                                  poa: Boolean,
+                                  nonStandardTaxPeriod: Boolean,
+                                  overseasTrader: Boolean,
+                                  poaTrader: Boolean,
                                   entityType: BusinessEntity,
-                                  dific: Boolean,
+                                  dificTrader: Boolean,
                                   anythingUnderAppeal: Boolean,
-                                  repaymentCustomer: Boolean,
-                                  moss: Boolean
+                                  repaymentTrader: Boolean,
+                                  mossTrader: Boolean
                                  )
 
 object ControlListInformation {
 
   sealed trait Stagger
 
-  case object Stagger0 extends Stagger
+  case object AnnualStagger extends Stagger
+
+  case object MonthlyStagger extends Stagger
 
   case object Stagger1 extends Stagger
 
@@ -84,6 +85,45 @@ object ControlListInformation {
 
   case object StaggerConflict extends ControlListParseError
 
+  import ControlListInformationIndicies._
+
+  private[models] val CONTROL_INFORMATION_STRING_LENGTH = 32
+
+  private def parseStagger(controlList: Seq[Boolean]): Either[StaggerConflict.type, Stagger] = {
+    (controlList(ANNUAL_STAGGER),
+      controlList(MONTHLY_STAGGER),
+      controlList(STAGGER_1),
+      controlList(STAGGER_2),
+      controlList(STAGGER_3)) match {
+      case (true, false, false, false, false) => Right(AnnualStagger)
+      case (false, true, false, false, false) => Right(MonthlyStagger)
+      case (false, false, true, false, false) => Right(Stagger1)
+      case (false, false, false, true, false) => Right(Stagger2)
+      case (false, false, false, false, true) => Right(Stagger3)
+      case _ => Left(StaggerConflict)
+    }
+  }
+
+  private def parseBusinessEntity(controlList: Seq[Boolean]): Either[EntityConflict.type, BusinessEntity] =
+    (controlList(COMPANY),
+      controlList(DIVISION),
+      controlList(GROUP),
+      controlList(PARTNERSHIP),
+      controlList(PUBLIC_CORPORATION),
+      controlList(SOLE_TRADER),
+      controlList(LOCAL_AUTHORITY),
+      controlList(NON_PROFIT)
+    ) match {
+      case (true, false, false, false, false, false, false, false) => Right(Company)
+      case (false, true, false, false, false, false, false, false) => Right(Division)
+      case (false, false, true, false, false, false, false, false) => Right(Group)
+      case (false, false, false, true, false, false, false, false) => Right(Partnership)
+      case (false, false, false, false, true, false, false, false) => Right(PublicCorporation)
+      case (false, false, false, false, false, true, false, false) => Right(SoleTrader)
+      case (false, false, false, false, false, false, true, false) => Right(LocalAuthority)
+      case (false, false, false, false, false, false, false, true) => Right(NonProfitMakingBody)
+      case _ => Left(EntityConflict)
+    }
 
   def tryParse(controlList: String): Either[ControlListParseError, ControlListInformation] = {
     val controlListSeq: Seq[Boolean] = Try(controlList.map {
@@ -92,50 +132,14 @@ object ControlListInformation {
       case _ => throw new IllegalArgumentException("control list string must be binary")
     }).getOrElse(Seq.empty)
 
-    if (controlListSeq.length != 32) Left(InvalidFormat)
+    if (controlListSeq.length != CONTROL_INFORMATION_STRING_LENGTH) Left(InvalidFormat)
     else {
-      import ControlListInformationIndicies._
-
-      lazy val parseStagger: Either[StaggerConflict.type, Stagger] =
-        (controlListSeq(STAGGER_0),
-          controlListSeq(STAGGER_1),
-          controlListSeq(STAGGER_2),
-          controlListSeq(STAGGER_3)) match {
-          case (true, false, false, false) => Right(Stagger0)
-          case (false, true, false, false) => Right(Stagger1)
-          case (false, false, true, false) => Right(Stagger2)
-          case (false, false, false, true) => Right(Stagger3)
-          case _ => Left(StaggerConflict)
-        }
-
-      lazy val parseBusinessEntity: Either[EntityConflict.type, BusinessEntity] =
-        (controlListSeq(COMPANY),
-          controlListSeq(DIVISION),
-          controlListSeq(GROUP),
-          controlListSeq(PARTNERSHIP),
-          controlListSeq(PUBLIC_CORPORATION),
-          controlListSeq(SOLE_TRADER),
-          controlListSeq(LOCAL_AUTHORITY),
-          controlListSeq(NON_PROFIT)
-        ) match {
-          case (true, false, false, false, false, false, false, false) => Right(Company)
-          case (false, true, false, false, false, false, false, false) => Right(Division)
-          case (false, false, true, false, false, false, false, false) => Right(Group)
-          case (false, false, false, true, false, false, false, false) => Right(Partnership)
-          case (false, false, false, false, true, false, false, false) => Right(PublicCorporation)
-          case (false, false, false, false, false, true, false, false) => Right(SoleTrader)
-          case (false, false, false, false, false, false, true, false) => Right(LocalAuthority)
-          case (false, false, false, false, false, false, false, true) => Right(NonProfitMakingBody)
-          case _ => Left(EntityConflict)
-        }
-
-      (parseStagger, parseBusinessEntity) match {
+      (parseStagger(controlListSeq), parseBusinessEntity(controlListSeq)) match {
         case (Left(err), _) => Left(err)
         case (_, Left(err)) => Left(err)
         case (Right(stagger), Right(businessEntity)) =>
           Right(ControlListInformation(
-            belowVatThreshold = controlListSeq(VAT_THRESHOLD),
-            annualAccounting = controlListSeq(ANNUAL_ACCOUNTING),
+            belowVatThreshold = controlListSeq(BELOW_VAT_THRESHOLD),
             missingReturns = controlListSeq(MISSING_RETURNS),
             centralAssessments = controlListSeq(CENTRAL_ASSESSMENTS),
             criminalInvestigationInhibits = controlListSeq(CRIMINAL_INVESTIGATION_INHIBITS),
@@ -144,29 +148,28 @@ object ControlListInformation {
             deRegOrDeath = controlListSeq(DEREG_OR_DEATH),
             debtMigration = controlListSeq(DEBT_MIGRATION),
             directDebit = controlListSeq(DIRECT_DEBIT),
-            eu = controlListSeq(EU),
+            euSalesOrPurchases = controlListSeq(EU_SALES_OR_PURCHASES),
             largeBusiness = controlListSeq(LARGE_BUSINESS),
-            missing = controlListSeq(MISSING),
+            missingTrader = controlListSeq(MISSING_TRADER),
             staggerType = stagger,
-            nonStandard = controlListSeq(NONE_STANDARD_TAX_PERIOD),
-            overseas = controlListSeq(OVERSEAS),
-            poa = controlListSeq(POA),
+            nonStandardTaxPeriod = controlListSeq(NONE_STANDARD_TAX_PERIOD),
+            overseasTrader = controlListSeq(OVERSEAS_TRADER),
+            poaTrader = controlListSeq(POA_TRADER),
             entityType = businessEntity,
-            dific = controlListSeq(DIFIC),
+            dificTrader = controlListSeq(DIFIC_TRADER),
             anythingUnderAppeal = controlListSeq(ANYTHING_UNDER_APPEAL),
-            repaymentCustomer = controlListSeq(REPAYMENT_CUSTOMERS),
-            moss = controlListSeq(MOSS)
+            repaymentTrader = controlListSeq(REPAYMENT_TRADER),
+            mossTrader = controlListSeq(MOSS_TRADER)
           ))
       }
     }
-
   }
 
 }
 
 object ControlListInformationIndicies {
-  val VAT_THRESHOLD = 0
-  val ANNUAL_ACCOUNTING = 1
+  val BELOW_VAT_THRESHOLD = 0
+  val ANNUAL_STAGGER = 1
   val MISSING_RETURNS = 2
   val CENTRAL_ASSESSMENTS = 3
   val CRIMINAL_INVESTIGATION_INHIBITS = 4
@@ -175,13 +178,13 @@ object ControlListInformationIndicies {
   val DEREG_OR_DEATH = 7
   val DEBT_MIGRATION = 8
   val DIRECT_DEBIT = 9
-  val EU = 10
+  val EU_SALES_OR_PURCHASES = 10
   val LARGE_BUSINESS = 11
-  val MISSING = 12
-  val STAGGER_0 = 13
+  val MISSING_TRADER = 12
+  val MONTHLY_STAGGER = 13
   val NONE_STANDARD_TAX_PERIOD = 14
-  val OVERSEAS = 15
-  val POA = 16
+  val OVERSEAS_TRADER = 15
+  val POA_TRADER = 16
   val STAGGER_1 = 17
   val STAGGER_2 = 18
   val STAGGER_3 = 19
@@ -193,8 +196,8 @@ object ControlListInformationIndicies {
   val SOLE_TRADER = 25
   val LOCAL_AUTHORITY = 26
   val NON_PROFIT = 27
-  val DIFIC = 28
+  val DIFIC_TRADER = 28
   val ANYTHING_UNDER_APPEAL = 29
-  val REPAYMENT_CUSTOMERS = 30
-  val MOSS = 31
+  val REPAYMENT_TRADER = 30
+  val MOSS_TRADER = 31
 }
