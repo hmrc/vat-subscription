@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.vatsubscription.utils.controllist
 
+import uk.gov.hmrc.vatsubscription.config.Constants.CONTROL_INFORMATION_STRING_LENGTH
 import uk.gov.hmrc.vatsubscription.models.ControlListInformation
 import uk.gov.hmrc.vatsubscription.models.ControlListInformation._
 
 import scala.util.Try
 
 object ControlListInformationParser {
-  import ControlListInformationIndices._
 
-  private[controllist] val CONTROL_INFORMATION_STRING_LENGTH = 32
+  import ControlListInformationIndices._
 
   private def parseStagger(controlList: Seq[Boolean]): Either[StaggerConflict.type, Stagger] = {
     (controlList(ANNUAL_STAGGER),
@@ -144,4 +144,5 @@ object ControlListInformationParser {
     val REPAYMENT_TRADER = 30
     val MOSS_TRADER = 31
   }
+
 }

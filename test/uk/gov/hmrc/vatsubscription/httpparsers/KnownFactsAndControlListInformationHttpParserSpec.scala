@@ -39,14 +39,12 @@ class KnownFactsAndControlListInformationHttpParserSpec extends UnitSpec with Ei
               Json.obj(
                 "postcode" -> testPostCode,
                 "dateOfReg" -> testDateOfRegistration,
-                "controlListInformation" -> testControlListInformation
+                "controlListInformation" -> ControlList.valid
               )
             )
           )
 
-          read(testMethod, testUrl, testResponse).right.value shouldBe KnownFactsAndControlListInformation(Some(testPostCode),
-                                                                                                           Some(testDateOfRegistration),
-                                                                                                           testControlListInformation)
+          read(testMethod, testUrl, testResponse) shouldBe Right(MtdEligible(testPostCode, testDateOfRegistration))
         }
       }
 
