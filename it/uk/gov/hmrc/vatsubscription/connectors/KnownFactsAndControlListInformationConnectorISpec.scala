@@ -21,8 +21,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.helpers.ComponentSpecBase
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.KnownFactsAndControlListInformationStub
-import uk.gov.hmrc.vatsubscription.httpparsers.{ControlListInformationVatNumberNotFound, KnownFactsInvalidVatNumber}
-import uk.gov.hmrc.vatsubscription.models.KnownFactsAndControlListInformation
+import uk.gov.hmrc.vatsubscription.httpparsers.{ControlListInformationVatNumberNotFound, KnownFactsInvalidVatNumber, MtdEligible}
 
 class KnownFactsAndControlListInformationConnectorISpec extends ComponentSpecBase with EitherValues {
 
@@ -38,7 +37,7 @@ class KnownFactsAndControlListInformationConnectorISpec extends ComponentSpecBas
 
         val res = await(KnownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(testVatNumber))
 
-        res.right.value shouldBe KnownFactsAndControlListInformation(Some(testPostCode),Some(testDateOfRegistration), testControlListInformation)
+        res.right.value shouldBe MtdEligible(testPostCode, testDateOfRegistration)
       }
     }
   }

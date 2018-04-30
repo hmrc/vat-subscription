@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsValue, Json}
 import play.api.http.Status.{OK, NOT_FOUND, BAD_REQUEST}
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.ControlList
 
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 
@@ -47,7 +48,7 @@ object KnownFactsAndControlListInformationStub extends WireMockMethods {
     Json.obj(
       "postcode" -> testPostCode,
       "dateOfReg" -> testDateOfRegistration,
-      "controlListInformation" -> testControlListInformation
+      "controlListInformation" -> ControlList.valid
     )
 
 

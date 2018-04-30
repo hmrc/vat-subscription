@@ -48,4 +48,6 @@ object Constants {
     val ContinueUrlKey = "continueUrl"
     val EmailVerifiedKey = "emailVerified"
   }
+
+  val CONTROL_INFORMATION_STRING_LENGTH: Int = 32
 }

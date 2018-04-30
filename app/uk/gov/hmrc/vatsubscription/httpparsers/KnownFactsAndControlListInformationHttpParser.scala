@@ -16,33 +16,53 @@
 
 package uk.gov.hmrc.vatsubscription.httpparsers
 
+import cats.data.NonEmptyList
+import cats.data.Validated.{Invalid, Valid}
 import play.api.http.Status._
-import play.api.libs.json.JsSuccess
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import uk.gov.hmrc.vatsubscription.models._
+import uk.gov.hmrc.vatsubscription.utils.controllist.ControlListInformationParser
 
 object KnownFactsAndControlListInformationHttpParser {
-  type KnownFactsAndControlListInformationHttpParserResponse = Either[KnownFactsAndControlListInformationFailure, KnownFactsAndControlListInformation]
+  type KnownFactsAndControlListInformationHttpParserResponse = Either[KnownFactsAndControlListInformationFailure, MtdEligible]
+
+  val postcodeKey = "postcode"
+  val registrationDateKey = "dateOfReg"
+  val controlListInformationKey = "controlListInformation"
 
   implicit object KnownFactsAndControlListInformationHttpReads extends HttpReads[KnownFactsAndControlListInformationHttpParserResponse] {
     override def read(method: String, url: String, response: HttpResponse): KnownFactsAndControlListInformationHttpParserResponse = {
-
-      // TODO parse control information string into ControlListInformation
       response.status match {
-        case OK => response.json.validate[KnownFactsAndControlListInformation] match {
-          case JsSuccess(knownFactsAndControlListInformation, _) => Right(knownFactsAndControlListInformation)
-          case _ => Left(UnexpectedKnownFactsAndControlListInformationFailure(OK, response.body))
-        }
-        case BAD_REQUEST => Left(KnownFactsInvalidVatNumber)
-        case NOT_FOUND => Left(ControlListInformationVatNumberNotFound)
-        case status => Left(UnexpectedKnownFactsAndControlListInformationFailure(status, response.body))
+        case OK =>
+          (for {
+            businessPostcode <- (response.json \ postcodeKey).validate[String]
+            vatRegistrationDate <- (response.json \ registrationDateKey).validate[String]
+            controlList <- (response.json \ controlListInformationKey).validate[String]
+          } yield ControlListInformationParser.tryParse(controlList) match {
+            case Right(validControlList) =>
+              validControlList.validate match {
+                case Valid(_) => Right(MtdEligible(businessPostcode, vatRegistrationDate))
+                case Invalid(ineligibilityReasons) => Left(MtdIneligible(ineligibilityReasons))
+              }
+            case Left(_) =>
+              Left(UnexpectedKnownFactsAndControlListInformationFailure(OK, response.body))
+          }) getOrElse Left(UnexpectedKnownFactsAndControlListInformationFailure(OK, response.body))
+        case BAD_REQUEST =>
+          Left(KnownFactsInvalidVatNumber)
+        case NOT_FOUND =>
+          Left(ControlListInformationVatNumberNotFound)
+        case status =>
+          Left(UnexpectedKnownFactsAndControlListInformationFailure(status, response.body))
       }
     }
   }
 
 }
 
+case class MtdEligible(businessPostcode: String, vatRegistrationDate: String)
+
 sealed trait KnownFactsAndControlListInformationFailure
+
+case class MtdIneligible(ineligibilityReasons: NonEmptyList[String]) extends KnownFactsAndControlListInformationFailure
 
 case object KnownFactsInvalidVatNumber extends KnownFactsAndControlListInformationFailure
 
