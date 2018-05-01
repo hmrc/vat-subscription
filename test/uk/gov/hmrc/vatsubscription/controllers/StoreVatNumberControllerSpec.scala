@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import play.api.http.Status._
+import play.api.http.Status.{PRECONDITION_FAILED, UNPROCESSABLE_ENTITY, _}
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -28,6 +28,7 @@ import uk.gov.hmrc.vatsubscription.config.Constants.HttpCodeKey
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser
+import uk.gov.hmrc.vatsubscription.models.StoreVatNumberRequest
 import uk.gov.hmrc.vatsubscription.service.mocks.MockStoreVatNumberService
 import uk.gov.hmrc.vatsubscription.services.StoreVatNumberService._
 
@@ -45,12 +46,14 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
   val enrolments = Enrolments(Set(testAgentEnrolment))
 
   "storeVatNumber" when {
+
+    //n.b. since the service is mocked, we don't care what the input is only how we handle what the service returns
+    val request = FakeRequest() withBody StoreVatNumberRequest(testVatNumber, None, None)
+
     "the VAT number has been stored correctly" should {
       "return CREATED" in {
         mockAuthRetrieveAgentEnrolment()
         mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Right(StoreVatNumberSuccess)))
-
-        val request = FakeRequest() withBody testVatNumber
 
         val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
 
@@ -63,8 +66,6 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
         mockAuthRetrieveAgentEnrolment()
         mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(VatNumberDatabaseFailure)))
 
-        val request = FakeRequest() withBody testVatNumber
-
         val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
 
         status(res) shouldBe INTERNAL_SERVER_ERROR
@@ -75,8 +76,6 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
       "return FORBIDDEN" in {
         mockAuthRetrieveAgentEnrolment()
         mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(DoesNotMatchEnrolment)))
-
-        val request = FakeRequest() withBody testVatNumber
 
         val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
 
@@ -90,8 +89,6 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
         mockAuthRetrieveAgentEnrolment()
         mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(InsufficientEnrolments)))
 
-        val request = FakeRequest() withBody testVatNumber
-
         val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
 
         status(res) shouldBe FORBIDDEN
@@ -104,8 +101,6 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
         mockAuthRetrieveAgentEnrolment()
         mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(RelationshipNotFound)))
 
-        val request = FakeRequest() withBody testVatNumber
-
         val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
 
         status(res) shouldBe FORBIDDEN
@@ -113,12 +108,55 @@ class StoreVatNumberControllerSpec extends UnitSpec with MockAuthConnector with 
       }
     }
 
+    "Known facts mismatch" should {
+      "return FORBIDDEN" in {
+        mockAuthRetrieveAgentEnrolment()
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(KnownFactsMismatch)))
+
+        val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+
+        status(res) shouldBe FORBIDDEN
+        jsonBodyOf(res) shouldBe Json.obj(HttpCodeKey -> "KNOWN_FACTS_MISMATCH")
+      }
+    }
+
+    "the user is ineligible" should {
+      "return UNPROCESSABLE_ENTITY" in {
+        mockAuthRetrieveAgentEnrolment()
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(Ineligible)))
+
+        val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+
+        status(res) shouldBe UNPROCESSABLE_ENTITY
+      }
+    }
+
+    "the vat number is not found" should {
+      "return PRECONDITION_FAILED" in {
+        mockAuthRetrieveAgentEnrolment()
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(VatNotFound)))
+
+        val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+
+        status(res) shouldBe PRECONDITION_FAILED
+      }
+    }
+
+    "the vat number is invalid" should {
+      "return PRECONDITION_FAILED" in {
+        mockAuthRetrieveAgentEnrolment()
+        mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(VatInvalid)))
+
+        val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
+
+        status(res) shouldBe PRECONDITION_FAILED
+      }
+    }
+
     "the call to agent services failed" should {
       "return FORBIDDEN" in {
         mockAuthRetrieveAgentEnrolment()
         mockStoreVatNumber(testVatNumber, enrolments)(Future.successful(Left(AgentServicesConnectionFailure)))
-
-        val request = FakeRequest() withBody testVatNumber
 
         val res: Result = await(TestStoreVatNumberController.storeVatNumber()(request))
 

@@ -22,15 +22,16 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.config.Constants
-import uk.gov.hmrc.vatsubscription.config.featureswitch.AlreadySubscribedCheck
+import uk.gov.hmrc.vatsubscription.config.featureswitch.{AlreadySubscribedCheck, MTDEligibilityCheck}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AgentClientRelationshipsStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
-import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser.NoRelationshipCode
-import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetMandationStatusStub._
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.KnownFactsAndControlListInformationStub._
+import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser.NoRelationshipCode
 import uk.gov.hmrc.vatsubscription.models.{MTDfBVoluntary, NonMTDfB}
+import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -38,7 +39,7 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
 
   val repo: SubscriptionRequestRepository = app.injector.instanceOf[SubscriptionRequestRepository]
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     await(repo.drop)
   }
@@ -98,54 +99,150 @@ class StoreVatNumberControllerISpec extends ComponentSpecBase with BeforeAndAfte
       }
     }
 
-    "the user is a principal user" should {
+    "the user is a principal user" when {
+      "the user has a HMCE-VAT enrolment" should {
+        "return CREATED when the vat number has been stored successfully" in {
+          enable(AlreadySubscribedCheck)
+
+          stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
+          stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
+
+          val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+
+          res should have(
+            httpStatus(CREATED),
+            emptyBody
+          )
+        }
+
+        "return CONFLICT when the user is already subscribed" in {
+          enable(AlreadySubscribedCheck)
+
+          stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
+          stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
+          stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(MTDfBVoluntary))
+
+          val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+
+          res should have(
+            httpStatus(CONFLICT),
+            emptyBody
+          )
+        }
+
+        "return FORBIDDEN when vat number does not match the one in enrolment" in {
+          stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
+
+          val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> UUID.randomUUID().toString))
+
+          res should have(
+            httpStatus(FORBIDDEN),
+            jsonBodyAs(Json.obj(Constants.HttpCodeKey -> "DoesNotMatchEnrolment"))
+          )
+        }
+
+        "return BAD_REQUEST when the json is invalid" in {
+          stubAuth(OK, successfulAuthResponse())
+
+          val res = post("/subscription-request/vat-number")(Json.obj())
+
+          res should have(
+            httpStatus(BAD_REQUEST)
+          )
+        }
+      }
+    }
+
+    "does not have a HMCE-VAT enrolment but has provided known facts" should {
       "return CREATED when the vat number has been stored successfully" in {
         enable(AlreadySubscribedCheck)
+        enable(MTDEligibilityCheck)
 
-        stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
+        stubAuth(OK, successfulAuthResponse())
         stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
+        stubSuccessGetKnownFactsAndControlListInformation(testVatNumber)
 
-        val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
+        val res = post("/subscription-request/vat-number")(Json.obj(
+          "vatNumber" -> testVatNumber,
+          "postCode" -> testPostCode,
+          "registrationDate" -> testDateOfRegistration
+        ))
 
         res should have(
           httpStatus(CREATED),
           emptyBody
         )
       }
-
-      "return CONFLICT when the user is already subscribed" in {
+      "return FORBIDDEN when known facts mismatch" in {
         enable(AlreadySubscribedCheck)
+        enable(MTDEligibilityCheck)
 
-        stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
-        stubCheckAgentClientRelationship(testAgentNumber, testVatNumber)(OK, Json.obj())
-        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(MTDfBVoluntary))
+        stubAuth(OK, successfulAuthResponse())
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
+        stubSuccessGetKnownFactsAndControlListInformation(testVatNumber)
+
+        val res = post("/subscription-request/vat-number")(Json.obj(
+          "vatNumber" -> testVatNumber,
+          "postCode" -> testVatNumber,
+          "registrationDate" -> testVatNumber
+        ))
+
+        res should have(
+          httpStatus(FORBIDDEN),
+          jsonBodyAs(Json.obj(Constants.HttpCodeKey -> "KNOWN_FACTS_MISMATCH"))
+        )
+      }
+      "return PRECONDITION_FAILED when vat number is not found" in {
+        enable(AlreadySubscribedCheck)
+        enable(MTDEligibilityCheck)
+
+        stubAuth(OK, successfulAuthResponse())
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
+        stubFailureControlListVatNumberNotFound(testVatNumber)
+
+        val res = post("/subscription-request/vat-number")(Json.obj(
+          "vatNumber" -> testVatNumber,
+          "postCode" -> testVatNumber,
+          "registrationDate" -> testVatNumber
+        ))
+
+        res should have(
+          httpStatus(PRECONDITION_FAILED)
+        )
+      }
+      "return PRECONDITION_FAILED when vat number is invalid" in {
+        enable(AlreadySubscribedCheck)
+        enable(MTDEligibilityCheck)
+
+        stubAuth(OK, successfulAuthResponse())
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
+        stubFailureKnownFactsInvalidVatNumber(testVatNumber)
+
+        val res = post("/subscription-request/vat-number")(Json.obj(
+          "vatNumber" -> testVatNumber,
+          "postCode" -> testVatNumber,
+          "registrationDate" -> testVatNumber
+        ))
+
+        res should have(
+          httpStatus(PRECONDITION_FAILED)
+        )
+      }
+    }
+
+    "does not have a HMCE-VAT enrolment and have not provided known facts" should {
+      "return FORBIDDEN" in {
+        enable(AlreadySubscribedCheck)
+        enable(MTDEligibilityCheck)
+
+        stubAuth(OK, successfulAuthResponse())
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(NonMTDfB))
 
         val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> testVatNumber))
 
         res should have(
-          httpStatus(CONFLICT),
-          emptyBody
-        )
-      }
-
-      "return FORBIDDEN when vat number does not match the one in enrolment" in {
-        stubAuth(OK, successfulAuthResponse(vatDecEnrolment))
-
-        val res = post("/subscription-request/vat-number")(Json.obj("vatNumber" -> UUID.randomUUID().toString))
-
-        res should have(
           httpStatus(FORBIDDEN),
-          jsonBodyAs(Json.obj(Constants.HttpCodeKey -> "DoesNotMatchEnrolment"))
-        )
-      }
-
-      "return BAD_REQUEST when the json is invalid" in {
-        stubAuth(OK, successfulAuthResponse())
-
-        val res = post("/subscription-request/vat-number")(Json.obj())
-
-        res should have(
-          httpStatus(BAD_REQUEST)
+          jsonBodyAs(Json.obj(Constants.HttpCodeKey -> "InsufficientEnrolments"))
         )
       }
     }

@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 trait MockKnownFactsAndControlListInformationConnector extends MockitoSugar with BeforeAndAfterEach {
   this: Suite =>
-  override protected def beforeEach(): Unit = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockKnownFactsAndControlListInformationConnector)
   }
