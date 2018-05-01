@@ -58,6 +58,8 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val timeToLiveSeconds: Long = loadConfig("mongodb.timeToLiveSeconds").toLong
 
+  lazy val emailTimeToLiveSeconds: Long = loadConfig("mongodb.email.emailTimeToLiveSeconds").toLong
+
   lazy val vatSubscriptionUrl: String = baseUrl("vat-subscription")
 
   def mandationStatusUrl(vatNumber: String): String = s"$vatSubscriptionUrl/vat-subscription/$vatNumber/mandation-status"
