@@ -20,9 +20,10 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.vatsubscription.services.VatNumberEligibilityService._
 import uk.gov.hmrc.vatsubscription.services._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class VatNumberEligibilityController @Inject()(val authConnector: AuthConnector,
@@ -33,8 +34,13 @@ class VatNumberEligibilityController @Inject()(val authConnector: AuthConnector,
   def checkVatNumberEligibility(vatNumber: String): Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
-        if (vatNumberEligibilityService.checkVatNumberEligibility) Future.successful(NoContent)
-        else Future.successful(BadRequest)
+        vatNumberEligibilityService.checkVatNumberEligibility(vatNumber) map {
+          case Right(VatNumberEligible) => NoContent
+          case Left(AlreadySubscribed) => Conflict
+          case Left(VatNumberIneligible) => BadRequest
+          case Left(VatNumberNotFound | InvalidVatNumber) => NotFound
+          case _ => BadGateway
+        }
       }
   }
 }

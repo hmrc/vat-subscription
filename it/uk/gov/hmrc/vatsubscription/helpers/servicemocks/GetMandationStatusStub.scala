@@ -22,7 +22,7 @@ import uk.gov.hmrc.vatsubscription.models.{MTDfBVoluntary, MandationStatus}
 import uk.gov.hmrc.vatsubscription.httpparsers.GetMandationStatusHttpParser.MandationStatusKey
 
 object GetMandationStatusStub extends WireMockMethods {
-  def stubGetMandationStatus(vatNumber: String)(status: Int, body: JsValue): StubMapping =
+  def stubGetMandationStatus(vatNumber: String)(status: Int, body: JsValue = Json.obj()): StubMapping =
     when(method = GET, uri = s"/vat-subscription/$vatNumber/mandation-status")
       .thenReturn(status = status, body = body)
 

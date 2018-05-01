@@ -28,7 +28,7 @@ import uk.gov.hmrc.vatsubscription.models.MandationStatus
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MandationStatusService @Inject()(val getVatCustomerInformationConnector: GetVatCustomerInformationConnector)(implicit ec: ExecutionContext) {
+class MandationStatusService @Inject()(getVatCustomerInformationConnector: GetVatCustomerInformationConnector)(implicit ec: ExecutionContext) {
 
   def getMandationStatus(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, MandationStatus]] =
     EitherT(getVatCustomerInformationConnector.getInformation(vatNumber)).map(_.mandationStatus).value

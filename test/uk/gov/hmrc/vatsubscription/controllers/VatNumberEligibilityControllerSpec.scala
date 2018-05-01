@@ -22,6 +22,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.service.mocks.MockVatNumberEligibilityService
+import uk.gov.hmrc.vatsubscription.services.VatNumberEligibilityService._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -30,19 +31,47 @@ class VatNumberEligibilityControllerSpec extends UnitSpec with MockAuthConnector
 
   object TestVatNumberEligibilityController extends VatNumberEligibilityController(mockAuthConnector, mockVatNumberEligibilityService)
 
-  "checkVatNumberEligibility" should {
-    "return NO_CONTENT when successful" in {
-      mockAuthorise()(Future.successful(Unit))
-      mockCheckVatNumberEligibility(true)
-      val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
-      status(res) shouldBe NO_CONTENT
+  "checkVatNumberEligibility" when {
+    "the service returns VAT number eligible" should {
+      "return NO_CONTENT" in {
+        mockAuthorise()(Future.successful(Unit))
+        mockCheckVatNumberEligibility(testVatNumber)(Future.successful(Right(VatNumberEligible)))
+        val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
+        status(res) shouldBe NO_CONTENT
+      }
+    }
+    "the service returns VAT number ineligible" should {
+      "return BAD_REQUEST" in {
+        mockAuthorise()(Future.successful(Unit))
+        mockCheckVatNumberEligibility(testVatNumber)(Future.successful(Left(VatNumberIneligible)))
+        val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
+        status(res) shouldBe BAD_REQUEST
+      }
+    }
+    "the service returns VAT Number not found" should {
+      "return NOT_FOUND" in {
+        mockAuthorise()(Future.successful(Unit))
+        mockCheckVatNumberEligibility(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
+        val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
+        status(res) shouldBe NOT_FOUND
+      }
+    }
+    "the service returns InvalidVatNumber" should {
+      "return NOT_FOUND" in {
+        mockAuthorise()(Future.successful(Unit))
+        mockCheckVatNumberEligibility(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
+        val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
+        status(res) shouldBe NOT_FOUND
+      }
     }
 
-    "return BAD_REQUEST when successful" in {
-      mockAuthorise()(Future.successful(Unit))
-      mockCheckVatNumberEligibility(false)
-      val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
-      status(res) shouldBe BAD_REQUEST
+    "the service returns anything else" should {
+      "return BAD_GATEWAY" in {
+        mockAuthorise()(Future.successful(Unit))
+        mockCheckVatNumberEligibility(testVatNumber)(Future.successful(Left(GetVatCustomerInformationFailure)))
+        val res = TestVatNumberEligibilityController.checkVatNumberEligibility(testVatNumber)(FakeRequest())
+        status(res) shouldBe BAD_GATEWAY
+      }
     }
   }
 

@@ -18,28 +18,69 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
-import play.api.libs.json.Json
+import uk.gov.hmrc.vatsubscription.config.featureswitch.{AlreadySubscribedCheck, MTDEligibilityCheck}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
-import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetMandationStatusStub.{mandationStatusBody, stubGetMandationStatus}
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.KnownFactsAndControlListInformationStub._
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
-import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
+import uk.gov.hmrc.vatsubscription.httpparsers.{MtdEligible, MtdIneligible}
+import uk.gov.hmrc.vatsubscription.models.MTDfBVoluntary
 
 class VatNumberEligibilityControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
 
   "/subscription-request/vat-number/:vatNumber/mtdfb-eligibility" when {
-    "service returns 'true'" should {
-      "return OK" in {
+    "the user does not exist on ETMP" when {
+      "the user is eligible" should {
+        "return OK" in {
+          enable(AlreadySubscribedCheck)
+          enable(MTDEligibilityCheck)
+
+          stubAuth(OK, successfulAuthResponse())
+          stubGetMandationStatus(testVatNumber)(NOT_FOUND)
+          stubGetKnownFactsAndControlListInformation(testVatNumber, MtdEligible(testPostCode, testDateOfRegistration))
+
+          val res = await(get(s"/subscription-request/vat-number/$testVatNumber/mtdfb-eligibility"))
+
+          res should have(
+            httpStatus(NO_CONTENT)
+          )
+        }
+      }
+    }
+    "the user does not exist on ETMP" when {
+      "the user is ineligible" should {
+        "return BAD_REQUEST" in {
+          enable(AlreadySubscribedCheck)
+          enable(MTDEligibilityCheck)
+
+          stubAuth(OK, successfulAuthResponse())
+          stubGetMandationStatus(testVatNumber)(NOT_FOUND)
+          stubGetKnownFactsAndControlListInformation(testVatNumber, MtdIneligible)
+
+          val res = await(get(s"/subscription-request/vat-number/$testVatNumber/mtdfb-eligibility"))
+
+          res should have(
+            httpStatus(BAD_REQUEST)
+          )
+        }
+      }
+    }
+    "the user is already subscribed" should {
+      "return CONFLICT" in {
+        enable(AlreadySubscribedCheck)
+        enable(MTDEligibilityCheck)
+
         stubAuth(OK, successfulAuthResponse())
+        stubGetMandationStatus(testVatNumber)(OK, mandationStatusBody(MTDfBVoluntary))
 
         val res = await(get(s"/subscription-request/vat-number/$testVatNumber/mtdfb-eligibility"))
 
         res should have(
-          httpStatus(NO_CONTENT)
+          httpStatus(CONFLICT)
         )
       }
     }
   }
-
 }
