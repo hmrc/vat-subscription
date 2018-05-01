@@ -16,22 +16,24 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
+import javax.inject.{Inject, Singleton}
+
 import cats.data._
 import cats.implicits._
-import javax.inject.{Inject, Singleton}
+import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.connectors.{AgentClientRelationshipsConnector, MandationStatusConnector}
+import uk.gov.hmrc.http.{BadGatewayException, HeaderCarrier}
+import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.config.featureswitch.{AlreadySubscribedCheck, MTDEligibilityCheck}
+import uk.gov.hmrc.vatsubscription.connectors.{AgentClientRelationshipsConnector, KnownFactsAndControlListInformationConnector, MandationStatusConnector}
 import uk.gov.hmrc.vatsubscription.httpparsers.GetMandationStatusHttpParser.VatNumberNotFound
+import uk.gov.hmrc.vatsubscription.httpparsers._
 import uk.gov.hmrc.vatsubscription.models._
 import uk.gov.hmrc.vatsubscription.models.monitoring.AgentClientRelationshipAuditing.AgentClientRelationshipAuditModel
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.services.StoreVatNumberService._
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 import uk.gov.hmrc.vatsubscription.utils.EnrolmentUtils._
-import StoreVatNumberService._
-import play.api.mvc.Request
-import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.config.featureswitch.AlreadySubscribedCheck
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,27 +41,35 @@ import scala.concurrent.{ExecutionContext, Future}
 class StoreVatNumberService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
                                       agentClientRelationshipsConnector: AgentClientRelationshipsConnector,
                                       mandationStatusConnector: MandationStatusConnector,
+                                      knownFactsAndControlListInformationConnector: KnownFactsAndControlListInformationConnector,
                                       auditService: AuditService,
                                       appConfig: AppConfig
                                      )(implicit ec: ExecutionContext) {
 
   def storeVatNumber(vatNumber: String,
-                     enrolments: Enrolments
+                     enrolments: Enrolments,
+                     businessPostcode: Option[String],
+                     vatRegistrationDate: Option[String]
                     )(implicit hc: HeaderCarrier, request: Request[_]): Future[Either[StoreVatNumberFailure, StoreVatNumberSuccess.type]] = {
-      for {
-        _ <- checkUserAuthority(vatNumber, enrolments)
-        _ <- checkExistingVatSubscription(vatNumber)
-        _ <- insertVatNumber(vatNumber)
-      } yield StoreVatNumberSuccess
-    }.value
+    for {
+      _ <- checkUserAuthority(vatNumber, enrolments, businessPostcode, vatRegistrationDate)
+      _ <- checkExistingVatSubscription(vatNumber)
+      _ <- checkEligibility(vatNumber, enrolments, businessPostcode, vatRegistrationDate)
+      _ <- insertVatNumber(vatNumber)
+    } yield StoreVatNumberSuccess
+  }.value
 
   private def checkUserAuthority(vatNumber: String,
-                                 enrolments: Enrolments
+                                 enrolments: Enrolments,
+                                 businessPostcode: Option[String],
+                                 vatRegistrationDate: Option[String]
                                 )(implicit request: Request[_], hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, Any] = {
     EitherT((enrolments.vatNumber, enrolments.agentReferenceNumber) match {
       case (Some(vatNumberFromEnrolment), _) =>
         if (vatNumber == vatNumberFromEnrolment) Future.successful(Right(UserHasMatchingEnrolment))
         else Future.successful(Left(DoesNotMatchEnrolment))
+      case (_, None) if businessPostcode.isDefined && vatRegistrationDate.isDefined =>
+        Future.successful(Right(UserHasKnownFacts))
       case (_, Some(agentReferenceNumber)) =>
         agentClientRelationshipsConnector.checkAgentClientRelationship(agentReferenceNumber, vatNumber) map {
           case Right(HaveRelationshipResponse) =>
@@ -74,12 +84,40 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
       case _ =>
         Future.successful(Left(InsufficientEnrolments))
     })
-
   }
+
+  // todo move this to service???? depends on how to union the types of failures
+  private def checkEligibility(vatNumber: String,
+                               enrolments: Enrolments,
+                               optBusinessPostcode: Option[String],
+                               optVatRegistrationDate: Option[String]
+                              )(implicit hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, EligibilitySuccess.type] =
+    if (appConfig.isEnabled(MTDEligibilityCheck)) {
+      EitherT[Future, KnownFactsAndControlListInformationFailure, MtdEligible](
+        knownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(vatNumber: String)
+      ).transform[StoreVatNumberFailure, EligibilitySuccess.type] {
+        case Right(MtdEligible(businessPostcode, vatRegistrationDate)) =>
+          if (
+            optBusinessPostcode.exists(_.replaceAll(" ", "").equalsIgnoreCase(businessPostcode.replaceAll(" ", "")))
+              && optVatRegistrationDate.exists(_.equals(vatRegistrationDate))
+          )
+            Right[StoreVatNumberFailure, EligibilitySuccess.type](EligibilitySuccess)
+          else
+            Left[StoreVatNumberFailure, EligibilitySuccess.type](KnownFactsMismatch)
+        // todo audit the reason?
+        case Left(MtdIneligible(ineligibleReasons)) => Left(Ineligible)
+        case Left(ControlListInformationVatNumberNotFound) => Left(VatNotFound)
+        case Left(KnownFactsInvalidVatNumber) => Left(VatInvalid)
+        case Left(err: UnexpectedKnownFactsAndControlListInformationFailure) =>
+          throw new BadGatewayException(s"Known facts & control list returned ${err.status} ${err.body}")
+      }
+    } else {
+      EitherT.pure(EligibilitySuccess)
+    }
 
   private def checkExistingVatSubscription(vatNumber: String
                                           )(implicit hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, NotSubscribed.type] =
-    if(appConfig.isEnabled(AlreadySubscribedCheck)) {
+    if (appConfig.isEnabled(AlreadySubscribedCheck)) {
       EitherT(mandationStatusConnector.getMandationStatus(vatNumber) map {
         case Right(NonMTDfB | NonDigital) | Left(VatNumberNotFound) => Right(NotSubscribed)
         case Right(MTDfBMandated | MTDfBVoluntary) => Left(AlreadySubscribed)
@@ -99,11 +137,16 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
 }
 
 object StoreVatNumberService {
+
   case object StoreVatNumberSuccess
 
   case object NotSubscribed
 
   case object UserHasMatchingEnrolment
+
+  case object UserHasKnownFacts
+
+  case object EligibilitySuccess
 
   sealed trait StoreVatNumberFailure
 
@@ -113,6 +156,14 @@ object StoreVatNumberService {
 
   case object InsufficientEnrolments extends StoreVatNumberFailure
 
+  case object KnownFactsMismatch extends StoreVatNumberFailure
+
+  case object Ineligible extends StoreVatNumberFailure
+
+  case object VatNotFound extends StoreVatNumberFailure
+
+  case object VatInvalid extends StoreVatNumberFailure
+
   case object RelationshipNotFound extends StoreVatNumberFailure
 
   case object AgentServicesConnectionFailure extends StoreVatNumberFailure
@@ -120,6 +171,7 @@ object StoreVatNumberService {
   case object VatSubscriptionConnectionFailure extends StoreVatNumberFailure
 
   case object VatNumberDatabaseFailure extends StoreVatNumberFailure
+
 }
 
 

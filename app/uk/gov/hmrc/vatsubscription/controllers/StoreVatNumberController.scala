@@ -18,18 +18,19 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.libs.json.{JsPath, Json}
+import play.api.libs.json.Json
 import play.api.mvc.Action
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.httpparsers.AgentClientRelationshipsHttpParser.NoRelationshipCode
-import uk.gov.hmrc.vatsubscription.models.SubscriptionRequest.vatNumberKey
+import uk.gov.hmrc.vatsubscription.models.StoreVatNumberRequest
+import uk.gov.hmrc.vatsubscription.services.StoreVatNumberService._
 import uk.gov.hmrc.vatsubscription.services._
-import StoreVatNumberService._
 
 import scala.concurrent.ExecutionContext
+
 
 @Singleton
 class StoreVatNumberController @Inject()(val authConnector: AuthConnector,
@@ -37,14 +38,14 @@ class StoreVatNumberController @Inject()(val authConnector: AuthConnector,
                                         )(implicit ec: ExecutionContext)
   extends BaseController with AuthorisedFunctions {
 
-  val storeVatNumber: Action[String] =
-    Action.async(parse.json((JsPath \ vatNumberKey).read[String])) {
+  def storeVatNumber: Action[StoreVatNumberRequest] =
+    Action.async(parse.json[StoreVatNumberRequest]) {
       implicit req =>
-        val vatNumber = req.body
+        val requestObj = req.body
 
         authorised().retrieve(Retrievals.allEnrolments) {
           enrolments =>
-            storeVatNumberService.storeVatNumber(vatNumber, enrolments) map {
+            storeVatNumberService.storeVatNumber(requestObj.vatNumber, enrolments, requestObj.postCode, requestObj.registrationDate) map {
               case Right(StoreVatNumberSuccess) =>
                 Created
               case Left(DoesNotMatchEnrolment) =>
@@ -53,6 +54,12 @@ class StoreVatNumberController @Inject()(val authConnector: AuthConnector,
                 Forbidden(Json.obj(HttpCodeKey -> "InsufficientEnrolments"))
               case Left(RelationshipNotFound) =>
                 Forbidden(Json.obj(HttpCodeKey -> NoRelationshipCode))
+              case Left(KnownFactsMismatch) =>
+                Forbidden(Json.obj(HttpCodeKey -> "KNOWN_FACTS_MISMATCH"))
+              case Left(VatNotFound | VatInvalid) =>
+                PreconditionFailed
+              case Left(Ineligible) =>
+                UnprocessableEntity
               case Left(AlreadySubscribed) =>
                 Conflict
               case Left(VatNumberDatabaseFailure) =>

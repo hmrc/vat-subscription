@@ -29,6 +29,8 @@ case class SubscriptionRequest(vatNumber: String,
 object SubscriptionRequest {
 
   val vatNumberKey = "vatNumber"
+  val postCodeKey = "postCode"
+  val registrationDateKey = "registrationDate"
   val idKey = "_id"
   val companyNumberKey = "companyNumber"
   val ninoKey = "nino"
