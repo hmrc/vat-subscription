@@ -17,11 +17,11 @@
 package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.{JsValue, Json}
-import play.api.http.Status.{OK, NOT_FOUND, BAD_REQUEST}
+import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.ControlList
-
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
+import uk.gov.hmrc.vatsubscription.httpparsers.{MtdEligible, MtdIneligible}
 
 object KnownFactsAndControlListInformationStub extends WireMockMethods {
 
@@ -33,6 +33,23 @@ object KnownFactsAndControlListInformationStub extends WireMockMethods {
       )
     ).thenReturn(status = status, body = body)
 
+  def stubGetKnownFactsAndControlListInformation(vatNumber: String, response: MtdEligible): Unit = {
+    val body = Json.obj(
+      "postcode" -> response.businessPostcode,
+      "dateOfReg" -> response.vatRegistrationDate,
+      "controlListInformation" -> ControlList.eligible
+    )
+    stubGetKnownFactsAndControlListInformation(vatNumber)(OK, Some(body))
+  }
+
+  def stubGetKnownFactsAndControlListInformation(vatNumber: String, response: MtdIneligible.type): Unit = {
+    val body = Json.obj(
+      "postcode" -> testPostCode,
+      "dateOfReg" -> testDateOfRegistration,
+      "controlListInformation" -> ControlList.ineligible
+    )
+    stubGetKnownFactsAndControlListInformation(vatNumber)(OK, Some(body))
+  }
 
   def stubSuccessGetKnownFactsAndControlListInformation(vatNumber: String): StubMapping =
     stubGetKnownFactsAndControlListInformation(vatNumber)(OK, Some(successResponseBody))
@@ -43,14 +60,12 @@ object KnownFactsAndControlListInformationStub extends WireMockMethods {
   def stubFailureKnownFactsInvalidVatNumber(vatNumber: String): StubMapping =
     stubGetKnownFactsAndControlListInformation(vatNumber)(BAD_REQUEST, None)
 
-
   private def successResponseBody =
     Json.obj(
       "postcode" -> testPostCode,
       "dateOfReg" -> testDateOfRegistration,
-      "controlListInformation" -> ControlList.valid
+      "controlListInformation" -> ControlList.eligible
     )
-
 
 
 }

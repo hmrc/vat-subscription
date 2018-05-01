@@ -35,7 +35,7 @@ trait MockKnownFactsAndControlListInformationConnector extends MockitoSugar with
 
   val mockKnownFactsAndControlListInformationConnector: KnownFactsAndControlListInformationConnector = mock[KnownFactsAndControlListInformationConnector]
 
-  def mockKnownFactsAndControlListInformationConnector(vatNumber: String
+  def mockGetKnownFactsAndControlListInformation(vatNumber: String
                                             )(response: Future[KnownFactsAndControlListInformationHttpParserResponse]): Unit = {
     when(mockKnownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(
       ArgumentMatchers.eq(vatNumber)

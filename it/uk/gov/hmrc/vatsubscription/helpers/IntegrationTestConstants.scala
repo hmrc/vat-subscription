@@ -36,9 +36,10 @@ object IntegrationTestConstants {
 
   object ControlList {
     val allFalse: String = "1" * CONTROL_INFORMATION_STRING_LENGTH
-    val valid: String = setupTestDataCore(allFalse)(STAGGER_1 -> '0', COMPANY -> '0')
+    val eligible: String = setupTestDataCore(allFalse)(STAGGER_1 -> '0', COMPANY -> '0')
+    val ineligible: String = setupTestDataCore(allFalse)(ANNUAL_STAGGER -> '0', COMPANY -> '0')
 
-    def setupTestData(amendments: (Int, Character)*): String = setupTestDataCore(valid)(amendments: _*)
+    def setupTestData(amendments: (Int, Character)*): String = setupTestDataCore(eligible)(amendments: _*)
 
     private def setupTestDataCore(startString: String)(amendments: (Int, Character)*): String = {
       require(amendments.forall { case (index, _) => index >= 0 && index < CONTROL_INFORMATION_STRING_LENGTH })

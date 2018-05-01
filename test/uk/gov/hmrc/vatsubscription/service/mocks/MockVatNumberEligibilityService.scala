@@ -16,17 +16,25 @@
 
 package uk.gov.hmrc.vatsubscription.service.mocks
 
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.services.VatNumberEligibilityService.VatNumberEligibility
 import uk.gov.hmrc.vatsubscription.services._
+
+import scala.concurrent.Future
 
 trait MockVatNumberEligibilityService extends MockitoSugar {
   self: Suite =>
 
   val mockVatNumberEligibilityService: VatNumberEligibilityService = mock[VatNumberEligibilityService]
 
-  def mockCheckVatNumberEligibility(response: Boolean): Unit = {
-    when(mockVatNumberEligibilityService.checkVatNumberEligibility) thenReturn response
+  def mockCheckVatNumberEligibility(vatNumber: String)(response: Future[VatNumberEligibility]): Unit = {
+    when(mockVatNumberEligibilityService.checkVatNumberEligibility
+    (ArgumentMatchers.eq(vatNumber)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ) thenReturn response
   }
 }
