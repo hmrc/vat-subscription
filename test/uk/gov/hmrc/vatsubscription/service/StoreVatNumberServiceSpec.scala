@@ -234,7 +234,7 @@ class StoreVatNumberServiceSpec
             enable(MTDEligibilityCheck)
 
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
-            mockKnownFactsAndControlListInformationConnector(testVatNumber)(Future.successful(Right(MtdEligible(testPostCode.toLowerCase(), testDateOfRegistration))))
+            mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Right(MtdEligible(testPostCode.toLowerCase(), testDateOfRegistration))))
             mockUpsertVatNumber(testVatNumber)(Future.successful(mock[UpdateWriteResult]))
 
             val res = await(call)
@@ -247,7 +247,7 @@ class StoreVatNumberServiceSpec
             enable(MTDEligibilityCheck)
 
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
-            mockKnownFactsAndControlListInformationConnector(testVatNumber)(Future.successful(Left(MtdIneligible(NonEmptyList[String]("reason", List.empty)))))
+            mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(MtdIneligible(NonEmptyList[String]("reason", List.empty)))))
 
             val res = await(call)
             res.left.value shouldBe Ineligible
@@ -259,7 +259,7 @@ class StoreVatNumberServiceSpec
             enable(MTDEligibilityCheck)
 
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
-            mockKnownFactsAndControlListInformationConnector(testVatNumber)(Future.successful(Left(ControlListInformationVatNumberNotFound)))
+            mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(ControlListInformationVatNumberNotFound)))
 
             val res = await(call)
             res.left.value shouldBe VatNotFound
@@ -271,7 +271,7 @@ class StoreVatNumberServiceSpec
             enable(MTDEligibilityCheck)
 
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
-            mockKnownFactsAndControlListInformationConnector(testVatNumber)(Future.successful(Left(KnownFactsInvalidVatNumber)))
+            mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(KnownFactsInvalidVatNumber)))
 
             val res = await(call)
             res.left.value shouldBe VatInvalid
@@ -283,7 +283,7 @@ class StoreVatNumberServiceSpec
             enable(MTDEligibilityCheck)
 
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
-            mockKnownFactsAndControlListInformationConnector(testVatNumber)(Future.successful(Right(MtdEligible(testPostCode.drop(1), testDateOfRegistration))))
+            mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Right(MtdEligible(testPostCode.drop(1), testDateOfRegistration))))
 
             val res = await(call)
             res.left.value shouldBe KnownFactsMismatch
@@ -295,7 +295,7 @@ class StoreVatNumberServiceSpec
             enable(MTDEligibilityCheck)
 
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonDigital)))
-            mockKnownFactsAndControlListInformationConnector(testVatNumber)(Future.successful(Right(MtdEligible(testPostCode, testDateOfRegistration))))
+            mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Right(MtdEligible(testPostCode, testDateOfRegistration))))
             mockUpsertVatNumber(testVatNumber)(Future.failed(new Exception))
 
             val res = await(call)
