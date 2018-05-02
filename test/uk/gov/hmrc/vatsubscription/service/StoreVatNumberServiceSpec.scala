@@ -258,7 +258,7 @@ class StoreVatNumberServiceSpec
 
     "the user has a fresh cred" when {
 
-      def call = TestStoreVatNumberService.storeVatNumber(testVatNumber, freshUser, Some(testPostCode), Some(testDateOfRegistration))
+      def call = TestStoreVatNumberService.storeVatNumber(testVatNumber, freshUser, Some(testPostCode filterNot(_.isWhitespace)), Some(testDateOfRegistration))
 
       "the vat number is not already subscribed for MTD-VAT" when {
         "the vat number is stored successfully" should {
