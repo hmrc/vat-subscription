@@ -105,7 +105,8 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
         case Right(MtdEligible(businessPostcode, vatRegistrationDate)) =>
           (optBusinessPostcode, optVatRegistrationDate) match {
             case (Some(enteredPostcode), Some(enteredVatRegistrationDate)) =>
-              if((enteredPostcode equalsIgnoreCase businessPostcode) && (enteredVatRegistrationDate == vatRegistrationDate)) {
+              if (((enteredPostcode filterNot(_.isWhitespace)) equalsIgnoreCase (businessPostcode filterNot(_.isWhitespace)))
+                && (enteredVatRegistrationDate == vatRegistrationDate)) {
                 Right[StoreVatNumberFailure, EligibilitySuccess.type](EligibilitySuccess)
               } else {
                 Left[StoreVatNumberFailure, EligibilitySuccess.type](KnownFactsMismatch)
