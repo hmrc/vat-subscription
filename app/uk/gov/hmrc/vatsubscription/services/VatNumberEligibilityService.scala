@@ -19,22 +19,26 @@ package uk.gov.hmrc.vatsubscription.services
 import cats.data.EitherT
 import cats.implicits._
 import javax.inject.{Inject, Singleton}
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.config.featureswitch.{AlreadySubscribedCheck, MTDEligibilityCheck}
 import uk.gov.hmrc.vatsubscription.connectors.{KnownFactsAndControlListInformationConnector, MandationStatusConnector}
 import uk.gov.hmrc.vatsubscription.httpparsers.{ControlListInformationVatNumberNotFound, KnownFactsInvalidVatNumber, MtdEligible, MtdIneligible}
+import uk.gov.hmrc.vatsubscription.models.monitoring.ControlListAuditing._
 import uk.gov.hmrc.vatsubscription.models.{MTDfBMandated, MTDfBVoluntary, NonDigital, NonMTDfB}
 import uk.gov.hmrc.vatsubscription.services.VatNumberEligibilityService._
+import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VatNumberEligibilityService @Inject()(mandationStatusConnector: MandationStatusConnector,
                                             knownFactsAndControlListInformationConnector: KnownFactsAndControlListInformationConnector,
+                                            auditService: AuditService,
                                             appConfig: AppConfig)(implicit ec: ExecutionContext) {
 
-  def checkVatNumberEligibility(vatNumber: String)(implicit hc: HeaderCarrier): Future[VatNumberEligibility] = {
+  def checkVatNumberEligibility(vatNumber: String)(implicit hc: HeaderCarrier, request: Request[_]): Future[VatNumberEligibility] = {
     for {
       _ <- checkExistingVatSubscription(vatNumber)
       _ <- getEligibilityStatus(vatNumber)
@@ -56,16 +60,43 @@ class VatNumberEligibilityService @Inject()(mandationStatusConnector: MandationS
   }
 
   private def getEligibilityStatus(vatNumber: String
-                                  )(implicit hc: HeaderCarrier): EitherT[Future, VatNumberEligibilityFailure, VatNumberEligible.type] = {
+                                  )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, VatNumberEligibilityFailure, VatNumberEligible.type] = {
     if (appConfig.isEnabled(MTDEligibilityCheck)) {
       EitherT(knownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(vatNumber)) transform {
-        //todo auditing
-        case Right(_: MtdEligible) => Right(VatNumberEligible)
-        //todo auditing
-        case Left(_: MtdIneligible) => Left(VatNumberIneligible)
-        case Left(KnownFactsInvalidVatNumber) => Left(InvalidVatNumber)
-        case Left(ControlListInformationVatNumberNotFound) => Left(VatNumberNotFound)
-        case _ => Left(KnownFactsAndControlListFailure)
+        case Right(_: MtdEligible) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = true
+          ))
+          Right(VatNumberEligible)
+        case Left(MtdIneligible(ineligibilityReasons)) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = false,
+            failureReasons = ineligibilityReasons.toList
+          ))
+          Left(VatNumberIneligible)
+        case Left(KnownFactsInvalidVatNumber) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = false,
+            failureReasons = Seq(invalidVatNumber)
+          ))
+          Left(InvalidVatNumber)
+        case Left(ControlListInformationVatNumberNotFound) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = false,
+            failureReasons = Seq(vatNumberNotFound)
+          ))
+          Left(VatNumberNotFound)
+        case _ =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = false,
+            failureReasons = Seq(unexpectedError)
+          ))
+          Left(KnownFactsAndControlListFailure)
       }
     } else {
       EitherT.pure[Future, VatNumberEligibilityFailure](VatNumberEligible)

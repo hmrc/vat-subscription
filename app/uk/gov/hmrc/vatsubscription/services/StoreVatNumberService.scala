@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.vatsubscription.services
 
-import javax.inject.{Inject, Singleton}
 import cats.data._
 import cats.implicits._
+import javax.inject.{Inject, Singleton}
 import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.{BadGatewayException, HeaderCarrier, InternalServerException}
@@ -29,6 +29,7 @@ import uk.gov.hmrc.vatsubscription.httpparsers.GetMandationStatusHttpParser.VatN
 import uk.gov.hmrc.vatsubscription.httpparsers._
 import uk.gov.hmrc.vatsubscription.models._
 import uk.gov.hmrc.vatsubscription.models.monitoring.AgentClientRelationshipAuditing.AgentClientRelationshipAuditModel
+import uk.gov.hmrc.vatsubscription.models.monitoring.ControlListAuditing._
 import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.services.StoreVatNumberService._
 import uk.gov.hmrc.vatsubscription.services.monitoring.AuditService
@@ -97,12 +98,16 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
                                enrolments: Enrolments,
                                optBusinessPostcode: Option[String],
                                optVatRegistrationDate: Option[String]
-                              )(implicit hc: HeaderCarrier): EitherT[Future, StoreVatNumberFailure, EligibilitySuccess.type] =
+                              )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, StoreVatNumberFailure, EligibilitySuccess.type] =
     if (appConfig.isEnabled(MTDEligibilityCheck)) {
       EitherT[Future, KnownFactsAndControlListInformationFailure, MtdEligible](
         knownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(vatNumber: String)
       ).transform[StoreVatNumberFailure, EligibilitySuccess.type] {
         case Right(MtdEligible(businessPostcode, vatRegistrationDate)) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = true
+          ))
           (optBusinessPostcode, optVatRegistrationDate) match {
             case (Some(enteredPostcode), Some(enteredVatRegistrationDate)) =>
               if (((enteredPostcode filterNot(_.isWhitespace)) equalsIgnoreCase (businessPostcode filterNot(_.isWhitespace)))
@@ -114,11 +119,33 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
             case _ =>
               Right[StoreVatNumberFailure, EligibilitySuccess.type](EligibilitySuccess)
           }
-        // todo audit the reason?
-        case Left(MtdIneligible(ineligibleReasons)) => Left(Ineligible)
-        case Left(ControlListInformationVatNumberNotFound) => Left(VatNotFound)
-        case Left(KnownFactsInvalidVatNumber) => Left(VatInvalid)
+        case Left(MtdIneligible(ineligibleReasons)) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = false,
+            failureReasons = ineligibleReasons.toList
+          ))
+          Left(Ineligible)
+        case Left(ControlListInformationVatNumberNotFound) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = false,
+            failureReasons = Seq(vatNumberNotFound)
+          ))
+          Left(VatNotFound)
+        case Left(KnownFactsInvalidVatNumber) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = false,
+            failureReasons = Seq(invalidVatNumber)
+          ))
+          Left(VatInvalid)
         case Left(err: UnexpectedKnownFactsAndControlListInformationFailure) =>
+          auditService.audit(ControlListAuditModel(
+            vatNumber = vatNumber,
+            isSuccess = false,
+            failureReasons = Seq(unexpectedError)
+          ))
           throw new BadGatewayException(s"Known facts & control list returned ${err.status} ${err.body}")
       }
     } else {

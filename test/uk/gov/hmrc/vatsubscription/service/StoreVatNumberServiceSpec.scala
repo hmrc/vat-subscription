@@ -19,7 +19,6 @@ package uk.gov.hmrc.vatsubscription.service
 import java.util.UUID
 
 import cats.data.NonEmptyList
-import org.scalatest.EitherValues
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -36,6 +35,7 @@ import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.{ControlListInformationVatNumberNotFound, KnownFactsInvalidVatNumber, MtdEligible, MtdIneligible}
 import uk.gov.hmrc.vatsubscription.models._
 import uk.gov.hmrc.vatsubscription.models.monitoring.AgentClientRelationshipAuditing.AgentClientRelationshipAuditModel
+import uk.gov.hmrc.vatsubscription.models.monitoring.ControlListAuditing._
 import uk.gov.hmrc.vatsubscription.repositories.mocks.MockSubscriptionRequestRepository
 import uk.gov.hmrc.vatsubscription.service.mocks.monitoring.MockAuditService
 import uk.gov.hmrc.vatsubscription.services.StoreVatNumberService._
@@ -271,6 +271,7 @@ class StoreVatNumberServiceSpec
             mockUpsertVatNumber(testVatNumber)(Future.successful(mock[UpdateWriteResult]))
 
             val res = await(call)
+            verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = true))
             res shouldBe Right(StoreVatNumberSuccess)
           }
         }
@@ -279,10 +280,14 @@ class StoreVatNumberServiceSpec
             enable(AlreadySubscribedCheck)
             enable(MTDEligibilityCheck)
 
+            val ineligibilityReason1 = "reason1"
+            val ineligibilityReason2 = "reason2"
+
             mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
-            mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(MtdIneligible(NonEmptyList[String]("reason", List.empty)))))
+            mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(MtdIneligible(NonEmptyList(ineligibilityReason1, List(ineligibilityReason2))))))
 
             val res = await(call)
+            verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = false, failureReasons = Seq(ineligibilityReason1, ineligibilityReason2)))
             res shouldBe Left(Ineligible)
           }
         }
@@ -295,6 +300,7 @@ class StoreVatNumberServiceSpec
             mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(ControlListInformationVatNumberNotFound)))
 
             val res = await(call)
+            verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = false, failureReasons = Seq(vatNumberNotFound)))
             res shouldBe Left(VatNotFound)
           }
         }
@@ -307,6 +313,7 @@ class StoreVatNumberServiceSpec
             mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(KnownFactsInvalidVatNumber)))
 
             val res = await(call)
+            verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = false, failureReasons = Seq(invalidVatNumber)))
             res shouldBe Left(VatInvalid)
           }
         }

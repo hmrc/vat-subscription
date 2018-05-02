@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.services.VatNumberEligibilityService.VatNumberEligibility
 import uk.gov.hmrc.vatsubscription.services._
@@ -34,7 +35,7 @@ trait MockVatNumberEligibilityService extends MockitoSugar {
   def mockCheckVatNumberEligibility(vatNumber: String)(response: Future[VatNumberEligibility]): Unit = {
     when(mockVatNumberEligibilityService.checkVatNumberEligibility
     (ArgumentMatchers.eq(vatNumber)
-    )(ArgumentMatchers.any[HeaderCarrier])
+    )(ArgumentMatchers.any[HeaderCarrier], ArgumentMatchers.any[Request[_]])
     ) thenReturn response
   }
 }

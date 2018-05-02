@@ -19,6 +19,8 @@ package uk.gov.hmrc.vatsubscription.service
 import cats.data.NonEmptyList
 import org.scalatest.EitherValues
 import play.api.http.Status
+import play.api.mvc.Request
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.config.featureswitch.{AlreadySubscribedCheck, MTDEligibilityCheck}
@@ -27,7 +29,9 @@ import uk.gov.hmrc.vatsubscription.connectors.mocks.{MockKnownFactsAndControlLis
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.GetMandationStatusHttpParser.GetMandationStatusHttpFailure
 import uk.gov.hmrc.vatsubscription.httpparsers.{InvalidVatNumber => _, VatNumberNotFound => _, _}
+import uk.gov.hmrc.vatsubscription.models.monitoring.ControlListAuditing._
 import uk.gov.hmrc.vatsubscription.models.{MTDfBMandated, MTDfBVoluntary, NonDigital, NonMTDfB}
+import uk.gov.hmrc.vatsubscription.service.mocks.monitoring.MockAuditService
 import uk.gov.hmrc.vatsubscription.services.VatNumberEligibilityService
 import uk.gov.hmrc.vatsubscription.services.VatNumberEligibilityService._
 
@@ -35,15 +39,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class VatNumberEligibilityServiceSpec extends UnitSpec with EitherValues
-  with MockMandationStatusConnector with MockKnownFactsAndControlListInformationConnector with MockConfig {
+  with MockMandationStatusConnector with MockKnownFactsAndControlListInformationConnector with MockConfig with MockAuditService {
 
   object TestVatNumberEligibilityService extends VatNumberEligibilityService(
     mockMandationStatusConnector,
     mockKnownFactsAndControlListInformationConnector,
+    mockAuditService,
     mockConfig
   )
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val request: Request[_] = FakeRequest()
 
   "checkVatNumberEligibility" when {
     "the AlreadySubscribedCheck feature switch is enabled" when {
@@ -58,6 +64,7 @@ class VatNumberEligibilityServiceSpec extends UnitSpec with EitherValues
               mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Right(MtdEligible(testPostCode, testDateOfRegistration))))
 
               await(TestVatNumberEligibilityService.checkVatNumberEligibility(testVatNumber)).right.value shouldBe VatNumberEligible
+              verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = true))
             }
           }
           "the known facts and control list service returns MtdIneligible" should {
@@ -65,10 +72,13 @@ class VatNumberEligibilityServiceSpec extends UnitSpec with EitherValues
               enable(AlreadySubscribedCheck)
               enable(MTDEligibilityCheck)
 
+              val ineligibilityReason = "reason"
+
               mockGetMandationStatus(testVatNumber)(Future.successful(Right(NonMTDfB)))
-              mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(MtdIneligible(NonEmptyList.one("")))))
+              mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(MtdIneligible(NonEmptyList.one(ineligibilityReason)))))
 
               await(TestVatNumberEligibilityService.checkVatNumberEligibility(testVatNumber)).left.value shouldBe VatNumberIneligible
+              verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = false, Seq(ineligibilityReason)))
             }
           }
           "the known facts and control list service returns KnownFactsInvalidVatNumber" should {
@@ -80,6 +90,7 @@ class VatNumberEligibilityServiceSpec extends UnitSpec with EitherValues
               mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(KnownFactsInvalidVatNumber)))
 
               await(TestVatNumberEligibilityService.checkVatNumberEligibility(testVatNumber)).left.value shouldBe InvalidVatNumber
+              verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = false, failureReasons = Seq(invalidVatNumber)))
             }
           }
           "the known facts and control list service returns ControlListInformationVatNumberNotFound" should {
@@ -91,6 +102,7 @@ class VatNumberEligibilityServiceSpec extends UnitSpec with EitherValues
               mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(ControlListInformationVatNumberNotFound)))
 
               await(TestVatNumberEligibilityService.checkVatNumberEligibility(testVatNumber)).left.value shouldBe VatNumberNotFound
+              verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = false, failureReasons = Seq(vatNumberNotFound)))
             }
           }
           "the known facts and control list service returns any other error" should {
@@ -102,6 +114,7 @@ class VatNumberEligibilityServiceSpec extends UnitSpec with EitherValues
               mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Left(UnexpectedKnownFactsAndControlListInformationFailure(Status.INTERNAL_SERVER_ERROR, ""))))
 
               await(TestVatNumberEligibilityService.checkVatNumberEligibility(testVatNumber)).left.value shouldBe KnownFactsAndControlListFailure
+              verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = false, failureReasons = Seq(unexpectedError)))
             }
           }
         }
@@ -139,6 +152,7 @@ class VatNumberEligibilityServiceSpec extends UnitSpec with EitherValues
           mockGetKnownFactsAndControlListInformation(testVatNumber)(Future.successful(Right(MtdEligible(testPostCode, testDateOfRegistration))))
 
           await(TestVatNumberEligibilityService.checkVatNumberEligibility(testVatNumber)).right.value shouldBe VatNumberEligible
+          verifyAudit(ControlListAuditModel(testVatNumber, isSuccess = true))
         }
       }
       "the mandation status service returns MTDfBMandated" should {
