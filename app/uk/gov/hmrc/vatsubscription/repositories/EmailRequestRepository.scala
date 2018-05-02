@@ -18,17 +18,18 @@ package uk.gov.hmrc.vatsubscription.repositories
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
+import reactivemongo.play.json._
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.EmailRequest
-import uk.gov.hmrc.vatsubscription.models.EmailRequest.creationTimestampKey
-
+import uk.gov.hmrc.vatsubscription.models.EmailRequest.{creationTimestampKey, idKey}
+import reactivemongo.play.json.JSONSerializationPack.Writer
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -41,8 +42,13 @@ class EmailRequestRepository @Inject()(mongo: ReactiveMongoComponent,
     implicitly[Format[String]]
   ) {
 
-  def insertEmail(vatNumber: String, email: String): Future[WriteResult] =
-    insert(EmailRequest(vatNumber, email))
+  def upsertEmail(vatNumber: String, email: String): Future[UpdateWriteResult] = {
+    collection.update(
+      selector = Json.obj(idKey -> vatNumber),
+      update = EmailRequest(vatNumber, email),
+      upsert = true
+    )(implicitly[Writer[JsObject]], EmailRequest.mongoFormat, implicitly[ExecutionContext])
+  }
 
   def deleteRecord(vatNumber: String): Future[WriteResult] =
     removeById(vatNumber)

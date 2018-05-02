@@ -20,7 +20,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import uk.gov.hmrc.vatsubscription.repositories.EmailRequestRepository
 
 import scala.concurrent.Future
@@ -34,8 +34,8 @@ trait MockEmailRequestRepository extends MockitoSugar with BeforeAndAfterEach {
 
   val mockEmailRequestRepository: EmailRequestRepository = mock[EmailRequestRepository]
 
-  def mockInsertEmail(vatNumber: String, email: String)(response: Future[WriteResult]): Unit =
-    when(mockEmailRequestRepository.insertEmail(ArgumentMatchers.eq(vatNumber), ArgumentMatchers.eq(email)))
+  def mockUpsertEmail(vatNumber: String, email: String)(response: Future[UpdateWriteResult]): Unit =
+    when(mockEmailRequestRepository.upsertEmail(ArgumentMatchers.eq(vatNumber), ArgumentMatchers.eq(email)))
       .thenReturn(response)
 
   def mockDeleteRecord(vatNumber: String)(response: Future[WriteResult]): Unit =

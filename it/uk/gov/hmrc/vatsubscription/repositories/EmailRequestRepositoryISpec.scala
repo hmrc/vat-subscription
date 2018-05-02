@@ -21,7 +21,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import reactivemongo.core.errors.DatabaseException
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
-import uk.gov.hmrc.vatsubscription.models.EmailRequest
+import uk.gov.hmrc.vatsubscription.models.{EmailRequest, SubscriptionRequest}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -38,30 +38,32 @@ class EmailRequestRepositoryISpec extends UnitSpec with GuiceOneAppPerSuite with
     await(repo.drop)
   }
 
-  "insertEmail" should {
-    "insert the Email request where there is not already one" in {
+  "upsertEmail" should {
+    "insert the subscription request where there is not already one" in {
       val res = for {
-        _ <- repo.insertEmail(testVatNumber, testEmail)
+        _ <- repo.upsertEmail(testVatNumber, testEmail)
         model <- repo.findById(testVatNumber)
       } yield model
 
       await(res) should contain(testEmailRequest)
     }
 
-    "throw an exception when email already stored for vat user" in {
-      intercept[DatabaseException] {
-        await(for {
-          _ <- repo.insert(EmailRequest(testVatNumber, testEmail))
-          res <- repo.insertEmail(testVatNumber, testEmail)
-        } yield res)
-      }
+    "replace the previous data when one already exists" in {
+      val res = for {
+        _ <- repo.insert(EmailRequest(testVatNumber, testEmail))
+        _ <- repo.upsertEmail(testVatNumber, testEmail)
+        model <- repo.findById(testVatNumber)
+      } yield model
+
+      await(res) should contain(testEmailRequest)
+
     }
   }
 
   "deleteRecord" should {
     "delete the entry stored against the vrn" in {
       val res = for {
-        _ <- repo.insertEmail(testVatNumber, testEmail)
+        _ <- repo.upsertEmail(testVatNumber, testEmail)
         inserted <- repo.findById(testVatNumber)
         _ <- repo.deleteRecord(testVatNumber)
         postDelete <- repo.findById(testVatNumber)
