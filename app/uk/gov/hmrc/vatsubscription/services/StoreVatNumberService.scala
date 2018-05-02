@@ -17,12 +17,11 @@
 package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.{Inject, Singleton}
-
 import cats.data._
 import cats.implicits._
 import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
-import uk.gov.hmrc.http.{BadGatewayException, HeaderCarrier}
+import uk.gov.hmrc.http.{BadGatewayException, HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.config.featureswitch.{AlreadySubscribedCheck, MTDEligibilityCheck}
 import uk.gov.hmrc.vatsubscription.connectors.{AgentClientRelationshipsConnector, KnownFactsAndControlListInformationConnector, MandationStatusConnector}
@@ -71,19 +70,26 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
       case (_, None) if businessPostcode.isDefined && vatRegistrationDate.isDefined =>
         Future.successful(Right(UserHasKnownFacts))
       case (_, Some(agentReferenceNumber)) =>
-        agentClientRelationshipsConnector.checkAgentClientRelationship(agentReferenceNumber, vatNumber) map {
-          case Right(HaveRelationshipResponse) =>
-            auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = true))
-            Right(HaveRelationshipResponse)
-          case Right(NoRelationshipResponse) =>
-            auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = false))
-            Left(RelationshipNotFound)
-          case _ =>
-            Left(AgentServicesConnectionFailure)
-        }
+        checkAgentClientRelationship(vatNumber, agentReferenceNumber)
       case _ =>
         Future.successful(Left(InsufficientEnrolments))
     })
+  }
+
+  private def checkAgentClientRelationship(vatNumber: String,
+                                           agentReferenceNumber: String
+                                          )(implicit hc: HeaderCarrier,
+                                            request: Request[_]) = {
+    agentClientRelationshipsConnector.checkAgentClientRelationship(agentReferenceNumber, vatNumber) map {
+      case Right(HaveRelationshipResponse) =>
+        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = true))
+        Right(HaveRelationshipResponse)
+      case Right(NoRelationshipResponse) =>
+        auditService.audit(AgentClientRelationshipAuditModel(vatNumber, agentReferenceNumber, haveRelationship = false))
+        Left(RelationshipNotFound)
+      case _ =>
+        Left(AgentServicesConnectionFailure)
+    }
   }
 
   // todo move this to service???? depends on how to union the types of failures
@@ -97,13 +103,16 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
         knownFactsAndControlListInformationConnector.getKnownFactsAndControlListInformation(vatNumber: String)
       ).transform[StoreVatNumberFailure, EligibilitySuccess.type] {
         case Right(MtdEligible(businessPostcode, vatRegistrationDate)) =>
-          if (
-            optBusinessPostcode.exists(_.replaceAll(" ", "").equalsIgnoreCase(businessPostcode.replaceAll(" ", "")))
-              && optVatRegistrationDate.exists(_.equals(vatRegistrationDate))
-          )
-            Right[StoreVatNumberFailure, EligibilitySuccess.type](EligibilitySuccess)
-          else
-            Left[StoreVatNumberFailure, EligibilitySuccess.type](KnownFactsMismatch)
+          (optBusinessPostcode, optVatRegistrationDate) match {
+            case (Some(enteredPostcode), Some(enteredVatRegistrationDate)) =>
+              if((enteredPostcode equalsIgnoreCase businessPostcode) && (enteredVatRegistrationDate == vatRegistrationDate)) {
+                Right[StoreVatNumberFailure, EligibilitySuccess.type](EligibilitySuccess)
+              } else {
+                Left[StoreVatNumberFailure, EligibilitySuccess.type](KnownFactsMismatch)
+              }
+            case _ =>
+              Right[StoreVatNumberFailure, EligibilitySuccess.type](EligibilitySuccess)
+          }
         // todo audit the reason?
         case Left(MtdIneligible(ineligibleReasons)) => Left(Ineligible)
         case Left(ControlListInformationVatNumberNotFound) => Left(VatNotFound)
@@ -112,7 +121,12 @@ class StoreVatNumberService @Inject()(subscriptionRequestRepository: Subscriptio
           throw new BadGatewayException(s"Known facts & control list returned ${err.status} ${err.body}")
       }
     } else {
-      EitherT.pure(EligibilitySuccess)
+      (optBusinessPostcode, optVatRegistrationDate) match {
+        case (Some(_), Some(_)) =>
+          EitherT.liftF(Future.failed(new InternalServerException("The known facts API is disabled and known facts were provided")))
+        case _ =>
+          EitherT.pure(EligibilitySuccess)
+      }
     }
 
   private def checkExistingVatSubscription(vatNumber: String
