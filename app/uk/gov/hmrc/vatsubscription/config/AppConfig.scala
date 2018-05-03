@@ -24,7 +24,6 @@ import uk.gov.hmrc.vatsubscription.config.featureswitch.{FeatureSwitch, FeatureS
 
 @Singleton
 class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig with FeatureSwitching {
-
   override protected def mode: Mode = environment.mode
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
@@ -34,10 +33,10 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val taxEnrolmentsUrl: String = baseUrl("tax-enrolments") + "/tax-enrolments"
 
   lazy val desUrl: String = loadConfig("microservice.services.des.url")
+
   lazy val desAuthorisationToken: String = s"Bearer ${loadConfig("microservice.services.des.authorisation-token")}"
   lazy val desEnvironmentHeader: (String, String) =
     "Environment" -> loadConfig("microservice.services.des.environment")
-
   lazy val registerWithMultipleIdentifiersUrl: String = s"$desUrl/cross-regime/register/VATC"
 
   lazy val authenticatorUrl: String = baseUrl("authenticator")
@@ -61,6 +60,10 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val emailTimeToLiveSeconds: Long = loadConfig("mongodb.email.emailTimeToLiveSeconds").toLong
 
   lazy val vatSubscriptionUrl: String = baseUrl("vat-subscription")
+
+  lazy val emailUrl: String = baseUrl("email")
+
+  lazy val sendEmailUrl: String = s"$emailUrl/hmrc/email"
 
   def mandationStatusUrl(vatNumber: String): String = s"$vatSubscriptionUrl/vat-subscription/$vatNumber/mandation-status"
 
