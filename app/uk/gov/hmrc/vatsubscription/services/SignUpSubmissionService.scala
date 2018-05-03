@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.{CustomerSignUpConnector, EmailVerificationConnector, RegistrationConnector, TaxEnrolmentsConnector}
 import uk.gov.hmrc.vatsubscription.httpparsers.{EmailNotVerified, EmailVerified, RegisterWithMultipleIdsSuccess, SuccessfulTaxEnrolment}
 import uk.gov.hmrc.vatsubscription.models.{CustomerSignUpResponseSuccess, SubscriptionRequest}
-import uk.gov.hmrc.vatsubscription.repositories.SubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.repositories.{EmailRequestRepository, SubscriptionRequestRepository}
 import SignUpSubmissionService._
 import play.api.mvc.Request
 import uk.gov.hmrc.auth.core.Enrolments
@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SignUpSubmissionService @Inject()(subscriptionRequestRepository: SubscriptionRequestRepository,
+                                        emailRequestRepository: EmailRequestRepository,
                                         emailVerificationConnector: EmailVerificationConnector,
                                         customerSignUpConnector: CustomerSignUpConnector,
                                         registrationConnector: RegistrationConnector,
@@ -60,6 +61,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
           _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
+          _ <- saveTemporarySubscriptionData(vatNumber, emailAddress)
         } yield SignUpRequestSubmitted
 
         result.value
@@ -70,6 +72,7 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
           _ <- signUp(safeId, vatNumber, emailAddress, emailAddressVerified, optAgentReferenceNumber)
           _ <- registerEnrolment(vatNumber, safeId)
           _ <- deleteRecord(vatNumber)
+          _ <- saveTemporarySubscriptionData(vatNumber, emailAddress)
         } yield SignUpRequestSubmitted
 
         result.value
@@ -155,6 +158,15 @@ class SignUpSubmissionService @Inject()(subscriptionRequestRepository: Subscript
       _ => DeleteRecordFailure
     }
   }
+
+  private def saveTemporarySubscriptionData(vatNumber: String, email: String):
+  EitherT[Future, SignUpRequestSubmissionFailure, StoreTemporarySubscriptionDataSuccess.type] = {
+    val saveEmail: Future[Either[SignUpRequestSubmissionFailure, StoreTemporarySubscriptionDataSuccess.type]] =
+      emailRequestRepository.upsertEmail(vatNumber, email).map(_ => Right(StoreTemporarySubscriptionDataSuccess))
+    EitherT(saveEmail) leftMap {
+      _ => DeleteRecordFailure
+    }
+  }
 }
 
 object SignUpSubmissionService {
@@ -162,6 +174,8 @@ object SignUpSubmissionService {
   type SignUpRequestSubmissionResponse = Either[SignUpRequestSubmissionFailure, SignUpRequestSubmitted.type]
 
   case object SignUpRequestDeleted
+
+  case object StoreTemporarySubscriptionDataSuccess
 
   case object SignUpRequestSubmitted
 
