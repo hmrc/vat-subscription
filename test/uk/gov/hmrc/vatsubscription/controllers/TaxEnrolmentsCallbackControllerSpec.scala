@@ -34,7 +34,7 @@ class TaxEnrolmentsCallbackControllerSpec extends UnitSpec with MockitoSugar {
   val testRequest: FakeRequest[JsValue] = FakeRequest().withBody(Json.obj(TestTaxEnrolmentsCallbackController.stateKey -> "nnn"))
 
   "taxEnrolmentsCallback" should {
-    "return OK when successful" in {
+    "return NO_CONTENT when successful" in {
       val res: Future[Result] = TestTaxEnrolmentsCallbackController.taxEnrolmentsCallback(testVatNumber)(testRequest)
       status(res) shouldBe NO_CONTENT
     }

@@ -26,7 +26,7 @@ class TaxEnrolmentsCallbackControllerISpec extends ComponentSpecBase with Before
 
   "/subscription-request/vat-number/callback" when {
     "callback is successful" should {
-      "return OK with the status" in {
+      "return NO_CONTENT with the status" in {
 
         val res = post(s"/subscription-request/vat-number/$testVatNumber/callback")(Json.obj("vatNumber" -> testVatNumber))
         res should have(
