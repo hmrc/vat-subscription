@@ -28,7 +28,8 @@ object FeatureSwitch {
 
   val switches: Set[FeatureSwitch] = Set(
     MTDEligibilityCheck,
-    AlreadySubscribedCheck
+    AlreadySubscribedCheck,
+    StubDESFeature
   )
 
   def apply(str: String): FeatureSwitch =
@@ -52,4 +53,9 @@ object MTDEligibilityCheck extends FeatureSwitch {
 object AlreadySubscribedCheck extends FeatureSwitch {
   override val displayName: String = "Enable check for already subscribed VAT numbers (API 1363)"
   override val name: String = s"$prefix.already-subscribed-check"
+}
+
+object StubDESFeature extends FeatureSwitch {
+  val displayName = s"Use stub for DES connection"
+  val name = s"$prefix.stub-des"
 }
