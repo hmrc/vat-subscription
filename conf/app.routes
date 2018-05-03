@@ -12,3 +12,5 @@ GET         /subscription-request/vat-number/:vatNumber/mtdfb-eligibility       
 GET         /:vatNumber/mandation-status                                             @uk.gov.hmrc.vatsubscription.controllers.MandationStatusController.getMandationStatus(vatNumber: String)
 
 GET         /:vatNumber/customer-details                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(vatNumber: String)
+
+POST        /subscription-request/vat-number/:vatNumber/callback                     @uk.gov.hmrc.vatsubscription.controllers.TaxEnrolmentsCallbackController.taxEnrolmentsCallback(vatNumber: String)
