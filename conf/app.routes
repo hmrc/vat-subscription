@@ -7,8 +7,6 @@ PUT         /subscription-request/vat-number/:vatNumber/nino                    
 POST        /subscription-request/vat-number/:vatNumber/submit                       @uk.gov.hmrc.vatsubscription.controllers.SignUpSubmissionController.submitSignUpRequest(vatNumber: String)
 POST        /subscription-request/vat-number/:vatNumber/identity-verification        @uk.gov.hmrc.vatsubscription.controllers.StoreIdentityVerificationOutcomeController.storeIdentityVerificationOutcome(vatNumber: String)
 
-PUT         /store-temporary-subscription-data/vat-number/:vatNumber/email           @uk.gov.hmrc.vatsubscription.controllers.StoreTemporarySubscriptionDataController.storeTemporarySubscriptionData(vatNumber: String)
-
 GET         /subscription-request/vat-number/:vatNumber/mtdfb-eligibility            @uk.gov.hmrc.vatsubscription.controllers.VatNumberEligibilityController.checkVatNumberEligibility(vatNumber: String)
 
 GET         /:vatNumber/mandation-status                                             @uk.gov.hmrc.vatsubscription.controllers.MandationStatusController.getMandationStatus(vatNumber: String)

@@ -24,11 +24,11 @@ import uk.gov.hmrc.vatsubscription.connectors.mocks.{MockCustomerSignUpConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers._
 import uk.gov.hmrc.vatsubscription.models.{CustomerSignUpResponseFailure, CustomerSignUpResponseSuccess, SubscriptionRequest}
-import uk.gov.hmrc.vatsubscription.repositories.mocks.MockSubscriptionRequestRepository
+import uk.gov.hmrc.vatsubscription.repositories.mocks.{MockEmailRequestRepository, MockSubscriptionRequestRepository}
 import uk.gov.hmrc.vatsubscription.services._
 import SignUpSubmissionService._
 import play.api.test.FakeRequest
-import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants
 import uk.gov.hmrc.vatsubscription.models.monitoring.RegisterWithMultipleIDsAuditing.RegisterWithMultipleIDsAuditModel
@@ -41,10 +41,11 @@ import scala.concurrent.Future
 class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
   with MockSubscriptionRequestRepository with MockEmailVerificationConnector
   with MockCustomerSignUpConnector with MockRegistrationConnector
-  with MockTaxEnrolmentsConnector with MockAuditService{
+  with MockTaxEnrolmentsConnector with MockAuditService with MockEmailRequestRepository {
 
   object TestSignUpSubmissionService extends SignUpSubmissionService(
     mockSubscriptionRequestRepository,
+    mockEmailRequestRepository,
     mockEmailVerificationConnector,
     mockCustomerSignUpConnector,
     mockRegistrationConnector,
@@ -77,6 +78,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
                   mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
                   mockDeleteRecord(testVatNumber)(mock[WriteResult])
+                  mockUpsertEmailAfterSubscription(testVatNumber, testEmail)(mock[UpdateWriteResult])
 
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
@@ -98,6 +100,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
                   mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
                   mockDeleteRecord(testVatNumber)(mock[WriteResult])
+                  mockUpsertEmailAfterSubscription(testVatNumber, testEmail)(mock[UpdateWriteResult])
 
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
@@ -202,6 +205,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = false)(Future.successful(Right(CustomerSignUpResponseSuccess)))
                   mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
                   mockDeleteRecord(testVatNumber)(mock[WriteResult])
+                  mockUpsertEmailAfterSubscription(testVatNumber, testEmail)(mock[UpdateWriteResult])
 
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
@@ -291,6 +295,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
                   mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
                   mockDeleteRecord(testVatNumber)(mock[WriteResult])
+                  mockUpsertEmailAfterSubscription(testVatNumber, testEmail)(mock[UpdateWriteResult])
 
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 
@@ -313,6 +318,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec with EitherValues
                   mockSignUp(testSafeId, testVatNumber, testEmail, emailVerified = true)(Future.successful(Right(CustomerSignUpResponseSuccess)))
                   mockRegisterEnrolment(testVatNumber, testSafeId)(Future.successful(Right(SuccessfulTaxEnrolment)))
                   mockDeleteRecord(testVatNumber)(mock[WriteResult])
+                  mockUpsertEmailAfterSubscription(testVatNumber, testEmail)(mock[UpdateWriteResult])
 
                   val res = await(TestSignUpSubmissionService.submitSignUpRequest(testVatNumber, enrolments))
 

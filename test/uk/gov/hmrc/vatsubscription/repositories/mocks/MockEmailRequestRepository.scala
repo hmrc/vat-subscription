@@ -34,12 +34,8 @@ trait MockEmailRequestRepository extends MockitoSugar with BeforeAndAfterEach {
 
   val mockEmailRequestRepository: EmailRequestRepository = mock[EmailRequestRepository]
 
-  def mockUpsertEmail(vatNumber: String, email: String)(response: Future[UpdateWriteResult]): Unit =
+  def mockUpsertEmailAfterSubscription(vatNumber: String, email: String)(response: Future[UpdateWriteResult]): Unit =
     when(mockEmailRequestRepository.upsertEmail(ArgumentMatchers.eq(vatNumber), ArgumentMatchers.eq(email)))
-      .thenReturn(response)
-
-  def mockDeleteRecord(vatNumber: String)(response: Future[WriteResult]): Unit =
-    when(mockEmailRequestRepository.deleteRecord(ArgumentMatchers.eq(vatNumber)))
       .thenReturn(response)
 
 
