@@ -32,13 +32,16 @@ import scala.concurrent.Future
 class TaxEnrolmentsConnector @Inject()(http: HttpClient,
                                        applicationConfig: AppConfig) {
 
+  private def taxEnrolmentsCallbackUrl(vatNumber: String) =
+    s"${applicationConfig.vatSubscriptionUrl}/vat-subscription/subscription-request/vat-number/$vatNumber/callback"
+
   def registerEnrolment(vatNumber: String, safeId: String)
                         (implicit hc: HeaderCarrier): Future[TaxEnrolmentsResponse] = {
 
-    val enrolmentRequestBody ={
+    val enrolmentRequestBody = {
         Json.obj(
           "serviceName" -> ServiceName,
-          "callback" -> "", // This needs to be blank until tax-enrolments fix the callback field to be optional
+          "callback" -> taxEnrolmentsCallbackUrl(vatNumber),
           "etmpId" -> safeId
         )
     }

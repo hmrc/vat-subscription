@@ -16,19 +16,25 @@
 
 package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 
+import helpers.WiremockHelper
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.config.Constants
 
 object TaxEnrolmentsStub extends WireMockMethods {
 
+  val mockUrl = s"http://${WiremockHelper.wiremockHost}:${WiremockHelper.wiremockPort}"
+
   def registerEnrolmentUri(vatNumber: String): String =
     s"/tax-enrolments/subscriptions/$vatNumber/subscriber"
+
+  private def taxEnrolmentsCallbackUrl(vatNumber: String) =
+    s"$mockUrl/vat-subscription/subscription-request/vat-number/$vatNumber/callback"
 
   def stubRegisterEnrolment(vatNumber: String, safeId: String)(status: Int): Unit = {
 
     val registerEnrolmentJsonBody = Json.obj(
       "serviceName" -> Constants.TaxEnrolments.ServiceName,
-      "callback" -> "",
+      "callback" -> taxEnrolmentsCallbackUrl(vatNumber),
       "etmpId" -> safeId
     )
     when(
