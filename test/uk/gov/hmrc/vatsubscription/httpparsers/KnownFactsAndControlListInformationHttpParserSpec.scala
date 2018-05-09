@@ -18,12 +18,12 @@ package uk.gov.hmrc.vatsubscription.httpparsers
 
 import org.scalatest.EitherValues
 import play.api.http.Status._
-import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.KnownFactsAndControlListInformationHttpParser.KnownFactsAndControlListInformationHttpReads.read
-import uk.gov.hmrc.vatsubscription.models._
+import uk.gov.hmrc.vatsubscription.httpparsers.KnownFactsAndControlListInformationHttpParser.invalidJsonResponseMessage
 
 class KnownFactsAndControlListInformationHttpParserSpec extends UnitSpec with EitherValues {
   val testMethod = "GET"
@@ -61,7 +61,7 @@ class KnownFactsAndControlListInformationHttpParserSpec extends UnitSpec with Ei
             )
           )
 
-          read(testMethod, testUrl, testResponse).left.value shouldBe UnexpectedKnownFactsAndControlListInformationFailure(OK, testResponse.body)
+          read(testMethod, testUrl, testResponse).left.value shouldBe UnexpectedKnownFactsAndControlListInformationFailure(OK, invalidJsonResponseMessage)
         }
       }
     }
