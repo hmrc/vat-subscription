@@ -29,6 +29,8 @@ object KnownFactsAndControlListInformationHttpParser {
   val registrationDateKey = "dateOfReg"
   val controlListInformationKey = "controlListInformation"
 
+  val invalidJsonResponseMessage = "Invalid JSON response"
+
   implicit object KnownFactsAndControlListInformationHttpReads extends HttpReads[KnownFactsAndControlListInformationHttpParserResponse] {
     override def read(method: String, url: String, response: HttpResponse): KnownFactsAndControlListInformationHttpParserResponse = {
       response.status match {
@@ -43,9 +45,9 @@ object KnownFactsAndControlListInformationHttpParser {
                 case Valid(_) => Right(MtdEligible(businessPostcode, vatRegistrationDate))
                 case Invalid(ineligibilityReasons) => Left(MtdIneligible(ineligibilityReasons))
               }
-            case Left(_) =>
-              Left(UnexpectedKnownFactsAndControlListInformationFailure(OK, response.body))
-          }) getOrElse Left(UnexpectedKnownFactsAndControlListInformationFailure(OK, response.body))
+            case Left(parsingError) =>
+              Left(UnexpectedKnownFactsAndControlListInformationFailure(OK, parsingError.toString))
+          }) getOrElse Left(UnexpectedKnownFactsAndControlListInformationFailure(OK, invalidJsonResponseMessage))
         case BAD_REQUEST =>
           Left(KnownFactsInvalidVatNumber)
         case NOT_FOUND =>

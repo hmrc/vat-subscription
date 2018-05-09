@@ -38,7 +38,7 @@ class ControlListInformationSpec extends UnitSpec {
     nonStandardTaxPeriod = false,
     overseasTrader = false,
     poaTrader = false,
-    entityType = SoleTrader,
+    entityType = entityType,
     dificTrader = false,
     anythingUnderAppeal = false,
     repaymentTrader = false,
@@ -177,32 +177,32 @@ class ControlListInformationSpec extends UnitSpec {
     }
     "the user has an entity type of Division" should {
       "return Invalid with an invalidEntityTypeMessage for Division" in {
-        valid(SoleTrader).copy(entityType = Division).validate shouldBe ineligible(invalidEntityTypeMessage(Division))
+        valid(Division).validate shouldBe ineligible(invalidEntityTypeMessage(Division))
       }
     }
     "the user has an entity type of Group" should {
       "return Invalid with an invalidEntityTypeMessage for Group" in {
-        valid(SoleTrader).copy(entityType = Group).validate shouldBe ineligible(invalidEntityTypeMessage(Group))
+        valid(Group).validate shouldBe ineligible(invalidEntityTypeMessage(Group))
       }
     }
     "the user has an entity type of Partnership" should {
       "return Invalid with an invalidEntityTypeMessage for Partnership" in {
-        valid(SoleTrader).copy(entityType = Partnership).validate shouldBe ineligible(invalidEntityTypeMessage(Partnership))
+        valid(Partnership).validate shouldBe ineligible(invalidEntityTypeMessage(Partnership))
       }
     }
     "the user has an entity type of PublicCorporation" should {
       "return Invalid with an invalidEntityTypeMessage for PublicCorporation" in {
-        valid(SoleTrader).copy(entityType = PublicCorporation).validate shouldBe ineligible(invalidEntityTypeMessage(PublicCorporation))
+        valid(PublicCorporation).validate shouldBe ineligible(invalidEntityTypeMessage(PublicCorporation))
       }
     }
     "the user has an entity type of LocalAuthority" should {
       "return Invalid with an invalidEntityTypeMessage for LocalAuthority" in {
-        valid(SoleTrader).copy(entityType = LocalAuthority).validate shouldBe ineligible(invalidEntityTypeMessage(LocalAuthority))
+        valid(LocalAuthority).validate shouldBe ineligible(invalidEntityTypeMessage(LocalAuthority))
       }
     }
     "the user has an entity type of NonProfitMakingBody" should {
       "return Invalid with an invalidEntityTypeMessage for NonProfitMakingBody" in {
-        valid(SoleTrader).copy(entityType = NonProfitMakingBody).validate shouldBe ineligible(invalidEntityTypeMessage(NonProfitMakingBody))
+        valid(NonProfitMakingBody).validate shouldBe ineligible(invalidEntityTypeMessage(NonProfitMakingBody))
       }
     }
     "the user is a DIFIC trader" should {
