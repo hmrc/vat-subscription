@@ -18,10 +18,10 @@ package uk.gov.hmrc.vatsubscription.helpers
 
 import java.util.UUID
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.vatsubscription.config.Constants.{MtdVatEnrolmentKey, MtdVatReferenceKey}
-import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, MTDfBMandated, VatCustomerInformation}
+import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, FlatRateScheme, MTDfBMandated, VatCustomerInformation}
 
 
 object TestConstants {
@@ -29,7 +29,7 @@ object TestConstants {
 
   val testMtdVatEnrolment: Enrolment = Enrolment(MtdVatEnrolmentKey).withIdentifier(MtdVatReferenceKey, testVatNumber)
 
-  val testSuccessDesResponse = {
+  val testSuccessDesResponse: JsObject = {
     val testIndividualJson = Json.obj("title" -> "00001",
       "firstName" -> "testFirstName",
       "middleName" -> "testMiddleName",
@@ -46,11 +46,24 @@ object TestConstants {
     )
   }
 
+  val testErrorMsg = "this is an error"
+  val hasFlatRateSchemeNo: Boolean = false
+  val hasFlatRateSchemeYes: Boolean = true
+
   val testCustomerDetails = CustomerDetails(Some("testFirstName"),
     Some("testLastName"),
     Some("testOrganisationName"),
-    Some("testTradingName"))
+    Some("testTradingName"),
+    hasFlatRateSchemeNo)
 
-  val testCustomerInformation = VatCustomerInformation(MTDfBMandated, testCustomerDetails)
+  val testCustomerDetailsWithFlatRateScheme = CustomerDetails(Some("testFirstName"),
+    Some("testLastName"),
+    Some("testOrganisationName"),
+    Some("testTradingName"),
+    hasFlatRateSchemeYes)
+
+  val testCustomerInformation = VatCustomerInformation(MTDfBMandated, testCustomerDetails, None)
+  val testCustomerInformationWithFlatRateScheme = VatCustomerInformation(MTDfBMandated, testCustomerDetails,
+    Some(FlatRateScheme(Some("001"), Some(BigDecimal("123.12")), Some(true), Some("2001-01-01"))))
 
 }

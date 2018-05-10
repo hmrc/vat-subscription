@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
@@ -26,7 +26,8 @@ import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 
 class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
-  val testSuccessDesResponse = {
+  val testSuccessDesResponse: JsObject = {
+
     val testIndividualJson = Json.obj("title" -> "00001",
       "firstName" -> "testFirstName",
       "middleName" -> "testMiddleName",
@@ -43,10 +44,11 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
     )
   }
 
-  val expectedCustomerDetailsJson = Json.obj("organisationName" -> "testOrganisationName",
+  val expectedCustomerDetailsJson: JsObject = Json.obj("organisationName" -> "testOrganisationName",
                                              "firstName" -> "testFirstName",
                                              "lastName" -> "testLastName",
-                                             "tradingName" -> "testTradingName")
+                                             "tradingName" -> "testTradingName",
+                                              "hasFlatRateScheme" -> false)
 
   "/:vatNumber/customer-details" when {
     "the user does not have an mtd vat enrolment" should {
@@ -113,6 +115,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         )
       }
     }
+
   }
 
 }
