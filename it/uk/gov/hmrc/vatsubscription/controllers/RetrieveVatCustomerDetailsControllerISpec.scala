@@ -23,12 +23,10 @@ import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
-import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
 
 class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
   val testSuccessDesResponse = {
-
     val testIndividualJson = Json.obj("title" -> "00001",
       "firstName" -> "testFirstName",
       "middleName" -> "testMiddleName",
@@ -50,11 +48,22 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
                                              "lastName" -> "testLastName",
                                              "tradingName" -> "testTradingName")
 
-
   "/:vatNumber/customer-details" when {
+    "the user does not have an mtd vat enrolment" should {
+      "return FORBIDDEN" in {
+        stubAuth(OK, successfulAuthResponse())
+
+        val res = await(get(s"/$testVatNumber/customer-details"))
+
+        res should have(
+          httpStatus(FORBIDDEN)
+        )
+      }
+    }
+
     "calls to DES is successful" should {
       "return OK with the status" in {
-        stubAuth(OK, successfulAuthResponse())
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(OK, testSuccessDesResponse)
 
         val res = await(get(s"/$testVatNumber/customer-details"))
@@ -68,7 +77,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
 
     "calls to DES returned BAD_REQUEST" should {
       "return BAD_REQUEST with the status" in {
-        stubAuth(OK, successfulAuthResponse())
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
 
         val res = await(get(s"/$testVatNumber/customer-details"))
@@ -81,7 +90,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
 
     "calls to DES returned NOT_FOUND" should {
       "return NOT_FOUND with the status" in {
-        stubAuth(OK, successfulAuthResponse())
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
 
         val res = await(get(s"/$testVatNumber/customer-details"))
@@ -94,7 +103,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
 
     "calls to DES returned anything else" should {
       "return INTERNAL_SERVER_ERROR with the status" in {
-        stubAuth(OK, successfulAuthResponse())
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
 
         val res = await(get(s"/$testVatNumber/customer-details"))
@@ -104,7 +113,6 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         )
       }
     }
-
   }
 
 }

@@ -29,10 +29,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  lazy val agentClientRelationshipUrl: String = baseUrl("agent-client-relationships") + "/agent-client-relationships"
-
-  lazy val taxEnrolmentsUrl: String = baseUrl("tax-enrolments") + "/tax-enrolments"
-
   def desUrl: String =
     loadConfig(
       if (isEnabled(featureswitch.StubDESFeature)) "microservice.services.des.stub-url"
@@ -42,35 +38,13 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val desAuthorisationToken: String = s"Bearer ${loadConfig("microservice.services.des.authorisation-token")}"
   lazy val desEnvironmentHeader: (String, String) =
     "Environment" -> loadConfig("microservice.services.des.environment")
-  lazy val registerWithMultipleIdentifiersUrl: String = s"$desUrl/cross-regime/register/VATC"
 
   lazy val authenticatorUrl: String = baseUrl("authenticator")
-
-  lazy val emailVerificationUrl: String = baseUrl("email-verification")
-
-  def getEmailVerifiedUrl(email: String): String = s"$emailVerificationUrl/email-verification/verified-email-addresses/$email"
-
-  lazy val verifyEmailUrl = s"$emailVerificationUrl/email-verification/verification-requests"
-
-  lazy val frontendBaseUrl: String = loadConfig("microservice.services.vat-subscription-frontend.url")
-
-  lazy val principalVerifyEmailContinueUrl = s"$frontendBaseUrl/vat-through-software/sign-up/email-verified"
-
-  lazy val delegatedVerifyEmailContinueUrl = s"$frontendBaseUrl/vat-through-software/sign-up/client/email-verified"
-
-  lazy val identityVerificationFrontendUrl: String = baseUrl("identity-verification-frontend")
 
   lazy val timeToLiveSeconds: Long = loadConfig("mongodb.timeToLiveSeconds").toLong
 
   lazy val emailTimeToLiveSeconds: Long = loadConfig("mongodb.email.emailTimeToLiveSeconds").toLong
 
-  lazy val vatSubscriptionUrl: String = baseUrl("vat-subscription")
-
-  lazy val emailUrl: String = baseUrl("email")
-
-  lazy val sendEmailUrl: String = s"$emailUrl/hmrc/email"
-
-  def mandationStatusUrl(vatNumber: String): String = s"$vatSubscriptionUrl/vat-subscription/$vatNumber/mandation-status"
-
   override def isEnabled(featureSwitch: FeatureSwitch): Boolean = super.isEnabled(featureSwitch)
+
 }

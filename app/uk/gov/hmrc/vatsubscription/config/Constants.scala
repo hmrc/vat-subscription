@@ -17,37 +17,6 @@
 package uk.gov.hmrc.vatsubscription.config
 
 object Constants {
-  val AgentEnrolmentKey: String = "HMRC-AS-AGENT"
-  val AgentReferenceNumberKey: String = "AgentReferenceNumber"
-  val VatDecEnrolmentKey: String = "HMCE-VATDEC-ORG"
-  val VatReferenceKey: String = "VATRegNo"
-  val HttpCodeKey: String = "CODE"
-
-  object Des {
-    val IdTypeKey = "idType"
-    val IdValueKey = "idValue"
-    val CrnKey = "CRN"
-    val NinoKey = "NINO"
-    val VrnKey = "VRN"
-    val SafeIdKey = "SAFEID"
-    val emailKey = "EMAIL"
-
-    val RegistrationRequestKey = "registrationRequest"
-    val IdentificationKey = "identification"
-  }
-
-  object TaxEnrolments {
-    val ServiceName = "HMRC-MTD-VAT"
-  }
-
-  object EmailVerification {
-    val EmailKey = "email"
-    val TemplateIdKey = "templateId"
-    val TemplateParametersKey = "templateParameters"
-    val LinkExpiryDurationKey = "linkExpiryDuration"
-    val ContinueUrlKey = "continueUrl"
-    val EmailVerifiedKey = "emailVerified"
-  }
-
-  val CONTROL_INFORMATION_STRING_LENGTH: Int = 32
+  val MtdVatEnrolmentKey: String = "HMRC-MTD-VAT"
+  val MtdVatReferenceKey: String = "VRN"
 }

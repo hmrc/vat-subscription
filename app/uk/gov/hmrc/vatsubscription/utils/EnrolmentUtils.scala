@@ -22,16 +22,10 @@ import uk.gov.hmrc.vatsubscription.config.Constants._
 object EnrolmentUtils {
 
   implicit class EnrolmentUtils(enrolments: Enrolments) {
-    def vatNumber: Option[String] =
-      enrolments getEnrolment VatDecEnrolmentKey flatMap {
-        vatDecEnrolment =>
-          vatDecEnrolment getIdentifier VatReferenceKey map (_.value)
-      }
-
-    def agentReferenceNumber: Option[String] =
-      enrolments getEnrolment AgentEnrolmentKey flatMap {
-        agentEnrolment =>
-          agentEnrolment getIdentifier AgentReferenceNumberKey map (_.value)
+    def mtdVatRef: Option[String] =
+      enrolments getEnrolment MtdVatEnrolmentKey flatMap {
+        mtdVatEnrolment =>
+          mtdVatEnrolment getIdentifier MtdVatReferenceKey map (_.value)
       }
   }
 

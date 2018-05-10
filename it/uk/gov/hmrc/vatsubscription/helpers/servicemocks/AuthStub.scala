@@ -46,25 +46,16 @@ object AuthStub extends WireMockMethods {
   )
 
   def successfulAuthResponse(enrolments: JsObject*): JsObject =
-    successfulAuthResponse(L0, enrolments:_*)
+    successfulAuthResponse(L0, enrolments: _*)
 
-  val agentEnrolment: JsObject = Json.obj(
-    "key" -> AgentEnrolmentKey,
+  val mtdVatEnrolment: JsObject = Json.obj(
+    "key" -> MtdVatEnrolmentKey,
     "identifiers" -> Json.arr(
       Json.obj(
-        "key" -> AgentReferenceNumberKey,
-        "value" -> testAgentNumber
-      )
-    )
-  )
-
-  val vatDecEnrolment: JsObject = Json.obj(
-    "key" -> VatDecEnrolmentKey,
-    "identifiers" -> Json.arr(
-      Json.obj(
-        "key" -> VatReferenceKey,
+        "key" -> MtdVatReferenceKey,
         "value" -> testVatNumber
       )
     )
   )
+
 }
