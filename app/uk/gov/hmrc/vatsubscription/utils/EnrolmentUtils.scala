@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.config
+package uk.gov.hmrc.vatsubscription.utils
 
-object Constants {
-  val MtdVatEnrolmentKey: String = "HMRC-MTD-VAT"
-  val MtdVatReferenceKey: String = "VRN"
+import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.vatsubscription.config.Constants._
+
+object EnrolmentUtils {
+
+  implicit class EnrolmentUtils(enrolments: Enrolments) {
+    def mtdVatRef: Option[String] =
+      enrolments getEnrolment MtdVatEnrolmentKey flatMap {
+        mtdVatEnrolment =>
+          mtdVatEnrolment getIdentifier MtdVatReferenceKey map (_.value)
+      }
+  }
+
 }

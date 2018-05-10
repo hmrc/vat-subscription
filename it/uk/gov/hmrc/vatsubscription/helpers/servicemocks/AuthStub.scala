@@ -22,6 +22,8 @@ import play.api.http.Status._
 import play.api.libs.json.{JsObject, Json, Writes}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L0
+import uk.gov.hmrc.vatsubscription.config.Constants._
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 
 object AuthStub extends WireMockMethods {
   val authority = "/auth/authorise"
@@ -45,5 +47,15 @@ object AuthStub extends WireMockMethods {
 
   def successfulAuthResponse(enrolments: JsObject*): JsObject =
     successfulAuthResponse(L0, enrolments: _*)
+
+  val mtdVatEnrolment: JsObject = Json.obj(
+    "key" -> MtdVatEnrolmentKey,
+    "identifiers" -> Json.arr(
+      Json.obj(
+        "key" -> MtdVatReferenceKey,
+        "value" -> testVatNumber
+      )
+    )
+  )
 
 }

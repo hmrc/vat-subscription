@@ -22,7 +22,7 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrieval, Retrievals}
-import uk.gov.hmrc.auth.core.{AuthConnector, ConfidenceLevel, Enrolments}
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
 
@@ -46,8 +46,12 @@ trait MockAuthConnector extends BeforeAndAfterEach with MockitoSugar {
     ) thenReturn response
   }
 
+  def mockAuthRetrieveMtdVatEnrolled(): Unit =
+    mockAuthorise(retrievals = Retrievals.allEnrolments)(Future.successful(Enrolments(Set(testMtdVatEnrolment))))
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuthConnector)
   }
+
 }

@@ -19,11 +19,15 @@ package uk.gov.hmrc.vatsubscription.helpers
 import java.util.UUID
 
 import play.api.libs.json.Json
+import uk.gov.hmrc.auth.core.Enrolment
+import uk.gov.hmrc.vatsubscription.config.Constants.{MtdVatEnrolmentKey, MtdVatReferenceKey}
 import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, MTDfBMandated, VatCustomerInformation}
 
 
 object TestConstants {
   val testVatNumber: String = UUID.randomUUID().toString
+
+  val testMtdVatEnrolment: Enrolment = Enrolment(MtdVatEnrolmentKey).withIdentifier(MtdVatReferenceKey, testVatNumber)
 
   val testSuccessDesResponse = {
     val testIndividualJson = Json.obj("title" -> "00001",
