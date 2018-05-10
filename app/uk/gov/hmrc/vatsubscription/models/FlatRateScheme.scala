@@ -18,10 +18,10 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CustomerDetails(firstName: Option[String], lastName: Option[String], organisationName: Option[String],
-                           tradingName: Option[String], hasFlatRateScheme: Boolean = false)
+case class FlatRateScheme(FRSCategory: Option[String], FRSPercentage: Option[BigDecimal],
+                          limitedCostTrader: Option[Boolean], startDate: Option[String])
 
-object CustomerDetails {
-  implicit val format: OFormat[CustomerDetails] = Json.format[CustomerDetails]
+object FlatRateScheme {
+  implicit val format: OFormat[FlatRateScheme] = Json.format[FlatRateScheme]
 }
 

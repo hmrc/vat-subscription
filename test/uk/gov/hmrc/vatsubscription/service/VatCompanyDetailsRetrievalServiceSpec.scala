@@ -44,6 +44,12 @@ class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCust
       await(res) shouldBe Right(testCustomerDetails)
     }
 
+    "retrieve the vat customers details from valid customer information including flat rate scheme" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(testCustomerInformationWithFlatRateScheme)))
+      val res = TestVatCompanyDetailsRetrievalService.retrieveVatCustomerDetails(testVatNumber)
+      await(res) shouldBe Right(testCustomerDetailsWithFlatRateScheme)
+    }
+
     "return a failed response when the customer information cannot be retrieved" in {
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
       val res = TestVatCompanyDetailsRetrievalService.retrieveVatCustomerDetails(testVatNumber)

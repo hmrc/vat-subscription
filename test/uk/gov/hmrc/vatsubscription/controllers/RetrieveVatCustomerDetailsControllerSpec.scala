@@ -16,15 +16,14 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.Enrolments
-import uk.gov.hmrc.auth.core.retrieve.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrievals}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
@@ -44,12 +43,21 @@ class RetrieveVatCustomerDetailsControllerSpec extends UnitSpec with MockAuthCon
   implicit private val system: ActorSystem = ActorSystem()
   implicit private val materializer: ActorMaterializer = ActorMaterializer()
 
-  val expectedClientDetails: JsValue = Json.obj("firstName" -> "testFirstName",
-    "lastName" -> "testLastName",
+  val expectedClientDetailsWithFlatRateScheme: JsValue = Json.obj(
+    "firstName" -> "testFirstName",
+    "lastName" ->"testLastName",
     "organisationName" -> "testOrganisationName",
-    "tradingName" -> "testTradingName")
+    "tradingName" -> "testTradingName",
+    "hasFlatRateScheme" -> true)
 
-  val emptyJson = Json.obj()
+  val expectedClientDetails: JsValue = Json.obj(
+    "firstName" -> "testFirstName",
+    "lastName" ->"testLastName",
+    "organisationName" -> "testOrganisationName",
+    "tradingName" -> "testTradingName",
+    "hasFlatRateScheme" -> false)
+
+  val baseJson: JsObject = Json.obj("hasFlatRateScheme" -> false)
 
   "retrieveVatCustomerDetails" when {
     "the user does not have an mtd vat enrolment" should {
@@ -80,7 +88,32 @@ class RetrieveVatCustomerDetailsControllerSpec extends UnitSpec with MockAuthCon
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe emptyJson
+          jsonBodyOf(res) shouldBe baseJson
+        }
+      }
+    }
+  }
+
+  "retrieveVatCustomerDetails" when {
+    "the customer details and flat rate scheme have been successfully retrieved" should {
+      "return the customer details" when {
+        "the customer details and flat rate scheme are populated" in {
+          mockAuthRetrieveMtdVatEnrolled()
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(testCustomerDetailsWithFlatRateScheme)))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe expectedClientDetailsWithFlatRateScheme
+        }
+        "the customer details are empty" in {
+          mockAuthRetrieveMtdVatEnrolled()
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(CustomerDetails(None, None, None, None))))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe baseJson
         }
       }
     }

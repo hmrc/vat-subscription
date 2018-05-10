@@ -25,22 +25,73 @@ class VatCustomerInformationSpec extends UnitSpec {
   private val testJson = Json.parse(
     """
       |{
-      |   "approvedInformation": {
-      |      "customerDetails": {
-      |         "organisationName": "Ancient Antiques",
-      |         "individual": {
-      |            "title": "0001",
-      |            "firstName": "Fred",
-      |            "middleName": "M",
-      |            "lastName": "Flintstone"
-      |         },
-      |         "tradingName": "a",
-      |         "mandationStatus": "1",
-      |         "registrationReason": "0001",
-      |         "effectiveRegistrationDate": "1967-08-13",
-      |         "businessStartDate": "1967-08-13"
-      |      }
-      |   }
+      |	"approvedInformation": {
+      |		"customerDetails": {
+      |			"organisationName": "Ancient Antiques",
+      |			"individual": {
+      |				"title": "0001",
+      |				"firstName": "Fred",
+      |				"middleName": "M",
+      |				"lastName": "Flintstone"
+      |			},
+      |			"tradingName": "a",
+      |			"mandationStatus": "1",
+      |			"registrationReason": "0001",
+      |			"effectiveRegistrationDate": "1967-08-13",
+      |			"businessStartDate": "1967-08-13"
+      |		},
+      |		"PPOB": {
+      |			"address": {
+      |				"line1": "VAT ADDR 1",
+      |				"line2": "VAT ADDR 2",
+      |				"line3": "VAT ADDR 3",
+      |				"line4": "VAT ADDR 4",
+      |				"postCode": "SW1A 2BQ",
+      |				"countryCode": "ES"
+      |			}
+      |
+      |		},
+      |		"flatRateScheme": {
+      |			"FRSCategory": "001",
+      |			"FRSPercentage": 123.12,
+      |			"limitedCostTrader": true,
+      |			"startDate": "2001-01-01"
+      |		}
+      |	}
+      |}
+    """.stripMargin)
+
+
+  private val testJsonNoFlatRate = Json.parse(
+    """
+      |{
+      |	"approvedInformation": {
+      |		"customerDetails": {
+      |			"organisationName": "Ancient Antiques",
+      |			"individual": {
+      |				"title": "0001",
+      |				"firstName": "Fred",
+      |				"middleName": "M",
+      |				"lastName": "Flintstone"
+      |			},
+      |			"tradingName": "a",
+      |			"mandationStatus": "1",
+      |			"registrationReason": "0001",
+      |			"effectiveRegistrationDate": "1967-08-13",
+      |			"businessStartDate": "1967-08-13"
+      |		},
+      |		"PPOB": {
+      |			"address": {
+      |				"line1": "VAT ADDR 1",
+      |				"line2": "VAT ADDR 2",
+      |				"line3": "VAT ADDR 3",
+      |				"line4": "VAT ADDR 4",
+      |				"postCode": "SW1A 2BQ",
+      |				"countryCode": "ES"
+      |			}
+      |
+      |		}
+      |	}
       |}
     """.stripMargin)
 
@@ -57,14 +108,22 @@ class VatCustomerInformationSpec extends UnitSpec {
 
   "desReader" should {
     "parse the json correctly when all optional fields are populated" in {
-      val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(Some("Fred"), Some("Flintstone"), Some("Ancient Antiques"), Some("a")))
+      val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(Some("Fred"), Some("Flintstone"), Some("Ancient Antiques"), Some("a")),
+        Some(FlatRateScheme(Some("001"), Some(BigDecimal("123.12")), Some(true), Some("2001-01-01"))))
       val data = VatCustomerInformation.desReader.reads(testJson).get
       data shouldBe expected
     }
 
     "parse the json correctly when no optional fields are returned" in {
-      val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(None, None, None, None))
+      val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(None, None, None, None), None)
       val data = VatCustomerInformation.desReader.reads(testJsonMin).get
+      data shouldBe expected
+    }
+
+    "parse the json correctly when no flat rate scheme is returned" in {
+      val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(Some("Fred"), Some("Flintstone"), Some("Ancient Antiques"), Some("a")),
+        None)
+      val data = VatCustomerInformation.desReader.reads(testJsonNoFlatRate).get
       data shouldBe expected
     }
   }

@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
 
-case class VatCustomerInformation(mandationStatus: MandationStatus, customerDetails: CustomerDetails)
+case class VatCustomerInformation(mandationStatus: MandationStatus, customerDetails: CustomerDetails, flatRateScheme: Option[FlatRateScheme])
 
 
 object VatCustomerInformation {
@@ -31,6 +31,8 @@ object VatCustomerInformation {
   val organisationNameKey = "organisationName"
   val tradingNameKey = "tradingName"
   val mandationStatusKey = "mandationStatus"
+  val flatRateSchemeKey = "flatRateScheme"
+  private val flatRateSchemePath = JsPath \ approvedInformationKey \ flatRateSchemeKey
   private val path = JsPath \ approvedInformationKey \ customerDetailsKey
 
   implicit class JsonReadUtil(jsPath: JsPath) {
@@ -43,9 +45,12 @@ object VatCustomerInformation {
     organisationName <- (path \ organisationNameKey).readOpt[String]
     tradingName <- (path \ tradingNameKey).readOpt[String]
     mandationStatus <- (path \ mandationStatusKey).read[MandationStatus]
+    flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
+
   } yield VatCustomerInformation(
     mandationStatus,
-    CustomerDetails(firstName = firstName, lastName = lastName, organisationName = organisationName, tradingName = tradingName)
+    CustomerDetails(firstName = firstName, lastName = lastName, organisationName = organisationName, tradingName = tradingName),
+    flatRateScheme
   )
 
 }
