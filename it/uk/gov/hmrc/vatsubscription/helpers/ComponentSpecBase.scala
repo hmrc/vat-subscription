@@ -41,21 +41,7 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
-    "microservice.services.agent-client-relationships.host" -> mockHost,
-    "microservice.services.agent-client-relationships.port" -> mockPort,
-    "microservice.services.tax-enrolments.host" -> mockHost,
-    "microservice.services.tax-enrolments.port" -> mockPort,
-    "microservice.services.email-verification.host" -> mockHost,
-    "microservice.services.email-verification.port" -> mockPort,
-    "microservice.services.des.url" -> mockUrl,
-    "microservice.services.authenticator.host" -> mockHost,
-    "microservice.services.authenticator.port" -> mockPort,
-    "microservice.services.identity-verification-frontend.host" -> mockHost,
-    "microservice.services.identity-verification-frontend.port" -> mockPort,
-    "microservice.services.vat-subscription.host" -> mockHost,
-    "microservice.services.vat-subscription.port" -> mockPort,
-    "microservice.services.email.host" -> mockHost,
-    "microservice.services.email.port" -> mockPort
+    "microservice.services.des.url" -> mockUrl
   )
 
   override def beforeAll(): Unit = {

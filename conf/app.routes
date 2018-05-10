@@ -1,16 +1,5 @@
 # microservice specific routes
 
-POST        /subscription-request/vat-number                                         @uk.gov.hmrc.vatsubscription.controllers.StoreVatNumberController.storeVatNumber
-PUT         /subscription-request/vat-number/:vatNumber/company-number               @uk.gov.hmrc.vatsubscription.controllers.StoreCompanyNumberController.storeCompanyNumber(vatNumber: String)
-PUT         /subscription-request/vat-number/:vatNumber/email                        @uk.gov.hmrc.vatsubscription.controllers.StoreEmailController.storeEmail(vatNumber: String)
-PUT         /subscription-request/vat-number/:vatNumber/nino                         @uk.gov.hmrc.vatsubscription.controllers.StoreNinoController.storeNino(vatNumber: String)
-POST        /subscription-request/vat-number/:vatNumber/submit                       @uk.gov.hmrc.vatsubscription.controllers.SignUpSubmissionController.submitSignUpRequest(vatNumber: String)
-POST        /subscription-request/vat-number/:vatNumber/identity-verification        @uk.gov.hmrc.vatsubscription.controllers.StoreIdentityVerificationOutcomeController.storeIdentityVerificationOutcome(vatNumber: String)
-
-GET         /subscription-request/vat-number/:vatNumber/mtdfb-eligibility            @uk.gov.hmrc.vatsubscription.controllers.VatNumberEligibilityController.checkVatNumberEligibility(vatNumber: String)
-
 GET         /:vatNumber/mandation-status                                             @uk.gov.hmrc.vatsubscription.controllers.MandationStatusController.getMandationStatus(vatNumber: String)
 
 GET         /:vatNumber/customer-details                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(vatNumber: String)
-
-POST        /subscription-request/vat-number/:vatNumber/callback                     @uk.gov.hmrc.vatsubscription.controllers.TaxEnrolmentsCallbackController.taxEnrolmentsCallback(vatNumber: String)

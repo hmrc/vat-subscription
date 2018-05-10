@@ -46,15 +46,6 @@ trait MockAuthConnector extends BeforeAndAfterEach with MockitoSugar {
     ) thenReturn response
   }
 
-  def mockAuthRetrieveAgentEnrolment(): Unit =
-    mockAuthorise(retrievals = Retrievals.allEnrolments)(Future.successful(Enrolments(Set(testAgentEnrolment))))
-
-  def mockAuthRetrievePrincipalEnrolment(): Unit =
-    mockAuthorise(retrievals = Retrievals.allEnrolments)(Future.successful(Enrolments(Set(testPrincipalEnrolment))))
-
-  def mockAuthRetrieveConfidenceLevel(confidenceLevel: ConfidenceLevel): Unit =
-    mockAuthorise(retrievals = Retrievals.confidenceLevel)(Future.successful(confidenceLevel))
-
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuthConnector)

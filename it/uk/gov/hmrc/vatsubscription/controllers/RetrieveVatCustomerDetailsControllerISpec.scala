@@ -23,12 +23,10 @@ import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
-import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
 
 class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
   val testSuccessDesResponse = {
-
     val testIndividualJson = Json.obj("title" -> "00001",
       "firstName" -> "testFirstName",
       "middleName" -> "testMiddleName",

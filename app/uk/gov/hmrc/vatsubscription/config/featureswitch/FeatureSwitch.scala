@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.config.featureswitch
 
-import FeatureSwitch._
+import uk.gov.hmrc.vatsubscription.config.featureswitch.FeatureSwitch._
 
 sealed trait FeatureSwitch {
   val name: String
@@ -27,8 +27,6 @@ object FeatureSwitch {
   val prefix = "feature-switch"
 
   val switches: Set[FeatureSwitch] = Set(
-    MTDEligibilityCheck,
-    AlreadySubscribedCheck,
     StubDESFeature
   )
 
@@ -43,16 +41,6 @@ object FeatureSwitch {
       case Some(switch) => switch
       case None => throw new IllegalArgumentException("Invalid feature switch: " + setting.feature)
     }
-}
-
-object MTDEligibilityCheck extends FeatureSwitch {
-  val displayName = s"Enable MTD VAT control list eligibility check"
-  val name = s"$prefix.control-list-check"
-}
-
-object AlreadySubscribedCheck extends FeatureSwitch {
-  override val displayName: String = "Enable check for already subscribed VAT numbers (API 1363)"
-  override val name: String = s"$prefix.already-subscribed-check"
 }
 
 object StubDESFeature extends FeatureSwitch {
