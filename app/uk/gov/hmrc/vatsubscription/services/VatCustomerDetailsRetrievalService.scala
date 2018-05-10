@@ -35,11 +35,11 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
   def retrieveVatCustomerDetails(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, CustomerDetails]] =
     (EitherT(vatCustomerDetailsConnector.getInformation(vatNumber)) map {
       vatCustomerInformation =>  CustomerDetails(
-        vatCustomerInformation.customerDetails.firstName,
-        vatCustomerInformation.customerDetails.lastName,
-        vatCustomerInformation.customerDetails.organisationName,
-        vatCustomerInformation.customerDetails.tradingName,
-        vatCustomerInformation.flatRateScheme.isDefined)
+        firstName =  vatCustomerInformation.customerDetails.firstName,
+        lastName = vatCustomerInformation.customerDetails.lastName,
+        organisationName = vatCustomerInformation.customerDetails.organisationName,
+        tradingName = vatCustomerInformation.customerDetails.tradingName,
+        hasFlatRateScheme = vatCustomerInformation.flatRateScheme.isDefined)
     }).value
 
 }
