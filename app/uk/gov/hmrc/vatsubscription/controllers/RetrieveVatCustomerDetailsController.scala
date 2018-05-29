@@ -17,15 +17,12 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.auth.core.retrieve.Retrievals
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, Enrolment}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.httpparsers.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
 import uk.gov.hmrc.vatsubscription.services._
-import uk.gov.hmrc.vatsubscription.utils.EnrolmentUtils._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,18 +34,19 @@ class RetrieveVatCustomerDetailsController @Inject()(val authConnector: AuthConn
 
   def retrieveVatCustomerDetails(vatNumber: String): Action[AnyContent] = Action.async {
     implicit request =>
-      authorised().retrieve(Retrievals.allEnrolments) {
-        enrolments =>
-          if (enrolments.mtdVatRef.isDefined) {
-            vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vatNumber) map {
-              case Right(customerDetails) => Ok(Json.toJson(customerDetails))
-              case Left(InvalidVatNumber) => BadRequest
-              case Left(VatNumberNotFound) => NotFound
-              case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
-            }
-          } else {
-            Future.successful(Forbidden)
-          }
+      authorised(
+        Enrolment("HMRC-MTD-VAT")
+          .withIdentifier("VRN", vatNumber)
+          .withDelegatedAuthRule("mtd-vat-auth")
+      ) {
+        vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vatNumber) map {
+          case Right(customerDetails) => Ok(Json.toJson(customerDetails))
+          case Left(InvalidVatNumber) => BadRequest
+          case Left(VatNumberNotFound) => NotFound
+          case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
+        }
+      } recoverWith {
+        case _ => Future.successful(Forbidden)
       }
   }
 

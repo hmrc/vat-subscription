@@ -53,7 +53,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
   "/:vatNumber/customer-details" when {
     "the user does not have an mtd vat enrolment" should {
       "return FORBIDDEN" in {
-        stubAuth(OK, successfulAuthResponse())
+        stubAuthFailure()
 
         val res = await(get(s"/$testVatNumber/customer-details"))
 
