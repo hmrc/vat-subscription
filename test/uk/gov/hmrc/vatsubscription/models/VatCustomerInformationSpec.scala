@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
 
@@ -49,7 +49,6 @@ class VatCustomerInformationSpec extends UnitSpec {
       |				"postCode": "SW1A 2BQ",
       |				"countryCode": "ES"
       |			}
-      |
       |		},
       |		"flatRateScheme": {
       |			"FRSCategory": "001",
@@ -89,11 +88,39 @@ class VatCustomerInformationSpec extends UnitSpec {
       |				"postCode": "SW1A 2BQ",
       |				"countryCode": "ES"
       |			}
-      |
-      |		}
+      |		},
+      |   "bankDetails":{
+      |     "accountHolderName":"**********************",
+      |     "bankAccountNumber":"**7425",
+      |     "sortCode":"69***"
+      |     }
+      |	  }
+      |}
+    """.stripMargin)
+
+  private val testJsonValidReturnPeriods = Json.parse(
+    """
+      |{
+      |	"approvedInformation": {
+      |		"customerDetails": {
+      |			"organisationName": "Ancient Antiques",
+      |			"individual": {
+      |				"title": "0001",
+      |				"firstName": "Fred",
+      |				"middleName": "M",
+      |				"lastName": "Flintstone"
+      |			},
+      |			"tradingName": "a",
+      |			"mandationStatus": "1",
+      |			"registrationReason": "0001",
+      |			"effectiveRegistrationDate": "1967-08-13",
+      |			"businessStartDate": "1967-08-13"
+      |		},
+      |  "returnPeriod":{"stdReturnPeriod":"MC"}
       |	}
       |}
     """.stripMargin)
+
 
   private val testJsonMin = Json.parse(
     """
@@ -109,19 +136,31 @@ class VatCustomerInformationSpec extends UnitSpec {
   "desReader" should {
     "parse the json correctly when all optional fields are populated" in {
       val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(Some("Fred"), Some("Flintstone"), Some("Ancient Antiques"), Some("a")),
-        Some(FlatRateScheme(Some("001"), Some(BigDecimal("123.12")), Some(true), Some("2001-01-01"))))
+        Some(FlatRateScheme(Some("001"), Some(BigDecimal("123.12")), Some(true), Some("2001-01-01"))),
+        Some(PPOB(Some(PPOBAddress(Some("VAT ADDR 1"),Some("VAT ADDR 2"),Some("VAT ADDR 3"),Some("VAT ADDR 4"), None, Some("SW1A 2BQ"), Some("ES"))))),
+        None,
+        None)
       val data = VatCustomerInformation.desReader.reads(testJson).get
       data shouldBe expected
     }
 
     "parse the json correctly when no optional fields are returned" in {
-      val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(None, None, None, None), None)
+      val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(None, None, None, None), None, None, None, None)
       val data = VatCustomerInformation.desReader.reads(testJsonMin).get
+      data shouldBe expected
+    }
+
+    "parse the json correctly when valid ReturnPeriod returned" in {
+      val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(Some("Fred"), Some("Flintstone"), Some("Ancient Antiques"), Some("a")),
+        None, None, None, Some(MCReturnPeriod))
+      val data = VatCustomerInformation.desReader.reads(testJsonValidReturnPeriods).get
       data shouldBe expected
     }
 
     "parse the json correctly when no flat rate scheme is returned" in {
       val expected = VatCustomerInformation(MTDfBMandated, CustomerDetails(Some("Fred"), Some("Flintstone"), Some("Ancient Antiques"), Some("a")),
+        None, Some(PPOB(Some(PPOBAddress(Some("VAT ADDR 1"),Some("VAT ADDR 2"),Some("VAT ADDR 3"),Some("VAT ADDR 4"), None, Some("SW1A 2BQ"), Some("ES"))))),
+        Some(BankDetails(Some("**********************"),Some("**7425"),Some("69***"))),
         None)
       val data = VatCustomerInformation.desReader.reads(testJsonNoFlatRate).get
       data shouldBe expected

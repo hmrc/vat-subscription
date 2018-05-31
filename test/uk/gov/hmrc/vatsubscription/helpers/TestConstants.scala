@@ -62,8 +62,8 @@ object TestConstants {
     Some("testTradingName"),
     hasFlatRateSchemeYes)
 
-  val testCustomerInformation = VatCustomerInformation(MTDfBMandated, testCustomerDetails, None)
+  val testCustomerInformation = VatCustomerInformation(MTDfBMandated, testCustomerDetails, None, None, None, None)
   val testCustomerInformationWithFlatRateScheme = VatCustomerInformation(MTDfBMandated, testCustomerDetails,
-    Some(FlatRateScheme(Some("001"), Some(BigDecimal("123.12")), Some(true), Some("2001-01-01"))))
+    Some(FlatRateScheme(Some("001"), Some(BigDecimal("123.12")), Some(true), Some("2001-01-01"))), None, None, None)
 
 }

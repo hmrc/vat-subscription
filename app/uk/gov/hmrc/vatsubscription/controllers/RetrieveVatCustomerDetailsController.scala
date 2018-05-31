@@ -50,4 +50,21 @@ class RetrieveVatCustomerDetailsController @Inject()(val authConnector: AuthConn
       }
   }
 
+  def retrieveVatInformation(vatNumber: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      authorised(
+        Enrolment("HMRC-MTD-VAT")
+          .withIdentifier("VRN", vatNumber)
+          .withDelegatedAuthRule("mtd-vat-auth")
+      ) {
+        vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
+          case Right(vatInformation) => Ok(Json.toJson(vatInformation))
+          case Left(InvalidVatNumber) => BadRequest
+          case Left(VatNumberNotFound) => NotFound
+          case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
+        }
+      } recoverWith {
+        case _ => Future.successful(Forbidden)
+      }
+  }
 }
