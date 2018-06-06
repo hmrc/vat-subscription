@@ -21,49 +21,42 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class BankDetailsSpec extends UnitSpec {
 
-  private val allFieldsInput = """{"accountHolderName":"**********************","bankAccountNumber":"**1234","sortCode":"500000"}"""
+  private val accName = "**********************"
+  private val accNum = "****1234"
+  private val accSort = "12****"
 
-  private val nullFields = """{"accountHolderName":null,"bankAccountNumber":null,"sortCode":null}"""
+  private val allFieldsInput = Json.obj(
+    "accountHolderName" -> accName,
+    "bankAccountNumber" -> accNum,
+    "sortCode" -> accSort
+  )
 
-  private val allFieldsOutput = """{"accountHolderName":"**********************","bankAccountNumber":"**1111","sortCode":"100000"}"""
-
-  private val noFields = "{}"
+  private val noFields = Json.obj()
 
   "BankDetails Reads" should {
     "parse the json correctly when all optional fields are populated" in {
-      val bankDetails = BankDetails.bankReader.reads(Json.parse(allFieldsInput)).get
-      assert(bankDetails.accountHolderName.contains("**********************"))
-      assert(bankDetails.bankAccountNumber.contains("**1234"))
-      assert(bankDetails.sortCode.contains("500000"))
-    }
-
-    "parse the json correctly when all fields are null" in {
-      val bankDetails = BankDetails.bankReader.reads(Json.parse(nullFields)).get
-      assert(bankDetails.accountHolderName.isEmpty)
-      assert(bankDetails.bankAccountNumber.isEmpty)
-      assert(bankDetails.sortCode.isEmpty)
+      val expected = BankDetails(Some(accName), Some(accNum), Some(accSort))
+      BankDetails.bankReader.reads(allFieldsInput).get shouldBe expected
     }
 
     "parse the json correctly when no fields are supplied" in {
-      val bankDetails = BankDetails.bankReader.reads(Json.parse(noFields)).get
-      assert(bankDetails.accountHolderName.isEmpty)
-      assert(bankDetails.bankAccountNumber.isEmpty)
-      assert(bankDetails.sortCode.isEmpty)
+      val expected = BankDetails(None, None, None)
+      BankDetails.bankReader.reads(noFields).get shouldBe expected
     }
   }
 
   "BankDetails Writes" should {
 
     "output a fully populated BankDetails object with all fields populated" in {
-      val bankDetails = BankDetails(Some("**********************"), Some("**1111"), Some("100000"))
+      val bankDetails = BankDetails(Some(accName), Some(accNum), Some(accSort))
       val output = BankDetails.bankWriter.writes(bankDetails)
-      assert(output.toString() == allFieldsOutput)
+      output shouldBe allFieldsInput
     }
 
     "an empty json object when an empty BankDetails object is marshalled" in {
       val bankDetails = BankDetails(None,None,None)
       val output = BankDetails.bankWriter.writes(bankDetails)
-      assert(output.toString() == noFields)
+      output shouldBe noFields
     }
   }
 }
