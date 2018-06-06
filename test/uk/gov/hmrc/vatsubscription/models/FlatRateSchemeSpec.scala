@@ -21,59 +21,42 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class FlatRateSchemeSpec extends UnitSpec {
 
-  private val allFieldsInput =
-    """
-      |{"FRSCategory":"003",
-      |  "FRSPercentage":59.99,
-      |  "startDate":"2001-01-01",
-      |  "limitedCostTrader":true}
-    """.stripMargin
+  private val category = "003"
+  private val percentage = 59.99
+  private val startDate = "2001-01-01"
+  private val limitedCostTrader = true
 
-  private val nullFields = """{"FRSCategory":null,"FRSPercentage":null,"limitedCostTrader":null,"startDate":null}"""
+  private val allFieldsInput = Json.obj(
+    "FRSCategory" -> category,
+    "FRSPercentage" -> percentage,
+    "startDate" -> startDate,
+    "limitedCostTrader" -> limitedCostTrader
+  )
 
-  private val allFieldsOutput =
-    """{"FRSCategory":"001","FRSPercentage":30.01,"limitedCostTrader":false,"startDate":"2017-12-01"}"""
-
-  private val noFields = "{}"
+  private val noFields = Json.obj()
 
   "FlatRateScheme Reads" should {
     "parse the json correctly when all optional fields are populated" in {
-      val frs = FlatRateScheme.frsReader.reads(Json.parse(allFieldsInput)).get
-      assert(frs.FRSCategory.contains("003"))
-      assert(frs.FRSPercentage.contains(59.99))
-      assert(frs.startDate.contains("2001-01-01"))
-      assert(frs.limitedCostTrader.contains(true))
+      val expected = FlatRateScheme(Some(category), Some(percentage), Some(limitedCostTrader), Some(startDate))
+      FlatRateScheme.frsReader.reads(allFieldsInput).get shouldBe expected
     }
 
     "parse the json correctly when all fields are null" in {
-      val frs = FlatRateScheme.frsReader.reads(Json.parse(nullFields)).get
-      assert(frs.FRSCategory.isEmpty)
-      assert(frs.FRSPercentage.isEmpty)
-      assert(frs.startDate.isEmpty)
-      assert(frs.limitedCostTrader.isEmpty)
-    }
-
-    "parse the json correctly when no fields are supplied" in {
-      val frs = FlatRateScheme.frsReader.reads(Json.parse(noFields)).get
-      assert(frs.FRSCategory.isEmpty)
-      assert(frs.FRSPercentage.isEmpty)
-      assert(frs.startDate.isEmpty)
-      assert(frs.limitedCostTrader.isEmpty)
+      val expected = FlatRateScheme(None, None, None, None)
+      FlatRateScheme.frsReader.reads(noFields).get shouldBe expected
     }
   }
 
   "FlatRateScheme Writes" should {
+
     "output a fully populated FlatRateScheme object with all fields populated" in {
-      val frs = FlatRateScheme(Some("001"), Some(30.01), Some(false), Some("2017-12-01"))
-      val output = FlatRateScheme.frsWriter.writes(frs)
-      assert(output.toString() == allFieldsOutput)
+      val model = FlatRateScheme(Some(category), Some(percentage), Some(limitedCostTrader), Some(startDate))
+      FlatRateScheme.frsWriter.writes(model) shouldBe allFieldsInput
     }
 
     "an empty json object when an empty FlatRateScheme object is marshalled" in {
-      val frs = FlatRateScheme(None,None,None,None)
-      val output = FlatRateScheme.frsWriter.writes(frs)
-      assert(output.toString() == noFields)
+      val model = FlatRateScheme(None,None,None,None)
+      FlatRateScheme.frsWriter.writes(model) shouldBe noFields
     }
   }
-
 }
