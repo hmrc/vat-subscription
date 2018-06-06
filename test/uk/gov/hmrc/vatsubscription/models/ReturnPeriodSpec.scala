@@ -19,63 +19,47 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
-/**
-  * Created by capconsult on 30/05/2018.
-  */
 class ReturnPeriodSpec extends UnitSpec {
 
-  private val maInput = """{"stdReturnPeriod":"MA"}"""
-  private val mbInput = """{"stdReturnPeriod":"MB"}"""
-  private val mcInput = """{"stdReturnPeriod":"MC"}"""
-  private val mmInput = """{"stdReturnPeriod":"MM"}"""
+  private val ma = Json.obj("stdReturnPeriod" -> "MA")
+  private val mb = Json.obj("stdReturnPeriod" -> "MB")
+  private val mc = Json.obj("stdReturnPeriod" -> "MC")
+  private val mm = Json.obj("stdReturnPeriod" -> "MM")
 
   "ReturnPeriod Reads" should {
     "parse the json correctly for MA types" in {
-      val maPeriod = ReturnPeriod.returnPeriodReader.reads(Json.parse(maInput)).get
-      assert(maPeriod.stdReturnPeriod == "MA")
+      ReturnPeriod.returnPeriodReader.reads(ma).get shouldBe MAReturnPeriod
     }
 
     "parse the json correctly for MB types" in {
-      val maPeriod = ReturnPeriod.returnPeriodReader.reads(Json.parse(mbInput)).get
-      assert(maPeriod.stdReturnPeriod == "MB")
+      ReturnPeriod.returnPeriodReader.reads(mb).get shouldBe MBReturnPeriod
     }
 
     "parse the json correctly for MC types" in {
-      val maPeriod = ReturnPeriod.returnPeriodReader.reads(Json.parse(mcInput)).get
-      assert(maPeriod.stdReturnPeriod == "MC")
+      ReturnPeriod.returnPeriodReader.reads(mc).get shouldBe MCReturnPeriod
     }
 
     "parse the json correctly for MM types" in {
-      val maPeriod = ReturnPeriod.returnPeriodReader.reads(Json.parse(mmInput)).get
-      assert(maPeriod.stdReturnPeriod == "MM")
+      ReturnPeriod.returnPeriodReader.reads(mm).get shouldBe MMReturnPeriod
     }
   }
 
   "ReturnPeriod Writes" should {
 
     "output a fully populated MA ReturnPeriod object with all fields populated" in {
-      val period = MAReturnPeriod
-      val output = ReturnPeriod.returnPeriodWriter.writes(period)
-      assert(output.toString() == """{"stdReturnPeriod":"MA"}""")
+      ReturnPeriod.returnPeriodWriter.writes(MAReturnPeriod) shouldBe ma
     }
 
     "output a fully populated MB ReturnPeriod object with all fields populated" in {
-      val period = MBReturnPeriod
-      val output = ReturnPeriod.returnPeriodWriter.writes(period)
-      assert(output.toString() == """{"stdReturnPeriod":"MB"}""")
+      ReturnPeriod.returnPeriodWriter.writes(MBReturnPeriod) shouldBe mb
     }
 
     "output a fully populated MC ReturnPeriod object with all fields populated" in {
-      val period = MCReturnPeriod
-      val output = ReturnPeriod.returnPeriodWriter.writes(period)
-      assert(output.toString() == """{"stdReturnPeriod":"MC"}""")
+      ReturnPeriod.returnPeriodWriter.writes(MCReturnPeriod) shouldBe mc
     }
 
     "output a fully populated MM ReturnPeriod object with all fields populated" in {
-      val period = MMReturnPeriod
-      val output = ReturnPeriod.returnPeriodWriter.writes(period)
-      assert(output.toString() == """{"stdReturnPeriod":"MM"}""")
+      ReturnPeriod.returnPeriodWriter.writes(MMReturnPeriod) shouldBe mm
     }
   }
-
 }
