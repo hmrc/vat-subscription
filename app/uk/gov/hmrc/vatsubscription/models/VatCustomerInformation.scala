@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsObject, _}
+import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
 
 case class VatCustomerInformation(mandationStatus: MandationStatus, customerDetails: CustomerDetails,
@@ -39,23 +38,24 @@ object VatCustomerInformation extends JsonReadUtil {
   val ppobKey = "PPOB"
   val bankDetailsKey = "bankDetails"
   val returnPeriodKey = "returnPeriod"
-  private val flatRateSchemePath = JsPath \ approvedInformationKey \ flatRateSchemeKey
-  private val ppobPath = JsPath \ approvedInformationKey \ ppobKey
-  private val bankDetailsPath = JsPath \ approvedInformationKey \ bankDetailsKey
-  private val returnPeriodPath = JsPath \ approvedInformationKey \ returnPeriodKey
-  private val path = JsPath \ approvedInformationKey \ customerDetailsKey
+
+  private val path = __ \ approvedInformationKey
+  private val customerDetailsPath = path \ customerDetailsKey
+  private val flatRateSchemePath = path \ flatRateSchemeKey
+  private val ppobPath = path \ ppobKey
+  private val bankDetailsPath = path \ bankDetailsKey
+  private val returnPeriodPath = path \ returnPeriodKey
 
   implicit val desReader: Reads[VatCustomerInformation] = for {
-    firstName <- (path \ individualKey \ firstNameKey).readOpt[String]
-    lastName <- (path \ individualKey \ lastNameKey).readOpt[String]
-    organisationName <- (path \ organisationNameKey).readOpt[String]
-    tradingName <- (path \ tradingNameKey).readOpt[String]
-    mandationStatus <- (path \ mandationStatusKey).read[MandationStatus]
+    firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
+    lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
+    organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
+    tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
+    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOB]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
-
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(firstName = firstName, lastName = lastName, organisationName = organisationName, tradingName = tradingName),
