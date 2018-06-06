@@ -19,9 +19,12 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
 
-case class VatCustomerInformation(mandationStatus: MandationStatus, customerDetails: CustomerDetails,
-                                  flatRateScheme: Option[FlatRateScheme], ppob: Option[PPOB],
-                                  bankDetails:Option[BankDetails], returnPeriod: Option[ReturnPeriod])
+case class VatCustomerInformation(mandationStatus: MandationStatus,
+                                  customerDetails: CustomerDetails,
+                                  flatRateScheme: Option[FlatRateScheme],
+                                  ppob: Option[PPOB],
+                                  bankDetails:Option[BankDetails],
+                                  returnPeriod: Option[ReturnPeriod])
 
 
 object VatCustomerInformation extends JsonReadUtil {
