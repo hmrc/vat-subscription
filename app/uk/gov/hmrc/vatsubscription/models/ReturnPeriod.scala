@@ -54,20 +54,8 @@ object ReturnPeriod {
   } yield value
 
 
-  implicit val returnPeriodWriter = new Writes[ReturnPeriod] {
-    def writes(period: ReturnPeriod): JsValue = {
-      if (period.stdReturnPeriod.trim.length > 0) {
-        Json.obj(
-          "stdReturnPeriod" -> period.stdReturnPeriod
-        )
-      } else {
-        Json.obj()
-      }
-    }
+  implicit val returnPeriodWriter: Writes[ReturnPeriod] = Writes {
+    case period if period.stdReturnPeriod.trim.length > 0 => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
+    case _ => Json.obj()
   }
-
-  implicit val format: Format[ReturnPeriod] = Format[ReturnPeriod](
-    returnPeriodReader,
-    returnPeriodWriter
-  )
 }

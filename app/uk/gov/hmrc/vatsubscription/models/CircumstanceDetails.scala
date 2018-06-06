@@ -19,11 +19,12 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Writes}
 
-/**
-  * Created by capconsult on 31/05/2018.
-  */
-case class CircumstanceDetails(businessName:Option[String], flatRateScheme: Option[FlatRateScheme], ppob: Option[PPOB],
-                               bankDetails:Option[BankDetails], returnPeriod: Option[ReturnPeriod])
+
+case class CircumstanceDetails(businessName:Option[String],
+                               flatRateScheme: Option[FlatRateScheme],
+                               ppob: Option[PPOB],
+                               bankDetails:Option[BankDetails],
+                               returnPeriod: Option[ReturnPeriod])
 
 object CircumstanceDetails {
 
@@ -37,7 +38,7 @@ object CircumstanceDetails {
   private val bankDetailsPath = JsPath \ bankDetailsKey
   private val returnPeriodPath = JsPath \ returnPeriodKey
 
-  implicit val desWriter: Writes[CircumstanceDetails] = (
+  implicit val circsWriter: Writes[CircumstanceDetails] = (
       organisationNamePath.writeNullable[String] and
       flatRateSchemePath.writeNullable[FlatRateScheme] and
       ppobPath.writeNullable[PPOB] and

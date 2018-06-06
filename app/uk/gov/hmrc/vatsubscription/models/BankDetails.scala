@@ -17,12 +17,13 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Format, JsPath, Reads, Writes}
-import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
+import play.api.libs.json.{JsPath, Reads, Writes}
 
-case class BankDetails(accountHolderName:Option[String],bankAccountNumber:Option[String],sortCode:Option[String])
+case class BankDetails(accountHolderName:Option[String],
+                       bankAccountNumber:Option[String],
+                       sortCode:Option[String])
 
-object BankDetails extends JsonReadUtil {
+object BankDetails {
 
 
   private val accountHolderNamePath = JsPath \ "accountHolderName"
@@ -30,9 +31,9 @@ object BankDetails extends JsonReadUtil {
   private val sortCodePath = JsPath \ "sortCode"
 
   implicit val bankReader: Reads[BankDetails] = for {
-    accountHolderName <- accountHolderNamePath.readOpt[String]
-    bankAccountNumber <- bankAccountNumberPath.readOpt[String]
-    sortCode <- sortCodePath.readOpt[String]
+    accountHolderName <- accountHolderNamePath.readNullable[String]
+    bankAccountNumber <- bankAccountNumberPath.readNullable[String]
+    sortCode <- sortCodePath.readNullable[String]
   } yield BankDetails(accountHolderName, bankAccountNumber, sortCode)
 
   implicit val bankWriter: Writes[BankDetails] = (
@@ -40,10 +41,5 @@ object BankDetails extends JsonReadUtil {
       bankAccountNumberPath.writeNullable[String] and
       sortCodePath.writeNullable[String]
     )(unlift(BankDetails.unapply))
-
-  implicit val format: Format[BankDetails] = Format[BankDetails](
-    bankReader,
-    bankWriter
-  )
 
 }

@@ -55,7 +55,7 @@ object MandationStatus {
 
   def unapply(arg: MandationStatus): Option[String] = Some(arg.Name)
 
-  val desReader: Reads[MandationStatus] = for {
+  implicit val desReader: Reads[MandationStatus] = for {
     value <- JsPath.read[String].map {
       case MTDfBMandated.DesString => MTDfBMandated
       case MTDfBVoluntary.DesString => MTDfBVoluntary
@@ -64,12 +64,7 @@ object MandationStatus {
     }
   } yield value
 
-  val writer: Writes[MandationStatus] = Writes(
-    (status: MandationStatus) => JsString(status.Name)
-  )
-
-  implicit val format: Format[MandationStatus] = Format[MandationStatus](
-    desReader,
-    writer
+  implicit val writer: Writes[MandationStatus] = Writes(
+    status => JsString(status.Name)
   )
 }

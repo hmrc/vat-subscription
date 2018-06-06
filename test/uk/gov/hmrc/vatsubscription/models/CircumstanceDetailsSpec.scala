@@ -33,13 +33,13 @@ class CircumstanceDetailsSpec extends UnitSpec {
         Some(PPOB(Some(PPOBAddress(Some("VAT ADDR 1"),Some("VAT ADDR 2"),Some("VAT ADDR 3"),Some("VAT ADDR 4"), None, Some("SW1A 2BQ"), Some("ES"))))),
         Some(BankDetails(Some("***********************"), Some("****5274"), Some("77****"))),
         Some(MMReturnPeriod))
-      val data = CircumstanceDetails.desWriter.writes(expected)
+      val data = CircumstanceDetails.circsWriter.writes(expected)
       data.toString() shouldBe expectedString
     }
 
     "parse the json correctly when no optional fields are returned" in {
       val expected = CircumstanceDetails(None, None, None, None, None)
-      val data = CircumstanceDetails.desWriter.writes(expected)
+      val data = CircumstanceDetails.circsWriter.writes(expected)
       data.toString() shouldBe "{}"
     }
   }

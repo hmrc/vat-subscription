@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
+import play.api.libs.json._
 
 case class FlatRateScheme(FRSCategory: Option[String], FRSPercentage: Option[BigDecimal],
                           limitedCostTrader: Option[Boolean], startDate: Option[String])
 
-object FlatRateScheme extends JsonReadUtil {
+object FlatRateScheme {
 
   private val frsCategoryPath = JsPath \ "FRSCategory"
   private val frsPerecentPath =  JsPath \ "FRSPercentage"
@@ -31,10 +30,10 @@ object FlatRateScheme extends JsonReadUtil {
   private val startDatePath = JsPath \ "startDate"
 
   implicit val frsReader: Reads[FlatRateScheme] = for {
-    frsCategory <- frsCategoryPath.readOpt[String]
-    frsPercentage <- frsPerecentPath.readOpt[BigDecimal]
-    limitedCostTrader <- limitedCostPath.readOpt[Boolean]
-    startDate <- startDatePath.readOpt[String]
+    frsCategory <- frsCategoryPath.readNullable[String]
+    frsPercentage <- frsPerecentPath.readNullable[BigDecimal]
+    limitedCostTrader <- limitedCostPath.readNullable[Boolean]
+    startDate <- startDatePath.readNullable[String]
   } yield FlatRateScheme(frsCategory, frsPercentage, limitedCostTrader, startDate)
 
   implicit val frsWriter: Writes[FlatRateScheme] = (
@@ -43,10 +42,5 @@ object FlatRateScheme extends JsonReadUtil {
     limitedCostPath.writeNullable[Boolean] and
     startDatePath.writeNullable[String]
     )(unlift(FlatRateScheme.unapply))
-
-  implicit val format: Format[FlatRateScheme] = Format[FlatRateScheme](
-    frsReader,
-    frsWriter
-  )
 }
 
