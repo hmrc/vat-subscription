@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.json._
 
 sealed trait ReturnPeriod {
-  def stdReturnPeriod: String = ""
+  def stdReturnPeriod: String
 }
 
 case object MAReturnPeriod extends ReturnPeriod {
