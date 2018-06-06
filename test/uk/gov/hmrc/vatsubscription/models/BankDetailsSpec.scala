@@ -21,6 +21,9 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class BankDetailsSpec extends UnitSpec {
 
+
+  //TODO: Create Test Constants package so these can be reused in other test specs.
+
   private val accName = "**********************"
   private val accNum = "****1234"
   private val accSort = "12****"

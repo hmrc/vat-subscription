@@ -26,6 +26,9 @@ class CircumstanceDetailsSpec extends UnitSpec {
 
     "output the json correctly when all fields are populated" in {
 
+
+      //TODO: Create Test Constants package so these can be reused in other test specs.
+
       val expected = Json.obj(
         "organisationName" -> "Ancient Antiques",
         "flatRateScheme" -> Json.obj(

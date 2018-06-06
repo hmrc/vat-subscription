@@ -21,6 +21,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class ReturnPeriodSpec extends UnitSpec {
 
+  //TODO: Create Test Constants package so these can be reused in other test specs.
+
   private val ma = Json.obj("stdReturnPeriod" -> "MA")
   private val mb = Json.obj("stdReturnPeriod" -> "MB")
   private val mc = Json.obj("stdReturnPeriod" -> "MC")

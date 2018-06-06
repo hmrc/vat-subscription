@@ -21,6 +21,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class FlatRateSchemeSpec extends UnitSpec {
 
+  //TODO: Create Test Constants package so these can be reused in other test specs.
+
   private val category = "003"
   private val percentage = 59.99
   private val startDate = "2001-01-01"
