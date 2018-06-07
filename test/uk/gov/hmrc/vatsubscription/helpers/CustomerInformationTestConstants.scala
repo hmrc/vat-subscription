@@ -72,9 +72,7 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> Json.obj(
-        "stdReturnPeriod" -> returnPeriodMC
-      )
+      "returnPeriod" -> returnPeriodMC
     )
   )
 

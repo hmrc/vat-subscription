@@ -30,11 +30,11 @@ class GetVatCustomerInformationHttpParserSpec extends UnitSpec {
   "CustomerSignUpHttpReads" when {
     "read" should {
       "parse an OK response with a valid json as a VatCustomerInformation" in {
-        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMax))
+        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRS))
 
         val res = GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Right(customerInformationModelMax)
+        res shouldBe Right(customerInformationModelMaxWithFRS)
       }
 
       "parse an OK response with an ivalid json as a UnexpectedGetVatCustomerInformationFailure" in {
