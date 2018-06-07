@@ -23,32 +23,92 @@ import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
+import uk.gov.hmrc.vatsubscription.models._
 
 class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
-  val testSuccessDesResponse: JsObject = {
+  //TODO: Create Integration Tests Constants package so that these can be reused across IT tests.
 
-    val testIndividualJson = Json.obj("title" -> "00001",
-      "firstName" -> "testFirstName",
-      "middleName" -> "testMiddleName",
-      "lastName" -> "testLastName")
+  //Customer Details
+  private val title = "0001"
+  private val orgName = "Ancient Antiques Ltd"
+  private val tradingName = "Dusty Relics"
+  private val firstName = "Fred"
+  private val lastName = "Flintstone"
+  private val middleName = "M"
+  private val mandationStatus = "1"
+  private val regReason = "0001"
+  private val effectiveDate = "1967-08-13"
+  private val startDate = "1967-08-13"
 
-    Json.obj(
-      "approvedInformation" -> Json.obj(
-        "customerDetails" -> Json.obj("individual" -> testIndividualJson,
-          "organisationName" -> "testOrganisationName",
-          "tradingName" -> "testTradingName",
-          "mandationStatus" -> "1"
+  //PPOB
+  private val addLine1 = "Add Line 1"
+  private val addLine2 = "Add Line 2"
+  private val addLine3 = "Add Line 3"
+  private val addLine4 = "Add Line 4"
+  private val addLine5 = "Add Line 5"
+  private val postcode = "TE37 7AD"
+  private val countryCode = "ES"
+
+  //FRS
+  private val frsCategory = "001"
+  private val frsPercent = 22.9
+  private val frsLtdCostTrader = true
+  private val frsStartDate = "2001-01-01"
+
+  //Bank Details
+  private val accName = "**********************"
+  private val accNum = "**7425"
+  private val accSort = "69***"
+
+  //Return Period
+  private val returnPeriod = "MC"
+
+
+  private val testSuccessDesResponse = Json.obj(
+    "approvedInformation" -> Json.obj(
+      "customerDetails" -> Json.obj(
+        "organisationName" -> orgName,
+        "individual" -> Json.obj(
+          "title" -> title,
+          "firstName" -> firstName,
+          "middleName" -> middleName,
+          "lastName" -> lastName
+        ),
+        "tradingName" -> tradingName,
+        "mandationStatus" -> mandationStatus,
+        "registrationReason" -> regReason,
+        "effectiveRegistrationDate" -> effectiveDate,
+        "businessStartDate" -> startDate
+      ),
+      "PPOB" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
         )
+      ),
+      "flatRateScheme" -> Json.obj(
+        "FRSCategory" -> frsCategory,
+        "FRSPercentage" -> frsPercent,
+        "limitedCostTrader" -> frsLtdCostTrader,
+        "startDate" -> frsStartDate
+      ),
+      "bankDetails" -> Json.obj(
+        "accountHolderName" -> accName,
+        "bankAccountNumber" -> accNum,
+        "sortCode" -> accSort
+      ),
+      "returnPeriod" -> Json.obj(
+        "stdReturnPeriod" -> returnPeriod
       )
     )
-  }
-
-  val expectedCustomerDetailsJson: JsObject = Json.obj("organisationName" -> "testOrganisationName",
-                                             "firstName" -> "testFirstName",
-                                             "lastName" -> "testLastName",
-                                             "tradingName" -> "testTradingName",
-                                              "hasFlatRateScheme" -> false)
+  )
 
   "/:vatNumber/customer-details" when {
     "the user does not have an mtd vat enrolment" should {
@@ -64,6 +124,15 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
     }
 
     "calls to DES is successful" should {
+
+      val expectedCustomerDetailsJson: JsObject = Json.obj(
+        "organisationName" -> orgName,
+        "firstName" -> firstName,
+        "lastName" -> lastName,
+        "tradingName" -> tradingName,
+        "hasFlatRateScheme" -> true
+      )
+
       "return OK with the status" in {
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(OK, testSuccessDesResponse)
@@ -115,7 +184,107 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         )
       }
     }
-
   }
 
+  "/:vatNumber/full-information" when {
+
+    "the user does not have an mtd vat enrolment" should {
+      "return FORBIDDEN" in {
+        stubAuthFailure()
+
+        val res = await(get(s"/$testVatNumber/full-information"))
+
+        res should have(
+          httpStatus(FORBIDDEN)
+        )
+      }
+    }
+
+    "calls to DES is successful" should {
+      "return OK with the status" in {
+
+        val expectedCustomerInformationModel = VatCustomerInformation(
+          MTDfBMandated,
+          CustomerDetails(
+            firstName = Some(firstName),
+            lastName = Some(lastName),
+            organisationName = Some(orgName),
+            tradingName = Some(tradingName)
+          ),
+          Some(FlatRateScheme(
+            Some(frsCategory),
+            Some(frsPercent),
+            Some(frsLtdCostTrader),
+            Some(frsStartDate)
+          )),
+          Some(PPOB(
+            Some(PPOBAddress(
+              Some(addLine1),
+              Some(addLine2),
+              Some(addLine3),
+              Some(addLine4),
+              Some(addLine5),
+              Some(postcode),
+              Some(countryCode)
+            ))
+          )),
+          Some(BankDetails(
+            Some(accName),
+            Some(accNum),
+            Some(accSort)
+          )),
+          Some(MCReturnPeriod)
+        )
+
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(OK, testSuccessDesResponse)
+
+        val res = await(get(s"/$testVatNumber/full-information"))
+
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(Json.toJson(expectedCustomerInformationModel))
+        )
+      }
+    }
+
+    "calls to DES returned BAD_REQUEST" should {
+      "return BAD_REQUEST with the status" in {
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
+
+        val res = await(get(s"/$testVatNumber/full-information"))
+
+        res should have(
+          httpStatus(BAD_REQUEST)
+        )
+      }
+    }
+
+    "calls to DES returned NOT_FOUND" should {
+      "return NOT_FOUND with the status" in {
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
+
+        val res = await(get(s"/$testVatNumber/full-information"))
+
+        res should have(
+          httpStatus(NOT_FOUND)
+        )
+      }
+    }
+
+    "calls to DES returned anything else" should {
+      "return INTERNAL_SERVER_ERROR with the status" in {
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
+
+        val res = await(get(s"/$testVatNumber/full-information"))
+
+        res should have(
+          httpStatus(BAD_GATEWAY)
+        )
+      }
+    }
+  }
 }

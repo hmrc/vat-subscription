@@ -16,50 +16,29 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants._
 
 class BankDetailsSpec extends UnitSpec {
 
-
-  //TODO: Create Test Constants package so these can be reused in other test specs.
-
-  private val accName = "**********************"
-  private val accNum = "****1234"
-  private val accSort = "12****"
-
-  private val allFieldsInput = Json.obj(
-    "accountHolderName" -> accName,
-    "bankAccountNumber" -> accNum,
-    "sortCode" -> accSort
-  )
-
-  private val noFields = Json.obj()
-
   "BankDetails Reads" should {
     "parse the json correctly when all optional fields are populated" in {
-      val expected = BankDetails(Some(accName), Some(accNum), Some(accSort))
-      BankDetails.bankReader.reads(allFieldsInput).get shouldBe expected
+      BankDetails.bankReader.reads(bankDetailsJsonMax).get shouldBe bankDetailsModelMax
     }
 
     "parse the json correctly when no fields are supplied" in {
-      val expected = BankDetails(None, None, None)
-      BankDetails.bankReader.reads(noFields).get shouldBe expected
+      BankDetails.bankReader.reads(bankDetailsJsonMin).get shouldBe bankDetailsModelMin
     }
   }
 
   "BankDetails Writes" should {
 
     "output a fully populated BankDetails object with all fields populated" in {
-      val bankDetails = BankDetails(Some(accName), Some(accNum), Some(accSort))
-      val output = BankDetails.bankWriter.writes(bankDetails)
-      output shouldBe allFieldsInput
+      BankDetails.bankWriter.writes(bankDetailsModelMax) shouldBe bankDetailsJsonMax
     }
 
     "an empty json object when an empty BankDetails object is marshalled" in {
-      val bankDetails = BankDetails(None,None,None)
-      val output = BankDetails.bankWriter.writes(bankDetails)
-      output shouldBe noFields
+      BankDetails.bankWriter.writes(bankDetailsModelMin) shouldBe bankDetailsJsonMin
     }
   }
 }

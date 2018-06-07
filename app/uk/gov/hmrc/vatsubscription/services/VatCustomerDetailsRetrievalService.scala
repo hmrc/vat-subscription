@@ -42,15 +42,8 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
         hasFlatRateScheme = vatCustomerInformation.flatRateScheme.isDefined)
     }).value
 
-  def retrieveCircumstanceInformation(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, CircumstanceDetails]] =
-    (EitherT(vatCustomerDetailsConnector.getInformation(vatNumber)) map {
-      vatCustomerInformation =>  CircumstanceDetails(
-        businessName = vatCustomerInformation.customerDetails.organisationName,
-        flatRateScheme = vatCustomerInformation.flatRateScheme,
-        ppob = vatCustomerInformation.ppob,
-        bankDetails = vatCustomerInformation.bankDetails,
-        returnPeriod = vatCustomerInformation.returnPeriod)
-    }).value
+  def retrieveCircumstanceInformation(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]] =
+    vatCustomerDetailsConnector.getInformation(vatNumber)
 
 }
 

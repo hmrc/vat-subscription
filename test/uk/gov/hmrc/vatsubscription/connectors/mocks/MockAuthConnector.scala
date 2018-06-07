@@ -24,7 +24,7 @@ import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrieval, Retrievals}
 import uk.gov.hmrc.auth.core.{AuthConnector, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 

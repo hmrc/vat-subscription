@@ -68,4 +68,6 @@ object VatCustomerInformation extends JsonReadUtil {
     returnPeriod
   )
 
+  implicit val writes = Json.writes[VatCustomerInformation]
+
 }
