@@ -24,11 +24,11 @@ class VatCustomerInformationSpec extends UnitSpec {
 
   "desReader" should {
     "parse the json correctly when all optional fields are populated" in {
-      VatCustomerInformation.desReader.reads(customerInformationJsonMax).get shouldBe customerInformationModelMax
+      VatCustomerInformation.desReader.reads(customerInformationDESJsonMax).get shouldBe customerInformationModelMax
     }
 
     "parse the json correctly when no optional fields are returned" in {
-      VatCustomerInformation.desReader.reads(customerInformationJsonMin).get shouldBe customerInformationModelMin
+      VatCustomerInformation.desReader.reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
     }
   }
 }

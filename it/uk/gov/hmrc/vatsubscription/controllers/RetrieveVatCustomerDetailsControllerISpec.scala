@@ -209,7 +209,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             firstName = Some(firstName),
             lastName = Some(lastName),
             organisationName = Some(orgName),
-            tradingName = Some(tradingName)
+            tradingName = Some(tradingName),
+            hasFlatRateScheme = true
           ),
           Some(FlatRateScheme(
             Some(frsCategory),

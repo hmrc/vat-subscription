@@ -27,12 +27,13 @@ import uk.gov.hmrc.vatsubscription.models._
 
 object CustomerInformationTestConstants {
 
-  val mandationStatus = "1"
+  val mandationStatusCode = "1"
+  val mandationStatus = "MTDfB Mandated"
   val regReason = "0001"
   val effectiveDate = "1967-08-13"
   val startDate = "1967-08-13"
 
-  val customerInformationJsonMaxWithFRS: JsValue = Json.obj(
+  val customerInformationDESJsonMaxWithFRS: JsValue = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "organisationName" -> orgName,
@@ -43,7 +44,7 @@ object CustomerInformationTestConstants {
           "lastName" -> lastName
         ),
         "tradingName" -> tradingName,
-        "mandationStatus" -> mandationStatus,
+        "mandationStatus" -> mandationStatusCode,
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
         "businessStartDate" -> startDate
@@ -77,7 +78,7 @@ object CustomerInformationTestConstants {
     )
   )
 
-  val customerInformationJsonMax: JsValue = Json.obj(
+  val customerInformationDESJsonMax: JsValue = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "organisationName" -> orgName,
@@ -88,7 +89,7 @@ object CustomerInformationTestConstants {
           "lastName" -> lastName
         ),
         "tradingName" -> tradingName,
-        "mandationStatus" -> mandationStatus,
+        "mandationStatus" -> mandationStatusCode,
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
         "businessStartDate" -> startDate
@@ -114,12 +115,83 @@ object CustomerInformationTestConstants {
     )
   )
 
-  val customerInformationJsonMin: JsValue = Json.obj(
+  val customerInformationDESJsonMin: JsValue = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
-        "mandationStatus" -> "1"
+        "mandationStatus" -> mandationStatusCode
       )
     )
+  )
+
+  val customerInformationOutputJsonMaxWithFRS: JsValue = Json.obj(
+    "bankDetails" -> Json.obj(
+      "accountHolderName" -> accName,
+      "bankAccountNumber" -> accNum,
+      "sortCode" -> accSort
+    ),
+    "customerDetails" -> Json.obj(
+      "firstName" -> firstName,
+      "hasFlatRateScheme" -> true,
+      "lastName" -> lastName,
+      "organisationName" -> orgName,
+      "tradingName" -> tradingName
+    ),
+    "flatRateScheme" -> Json.obj(
+      "FRSCategory" -> frsCategory,
+      "FRSPercentage" -> frsPercentage,
+      "limitedCostTrader" -> frsLimitedCostTrader,
+      "startDate" -> frsStartDate
+    ),
+    "mandationStatus" -> mandationStatus,
+    "ppob" -> Json.obj(
+      "address" -> Json.obj(
+        "line1" -> addLine1,
+        "line2" -> addLine2,
+        "line3" -> addLine3,
+        "line4" -> addLine4,
+        "line4" -> addLine4,
+        "line5" -> addLine5,
+        "postCode" -> postcode,
+        "countryCode" -> countryCode
+      )
+    ),
+    "returnPeriod" -> returnPeriodMC
+  )
+
+  val customerInformationOutputJsonMax: JsValue = Json.obj(
+    "bankDetails" -> Json.obj(
+      "accountHolderName" -> accName,
+      "bankAccountNumber" -> accNum,
+      "sortCode" -> accSort
+    ),
+    "customerDetails" -> Json.obj(
+      "firstName" -> firstName,
+      "hasFlatRateScheme" -> false,
+      "lastName" -> lastName,
+      "organisationName" -> orgName,
+      "tradingName" -> tradingName
+    ),
+    "mandationStatus" -> mandationStatus,
+    "ppob" -> Json.obj(
+      "address" -> Json.obj(
+        "line1" -> addLine1,
+        "line2" -> addLine2,
+        "line3" -> addLine3,
+        "line4" -> addLine4,
+        "line4" -> addLine4,
+        "line5" -> addLine5,
+        "postCode" -> postcode,
+        "countryCode" -> countryCode
+      )
+    ),
+    "returnPeriod" -> returnPeriodMC
+  )
+
+  val customerInformationOutputJsonMin: JsValue = Json.obj(
+    "customerDetails" -> Json.obj(
+      "hasFlatRateScheme" -> false
+    ),
+    "mandationStatus" -> "MTDfB Mandated"
   )
 
   val customerInformationModelMaxWithFRS: VatCustomerInformation = VatCustomerInformation(
@@ -128,7 +200,8 @@ object CustomerInformationTestConstants {
       firstName = Some(firstName),
       lastName = Some(lastName),
       organisationName = Some(orgName),
-      tradingName = Some(tradingName)
+      tradingName = Some(tradingName),
+      hasFlatRateScheme = true
     ),
     Some(FlatRateScheme(
       Some(frsCategory),

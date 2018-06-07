@@ -61,7 +61,7 @@ object VatCustomerInformation extends JsonReadUtil {
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
   } yield VatCustomerInformation(
     mandationStatus,
-    CustomerDetails(firstName = firstName, lastName = lastName, organisationName = organisationName, tradingName = tradingName),
+    CustomerDetails(firstName = firstName, lastName = lastName, organisationName = organisationName, tradingName = tradingName, flatRateScheme.isDefined),
     flatRateScheme,
     ppob,
     bankDetails,

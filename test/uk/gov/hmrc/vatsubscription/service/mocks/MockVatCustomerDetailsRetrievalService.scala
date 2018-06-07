@@ -22,7 +22,7 @@ import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationFailure
-import uk.gov.hmrc.vatsubscription.models.CustomerDetails
+import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, VatCustomerInformation}
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future
@@ -36,5 +36,11 @@ trait MockVatCustomerDetailsRetrievalService extends MockitoSugar {
                         (response: Future[Either[GetVatCustomerInformationFailure, CustomerDetails]]): Unit = {
     when(mockVatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(ArgumentMatchers.eq(vatNumber))
                                                                           (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+  }
+
+  def mockRetrieveVatInformation(vatNumber: String)
+                                    (response: Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]]): Unit = {
+    when(mockVatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(ArgumentMatchers.eq(vatNumber))
+    (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
   }
 }
