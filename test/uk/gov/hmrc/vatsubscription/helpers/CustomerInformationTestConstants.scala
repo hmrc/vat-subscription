@@ -55,7 +55,6 @@ object CustomerInformationTestConstants {
           "line2" -> addLine2,
           "line3" -> addLine3,
           "line4" -> addLine4,
-          "line4" -> addLine4,
           "line5" -> addLine5,
           "postCode" -> postcode,
           "countryCode" -> countryCode
@@ -97,7 +96,6 @@ object CustomerInformationTestConstants {
           "line1" -> addLine1,
           "line2" -> addLine2,
           "line3" -> addLine3,
-          "line4" -> addLine4,
           "line4" -> addLine4,
           "line5" -> addLine5,
           "postCode" -> postcode,
@@ -147,7 +145,6 @@ object CustomerInformationTestConstants {
         "line2" -> addLine2,
         "line3" -> addLine3,
         "line4" -> addLine4,
-        "line4" -> addLine4,
         "line5" -> addLine5,
         "postCode" -> postcode,
         "countryCode" -> countryCode
@@ -175,7 +172,6 @@ object CustomerInformationTestConstants {
         "line1" -> addLine1,
         "line2" -> addLine2,
         "line3" -> addLine3,
-        "line4" -> addLine4,
         "line4" -> addLine4,
         "line5" -> addLine5,
         "postCode" -> postcode,

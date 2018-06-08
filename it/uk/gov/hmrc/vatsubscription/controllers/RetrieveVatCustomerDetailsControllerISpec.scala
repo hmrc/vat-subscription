@@ -87,7 +87,6 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           "line2" -> addLine2,
           "line3" -> addLine3,
           "line4" -> addLine4,
-          "line4" -> addLine4,
           "line5" -> addLine5,
           "postCode" -> postcode,
           "countryCode" -> countryCode
