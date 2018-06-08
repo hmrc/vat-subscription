@@ -20,7 +20,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads
 
 class GetVatCustomerInformationHttpParserSpec extends UnitSpec {
@@ -30,11 +30,11 @@ class GetVatCustomerInformationHttpParserSpec extends UnitSpec {
   "CustomerSignUpHttpReads" when {
     "read" should {
       "parse an OK response with a valid json as a VatCustomerInformation" in {
-        val httpResponse = HttpResponse(OK, responseJson = Some(testSuccessDesResponse))
+        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRS))
 
         val res = GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Right(testCustomerInformation)
+        res shouldBe Right(customerInformationModelMaxWithFRS)
       }
 
       "parse an OK response with an ivalid json as a UnexpectedGetVatCustomerInformationFailure" in {
@@ -68,8 +68,6 @@ class GetVatCustomerInformationHttpParserSpec extends UnitSpec {
 
         res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "{ }"))
       }
-
     }
   }
-
 }

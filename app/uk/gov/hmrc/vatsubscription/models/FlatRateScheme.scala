@@ -16,12 +16,31 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class FlatRateScheme(FRSCategory: Option[String], FRSPercentage: Option[BigDecimal],
                           limitedCostTrader: Option[Boolean], startDate: Option[String])
 
 object FlatRateScheme {
-  implicit val format: OFormat[FlatRateScheme] = Json.format[FlatRateScheme]
+
+  private val frsCategoryPath = JsPath \ "FRSCategory"
+  private val frsPerecentPath =  JsPath \ "FRSPercentage"
+  private val limitedCostPath = JsPath \ "limitedCostTrader"
+  private val startDatePath = JsPath \ "startDate"
+
+  implicit val frsReader: Reads[FlatRateScheme] = for {
+    frsCategory <- frsCategoryPath.readNullable[String]
+    frsPercentage <- frsPerecentPath.readNullable[BigDecimal]
+    limitedCostTrader <- limitedCostPath.readNullable[Boolean]
+    startDate <- startDatePath.readNullable[String]
+  } yield FlatRateScheme(frsCategory, frsPercentage, limitedCostTrader, startDate)
+
+  implicit val frsWriter: Writes[FlatRateScheme] = (
+    frsCategoryPath.writeNullable[String] and
+    frsPerecentPath.writeNullable[BigDecimal] and
+    limitedCostPath.writeNullable[Boolean] and
+    startDatePath.writeNullable[String]
+    )(unlift(FlatRateScheme.unapply))
 }
 

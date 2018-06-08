@@ -21,7 +21,7 @@ import org.scalatest.EitherValues
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformationConnector
-import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.InvalidVatNumber
 import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, MTDfBMandated, VatCustomerInformation}
 import uk.gov.hmrc.vatsubscription.services.MandationStatusService
@@ -41,7 +41,7 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
   "getMandationStatus" should {
 
     "return the mandation status if successful" in {
-      val testSuccessfulResponse = VatCustomerInformation(MTDfBMandated, CustomerDetails(None, None, None, None), None)
+      val testSuccessfulResponse = VatCustomerInformation(MTDfBMandated, CustomerDetails(None, None, None, None), None, None, None, None)
 
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(testSuccessfulResponse)))
 

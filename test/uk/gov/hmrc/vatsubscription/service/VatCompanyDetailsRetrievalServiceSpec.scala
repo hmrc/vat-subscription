@@ -21,7 +21,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformationConnector
-import uk.gov.hmrc.vatsubscription.helpers.TestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.InvalidVatNumber
 import uk.gov.hmrc.vatsubscription.services._
 
@@ -39,20 +41,42 @@ class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCust
   "retrieveVatCustomerDetails" should {
 
     "retrieve the vat customers details from valid customer information" in {
-      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(testCustomerInformation)))
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMin)))
       val res = TestVatCompanyDetailsRetrievalService.retrieveVatCustomerDetails(testVatNumber)
-      await(res) shouldBe Right(testCustomerDetails)
+      await(res) shouldBe Right(customerDetailsModelMin)
     }
 
     "retrieve the vat customers details from valid customer information including flat rate scheme" in {
-      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(testCustomerInformationWithFlatRateScheme)))
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
       val res = TestVatCompanyDetailsRetrievalService.retrieveVatCustomerDetails(testVatNumber)
-      await(res) shouldBe Right(testCustomerDetailsWithFlatRateScheme)
+      await(res) shouldBe Right(customerDetailsModelMaxWithFRS)
     }
 
     "return a failed response when the customer information cannot be retrieved" in {
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
       val res = TestVatCompanyDetailsRetrievalService.retrieveVatCustomerDetails(testVatNumber)
+      await(res) shouldBe Left(InvalidVatNumber)
+    }
+
+  }
+
+  "retrieveVatCustomerInformation" should {
+
+    "retrieve the all the vat customers information" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
+      val res = TestVatCompanyDetailsRetrievalService.retrieveCircumstanceInformation(testVatNumber)
+      await(res) shouldBe Right(customerInformationModelMax)
+    }
+
+    "retrieve the vat customers details from valid customer information including flat rate scheme" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
+      val res = TestVatCompanyDetailsRetrievalService.retrieveCircumstanceInformation(testVatNumber)
+      await(res) shouldBe Right(customerInformationModelMaxWithFRS)
+    }
+
+    "return a failed response when the customer information cannot be retrieved" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
+      val res = TestVatCompanyDetailsRetrievalService.retrieveCircumstanceInformation(testVatNumber)
       await(res) shouldBe Left(InvalidVatNumber)
     }
 

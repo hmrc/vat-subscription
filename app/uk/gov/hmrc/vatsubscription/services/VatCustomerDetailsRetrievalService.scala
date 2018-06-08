@@ -23,7 +23,7 @@ import cats.instances.future._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationFailure
-import uk.gov.hmrc.vatsubscription.models.CustomerDetails
+import uk.gov.hmrc.vatsubscription.models._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,6 +41,9 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
         tradingName = vatCustomerInformation.customerDetails.tradingName,
         hasFlatRateScheme = vatCustomerInformation.flatRateScheme.isDefined)
     }).value
+
+  def retrieveCircumstanceInformation(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]] =
+    vatCustomerDetailsConnector.getInformation(vatNumber)
 
 }
 

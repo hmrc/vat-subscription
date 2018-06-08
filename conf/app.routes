@@ -3,3 +3,5 @@
 GET         /:vatNumber/mandation-status                                             @uk.gov.hmrc.vatsubscription.controllers.MandationStatusController.getMandationStatus(vatNumber: String)
 
 GET         /:vatNumber/customer-details                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(vatNumber: String)
+
+GET         /:vatNumber/full-information                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatInformation(vatNumber: String)
