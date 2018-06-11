@@ -18,22 +18,37 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.agentOrCapacitor
 
 class DeclarationSpec extends UnitSpec {
 
-  "Declaration Writes" should {
+  "Declaration Writes" when {
 
-    "output a correctly formatted Declaration json object with ARN" in {
-      val result = Json.obj(
-        "declaration" -> Json.obj(
-          "agentOrCapacitor" -> Json.obj(
-            "identification" -> Json.obj(
-              "ARN" -> "XAIT0000000000"
-            )
-          )
+    "supplied with an agentOrCapacitor model" should {
+
+      val model: Declaration = Declaration(Some(agentOrCapacitor), Signing())
+
+      "output a correctly formatted Declaration json with agentOrCapacitor" in {
+        val result = Json.obj(
+          "agentOrCapacitor" -> agentOrCapacitor,
+          "signing" -> Signing()
         )
-      )
-      Declaration.writes.writes(Declaration("XAIT0000000000")) shouldBe result
+
+        Declaration.writes.writes(model) shouldBe result
+      }
+    }
+
+    "not supplied with an agentOrCapacitor model" should {
+
+      val model: Declaration = Declaration(None, Signing())
+
+      "output a correctly formatted Declaration json" in {
+        val result = Json.obj(
+          "signing" -> Signing()
+        )
+
+        Declaration.writes.writes(model) shouldBe result
+      }
     }
   }
 }

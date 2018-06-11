@@ -16,17 +16,10 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.json.{Json, Writes}
 
-case class Declaration(agentOrCapacitor: Option[AgentOrCapacitor],
-                       signing: Signing)
+case class Signing(confirmDeclarationInfoAcceptable: Boolean = true)
 
-object Declaration {
-
-  implicit val writes: Writes[Declaration] = (
-    (JsPath \ "agentOrCapacitor").writeNullable[AgentOrCapacitor] and
-    (JsPath \ "signing").write[Signing]
-  )(unlift(Declaration.unapply))
-
+object Signing {
+  implicit val writes: Writes[Signing] = Json.writes[Signing]
 }

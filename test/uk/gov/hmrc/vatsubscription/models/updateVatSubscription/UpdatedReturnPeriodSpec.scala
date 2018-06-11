@@ -16,17 +16,24 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.json.Json
+import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
 
-case class Declaration(agentOrCapacitor: Option[AgentOrCapacitor],
-                       signing: Signing)
+class UpdatedReturnPeriodSpec extends UnitSpec {
 
-object Declaration {
+  "UpdatedReturnPeriod Writes" should {
 
-  implicit val writes: Writes[Declaration] = (
-    (JsPath \ "agentOrCapacitor").writeNullable[AgentOrCapacitor] and
-    (JsPath \ "signing").write[Signing]
-  )(unlift(Declaration.unapply))
+    val model: UpdatedReturnPeriod = UpdatedReturnPeriod(
+      MAReturnPeriod
+    )
 
+    "output a correctly formatted UpdatedReturnPeriod json" in {
+      val result = Json.obj(
+        "returnPeriod" -> "MA"
+      )
+
+      UpdatedReturnPeriod.writes.writes(model) shouldBe result
+    }
+  }
 }

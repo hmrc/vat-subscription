@@ -16,17 +16,15 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.vatsubscription.models.ReturnPeriod
 
-case class Declaration(agentOrCapacitor: Option[AgentOrCapacitor],
-                       signing: Signing)
+case class UpdatedReturnPeriod(returnPeriod: ReturnPeriod)
 
-object Declaration {
-
-  implicit val writes: Writes[Declaration] = (
-    (JsPath \ "agentOrCapacitor").writeNullable[AgentOrCapacitor] and
-    (JsPath \ "signing").write[Signing]
-  )(unlift(Declaration.unapply))
-
+object UpdatedReturnPeriod {
+  implicit val writes: Writes[UpdatedReturnPeriod] = Writes {
+    model => Json.obj(
+      "returnPeriod" -> model.returnPeriod.stdReturnPeriod
+    )
+  }
 }

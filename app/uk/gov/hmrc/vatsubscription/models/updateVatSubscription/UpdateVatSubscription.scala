@@ -16,8 +16,28 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
 
-import uk.gov.hmrc.vatsubscription.models.ReturnPeriod
+import play.api.libs.json._
 
-case class UpdateVatSubscription(requestedChange: RequestedChange,
-                                 returnPeriods: ReturnPeriod,
+case class UpdateVatSubscription(requestedChanges: RequestedChanges,
+                                 updatedReturnPeriod: UpdatedReturnPeriod,
                                  declaration: Declaration)
+
+object UpdateVatSubscription {
+
+  private val messageType: String = "SubscriptionUpdate"
+  private val source: String = "100"
+  private val mandationStatus: String = "1"
+
+  implicit val writes: Writes[UpdateVatSubscription] = Writes {
+    model => Json.obj(
+      "messageType" -> messageType,
+      "controlInformation" -> Json.obj(
+        "source" -> source,
+        "mandationStatus" -> mandationStatus
+      ),
+      "requestedChange" -> model.requestedChanges,
+      "returnPeriods" -> model.updatedReturnPeriod,
+      "declaration" -> model.declaration
+    )
+  }
+}

@@ -16,17 +16,22 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.json.Json
+import uk.gov.hmrc.play.test.UnitSpec
 
-case class Declaration(agentOrCapacitor: Option[AgentOrCapacitor],
-                       signing: Signing)
+class AgentOrCapacitorSpec extends UnitSpec {
 
-object Declaration {
+  "AgentOrCapacitor Writes" should {
 
-  implicit val writes: Writes[Declaration] = (
-    (JsPath \ "agentOrCapacitor").writeNullable[AgentOrCapacitor] and
-    (JsPath \ "signing").write[Signing]
-  )(unlift(Declaration.unapply))
+    val model: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
 
+    "output a correctly formatted json object" in {
+      val result = Json.obj(
+        "identification" -> Json.obj(
+          "ARN" -> "XAIT0000000000"
+        )
+      )
+      AgentOrCapacitor.writes.writes(model) shouldBe result
+    }
+  }
 }
