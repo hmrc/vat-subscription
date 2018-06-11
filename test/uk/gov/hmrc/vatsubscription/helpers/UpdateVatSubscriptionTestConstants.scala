@@ -27,10 +27,6 @@ object UpdateVatSubscriptionTestConstants {
     "source" -> "100",
     "mandationStatus" -> "1"
   )
-  val signing: JsObject = Json.obj(
-    "confirmDeclarationInfoAcceptable" -> true
-  )
-
   val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
   val changeReturnPeriod: RequestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true, repaymentBankDetails = false)
   val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod)
