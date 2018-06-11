@@ -30,6 +30,7 @@ class UpdatedReturnPeriodSpec extends UnitSpec {
 
     "output a correctly formatted UpdatedReturnPeriod json" in {
       val result = Json.obj(
+        "changeReturnPeriod" -> true,
         "returnPeriod" -> "MA"
       )
 

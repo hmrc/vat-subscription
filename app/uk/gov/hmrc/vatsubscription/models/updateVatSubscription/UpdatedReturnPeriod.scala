@@ -22,8 +22,12 @@ import uk.gov.hmrc.vatsubscription.models.ReturnPeriod
 case class UpdatedReturnPeriod(returnPeriod: ReturnPeriod)
 
 object UpdatedReturnPeriod {
+
+  private val changeReturnPeriod: Boolean = true
+
   implicit val writes: Writes[UpdatedReturnPeriod] = Writes {
     model => Json.obj(
+      "changeReturnPeriod" -> changeReturnPeriod,
       "returnPeriod" -> model.returnPeriod.stdReturnPeriod
     )
   }
