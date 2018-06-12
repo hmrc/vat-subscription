@@ -19,28 +19,51 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.UpdateVatSubscription
 
 class UpdateVatSubscriptionSpec extends UnitSpec {
 
-  "UpdateVatSubscription Writes" should {
+  "UpdateVatSubscription Writes" when {
 
-    val model: UpdateVatSubscription = UpdateVatSubscription(
-      requestedChanges = changeReturnPeriod,
-      updatedReturnPeriod = updatedReturnPeriod,
-      declaration = Declaration(Some(agentOrCapacitor), Signing())
-    )
+    "supplied with an UpdatedReturnPeriod" should {
 
-    "output a correctly formatted UpdateVatSubscription json object" in {
-      val result =
-        Json.obj(
-          "messageType" -> messageType,
-          "controlInformation" -> controlInformation,
-          "requestedChange" -> model.requestedChanges,
-          "returnPeriods" -> model.updatedReturnPeriod,
-          "declaration" -> model.declaration
-        )
-      UpdateVatSubscription.writes.writes(model) shouldBe result
+      val model: UpdateVatSubscription = UpdateVatSubscription(
+        requestedChanges = changeReturnPeriod,
+        updatedReturnPeriod = Some(updatedReturnPeriod),
+        declaration = Declaration(Some(agentOrCapacitor), Signing())
+      )
+
+      "output a correctly formatted UpdateVatSubscription json object" in {
+        val result =
+          Json.obj(
+            "messageType" -> messageType,
+            "controlInformation" -> controlInformation,
+            "requestedChange" -> model.requestedChanges,
+            "returnPeriods" -> model.updatedReturnPeriod,
+            "declaration" -> model.declaration
+          )
+        UpdateVatSubscription.writes.writes(model) shouldBe result
+      }
+    }
+
+    "not supplied with an UpdatedReturnPeriod" should {
+
+      val model: UpdateVatSubscription = UpdateVatSubscription(
+        requestedChanges = changeReturnPeriod,
+        updatedReturnPeriod = None,
+        declaration = Declaration(Some(agentOrCapacitor), Signing())
+      )
+
+      "output a correctly formatted UpdateVatSubscription json object" in {
+        val result =
+          Json.obj(
+            "messageType" -> messageType,
+            "controlInformation" -> controlInformation,
+            "requestedChange" -> model.requestedChanges,
+            "declaration" -> model.declaration
+          )
+        UpdateVatSubscription.writes.writes(model) shouldBe result
+      }
     }
   }
+
 }

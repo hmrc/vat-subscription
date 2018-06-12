@@ -16,18 +16,13 @@
 
 package uk.gov.hmrc.vatsubscription.helpers
 
-import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription._
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{AgentOrCapacitor, RequestedChanges, UpdatedReturnPeriod}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{AgentOrCapacitor, ControlInformation, RequestedChanges, UpdatedReturnPeriod}
 
 object UpdateVatSubscriptionTestConstants {
 
   val messageType: String = "SubscriptionUpdate"
-  val controlInformation: JsObject = Json.obj(
-    "source" -> "100",
-    "mandationStatus" -> "1"
-  )
+  val controlInformation: ControlInformation = ControlInformation()
   val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
   val changeReturnPeriod: RequestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true, repaymentBankDetails = false)
   val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod)

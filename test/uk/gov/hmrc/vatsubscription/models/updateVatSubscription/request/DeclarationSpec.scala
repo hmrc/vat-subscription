@@ -19,7 +19,6 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.agentOrCapacitor
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.Signing
 
 class DeclarationSpec extends UnitSpec {
 

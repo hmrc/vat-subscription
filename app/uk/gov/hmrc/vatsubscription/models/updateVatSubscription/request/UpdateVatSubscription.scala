@@ -16,28 +16,29 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class UpdateVatSubscription(requestedChanges: RequestedChanges,
-                                 updatedReturnPeriod: UpdatedReturnPeriod,
+case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
+                                 controlInformation: ControlInformation = ControlInformation(),
+                                 requestedChanges: RequestedChanges,
+                                 updatedReturnPeriod: Option[UpdatedReturnPeriod],
                                  declaration: Declaration)
 
 object UpdateVatSubscription {
 
-  private val messageType: String = "SubscriptionUpdate"
-  private val source: String = "100"
-  private val mandationStatus: String = "1"
+  implicit val writes: Writes[UpdateVatSubscription] = (
+    (JsPath \ "messageType").write[String] and
+    (JsPath \ "controlInformation").write[ControlInformation] and
+    (JsPath \ "requestedChange").write[RequestedChanges] and
+    (JsPath \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
+    (JsPath \ "declaration").write[Declaration]
+  )(unlift(UpdateVatSubscription.unapply))
+}
 
-  implicit val writes: Writes[UpdateVatSubscription] = Writes {
-    model => Json.obj(
-      "messageType" -> messageType,
-      "controlInformation" -> Json.obj(
-        "source" -> source,
-        "mandationStatus" -> mandationStatus
-      ),
-      "requestedChange" -> model.requestedChanges,
-      "returnPeriods" -> model.updatedReturnPeriod,
-      "declaration" -> model.declaration
-    )
-  }
+case class ControlInformation(source: String = "100",
+                              mandationStatus: String = "1")
+
+object ControlInformation {
+  implicit val writes: Writes[ControlInformation] = Json.writes[ControlInformation]
 }
