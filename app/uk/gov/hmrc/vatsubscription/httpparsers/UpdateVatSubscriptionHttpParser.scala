@@ -35,7 +35,7 @@ object UpdateVatSubscriptionHttpParser {
           response.json.validate[SuccessModel].fold(
             invalid => {
               Logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Success Response Json - $invalid")
-              Left(ErrorModel("INTERNAL_SERVER_ERROR", "Invalid Json"))
+              Left(ErrorModel("INTERNAL_SERVER_ERROR", "Invalid Json returned in Success response."))
             },
             valid => Right(valid)
           )
@@ -44,7 +44,7 @@ object UpdateVatSubscriptionHttpParser {
           response.json.validate[ErrorModel].fold(
             invalid => {
               Logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Error Response Json - $invalid")
-              Left(ErrorModel("INTERNAL_SERVER_ERROR", "Invalid Json"))
+              Left(ErrorModel("INTERNAL_SERVER_ERROR", s"Invalid Json returned in Error response. Status $status returned"))
             },
             valid => Left(valid)
           )
