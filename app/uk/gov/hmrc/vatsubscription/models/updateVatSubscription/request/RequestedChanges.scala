@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.libs.json.{Json, Writes}
 
-class AgentOrCapacitorSpec extends UnitSpec {
+case class RequestedChanges(addressDetails: Boolean,
+                            returnPeriod: Boolean,
+                            repaymentBankDetails: Boolean)
 
-  "AgentOrCapacitor Writes" should {
+object RequestedChanges {
 
-    val model: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
-
-    "output a correctly formatted json object" in {
-      val result = Json.obj(
-        "identification" -> Json.obj(
-          "ARN" -> "XAIT0000000000"
-        )
-      )
-      AgentOrCapacitor.writes.writes(model) shouldBe result
-    }
+  implicit val writes: Writes[RequestedChanges] = Writes {
+    model => Json.obj(
+      "PPOBDetails" -> model.addressDetails,
+      "returnPeriod" -> model.returnPeriod,
+      "repaymentBankDetails" -> model.repaymentBankDetails
+    )
   }
 }

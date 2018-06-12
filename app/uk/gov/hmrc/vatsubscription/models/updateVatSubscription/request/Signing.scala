@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json.{Json, Writes}
 
-case class RequestedChanges(addressDetails: Boolean,
-                            returnPeriod: Boolean,
-                            repaymentBankDetails: Boolean)
+case class Signing(confirmDeclarationInfoAcceptable: Boolean = true)
 
-object RequestedChanges {
-
-  implicit val writes: Writes[RequestedChanges] = Writes {
-    model => Json.obj(
-      "PPOBDetails" -> model.addressDetails,
-      "returnPeriod" -> model.returnPeriod,
-      "repaymentBankDetails" -> model.repaymentBankDetails
-    )
-  }
+object Signing {
+  implicit val writes: Writes[Signing] = Json.writes[Signing]
 }

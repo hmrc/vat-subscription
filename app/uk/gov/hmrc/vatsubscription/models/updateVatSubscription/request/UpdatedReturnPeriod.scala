@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import play.api.libs.json._
+import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.vatsubscription.models.ReturnPeriod
 
-case class AgentOrCapacitor(agentReferenceNumber: String)
+case class UpdatedReturnPeriod(returnPeriod: ReturnPeriod)
 
-object AgentOrCapacitor {
+object UpdatedReturnPeriod {
 
-  implicit val writes: Writes[AgentOrCapacitor] = Writes {
+  private val changeReturnPeriod: Boolean = true
+
+  implicit val writes: Writes[UpdatedReturnPeriod] = Writes {
     model => Json.obj(
-      "identification" -> Json.obj(
-        "ARN" -> model.agentReferenceNumber
-      )
+      "changeReturnPeriod" -> changeReturnPeriod,
+      "returnPeriod" -> model.returnPeriod.stdReturnPeriod
     )
   }
 }

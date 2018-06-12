@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.helpers
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription._
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{AgentOrCapacitor, RequestedChanges, UpdatedReturnPeriod}
 
 object UpdateVatSubscriptionTestConstants {
 

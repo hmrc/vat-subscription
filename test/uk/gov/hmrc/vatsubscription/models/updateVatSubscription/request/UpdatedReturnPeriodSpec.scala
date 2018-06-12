@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
 
-class RequestedChangesSpec extends UnitSpec {
+class UpdatedReturnPeriodSpec extends UnitSpec {
 
-  "RequestedChanges Writes" should {
+  "UpdatedReturnPeriod Writes" should {
 
-    val model: RequestedChanges = RequestedChanges(
-      addressDetails = true,
-      returnPeriod = true,
-      repaymentBankDetails = true
+    val model: UpdatedReturnPeriod = UpdatedReturnPeriod(
+      MAReturnPeriod
     )
 
-    "output a correctly formatted RequestedChanges json" in {
+    "output a correctly formatted UpdatedReturnPeriod json" in {
       val result = Json.obj(
-        "PPOBDetails" -> true,
-        "returnPeriod" -> true,
-        "repaymentBankDetails" -> true
+        "changeReturnPeriod" -> true,
+        "returnPeriod" -> "MA"
       )
 
-      RequestedChanges.writes.writes(model) shouldBe result
+      UpdatedReturnPeriod.writes.writes(model) shouldBe result
     }
   }
 }

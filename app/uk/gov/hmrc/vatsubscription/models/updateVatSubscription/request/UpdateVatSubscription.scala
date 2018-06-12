@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json._
 

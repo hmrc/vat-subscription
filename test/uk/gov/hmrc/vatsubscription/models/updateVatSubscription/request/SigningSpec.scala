@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.vatsubscription.models.ReturnPeriod
+import play.api.libs.json.Json
+import uk.gov.hmrc.play.test.UnitSpec
 
-case class UpdatedReturnPeriod(returnPeriod: ReturnPeriod)
+class SigningSpec extends UnitSpec {
 
-object UpdatedReturnPeriod {
+  "Signing Writes" should {
 
-  private val changeReturnPeriod: Boolean = true
+    val model: Signing = Signing()
 
-  implicit val writes: Writes[UpdatedReturnPeriod] = Writes {
-    model => Json.obj(
-      "changeReturnPeriod" -> changeReturnPeriod,
-      "returnPeriod" -> model.returnPeriod.stdReturnPeriod
-    )
+    "output a correctly formatted Signing json" in {
+      val result = Json.obj(
+        "confirmDeclarationInfoAcceptable" -> true
+      )
+
+      Signing.writes.writes(model) shouldBe result
+    }
   }
 }

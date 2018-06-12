@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
-case class Signing(confirmDeclarationInfoAcceptable: Boolean = true)
+case class Declaration(agentOrCapacitor: Option[AgentOrCapacitor],
+                       signing: Signing)
 
-object Signing {
-  implicit val writes: Writes[Signing] = Json.writes[Signing]
+object Declaration {
+
+  implicit val writes: Writes[Declaration] = (
+    (JsPath \ "agentOrCapacitor").writeNullable[AgentOrCapacitor] and
+    (JsPath \ "signing").write[Signing]
+  )(unlift(Declaration.unapply))
+
 }

@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models.updateVatSubscription
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.libs.json._
 
-class SigningSpec extends UnitSpec {
+case class AgentOrCapacitor(agentReferenceNumber: String)
 
-  "Signing Writes" should {
+object AgentOrCapacitor {
 
-    val model: Signing = Signing()
-
-    "output a correctly formatted Signing json" in {
-      val result = Json.obj(
-        "confirmDeclarationInfoAcceptable" -> true
+  implicit val writes: Writes[AgentOrCapacitor] = Writes {
+    model => Json.obj(
+      "identification" -> Json.obj(
+        "ARN" -> model.agentReferenceNumber
       )
-
-      Signing.writes.writes(model) shouldBe result
-    }
+    )
   }
 }
