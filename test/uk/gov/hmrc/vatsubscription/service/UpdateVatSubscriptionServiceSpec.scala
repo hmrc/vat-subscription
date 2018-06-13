@@ -22,7 +22,6 @@ import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.U
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
-import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
 import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, User}
 
 class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
@@ -32,17 +31,13 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
     new UpdateVatSubscriptionService(mockUpdateVatSubscriptionConnector)
   }
 
-  "Calling .updateVatSubscription" when {
+  "Calling .updateReturnPeriod" when {
 
-    val requestModel: UpdateVatSubscription = UpdateVatSubscription(
-      requestedChanges = changeReturnPeriod,
-      updatedReturnPeriod = Some(updatedReturnPeriod),
-      declaration = nonAgentDeclaration
-    )
+    implicit val user: User = User("123456789", arn = None)
 
     "connector call is successful" should {
       lazy val service = setup(Right(SuccessModel("12345")))
-      lazy val result = service.updateVatSubscription("123456789", requestModel)
+      lazy val result = service.updateReturnPeriod(MAReturnPeriod)
 
       "return successful UpdateVatSubscriptionResponse model" in {
         await(result) shouldEqual Right(SuccessModel("12345"))
@@ -51,7 +46,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "connector call is unsuccessful" should {
       lazy val service = setup(Left(ErrorModel("ERROR", "Error")))
-      lazy val result = service.updateVatSubscription("123456789", requestModel)
+      lazy val result = service.updateReturnPeriod(MAReturnPeriod)
 
       "return successful UpdateVatSubscriptionResponse model" in {
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
@@ -96,14 +91,4 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
     }
   }
 
-  "Calling .updateReturnPeriod" should {
-
-    implicit val user: User = User("123456789", arn = None)
-    lazy val service = setup(Right(SuccessModel("12345")))
-    lazy val result = service.updateReturnPeriod(MAReturnPeriod)
-
-    "return a success model" in {
-      await(result) shouldEqual Right(SuccessModel("12345"))
-    }
-  }
 }

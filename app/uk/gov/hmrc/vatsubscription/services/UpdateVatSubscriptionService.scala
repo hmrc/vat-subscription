@@ -28,15 +28,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def updateVatSubscription(vrn: String, vatSubscriptionModel: UpdateVatSubscription)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
-    updateVatSubscriptionConnector.updateVatSubscription(vrn, vatSubscriptionModel, hc)
-  }
-
   def updateReturnPeriod(updatedReturnPeriod: ReturnPeriod)
                         (implicit user: User, hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod)
-    updateVatSubscription(user.vrn, subscriptionModel)
+    updateVatSubscriptionConnector.updateVatSubscription(user.vrn, subscriptionModel, hc)
   }
 
   def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod)
