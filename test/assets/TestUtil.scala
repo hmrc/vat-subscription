@@ -19,14 +19,19 @@ package assets
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.Injector
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 
+import scala.concurrent.ExecutionContext
+
 class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   lazy val injector: Injector = app.injector
-  implicit lazy val mockHttp: HttpClient = mock[HttpClient]
   implicit lazy val mockAppConfig: AppConfig = injector.instanceOf[AppConfig]
+  implicit lazy val mockHttpClient: HttpClient = mock[HttpClient]
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
 }

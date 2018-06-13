@@ -20,7 +20,7 @@ import assets.TestUtil
 
 class UpdateVatSubscriptionConnectorSpec extends TestUtil {
 
-  object TestConnector extends UpdateVatSubscriptionConnector(mockHttp, mockAppConfig)
+  object TestConnector extends UpdateVatSubscriptionConnector(mockHttpClient, mockAppConfig)
 
   "UpdateVatSubscriptionConnector url()" should {
 
