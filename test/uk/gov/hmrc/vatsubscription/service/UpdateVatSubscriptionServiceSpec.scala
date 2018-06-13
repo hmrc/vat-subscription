@@ -27,12 +27,12 @@ import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, User}
 
 class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
-  "Calling .updateVatSubscription" when {
+  def setup(response: UpdateVatSubscriptionResponse): UpdateVatSubscriptionService = {
+    mockUpdateVatSubscriptionResponse(response)
+    new UpdateVatSubscriptionService(mockUpdateVatSubscriptionConnector)
+  }
 
-    def setup(response: UpdateVatSubscriptionResponse): UpdateVatSubscriptionService = {
-      mockUpdateVatSubscriptionResponse(response)
-      new UpdateVatSubscriptionService(mockUpdateVatSubscriptionConnector)
-    }
+  "Calling .updateVatSubscription" when {
 
     val requestModel: UpdateVatSubscription = UpdateVatSubscription(
       requestedChanges = changeReturnPeriod,
@@ -93,6 +93,17 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
         result shouldEqual expectedResult
       }
+    }
+  }
+
+  "Calling .updateReturnPeriod" should {
+
+    implicit val user: User = User("123456789", arn = None)
+    lazy val service = setup(Right(SuccessModel("12345")))
+    lazy val result = service.updateReturnPeriod(MAReturnPeriod)
+
+    "return a success model" in {
+      await(result) shouldEqual Right(SuccessModel("12345"))
     }
   }
 }
