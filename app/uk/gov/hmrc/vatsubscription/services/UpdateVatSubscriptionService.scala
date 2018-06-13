@@ -36,9 +36,7 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
 
   def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod)
                                       (implicit user: User): UpdateVatSubscription = {
-    val agentOrCapacitor: Option[AgentOrCapacitor] =
-      if (user.isAgent) Some(AgentOrCapacitor(user.arn.get))
-      else None
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
 
     UpdateVatSubscription(
       requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
