@@ -16,22 +16,30 @@
 
 package assets
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.inject.Injector
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.Writes
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.config.AppConfig
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+trait MockHttpClient extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  lazy val injector: Injector = app.injector
-  implicit lazy val mockAppConfig: AppConfig = injector.instanceOf[AppConfig]
-  implicit lazy val mockHttp: HttpClient = mock[HttpClient]
-  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
-  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
+  val mockHttpClient: HttpClient = mock[HttpClient]
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockHttpClient)
+  }
+
+  def mockHttpPut[I, O](response: O): Unit = {
+    when(mockHttpClient.PUT[I, O]
+    (any[String](), any[I]())
+    (any[Writes[I]](), any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
+      .thenReturn(Future.successful(response))
+  }
 }
