@@ -34,22 +34,21 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
   }
 
   def updateReturnPeriod(updatedReturnPeriod: ReturnPeriod)
-                        (implicit user: User): Future[UpdateVatSubscriptionResponse] = {
+                        (implicit user: User, hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
+    val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod)
+    updateVatSubscription(user.vrn, subscriptionModel)
+  }
+
+  def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod)
+                                      (implicit user: User): UpdateVatSubscription = {
     val agentOrCapacitor: Option[AgentOrCapacitor] =
       if (user.isAgent) Some(AgentOrCapacitor(user.arn.get))
       else None
 
-    val subscriptionModel: UpdateVatSubscription(
-      RequestedChanges(
-        addressDetails = false,
-        returnPeriod = true
-      ),
-      Some(UpdatedReturnPeriod(updatedReturnPeriod)),
-      Declaration(
-        agentOrCapacitor,
-        Signing()
-      )
+    UpdateVatSubscription(
+      requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+      updatedReturnPeriod = Some(UpdatedReturnPeriod(updatedReturnPeriod)),
+      declaration = Declaration(agentOrCapacitor, Signing())
     )
-    updateVatSubscription(user.vrn, subscriptionModel)
   }
 }

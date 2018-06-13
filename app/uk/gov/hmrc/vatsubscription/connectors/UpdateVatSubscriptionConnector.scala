@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
                                                val appConfig: AppConfig) {
 
-  val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
+  private[connectors] val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
 
   def updateVatSubscription(vrn: String, vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
                            (implicit ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {

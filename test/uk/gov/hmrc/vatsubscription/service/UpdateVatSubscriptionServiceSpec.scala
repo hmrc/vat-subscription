@@ -19,10 +19,11 @@ package uk.gov.hmrc.vatsubscription.service
 import assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
+import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, User}
 
 class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
@@ -54,6 +55,43 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       "return successful UpdateVatSubscriptionResponse model" in {
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
+      }
+    }
+  }
+
+  "Calling .constructReturnPeriodUpdateModel" when {
+
+    val service = new UpdateVatSubscriptionService(mockUpdateVatSubscriptionConnector)
+
+    "user is not an Agent" should {
+
+      implicit val user: User = User("123456789", arn = None)
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)
+
+      val expectedResult = UpdateVatSubscription(
+        requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
+        declaration = Declaration(None, Signing())
+      )
+
+      "return a correct UpdateVatSubscription model" in {
+        result shouldEqual expectedResult
+      }
+    }
+
+    "user is an Agent" should {
+
+      implicit val user: User = User("123456789", arn = Some("XAIT000000000"))
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)
+
+      val expectedResult = UpdateVatSubscription(
+        requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
+        declaration = Declaration(Some(AgentOrCapacitor("XAIT000000000")), Signing())
+      )
+
+      "return an UpdateVatSubscription model containing agentOrCapacitor" in {
+        result shouldEqual expectedResult
       }
     }
   }
