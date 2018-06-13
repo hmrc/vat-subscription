@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{AgentOrCapacitor, ControlInformation, RequestedChanges, UpdatedReturnPeriod}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
 object UpdateVatSubscriptionTestConstants {
 
@@ -26,4 +26,5 @@ object UpdateVatSubscriptionTestConstants {
   val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
   val changeReturnPeriod: RequestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true, repaymentBankDetails = false)
   val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod)
+  val nonAgentDeclaration: Declaration = Declaration(None, Signing())
 }
