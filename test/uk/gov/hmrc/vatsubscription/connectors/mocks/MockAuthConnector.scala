@@ -46,6 +46,9 @@ trait MockAuthConnector extends BeforeAndAfterEach with MockitoSugar {
     ) thenReturn response
   }
 
+  def mockAuthRetrieveAgentServicesEnrolled(predicate: Predicate = EmptyPredicate): Unit =
+    mockAuthorise(predicate = predicate, retrievals = Retrievals.allEnrolments)(Future.successful(Enrolments(Set(testAgentServicesEnrolment))))
+
   def mockAuthRetrieveMtdVatEnrolled(predicate: Predicate = EmptyPredicate): Unit =
     mockAuthorise(predicate = predicate, retrievals = Retrievals.allEnrolments)(Future.successful(Enrolments(Set(testMtdVatEnrolment))))
 

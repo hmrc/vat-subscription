@@ -19,6 +19,8 @@ package assets
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.Injector
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
@@ -29,6 +31,7 @@ import scala.concurrent.ExecutionContext
 class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   lazy val injector: Injector = app.injector
+  implicit lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   implicit lazy val mockAppConfig: AppConfig = injector.instanceOf[AppConfig]
   implicit lazy val mockHttp: HttpClient = mock[HttpClient]
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.config
+package uk.gov.hmrc.vatsubscription.controllers.actions.mocks
 
-object Constants {
-  val MtdVatEnrolmentKey: String = "HMRC-MTD-VAT"
-  val MtdVatReferenceKey: String = "VRN"
-  val MtdVatDelegatedAuth: String = "mtd-vat-auth"
+import assets.TestUtil
+import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
+import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 
-  val AgentServicesEnrolment: String = "HMRC-AS-AGENT"
-  val AgentServicesReference: String = "AgentReferenceNumber"
+trait MockVatAuthorised extends TestUtil with MockAuthConnector {
+
+  val mockVatAuthorised = new VatAuthorised(mockAuthConnector, mockAppConfig)
+
 }

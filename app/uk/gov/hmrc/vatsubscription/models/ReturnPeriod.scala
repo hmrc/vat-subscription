@@ -42,6 +42,13 @@ case object MMReturnPeriod extends ReturnPeriod {
 
 object ReturnPeriod {
 
+  def apply(period: String): ReturnPeriod = period match {
+    case MAReturnPeriod.stdReturnPeriod => MAReturnPeriod
+    case MBReturnPeriod.stdReturnPeriod => MBReturnPeriod
+    case MCReturnPeriod.stdReturnPeriod => MCReturnPeriod
+    case MMReturnPeriod.stdReturnPeriod => MMReturnPeriod
+  }
+
   def unapply(arg: ReturnPeriod): String = arg.stdReturnPeriod
 
   implicit val returnPeriodReader: Reads[ReturnPeriod] = for {
