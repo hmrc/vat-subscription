@@ -16,16 +16,12 @@
 
   package uk.gov.hmrc.vatsubscription.controllers
 
-  import akka.actor.ActorSystem
-  import akka.stream.ActorMaterializer
   import assets.TestUtil
   import play.api.http.Status._
   import play.api.libs.json.Json
   import play.api.mvc.Result
   import play.api.test.FakeRequest
-  import uk.gov.hmrc.auth.core.authorise.Predicate
-  import uk.gov.hmrc.auth.core.retrieve.{Retrieval, Retrievals}
-  import uk.gov.hmrc.auth.core.{Enrolment, Enrolments, InsufficientEnrolments}
+  import uk.gov.hmrc.auth.core.InsufficientEnrolments
   import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
   import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
   import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
@@ -42,21 +38,11 @@
     object TestRetrieveVatCustomerDetailsController
       extends RetrieveVatCustomerDetailsController(mockVatAuthorised, mockVatCustomerDetailsRetrievalService)
 
-
-    implicit private val system: ActorSystem = ActorSystem()
-    implicit private val materializer: ActorMaterializer = ActorMaterializer()
-
-    val predicate: Predicate = Enrolment("HMRC-MTD-VAT")
-      .withIdentifier("VRN", testVatNumber)
-      .withDelegatedAuthRule("mtd-vat-auth")
-
-    val retrievals: Retrieval[Enrolments] = Retrievals.allEnrolments
-
     "the retrieveVatCustomerDetails method" when {
 
       "the user does not have an mtd vat enrolment" should {
         "return FORBIDDEN" in {
-          mockAuthorise(predicate, retrievals)(Future.failed(InsufficientEnrolments()))
+          mockAuthorise(vatAuthPredicate, allEnrolments)(Future.failed(InsufficientEnrolments()))
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
@@ -68,7 +54,7 @@
         "return the customer details" when {
           "the customer details are populated" in {
 
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
@@ -78,7 +64,7 @@
           }
 
           "the customer details and flat rate scheme are populated" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMaxWithFRS)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
@@ -87,7 +73,7 @@
             jsonBodyOf(res) shouldBe customerDetailsJsonMaxWithFRS
           }
           "the customer details are empty" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(CustomerDetails(None, None, None, None))))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
@@ -101,7 +87,7 @@
       "the customer details could not be retrieved" when {
         "the vat number is invalid" should {
           "return a BadRequest" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
@@ -112,7 +98,7 @@
 
         "the vat number is not found" should {
           "return a NotFound" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
@@ -123,7 +109,7 @@
 
         "another failure occurred" should {
           "return the corresponding failure" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
 
             val responseBody = "error"
 
@@ -143,7 +129,7 @@
 
       "the user does not have an mtd vat enrolment" should {
         "return FORBIDDEN" in {
-          mockAuthorise(predicate, retrievals)(Future.failed(InsufficientEnrolments()))
+          mockAuthorise(vatAuthPredicate, allEnrolments)(Future.failed(InsufficientEnrolments()))
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 
@@ -154,7 +140,7 @@
       "the customer details have been successfully retrieved" should {
         "return the customer details" when {
           "the customer details are populated" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
@@ -164,7 +150,7 @@
           }
 
           "the customer details and flat rate scheme are populated" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
@@ -173,7 +159,7 @@
             jsonBodyOf(res) shouldBe customerInformationOutputJsonMaxWithFRS
           }
           "the customer details are empty" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMin)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
@@ -187,7 +173,7 @@
       "the customer details could not be retrieved" when {
         "the vat number is invalid" should {
           "return a BadRequest" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
@@ -198,7 +184,7 @@
 
         "the vat number is not found" should {
           "return a NotFound" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
@@ -209,7 +195,7 @@
 
         "another failure occurred" should {
           "return the corresponding failure" in {
-            mockAuthRetrieveMtdVatEnrolled(predicate)
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
 
             val responseBody = "error"
 

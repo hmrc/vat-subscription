@@ -16,12 +16,10 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
@@ -31,14 +29,11 @@ import uk.gov.hmrc.vatsubscription.service.mocks.MockMandationStatusService
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MandationStatusControllerSpec extends UnitSpec
+class MandationStatusControllerSpec extends TestUtil
   with MockAuthConnector with MockMandationStatusService {
 
   object TestMandationStatusController
     extends MandationStatusController(mockAuthConnector, mockMandationStatusService)
-
-  implicit private val system: ActorSystem = ActorSystem()
-  implicit private val materializer: ActorMaterializer = ActorMaterializer()
 
 
   "getMandationStatus" should {
