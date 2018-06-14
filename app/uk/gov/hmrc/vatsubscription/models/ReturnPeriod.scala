@@ -41,16 +41,20 @@ case object MMReturnPeriod extends ReturnPeriod {
   override val stdReturnPeriod: String = "MM"
 }
 
+case object InvalidReturnPeriod extends ReturnPeriod {
+  override val stdReturnPeriod: String = "XX"
+}
+
 object ReturnPeriod {
 
-  def apply(period: String): Option[ReturnPeriod] = period match {
-    case MAReturnPeriod.stdReturnPeriod => Some(MAReturnPeriod)
-    case MBReturnPeriod.stdReturnPeriod => Some(MBReturnPeriod)
-    case MCReturnPeriod.stdReturnPeriod => Some(MCReturnPeriod)
-    case MMReturnPeriod.stdReturnPeriod => Some(MMReturnPeriod)
+  def apply(period: String): ReturnPeriod = period match {
+    case MAReturnPeriod.stdReturnPeriod => MAReturnPeriod
+    case MBReturnPeriod.stdReturnPeriod => MBReturnPeriod
+    case MCReturnPeriod.stdReturnPeriod => MCReturnPeriod
+    case MMReturnPeriod.stdReturnPeriod => MMReturnPeriod
     case _ =>
       Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$period'")
-      None
+      InvalidReturnPeriod
   }
 
   def unapply(arg: ReturnPeriod): String = arg.stdReturnPeriod
@@ -61,6 +65,9 @@ object ReturnPeriod {
       case MBReturnPeriod.stdReturnPeriod => MBReturnPeriod
       case MCReturnPeriod.stdReturnPeriod => MCReturnPeriod
       case MMReturnPeriod.stdReturnPeriod => MMReturnPeriod
+      case invalid =>
+        Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$invalid'")
+        InvalidReturnPeriod
     }
   } yield value
 

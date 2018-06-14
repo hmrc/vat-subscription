@@ -25,23 +25,23 @@ class ReturnPeriodSpec extends UnitSpec {
   "ReturnPeriod.apply" should {
 
     "for 'January' should return Jan case object" in {
-      ReturnPeriod("MA") shouldBe Some(MAReturnPeriod)
+      ReturnPeriod("MA") shouldBe MAReturnPeriod
     }
 
     "for 'February' should return Feb case object" in {
-      ReturnPeriod("MB") shouldBe Some(MBReturnPeriod)
+      ReturnPeriod("MB") shouldBe MBReturnPeriod
     }
 
     "for 'March' should return Mar case object" in {
-      ReturnPeriod("MC") shouldBe Some(MCReturnPeriod)
+      ReturnPeriod("MC") shouldBe MCReturnPeriod
     }
 
     "for 'Monthly' should return Monthly case object" in {
-      ReturnPeriod("MM") shouldBe Some(MMReturnPeriod)
+      ReturnPeriod("MM") shouldBe MMReturnPeriod
     }
 
     "for an invalid return period should return 'None'" in {
-      ReturnPeriod("AB") shouldBe None
+      ReturnPeriod("AB") shouldBe InvalidReturnPeriod
     }
   }
 

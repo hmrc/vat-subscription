@@ -5,3 +5,5 @@ GET         /:vatNumber/mandation-status                                        
 GET         /:vatNumber/customer-details                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(vatNumber: String)
 
 GET         /:vatNumber/full-information                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatInformation(vatNumber: String)
+
+PUT         /:vatNumber/return-period                                                @uk.gov.hmrc.vatsubscription.controllers.UpdateVatCustomerDetailsController.updateVatReturnPeriod(vatNumber: String)
