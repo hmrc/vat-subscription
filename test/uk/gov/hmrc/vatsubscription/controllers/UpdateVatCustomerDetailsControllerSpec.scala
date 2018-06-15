@@ -116,7 +116,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_RETURN_PERIOD", "The supplied return period was invalid"))
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("RETURN_PERIOD_ERROR", "Invalid Json or Invalid Return Period supplied"))
           }
         }
 
@@ -131,7 +131,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_RETURN_PERIOD", "The supplied return period was invalid"))
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("RETURN_PERIOD_ERROR", "Invalid Json or Invalid Return Period supplied"))
           }
         }
 

@@ -60,11 +60,11 @@ object ReturnPeriod {
   def unapply(arg: ReturnPeriod): String = arg.stdReturnPeriod
 
   implicit val returnPeriodReader: Reads[ReturnPeriod] = for {
-    value <- (__ \ "stdReturnPeriod").read[String] map {
-      case MAReturnPeriod.stdReturnPeriod => MAReturnPeriod
-      case MBReturnPeriod.stdReturnPeriod => MBReturnPeriod
-      case MCReturnPeriod.stdReturnPeriod => MCReturnPeriod
-      case MMReturnPeriod.stdReturnPeriod => MMReturnPeriod
+    value <- (__ \ "stdReturnPeriod").readNullable[String] map {
+      case Some(MAReturnPeriod.stdReturnPeriod) => MAReturnPeriod
+      case Some(MBReturnPeriod.stdReturnPeriod) => MBReturnPeriod
+      case Some(MCReturnPeriod.stdReturnPeriod) => MCReturnPeriod
+      case Some(MMReturnPeriod.stdReturnPeriod) => MMReturnPeriod
       case invalid =>
         Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$invalid'")
         InvalidReturnPeriod
@@ -73,7 +73,6 @@ object ReturnPeriod {
 
 
   implicit val returnPeriodWriter: Writes[ReturnPeriod] = Writes {
-    case period if period.stdReturnPeriod.trim.length > 0 => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
-    case _ => Json.obj()
+    period => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
   }
 }

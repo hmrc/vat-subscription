@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsJson}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
@@ -34,16 +35,18 @@ class UpdateVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorised,
 
   private def returnPeriod(implicit user: User[_]): ReturnPeriod = user.body match {
     case body: AnyContentAsJson => body.json.as[ReturnPeriod]
-    case _ => InvalidReturnPeriod
+    case _ =>
+      Logger.warn("[UpdateVatCustomerDetailsController][AnyContentAsJson] Body of request was not JSON")
+      InvalidReturnPeriod
   }
 
   def updateVatReturnPeriod(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
       returnPeriod match {
         case InvalidReturnPeriod =>
-          Future.successful(BadRequest(Json.toJson(ErrorModel("INVALID_RETURN_PERIOD", "The supplied return period was invalid"))))
-        case _ =>
-          vatSubscriptionService.updateReturnPeriod(returnPeriod) map {
+          Future.successful(BadRequest(Json.toJson(ErrorModel("RETURN_PERIOD_ERROR", s"Invalid Json or Invalid Return Period supplied"))))
+        case period =>
+          vatSubscriptionService.updateReturnPeriod(period) map {
             case Right(success) => Ok(Json.toJson(success))
             case Left(error) => InternalServerError(Json.toJson(error))
           }

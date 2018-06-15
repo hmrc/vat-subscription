@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.helpers
+package uk.gov.hmrc.vatsubscription.helpers.servicemocks
 
-import java.util.UUID
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.libs.json.JsValue
 
-object IntegrationTestConstants {
-  val testVatNumber: String = UUID.randomUUID().toString
-  val testArn: String = UUID.randomUUID().toString
+
+object UpdateVatCustomerSubscriptionStub extends WireMockMethods {
+
+  def stubUpdateSubscription(vatNumber: String)(status: Int, body: JsValue): StubMapping =
+    when(method = PUT, uri = s"/vat/subscription/vrn/$vatNumber",
+      headers = Map(
+        "Authorization" -> "Bearer dev",
+        "Environment" -> "dev"
+      )
+    ).thenReturn(status = status, body = body)
+
+
 }

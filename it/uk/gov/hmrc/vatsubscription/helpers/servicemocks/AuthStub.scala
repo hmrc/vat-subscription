@@ -58,4 +58,14 @@ object AuthStub extends WireMockMethods {
     )
   )
 
+  val agentServicesEnrolments: JsObject = Json.obj(
+    "key" -> AgentServicesEnrolment,
+    "identifiers" -> Json.arr(
+      Json.obj(
+        "key" -> AgentServicesReference,
+        "value" -> testArn
+      )
+    )
+  )
+
 }
