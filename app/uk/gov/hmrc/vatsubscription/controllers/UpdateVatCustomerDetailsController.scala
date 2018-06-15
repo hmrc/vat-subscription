@@ -34,6 +34,7 @@ class UpdateVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorised,
 
   private def returnPeriod(implicit user: User[_]): ReturnPeriod = user.body match {
     case body: AnyContentAsJson => body.json.as[ReturnPeriod]
+    case _ => InvalidReturnPeriod
   }
 
   def updateVatReturnPeriod(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {

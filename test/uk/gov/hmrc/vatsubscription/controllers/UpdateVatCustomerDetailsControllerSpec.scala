@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContentAsJson, Result}
+import play.api.mvc.{AnyContent, AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
@@ -108,6 +108,21 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
         "an unknown return period is supplied" should {
 
           val unknownReturnPeriodRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(InvalidReturnPeriod))
+          lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(unknownReturnPeriodRequest))
+
+          "return status BAD_REQUEST (400)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            status(res) shouldBe BAD_REQUEST
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_RETURN_PERIOD", "The supplied return period was invalid"))
+          }
+        }
+
+        "no json body is supplied for the PUT" should {
+
+          val unknownReturnPeriodRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
           lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(unknownReturnPeriodRequest))
 
           "return status BAD_REQUEST (400)" in {
