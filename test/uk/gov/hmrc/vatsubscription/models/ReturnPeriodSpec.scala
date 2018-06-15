@@ -16,45 +16,88 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 
 class ReturnPeriodSpec extends UnitSpec {
 
+  "ReturnPeriod.apply" should {
+
+    "for 'January' should return Jan case object" in {
+      ReturnPeriod("MA") shouldBe MAReturnPeriod
+    }
+
+    "for 'February' should return Feb case object" in {
+      ReturnPeriod("MB") shouldBe MBReturnPeriod
+    }
+
+    "for 'March' should return Mar case object" in {
+      ReturnPeriod("MC") shouldBe MCReturnPeriod
+    }
+
+    "for 'Monthly' should return Monthly case object" in {
+      ReturnPeriod("MM") shouldBe MMReturnPeriod
+    }
+
+    "for an invalid return period should return 'None'" in {
+      ReturnPeriod("AB") shouldBe InvalidReturnPeriod
+    }
+  }
+
+  "ReturnPeriod.unapply" should {
+
+    "for Jan case object return 'January'" in {
+      ReturnPeriod.unapply(MAReturnPeriod) shouldBe "MA"
+    }
+
+    "for Feb case object return 'February'" in {
+      ReturnPeriod.unapply(MBReturnPeriod) shouldBe "MB"
+    }
+
+    "for Mar case object return 'March'" in {
+      ReturnPeriod.unapply(MCReturnPeriod) shouldBe "MC"
+    }
+
+    "for Monthly case object return 'Monthly'" in {
+      ReturnPeriod.unapply(MMReturnPeriod) shouldBe "MM"
+    }
+  }
+
   "ReturnPeriod Reads" should {
     "parse the json correctly for MA types" in {
-      ReturnPeriod.returnPeriodReader.reads(returnPeriodMA).get shouldBe MAReturnPeriod
+      returnPeriodMAJson.as[ReturnPeriod] shouldBe MAReturnPeriod
     }
 
     "parse the json correctly for MB types" in {
-      ReturnPeriod.returnPeriodReader.reads(returnPeriodMB).get shouldBe MBReturnPeriod
+      returnPeriodMBJson.as[ReturnPeriod] shouldBe MBReturnPeriod
     }
 
     "parse the json correctly for MC types" in {
-      ReturnPeriod.returnPeriodReader.reads(returnPeriodMC).get shouldBe MCReturnPeriod
+      returnPeriodMCJson.as[ReturnPeriod] shouldBe MCReturnPeriod
     }
 
     "parse the json correctly for MM types" in {
-      ReturnPeriod.returnPeriodReader.reads(returnPeriodMM).get shouldBe MMReturnPeriod
+      returnPeriodMMJson.as[ReturnPeriod] shouldBe MMReturnPeriod
     }
   }
 
   "ReturnPeriod Writes" should {
 
     "output a fully populated MA ReturnPeriod object with all fields populated" in {
-      ReturnPeriod.returnPeriodWriter.writes(MAReturnPeriod) shouldBe returnPeriodMA
+      Json.toJson(MAReturnPeriod) shouldBe returnPeriodMAJson
     }
 
     "output a fully populated MB ReturnPeriod object with all fields populated" in {
-      ReturnPeriod.returnPeriodWriter.writes(MBReturnPeriod) shouldBe returnPeriodMB
+      Json.toJson(MBReturnPeriod) shouldBe returnPeriodMBJson
     }
 
     "output a fully populated MC ReturnPeriod object with all fields populated" in {
-      ReturnPeriod.returnPeriodWriter.writes(MCReturnPeriod) shouldBe returnPeriodMC
+      Json.toJson(MCReturnPeriod) shouldBe returnPeriodMCJson
     }
 
     "output a fully populated MM ReturnPeriod object with all fields populated" in {
-      ReturnPeriod.returnPeriodWriter.writes(MMReturnPeriod) shouldBe returnPeriodMM
+      Json.toJson(MMReturnPeriod) shouldBe returnPeriodMMJson
     }
   }
 }

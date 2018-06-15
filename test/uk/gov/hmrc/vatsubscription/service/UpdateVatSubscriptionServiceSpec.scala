@@ -33,7 +33,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
   "Calling .updateReturnPeriod" when {
 
-    implicit val user: User = User("123456789", arn = None)
+    implicit val user: User[_] = User("123456789", arn = None)(fakeRequest)
 
     "connector call is successful" should {
       lazy val service = setup(Right(SuccessModel("12345")))
@@ -60,7 +60,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is not an Agent" should {
 
-      implicit val user: User = User("123456789", arn = None)
+      implicit val user: User[_] = User("123456789", arn = None)(fakeRequest)
       val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)
 
       val expectedResult = UpdateVatSubscription(
@@ -76,7 +76,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      implicit val user: User = User("123456789", arn = Some("XAIT000000000"))
+      implicit val user: User[_] = User("123456789", arn = Some("XAIT000000000"))(fakeRequest)
       val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)
 
       val expectedResult = UpdateVatSubscription(

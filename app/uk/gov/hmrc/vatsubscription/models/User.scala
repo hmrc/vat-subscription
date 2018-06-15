@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-case class User(vrn: String, arn: Option[String] = None) {
+import play.api.mvc.{Request, WrappedRequest}
+
+case class User[A](vrn: String, arn: Option[String] = None)(implicit request: Request[A]) extends WrappedRequest[A](request) {
   val isAgent: Boolean = arn.isDefined
 }

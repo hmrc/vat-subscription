@@ -18,33 +18,21 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Request, Result}
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, Enrolment}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.httpparsers.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
 import uk.gov.hmrc.vatsubscription.services._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class RetrieveVatCustomerDetailsController @Inject()(val authConnector: AuthConnector,
+class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorised,
                                                      vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService)
-                                                    (implicit ec: ExecutionContext)
-  extends BaseController with AuthorisedFunctions {
+                                                    (implicit ec: ExecutionContext) extends BaseController {
 
-  private def authAction(vatNumber: String)(f: Request[AnyContent] => Future[Result]): Action[AnyContent] = Action.async {
-    implicit request =>
-      authorised(
-        Enrolment("HMRC-MTD-VAT")
-          .withIdentifier("VRN", vatNumber)
-          .withDelegatedAuthRule("mtd-vat-auth")
-      )(f(request)) recover {
-        case _ => Forbidden
-      }
-  }
-
-  def retrieveVatCustomerDetails(vatNumber: String): Action[AnyContent] = authAction(vatNumber) {
-    implicit request =>
+  def retrieveVatCustomerDetails(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
+    implicit user =>
       vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vatNumber) map {
         case Right(customerDetails) => Ok(Json.toJson(customerDetails))
         case Left(InvalidVatNumber) => BadRequest
@@ -53,8 +41,8 @@ class RetrieveVatCustomerDetailsController @Inject()(val authConnector: AuthConn
       }
   }
 
-  def retrieveVatInformation(vatNumber: String): Action[AnyContent] = authAction(vatNumber) {
-    implicit request =>
+  def retrieveVatInformation(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
+    implicit user =>
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
         case Right(vatInformation) => Ok(Json.toJson(vatInformation))
         case Left(InvalidVatNumber) => BadRequest

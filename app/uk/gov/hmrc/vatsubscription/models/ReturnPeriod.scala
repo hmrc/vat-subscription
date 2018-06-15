@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
+import play.api.Logger
 import play.api.libs.json._
 
 sealed trait ReturnPeriod {
@@ -40,22 +41,38 @@ case object MMReturnPeriod extends ReturnPeriod {
   override val stdReturnPeriod: String = "MM"
 }
 
+case object InvalidReturnPeriod extends ReturnPeriod {
+  override val stdReturnPeriod: String = "XX"
+}
+
 object ReturnPeriod {
+
+  def apply(period: String): ReturnPeriod = period match {
+    case MAReturnPeriod.stdReturnPeriod => MAReturnPeriod
+    case MBReturnPeriod.stdReturnPeriod => MBReturnPeriod
+    case MCReturnPeriod.stdReturnPeriod => MCReturnPeriod
+    case MMReturnPeriod.stdReturnPeriod => MMReturnPeriod
+    case _ =>
+      Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$period'")
+      InvalidReturnPeriod
+  }
 
   def unapply(arg: ReturnPeriod): String = arg.stdReturnPeriod
 
   implicit val returnPeriodReader: Reads[ReturnPeriod] = for {
-    value <- (__ \ "stdReturnPeriod").read[String] map {
-      case MAReturnPeriod.stdReturnPeriod => MAReturnPeriod
-      case MBReturnPeriod.stdReturnPeriod => MBReturnPeriod
-      case MCReturnPeriod.stdReturnPeriod => MCReturnPeriod
-      case MMReturnPeriod.stdReturnPeriod => MMReturnPeriod
+    value <- (__ \ "stdReturnPeriod").readNullable[String] map {
+      case Some(MAReturnPeriod.stdReturnPeriod) => MAReturnPeriod
+      case Some(MBReturnPeriod.stdReturnPeriod) => MBReturnPeriod
+      case Some(MCReturnPeriod.stdReturnPeriod) => MCReturnPeriod
+      case Some(MMReturnPeriod.stdReturnPeriod) => MMReturnPeriod
+      case invalid =>
+        Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$invalid'")
+        InvalidReturnPeriod
     }
   } yield value
 
 
   implicit val returnPeriodWriter: Writes[ReturnPeriod] = Writes {
-    case period if period.stdReturnPeriod.trim.length > 0 => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
-    case _ => Json.obj()
+    period => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
   }
 }

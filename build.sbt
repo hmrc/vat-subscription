@@ -8,6 +8,31 @@ lazy val root = (project in file("."))
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
 
+lazy val coverageSettings: Seq[Setting[_]] = {
+  import scoverage.ScoverageKeys
+
+  val excludedPackages = Seq(
+    "<empty>",
+    "Reverse.*",
+    ".*standardError*.*",
+    ".*govuk_wrapper*.*",
+    ".*main_template*.*",
+    "uk.gov.hmrc.BuildInfo",
+    "app.*",
+    "prod.*",
+    "uk.gov.hmrc.vatsubscription.config.*",
+    "testOnlyDoNotUseInAppConf.*",
+    "uk.gov.hmrc.vatsubscription.testonly.*")
+
+  Seq(
+    ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
+    ScoverageKeys.coverageMinimum := 90,
+    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageHighlighting := true
+  )
+}
+
+coverageSettings
 scalaSettings
 publishingSettings
 defaultSettings()

@@ -19,4 +19,8 @@ package uk.gov.hmrc.vatsubscription.config
 object Constants {
   val MtdVatEnrolmentKey: String = "HMRC-MTD-VAT"
   val MtdVatReferenceKey: String = "VRN"
+  val MtdVatDelegatedAuth: String = "mtd-vat-auth"
+
+  val AgentServicesEnrolment: String = "HMRC-AS-AGENT"
+  val AgentServicesReference: String = "AgentReferenceNumber"
 }

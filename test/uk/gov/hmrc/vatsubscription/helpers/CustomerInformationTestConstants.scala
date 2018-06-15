@@ -71,7 +71,7 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMC
+      "returnPeriod" -> returnPeriodMCJson
     )
   )
 
@@ -107,7 +107,7 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMC
+      "returnPeriod" -> returnPeriodMCJson
     )
   )
 
@@ -150,7 +150,7 @@ object CustomerInformationTestConstants {
         "countryCode" -> countryCode
       )
     ),
-    "returnPeriod" -> returnPeriodMC
+    "returnPeriod" -> returnPeriodMCJson
   )
 
   val customerInformationOutputJsonMax: JsValue = Json.obj(
@@ -178,7 +178,7 @@ object CustomerInformationTestConstants {
         "countryCode" -> countryCode
       )
     ),
-    "returnPeriod" -> returnPeriodMC
+    "returnPeriod" -> returnPeriodMCJson
   )
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
