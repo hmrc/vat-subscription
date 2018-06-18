@@ -12,7 +12,6 @@ object AppDependencies {
   private val catsVersion = "1.0.1"
 
   val compile = Seq(
-    "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",
     ws,
     "uk.gov.hmrc" %% "bootstrap-play-25" % "1.6.0",
     "org.typelevel" %% "cats-core" % catsVersion

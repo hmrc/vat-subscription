@@ -26,7 +26,7 @@ import uk.gov.hmrc.vatsubscription.config.featureswitch.{FeatureSwitch, FeatureS
 @Singleton
 class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig with FeatureSwitching {
   override protected def mode: Mode = environment.mode
-  
+
   def desUrl: String =
     getString(
       if (isEnabled(featureswitch.StubDESFeature)) "microservice.services.des.stub-url"
