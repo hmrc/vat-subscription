@@ -27,23 +27,15 @@ import uk.gov.hmrc.vatsubscription.config.featureswitch.{FeatureSwitch, FeatureS
 class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig with FeatureSwitching {
   override protected def mode: Mode = environment.mode
 
-  private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
-
   def desUrl: String =
-    loadConfig(
+    getString(
       if (isEnabled(featureswitch.StubDESFeature)) "microservice.services.des.stub-url"
       else "microservice.services.des.url"
     )
 
-  lazy val desAuthorisationToken: String = s"Bearer ${loadConfig("microservice.services.des.authorisation-token")}"
+  lazy val desAuthorisationToken: String = s"Bearer ${getString("microservice.services.des.authorisation-token")}"
   lazy val desEnvironmentHeader: (String, String) =
-    "Environment" -> loadConfig("microservice.services.des.environment")
-
-  lazy val authenticatorUrl: String = baseUrl("authenticator")
-
-  lazy val timeToLiveSeconds: Long = loadConfig("mongodb.timeToLiveSeconds").toLong
-
-  lazy val emailTimeToLiveSeconds: Long = loadConfig("mongodb.email.emailTimeToLiveSeconds").toLong
+    "Environment" -> getString("microservice.services.des.environment")
 
   override def isEnabled(featureSwitch: FeatureSwitch): Boolean = super.isEnabled(featureSwitch)
 
