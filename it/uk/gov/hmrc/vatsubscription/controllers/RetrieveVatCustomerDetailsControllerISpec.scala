@@ -50,6 +50,15 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
   private val postcode = "TE37 7AD"
   private val countryCode = "ES"
 
+  val rlsIndicator = "0001"
+  val website = "www.test.com"
+
+  private val phoneNumber = "01234 567890"
+  private val mobileNumber = "07700 123456"
+  private val faxNumber = "01234 098765"
+  private val email = "test@test.com"
+  private val emailVerified = true
+
   //FRS
   private val frsCategory = "001"
   private val frsPercent = 22.9
@@ -90,7 +99,16 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           "line5" -> addLine5,
           "postCode" -> postcode,
           "countryCode" -> countryCode
-        )
+        ),
+        "RLS" -> rlsIndicator,
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
       ),
       "flatRateScheme" -> Json.obj(
         "FRSCategory" -> frsCategory,
@@ -226,7 +244,16 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(addLine5),
               Some(postcode),
               Some(countryCode)
-            ))
+            )),
+            Some(rlsIndicator),
+            Some(ContactDetails(
+              Some(phoneNumber),
+              Some(mobileNumber),
+              Some(faxNumber),
+              Some(email),
+              Some(emailVerified)
+            )),
+            Some(website)
           )),
           Some(BankDetails(
             Some(accName),

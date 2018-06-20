@@ -17,11 +17,12 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.helpers.AddressTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.FlatRateSchemeTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
 import uk.gov.hmrc.vatsubscription.models._
 
 
@@ -58,7 +59,16 @@ object CustomerInformationTestConstants {
           "line5" -> addLine5,
           "postCode" -> postcode,
           "countryCode" -> countryCode
-        )
+        ),
+        "RLS" -> rlsIndicator,
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
       ),
       "flatRateScheme" -> Json.obj(
         "FRSCategory" -> frsCategory,
@@ -100,7 +110,16 @@ object CustomerInformationTestConstants {
           "line5" -> addLine5,
           "postCode" -> postcode,
           "countryCode" -> countryCode
-        )
+        ),
+        "RLS" -> rlsIndicator,
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
       ),
       "bankDetails" -> Json.obj(
         "accountHolderName" -> accName,
@@ -148,7 +167,16 @@ object CustomerInformationTestConstants {
         "line5" -> addLine5,
         "postCode" -> postcode,
         "countryCode" -> countryCode
-      )
+      ),
+      "RLS" -> rlsIndicator,
+      "contactDetails" -> Json.obj(
+        "primaryPhoneNumber" -> phoneNumber,
+        "mobileNumber" -> mobileNumber,
+        "faxNumber" -> faxNumber,
+        "emailAddress" -> email,
+        "emailVerified" -> emailVerified
+      ),
+      "websiteAddress" -> website
     ),
     "returnPeriod" -> returnPeriodMCJson
   )
@@ -176,7 +204,16 @@ object CustomerInformationTestConstants {
         "line5" -> addLine5,
         "postCode" -> postcode,
         "countryCode" -> countryCode
-      )
+      ),
+      "RLS" -> rlsIndicator,
+      "contactDetails" -> Json.obj(
+        "primaryPhoneNumber" -> phoneNumber,
+        "mobileNumber" -> mobileNumber,
+        "faxNumber" -> faxNumber,
+        "emailAddress" -> email,
+        "emailVerified" -> emailVerified
+      ),
+      "websiteAddress" -> website
     ),
     "returnPeriod" -> returnPeriodMCJson
   )
@@ -190,63 +227,19 @@ object CustomerInformationTestConstants {
 
   val customerInformationModelMaxWithFRS: VatCustomerInformation = VatCustomerInformation(
     MTDfBMandated,
-    CustomerDetails(
-      firstName = Some(firstName),
-      lastName = Some(lastName),
-      organisationName = Some(orgName),
-      tradingName = Some(tradingName),
-      hasFlatRateScheme = true
-    ),
-    Some(FlatRateScheme(
-      Some(frsCategory),
-      Some(frsPercentage),
-      Some(frsLimitedCostTrader),
-      Some(frsStartDate)
-    )),
-    Some(PPOB(
-      Some(PPOBAddress(
-        Some(addLine1),
-        Some(addLine2),
-        Some(addLine3),
-        Some(addLine4),
-        Some(addLine5),
-        Some(postcode),
-        Some(countryCode)
-      ))
-    )),
-    Some(BankDetails(
-      Some(accName),
-      Some(accNum),
-      Some(accSort)
-    )),
+    customerDetailsModelMaxWithFRS,
+    Some(frsModelMax),
+    Some(ppobModelMax),
+    Some(bankDetailsModelMax),
     Some(MCReturnPeriod)
   )
 
   val customerInformationModelMax: VatCustomerInformation = VatCustomerInformation(
     MTDfBMandated,
-    CustomerDetails(
-      firstName = Some(firstName),
-      lastName = Some(lastName),
-      organisationName = Some(orgName),
-      tradingName = Some(tradingName)
-    ),
+    customerDetailsModelMax,
     None,
-    Some(PPOB(
-      Some(PPOBAddress(
-        Some(addLine1),
-        Some(addLine2),
-        Some(addLine3),
-        Some(addLine4),
-        Some(addLine5),
-        Some(postcode),
-        Some(countryCode)
-      ))
-    )),
-    Some(BankDetails(
-      Some(accName),
-      Some(accNum),
-      Some(accSort)
-    )),
+    Some(ppobModelMax),
+    Some(bankDetailsModelMax),
     Some(MCReturnPeriod)
   )
 
