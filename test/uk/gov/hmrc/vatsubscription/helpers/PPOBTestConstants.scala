@@ -58,4 +58,6 @@ object PPOBTestConstants {
   val contactDetailsModelMin = ContactDetails(None, None, None, None, None)
 
   val ppobModelMax = PPOB(Some(ppobAddressModelMax), Some(rlsIndicator), Some(contactDetailsModelMax), Some(website))
+
+  val ppobModelMaxNoRls = PPOB(Some(ppobAddressModelMax), None, Some(contactDetailsModelMax), Some(website))
 }

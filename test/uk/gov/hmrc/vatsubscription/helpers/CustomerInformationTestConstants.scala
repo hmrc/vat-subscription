@@ -82,6 +82,40 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson
+    ),
+    "inFlightInformation" -> Json.obj(
+      "changeIndicators" -> Json.obj(
+        "PPOBDetails" -> true,
+        "bankDetails" -> true,
+        "returnPeriod" -> true
+      ),
+      "inFlightChanges" -> Json.obj(
+        "PPOBDetails" -> Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "line2" -> addLine2,
+            "line3" -> addLine3,
+            "line4" -> addLine4,
+            "line5" -> addLine5,
+            "postCode" -> postcode,
+            "countryCode" -> countryCode
+          ),
+          "contactDetails" -> Json.obj(
+            "primaryPhoneNumber" -> phoneNumber,
+            "mobileNumber" -> mobileNumber,
+            "faxNumber" -> faxNumber,
+            "emailAddress" -> email,
+            "emailVerified" -> emailVerified
+          ),
+          "websiteAddress" -> website
+        ),
+        "bankDetails" -> Json.obj(
+          "accountHolderName" -> accName,
+          "bankAccountNumber" -> accNum,
+          "sortCode" -> accSort
+        ),
+        "returnPeriod" -> returnPeriodMCJson
+      )
     )
   )
 
@@ -127,6 +161,40 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson
+    ),
+    "inFlightInformation" -> Json.obj(
+      "changeIndicators" -> Json.obj(
+        "PPOBDetails" -> true,
+        "bankDetails" -> true,
+        "returnPeriod" -> true
+      ),
+      "inFlightChanges" -> Json.obj(
+        "PPOBDetails" -> Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "line2" -> addLine2,
+            "line3" -> addLine3,
+            "line4" -> addLine4,
+            "line5" -> addLine5,
+            "postCode" -> postcode,
+            "countryCode" -> countryCode
+          ),
+          "contactDetails" -> Json.obj(
+            "primaryPhoneNumber" -> phoneNumber,
+            "mobileNumber" -> mobileNumber,
+            "faxNumber" -> faxNumber,
+            "emailAddress" -> email,
+            "emailVerified" -> emailVerified
+          ),
+          "websiteAddress" -> website
+        ),
+        "bankDetails" -> Json.obj(
+          "accountHolderName" -> accName,
+          "bankAccountNumber" -> accNum,
+          "sortCode" -> accSort
+        ),
+        "returnPeriod" -> returnPeriodMCJson
+      )
     )
   )
 
@@ -178,7 +246,34 @@ object CustomerInformationTestConstants {
       ),
       "websiteAddress" -> website
     ),
-    "returnPeriod" -> returnPeriodMCJson
+    "returnPeriod" -> returnPeriodMCJson,
+    "pendingChanges" -> Json.obj(
+      "PPOBDetails" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        ),
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
+      ),
+      "bankDetails" -> Json.obj(
+        "accountHolderName" -> accName,
+        "bankAccountNumber" -> accNum,
+        "sortCode" -> accSort
+      ),
+      "returnPeriod" -> returnPeriodMCJson
+    )
   )
 
   val customerInformationOutputJsonMax: JsValue = Json.obj(
@@ -215,7 +310,34 @@ object CustomerInformationTestConstants {
       ),
       "websiteAddress" -> website
     ),
-    "returnPeriod" -> returnPeriodMCJson
+    "returnPeriod" -> returnPeriodMCJson,
+    "pendingChanges" -> Json.obj(
+      "PPOBDetails" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        ),
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
+      ),
+      "bankDetails" -> Json.obj(
+        "accountHolderName" -> accName,
+        "bankAccountNumber" -> accNum,
+        "sortCode" -> accSort
+      ),
+      "returnPeriod" -> returnPeriodMCJson
+    )
   )
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
@@ -231,7 +353,12 @@ object CustomerInformationTestConstants {
     Some(frsModelMax),
     Some(ppobModelMax),
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod)
+    Some(MCReturnPeriod),
+    Some(PendingChanges(
+      Some(ppobModelMaxNoRls),
+      Some(bankDetailsModelMax),
+      Some(MCReturnPeriod)
+    ))
   )
 
   val customerInformationModelMax: VatCustomerInformation = VatCustomerInformation(
@@ -240,10 +367,15 @@ object CustomerInformationTestConstants {
     None,
     Some(ppobModelMax),
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod)
+    Some(MCReturnPeriod),
+    Some(PendingChanges(
+      Some(ppobModelMaxNoRls),
+      Some(bankDetailsModelMax),
+      Some(MCReturnPeriod)
+    ))
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None), None, None, None, None
+    MTDfBMandated, CustomerDetails(None, None, None, None), None, None, None, None, None
   )
 }

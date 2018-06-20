@@ -124,6 +124,42 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       "returnPeriod" -> Json.obj(
         "stdReturnPeriod" -> returnPeriod
       )
+    ),
+    "inFlightInformation" -> Json.obj(
+      "changeIndicators" -> Json.obj(
+        "PPOBDetails" -> true,
+        "bankDetails" -> true,
+        "returnPeriod" -> true
+      ),
+      "inFlightChanges" -> Json.obj(
+        "PPOBDetails" -> Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "line2" -> addLine2,
+            "line3" -> addLine3,
+            "line4" -> addLine4,
+            "line5" -> addLine5,
+            "postCode" -> postcode,
+            "countryCode" -> countryCode
+          ),
+          "contactDetails" -> Json.obj(
+            "primaryPhoneNumber" -> phoneNumber,
+            "mobileNumber" -> mobileNumber,
+            "faxNumber" -> faxNumber,
+            "emailAddress" -> email,
+            "emailVerified" -> emailVerified
+          ),
+          "websiteAddress" -> website
+        ),
+        "bankDetails" -> Json.obj(
+          "accountHolderName" -> accName,
+          "bankAccountNumber" -> accNum,
+          "sortCode" -> accSort
+        ),
+        "returnPeriod" -> Json.obj(
+          "stdReturnPeriod" -> returnPeriod
+        )
+      )
     )
   )
 
@@ -260,7 +296,35 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(accNum),
             Some(accSort)
           )),
-          Some(MCReturnPeriod)
+          Some(MCReturnPeriod),
+          Some(PendingChanges(
+            Some(PPOB(
+              Some(PPOBAddress(
+                Some(addLine1),
+                Some(addLine2),
+                Some(addLine3),
+                Some(addLine4),
+                Some(addLine5),
+                Some(postcode),
+                Some(countryCode)
+              )),
+              None,
+              Some(ContactDetails(
+                Some(phoneNumber),
+                Some(mobileNumber),
+                Some(faxNumber),
+                Some(email),
+                Some(emailVerified)
+              )),
+              Some(website)
+            )),
+            Some(BankDetails(
+              Some(accName),
+              Some(accNum),
+              Some(accSort)
+            )),
+            Some(MCReturnPeriod)
+          ))
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
