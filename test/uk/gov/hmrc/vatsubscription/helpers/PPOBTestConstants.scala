@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.vatsubscription.helpers
 
-import uk.gov.hmrc.vatsubscription.models.{PPOB, PPOBAddress}
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, PPOB, PPOBAddress}
 
-object AddressTestConstants {
+object PPOBTestConstants {
 
   val addLine1 = "Add Line 1"
   val addLine2 = "Add Line 2"
@@ -28,6 +28,14 @@ object AddressTestConstants {
   val postcode = "TE37 7AD"
   val countryCode = "ES"
 
+  val rlsIndicator = "0001"
+  val website = "www.test.com"
+
+  val phoneNumber = "01234 567890"
+  val mobileNumber = "07700 123456"
+  val faxNumber = "01234 098765"
+  val email = "test@test.com"
+  val emailVerified = true
 
   val ppobAddressModelMax = PPOBAddress(
     Some(addLine1),
@@ -38,5 +46,18 @@ object AddressTestConstants {
     Some(postcode),
     Some(countryCode)
   )
-  val ppobModelMax = PPOB(Some(ppobAddressModelMax))
+
+  val contactDetailsModelMax = ContactDetails(
+    Some(phoneNumber),
+    Some(mobileNumber),
+    Some(faxNumber),
+    Some(email),
+    Some(emailVerified)
+  )
+
+  val contactDetailsModelMin = ContactDetails(None, None, None, None, None)
+
+  val ppobModelMax = PPOB(Some(ppobAddressModelMax), Some(rlsIndicator), Some(contactDetailsModelMax), Some(website))
+
+  val ppobModelMaxNoRls = PPOB(Some(ppobAddressModelMax), None, Some(contactDetailsModelMax), Some(website))
 }

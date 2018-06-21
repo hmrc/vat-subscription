@@ -24,12 +24,16 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   flatRateScheme: Option[FlatRateScheme],
                                   ppob: Option[PPOB],
                                   bankDetails:Option[BankDetails],
-                                  returnPeriod: Option[ReturnPeriod])
+                                  returnPeriod: Option[ReturnPeriod],
+                                  pendingChanges: Option[PendingChanges])
 
 
 object VatCustomerInformation extends JsonReadUtil {
 
   val approvedInformationKey = "approvedInformation"
+  val pendingChangesKey = "inFlightInformation"
+  val changes = "inFlightChanges"
+
   val customerDetailsKey = "customerDetails"
   val individualKey = "individual"
   val firstNameKey = "firstName"
@@ -49,6 +53,8 @@ object VatCustomerInformation extends JsonReadUtil {
   private val bankDetailsPath = path \ bankDetailsKey
   private val returnPeriodPath = path \ returnPeriodKey
 
+  private val pendingChangesPath = __ \ pendingChangesKey \ changes
+
   implicit val desReader: Reads[VatCustomerInformation] = for {
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
@@ -59,15 +65,17 @@ object VatCustomerInformation extends JsonReadUtil {
     ppob <- ppobPath.readOpt[PPOB]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges]
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(firstName = firstName, lastName = lastName, organisationName = organisationName, tradingName = tradingName, flatRateScheme.isDefined),
     flatRateScheme,
     ppob,
     bankDetails,
-    returnPeriod
+    returnPeriod,
+    pendingChanges
   )
 
-  implicit val writes = Json.writes[VatCustomerInformation]
+  implicit val writes: Writes[VatCustomerInformation] = Json.writes[VatCustomerInformation]
 
 }
