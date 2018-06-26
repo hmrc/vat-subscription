@@ -38,13 +38,13 @@ object PPOBTestConstants {
   val emailVerified = true
 
   val ppobAddressModelMax = PPOBAddress(
-    Some(addLine1),
+    addLine1,
     Some(addLine2),
     Some(addLine3),
     Some(addLine4),
     Some(addLine5),
-    Some(postcode),
-    Some(countryCode)
+    postcode,
+    countryCode
   )
 
   val contactDetailsModelMax = ContactDetails(
@@ -57,7 +57,7 @@ object PPOBTestConstants {
 
   val contactDetailsModelMin = ContactDetails(None, None, None, None, None)
 
-  val ppobModelMax = PPOB(Some(ppobAddressModelMax), Some(rlsIndicator), Some(contactDetailsModelMax), Some(website))
+  val ppobModelMax = PPOB(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
 
-  val ppobModelMaxNoRls = PPOB(Some(ppobAddressModelMax), None, Some(contactDetailsModelMax), Some(website))
+  val ppobModelMaxNoRls = PPOB(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
 }

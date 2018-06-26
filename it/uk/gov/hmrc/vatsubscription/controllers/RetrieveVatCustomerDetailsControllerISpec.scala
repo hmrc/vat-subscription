@@ -272,16 +272,15 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(frsStartDate)
           )),
           Some(PPOB(
-            Some(PPOBAddress(
-              Some(addLine1),
+            PPOBAddress(
+              addLine1,
               Some(addLine2),
               Some(addLine3),
               Some(addLine4),
               Some(addLine5),
-              Some(postcode),
-              Some(countryCode)
-            )),
-            Some(rlsIndicator),
+              postcode,
+              countryCode
+            ),
             Some(ContactDetails(
               Some(phoneNumber),
               Some(mobileNumber),
@@ -299,16 +298,15 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           Some(MCReturnPeriod),
           Some(PendingChanges(
             Some(PPOB(
-              Some(PPOBAddress(
-                Some(addLine1),
+              PPOBAddress(
+                addLine1,
                 Some(addLine2),
                 Some(addLine3),
                 Some(addLine4),
                 Some(addLine5),
-                Some(postcode),
-                Some(countryCode)
-              )),
-              None,
+                postcode,
+                countryCode
+              ),
               Some(ContactDetails(
                 Some(phoneNumber),
                 Some(mobileNumber),

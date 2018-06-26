@@ -236,7 +236,6 @@ object CustomerInformationTestConstants {
         "postCode" -> postcode,
         "countryCode" -> countryCode
       ),
-      "RLS" -> rlsIndicator,
       "contactDetails" -> Json.obj(
         "primaryPhoneNumber" -> phoneNumber,
         "mobileNumber" -> mobileNumber,
@@ -300,7 +299,6 @@ object CustomerInformationTestConstants {
         "postCode" -> postcode,
         "countryCode" -> countryCode
       ),
-      "RLS" -> rlsIndicator,
       "contactDetails" -> Json.obj(
         "primaryPhoneNumber" -> phoneNumber,
         "mobileNumber" -> mobileNumber,
