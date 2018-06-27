@@ -18,8 +18,9 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.models.get.PPOBAddressGet
 
-case class PPOB(address: PPOBAddress,
+case class PPOB(address: PPOBAddressGet,
                 contactDetails: Option[ContactDetails],
                 websiteAddress: Option[String])
 
@@ -30,13 +31,13 @@ object PPOB {
   private val websiteAddressPath = __ \ "websiteAddress"
 
   implicit val reads: Reads[PPOB] = (
-    addressPath.read[PPOBAddress] and
+    addressPath.read[PPOBAddressGet] and
       contactDetailsPath.readNullable[ContactDetails] and
       websiteAddressPath.readNullable[String]
     )(PPOB.apply _)
 
   implicit val writes: Writes[PPOB] = (
-    addressPath.write[PPOBAddress] and
+    addressPath.write[PPOBAddressGet] and
     contactDetailsPath.writeNullable[ContactDetails] and
     websiteAddressPath.writeNullable[String]
   )(unlift(PPOB.unapply))
