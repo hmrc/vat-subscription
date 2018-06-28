@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.models
+package uk.gov.hmrc.vatsubscription.models.post
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import uk.gov.hmrc.vatsubscription.models.get.PPOBAddressGet
+import uk.gov.hmrc.vatsubscription.models.ContactDetails
 
-case class PPOB(address: PPOBAddressGet,
-                contactDetails: Option[ContactDetails],
-                websiteAddress: Option[String])
+case class PPOBPost(address: PPOBAddressPost,
+                    contactDetails: Option[ContactDetails],
+                    websiteAddress: Option[String])
 
-object PPOB {
+object PPOBPost {
 
   private val addressPath = __ \ "address"
   private val contactDetailsPath = __ \ "contactDetails"
   private val websiteAddressPath = __ \ "websiteAddress"
 
-  implicit val reads: Reads[PPOB] = (
-    addressPath.read[PPOBAddressGet] and
+  implicit val reads: Reads[PPOBPost] = (
+    addressPath.read[PPOBAddressPost] and
       contactDetailsPath.readNullable[ContactDetails] and
       websiteAddressPath.readNullable[String]
-    )(PPOB.apply _)
+    )(PPOBPost.apply _)
 
-  implicit val writes: Writes[PPOB] = (
-    addressPath.write[PPOBAddressGet] and
-    contactDetailsPath.writeNullable[ContactDetails] and
-    websiteAddressPath.writeNullable[String]
-  )(unlift(PPOB.unapply))
+  implicit val writes: Writes[PPOBPost] = (
+    addressPath.write[PPOBAddressPost] and
+      contactDetailsPath.writeNullable[ContactDetails] and
+      websiteAddressPath.writeNullable[String]
+    )(unlift(PPOBPost.unapply))
 
 }

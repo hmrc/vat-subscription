@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 
 class UpdateVatSubscriptionSpec extends UnitSpec {
 
@@ -51,7 +51,7 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
 
       val model: UpdateVatSubscription = UpdateVatSubscription(
         requestedChanges = changePPOB,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMax)),
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         declaration = Declaration(Some(agentOrCapacitor), Signing())
       )
@@ -73,7 +73,7 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
 
       val model: UpdateVatSubscription = UpdateVatSubscription(
         requestedChanges = changePPOBandRP,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMax)),
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = Some(updatedReturnPeriod),
         declaration = Declaration(Some(agentOrCapacitor), Signing())
       )

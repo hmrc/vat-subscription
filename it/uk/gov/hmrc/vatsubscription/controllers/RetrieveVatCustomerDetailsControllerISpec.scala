@@ -24,7 +24,7 @@ import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 import uk.gov.hmrc.vatsubscription.models._
-import uk.gov.hmrc.vatsubscription.models.get.PPOBAddressGet
+import uk.gov.hmrc.vatsubscription.models.get.{PPOBGet, PPOBAddressGet}
 
 class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
@@ -272,7 +272,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(frsLtdCostTrader),
             Some(frsStartDate)
           )),
-          Some(PPOB(
+          Some(PPOBGet(
             PPOBAddressGet(
               addLine1,
               Some(addLine2),
@@ -298,7 +298,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           )),
           Some(MCReturnPeriod),
           Some(PendingChanges(
-            Some(PPOB(
+            Some(PPOBGet(
               PPOBAddressGet(
                 addLine1,
                 Some(addLine2),
