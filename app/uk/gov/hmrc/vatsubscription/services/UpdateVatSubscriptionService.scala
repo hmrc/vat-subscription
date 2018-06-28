@@ -20,7 +20,8 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.{PPOB, ReturnPeriod, User}
+import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
+import uk.gov.hmrc.vatsubscription.models.{ReturnPeriod, User}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,7 +36,7 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
     updateVatSubscriptionConnector.updateVatSubscription(user.vrn, subscriptionModel, hc)
   }
 
-  def updatePPOB(updatedPPOB: PPOB)
+  def updatePPOB(updatedPPOB: PPOBPost)
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructPPOBUpdateModel(updatedPPOB)
@@ -57,7 +58,7 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
     )
   }
 
-  def constructPPOBUpdateModel(updatedPPOB: PPOB)
+  def constructPPOBUpdateModel(updatedPPOB: PPOBPost)
                               (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))

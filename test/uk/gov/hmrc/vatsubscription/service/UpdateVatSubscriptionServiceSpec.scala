@@ -23,7 +23,7 @@ import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
 import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, User}
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMaxPost
 
 class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
@@ -61,7 +61,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "connector call is successful" should {
       lazy val service = setup(Right(SuccessModel("12345")))
-      lazy val result = service.updatePPOB(ppobModelMax)
+      lazy val result = service.updatePPOB(ppobModelMaxPost)
 
       "return successful UpdateVatSubscriptionResponse model" in {
         await(result) shouldEqual Right(SuccessModel("12345"))
@@ -70,7 +70,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "connector call is unsuccessful" should {
       lazy val service = setup(Left(ErrorModel("ERROR", "Error")))
-      lazy val result = service.updatePPOB(ppobModelMax)
+      lazy val result = service.updatePPOB(ppobModelMaxPost)
 
       "return successful UpdateVatSubscriptionResponse model" in {
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
@@ -124,11 +124,11 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
     "user is not an Agent" should {
 
       implicit val user: User[_] = User("123456789", arn = None)(fakeRequest)
-      val result = service.constructPPOBUpdateModel(ppobModelMax)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMax)),
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         declaration = Declaration(None, Signing())
       )
@@ -141,11 +141,11 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
     "user is an Agent" should {
 
       implicit val user: User[_] = User("123456789", arn = Some("XAIT000000000"))(fakeRequest)
-      val result = service.constructPPOBUpdateModel(ppobModelMax)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMax)),
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         declaration = Declaration(Some(AgentOrCapacitor("XAIT000000000")), Signing())
       )
