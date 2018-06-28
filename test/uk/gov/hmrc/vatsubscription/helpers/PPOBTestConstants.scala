@@ -16,7 +16,10 @@
 
 package uk.gov.hmrc.vatsubscription.helpers
 
-import uk.gov.hmrc.vatsubscription.models.{ContactDetails, PPOB, PPOBAddress}
+import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
+import uk.gov.hmrc.vatsubscription.models.post.{PPOBAddressPost, PPOBPost}
+import uk.gov.hmrc.vatsubscription.models.ContactDetails
 
 object PPOBTestConstants {
 
@@ -37,14 +40,24 @@ object PPOBTestConstants {
   val email = "test@test.com"
   val emailVerified = true
 
-  val ppobAddressModelMax = PPOBAddress(
-    Some(addLine1),
+  val ppobAddressModelMax = PPOBAddressGet(
+    addLine1,
     Some(addLine2),
     Some(addLine3),
     Some(addLine4),
     Some(addLine5),
     Some(postcode),
-    Some(countryCode)
+    countryCode
+  )
+
+  val ppobAddressModelMaxPost = PPOBAddressPost(
+    addLine1,
+    Some(addLine2),
+    Some(addLine3),
+    Some(addLine4),
+    Some(addLine5),
+    Some(postcode),
+    None
   )
 
   val contactDetailsModelMax = ContactDetails(
@@ -57,7 +70,15 @@ object PPOBTestConstants {
 
   val contactDetailsModelMin = ContactDetails(None, None, None, None, None)
 
-  val ppobModelMax = PPOB(Some(ppobAddressModelMax), Some(rlsIndicator), Some(contactDetailsModelMax), Some(website))
+  val ppobModelMax = PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
 
-  val ppobModelMaxNoRls = PPOB(Some(ppobAddressModelMax), None, Some(contactDetailsModelMax), Some(website))
+  val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website))
+
+
+  val ppobAddressGetJson: JsValue = Json.obj("line1" -> "Ronaldini Road", "line3" -> "Pell Way", "postCode" -> "R10 AAA", "countryCode" -> "BRAZIL")
+  val ppobAddressGetValue: PPOBAddressGet = PPOBAddressGet("Ronaldini Road", None, Some("Pell Way"), None, None, Some("R10 AAA"),"BRAZIL")
+
+  val ppobAddressPostJson: JsValue = Json.obj("line1" -> "Ronaldini Road", "postCode" -> "R10 AAA")
+  val ppobAddressPostValue: PPOBAddressPost = PPOBAddressPost("Ronaldini Road", None, None, None, None, Some("R10 AAA"), None)
+  val ppobAddressPostWritesResult: JsValue = Json.obj("line1" -> "Ronaldini Road", "postCode" -> "R10 AAA", "addressValidated" -> true)
 }

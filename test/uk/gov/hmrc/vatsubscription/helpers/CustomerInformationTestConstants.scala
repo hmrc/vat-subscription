@@ -236,7 +236,6 @@ object CustomerInformationTestConstants {
         "postCode" -> postcode,
         "countryCode" -> countryCode
       ),
-      "RLS" -> rlsIndicator,
       "contactDetails" -> Json.obj(
         "primaryPhoneNumber" -> phoneNumber,
         "mobileNumber" -> mobileNumber,
@@ -300,7 +299,6 @@ object CustomerInformationTestConstants {
         "postCode" -> postcode,
         "countryCode" -> countryCode
       ),
-      "RLS" -> rlsIndicator,
       "contactDetails" -> Json.obj(
         "primaryPhoneNumber" -> phoneNumber,
         "mobileNumber" -> mobileNumber,
@@ -355,7 +353,7 @@ object CustomerInformationTestConstants {
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
     Some(PendingChanges(
-      Some(ppobModelMaxNoRls),
+      Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod)
     ))
@@ -369,7 +367,7 @@ object CustomerInformationTestConstants {
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
     Some(PendingChanges(
-      Some(ppobModelMaxNoRls),
+      Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod)
     ))

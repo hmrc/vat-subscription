@@ -43,6 +43,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
 
     val requestModel: UpdateVatSubscription = UpdateVatSubscription(
       requestedChanges = changeReturnPeriod,
+      updatedPPOB = None,
       updatedReturnPeriod = Some(updatedReturnPeriod),
       declaration = nonAgentDeclaration
     )
