@@ -17,12 +17,13 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
 import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
 
 case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   customerDetails: CustomerDetails,
                                   flatRateScheme: Option[FlatRateScheme],
-                                  ppob: Option[PPOB],
+                                  ppob: Option[PPOBGet],
                                   bankDetails:Option[BankDetails],
                                   returnPeriod: Option[ReturnPeriod],
                                   pendingChanges: Option[PendingChanges])
@@ -62,7 +63,7 @@ object VatCustomerInformation extends JsonReadUtil {
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
     mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
-    ppob <- ppobPath.readOpt[PPOB]
+    ppob <- ppobPath.readOpt[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges]

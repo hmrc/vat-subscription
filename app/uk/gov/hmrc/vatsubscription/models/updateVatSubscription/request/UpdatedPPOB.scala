@@ -17,9 +17,9 @@
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.vatsubscription.models.PPOB
+import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
 
-case class UpdatedPPOB(updatedPPOB: PPOB)
+case class UpdatedPPOB(updatedPPOB: PPOBPost)
 
 object UpdatedPPOB {
 
