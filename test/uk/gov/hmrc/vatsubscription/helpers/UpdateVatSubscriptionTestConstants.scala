@@ -25,8 +25,11 @@ object UpdateVatSubscriptionTestConstants {
   val messageType: String = "SubscriptionUpdate"
   val controlInformation: ControlInformation = ControlInformation()
   val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
-  val changeReturnPeriod: RequestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true, repaymentBankDetails = false)
+  val changeReturnPeriod: RequestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true)
+  val changePPOB: RequestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false)
+  val changePPOBandRP: RequestedChanges = RequestedChanges(addressDetails = true, returnPeriod = true)
   val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod)
+
   val nonAgentDeclaration: Declaration = Declaration(None, Signing())
 
   val updateSuccessResponse: SuccessModel = SuccessModel("XAVV0000000123456")

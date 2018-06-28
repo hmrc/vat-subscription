@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
 
 class UpdateVatSubscriptionSpec extends UnitSpec {
 
@@ -28,6 +29,7 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
 
       val model: UpdateVatSubscription = UpdateVatSubscription(
         requestedChanges = changeReturnPeriod,
+        updatedPPOB = None,
         updatedReturnPeriod = Some(updatedReturnPeriod),
         declaration = Declaration(Some(agentOrCapacitor), Signing())
       )
@@ -45,10 +47,56 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
       }
     }
 
-    "not supplied with an UpdatedReturnPeriod" should {
+    "supplied with an UpdatedPPOB" should {
+
+      val model: UpdateVatSubscription = UpdateVatSubscription(
+        requestedChanges = changePPOB,
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMax)),
+        updatedReturnPeriod = None,
+        declaration = Declaration(Some(agentOrCapacitor), Signing())
+      )
+
+      "output a correctly formatted UpdateVatSubscription json object" in {
+        val result =
+          Json.obj(
+            "messageType" -> messageType,
+            "controlInformation" -> controlInformation,
+            "requestedChange" -> model.requestedChanges,
+            "contactDetails" -> model.updatedPPOB,
+            "declaration" -> model.declaration
+          )
+        UpdateVatSubscription.writes.writes(model) shouldBe result
+      }
+    }
+
+    "supplied with an UpdatedPPOB and an UpdatedReturnPeriod" should {
+
+      val model: UpdateVatSubscription = UpdateVatSubscription(
+        requestedChanges = changePPOBandRP,
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMax)),
+        updatedReturnPeriod = Some(updatedReturnPeriod),
+        declaration = Declaration(Some(agentOrCapacitor), Signing())
+      )
+
+      "output a correctly formatted UpdateVatSubscription json object" in {
+        val result =
+          Json.obj(
+            "messageType" -> messageType,
+            "controlInformation" -> controlInformation,
+            "requestedChange" -> model.requestedChanges,
+            "contactDetails" -> model.updatedPPOB,
+            "returnPeriods" -> model.updatedReturnPeriod,
+            "declaration" -> model.declaration
+          )
+        UpdateVatSubscription.writes.writes(model) shouldBe result
+      }
+    }
+
+    "not supplied with any updates" should {
 
       val model: UpdateVatSubscription = UpdateVatSubscription(
         requestedChanges = changeReturnPeriod,
+        updatedPPOB = None,
         updatedReturnPeriod = None,
         declaration = Declaration(Some(agentOrCapacitor), Signing())
       )

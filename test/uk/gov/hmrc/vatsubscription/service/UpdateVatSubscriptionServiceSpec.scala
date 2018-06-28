@@ -65,6 +65,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+        updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
         declaration = Declaration(None, Signing())
       )
@@ -81,6 +82,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+        updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
         declaration = Declaration(Some(AgentOrCapacitor("XAIT000000000")), Signing())
       )

@@ -42,6 +42,7 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
 
     UpdateVatSubscription(
       requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+      updatedPPOB = None,
       updatedReturnPeriod = Some(UpdatedReturnPeriod(updatedReturnPeriod)),
       declaration = Declaration(agentOrCapacitor, Signing())
     )

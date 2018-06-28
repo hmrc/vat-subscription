@@ -22,6 +22,7 @@ import play.api.libs.json._
 case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
                                  controlInformation: ControlInformation = ControlInformation(),
                                  requestedChanges: RequestedChanges,
+                                 updatedPPOB: Option[UpdatedPPOB],
                                  updatedReturnPeriod: Option[UpdatedReturnPeriod],
                                  declaration: Declaration)
 
@@ -31,6 +32,7 @@ object UpdateVatSubscription {
     (JsPath \ "messageType").write[String] and
     (JsPath \ "controlInformation").write[ControlInformation] and
     (JsPath \ "requestedChange").write[RequestedChanges] and
+    (JsPath \ "contactDetails").writeNullable[UpdatedPPOB] and
     (JsPath \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
     (JsPath \ "declaration").write[Declaration]
   )(unlift(UpdateVatSubscription.unapply))
