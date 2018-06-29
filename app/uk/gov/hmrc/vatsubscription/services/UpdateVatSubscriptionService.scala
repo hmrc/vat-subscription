@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
+import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
 import uk.gov.hmrc.vatsubscription.models.{ReturnPeriod, User}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
@@ -35,6 +36,15 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
     updateVatSubscriptionConnector.updateVatSubscription(user.vrn, subscriptionModel, hc)
   }
 
+  def updatePPOB(updatedPPOB: PPOBPost)
+                (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
+
+    val subscriptionModel = constructPPOBUpdateModel(updatedPPOB)
+    updateVatSubscriptionConnector.updateVatSubscription(user.vrn, subscriptionModel, hc)
+  }
+
+
+
   def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod)
                                       (implicit user: User[_]): UpdateVatSubscription = {
 
@@ -44,6 +54,19 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
       requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
       updatedPPOB = None,
       updatedReturnPeriod = Some(UpdatedReturnPeriod(updatedReturnPeriod)),
+      declaration = Declaration(agentOrCapacitor, Signing())
+    )
+  }
+
+  def constructPPOBUpdateModel(updatedPPOB: PPOBPost)
+                              (implicit user: User[_]): UpdateVatSubscription = {
+
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
+
+    UpdateVatSubscription(
+      requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
+      updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+      updatedReturnPeriod = None,
       declaration = Declaration(agentOrCapacitor, Signing())
     )
   }
