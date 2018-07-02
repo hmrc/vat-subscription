@@ -25,6 +25,7 @@ import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.models._
@@ -105,21 +106,6 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
 
       "return an error response" when {
 
-        "an unknown return period is supplied" should {
-
-          val unknownReturnPeriodRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(InvalidReturnPeriod))
-          lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(unknownReturnPeriodRequest))
-
-          "return status BAD_REQUEST (400)" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            status(res) shouldBe BAD_REQUEST
-          }
-
-          "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("RETURN_PERIOD_ERROR", "Invalid Json or Invalid Return Period supplied"))
-          }
-        }
-
         "no json body is supplied for the PUT" should {
 
           val unknownReturnPeriodRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
@@ -142,6 +128,70 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockUpdateReturnPeriod(MAReturnPeriod)(Future.successful(Left(updateErrorResponse)))
+            status(res) shouldBe INTERNAL_SERVER_ERROR
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+          }
+        }
+      }
+    }
+  }
+
+  val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMaxPost))
+
+  "the.updatePPOB() method" when {
+
+    "the user is not authorised" should {
+
+      "return FORBIDDEN" in {
+        mockAuthorise(vatAuthPredicate, allEnrolments)(Future.failed(InsufficientEnrolments()))
+        val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(ppobPostRequest))
+        status(res) shouldBe FORBIDDEN
+      }
+    }
+
+    "The user is authorised" should {
+
+      "return a successful response" when {
+
+        "a valid PPOBPost is supplied and the response from the UpdateVatSubscription service is successful" in {
+
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Right(updateSuccessResponse)))
+
+          val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(ppobPostRequest))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+        }
+      }
+
+      "return an error response" when {
+
+        "no json body is supplied for the PUT" should {
+
+          val emptyPPOBRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+          lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(emptyPPOBRequest))
+
+          "return status BAD_REQUEST (400)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            status(res) shouldBe BAD_REQUEST
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("PPOB_ERROR", "Unknown body retrieved"))
+          }
+        }
+
+        "a valid PPOB is supplied but an error is returned from the UpdateVatSubscription Service" should {
+
+          lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(ppobPostRequest))
+
+          "return status INTERNAL_SERVER_ERROR (500)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
