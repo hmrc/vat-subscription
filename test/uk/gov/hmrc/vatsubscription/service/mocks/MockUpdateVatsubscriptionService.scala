@@ -22,6 +22,7 @@ import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
+import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
 import uk.gov.hmrc.vatsubscription.models.{ReturnPeriod, User}
 import uk.gov.hmrc.vatsubscription.services._
 
@@ -35,6 +36,16 @@ trait MockUpdateVatsubscriptionService extends MockitoSugar {
   def mockUpdateReturnPeriod(newPeriod: ReturnPeriod)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdateVatSubscriptionService
       .updateReturnPeriod(ArgumentMatchers.eq(newPeriod))(
+        ArgumentMatchers.any[User[_]],
+        ArgumentMatchers.any[HeaderCarrier],
+        ArgumentMatchers.any[ExecutionContext]
+      )
+    ).thenReturn(response)
+  }
+
+  def mockUpdatePPOB(newPPOB: PPOBPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+    when(mockUpdateVatSubscriptionService
+      .updatePPOB(ArgumentMatchers.eq(newPPOB))(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

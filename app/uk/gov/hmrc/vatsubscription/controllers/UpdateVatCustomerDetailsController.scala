@@ -22,6 +22,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsJson}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
+import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.models.{InvalidReturnPeriod, ReturnPeriod, User}
 import uk.gov.hmrc.vatsubscription.services._
@@ -40,6 +41,13 @@ class UpdateVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorised,
       InvalidReturnPeriod
   }
 
+  private def ppob(implicit user: User[_]): Either[ErrorModel, PPOBPost] = user.body match {
+    case body: AnyContentAsJson => Right(body.json.as[PPOBPost])
+    case _ =>
+      Logger.warn("[UpdateVatCustomerDetailsController][AnyContentAsJson] Body of request was not JSON")
+      Left(ErrorModel("PPOB_ERROR", "Unknown body retrieved"))
+  }
+
   def updateVatReturnPeriod(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
       returnPeriod match {
@@ -47,6 +55,19 @@ class UpdateVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorised,
           Future.successful(BadRequest(Json.toJson(ErrorModel("RETURN_PERIOD_ERROR", s"Invalid Json or Invalid Return Period supplied"))))
         case period =>
           vatSubscriptionService.updateReturnPeriod(period) map {
+            case Right(success) => Ok(Json.toJson(success))
+            case Left(error) => InternalServerError(Json.toJson(error))
+          }
+      }
+  }
+
+  def updatePPOB(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
+    implicit user =>
+      ppob match {
+        case Left(error) =>
+          Future.successful(BadRequest(Json.toJson(error)))
+        case Right(updatedPpob) =>
+          vatSubscriptionService.updatePPOB(updatedPpob) map {
             case Right(success) => Ok(Json.toJson(success))
             case Left(error) => InternalServerError(Json.toJson(error))
           }
