@@ -21,8 +21,7 @@ import play.api.http.Status._
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, Retrievals}
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
 import uk.gov.hmrc.vatsubscription.config.Constants
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
@@ -43,8 +42,6 @@ class VatAuthorisedSpec extends TestUtil with MockAuthConnector {
     Enrolment(Constants.MtdVatEnrolmentKey)
       .withIdentifier(Constants.MtdVatReferenceKey, testVatNumber)
       .withDelegatedAuthRule(Constants.MtdVatDelegatedAuth)
-
-  val retrievals: Retrieval[Enrolments] = Retrievals.allEnrolments
 
   "The VatAuthorised.async method" should {
 

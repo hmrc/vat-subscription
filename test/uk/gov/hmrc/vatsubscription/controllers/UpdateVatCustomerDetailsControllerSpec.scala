@@ -49,7 +49,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
     "the user is not authorised" should {
 
       "return FORBIDDEN" in {
-        mockAuthorise(vatAuthPredicate, allEnrolments)(Future.failed(InsufficientEnrolments()))
+        mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
         val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(maRequest))
         status(res) shouldBe FORBIDDEN
       }
@@ -146,7 +146,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
     "the user is not authorised" should {
 
       "return FORBIDDEN" in {
-        mockAuthorise(vatAuthPredicate, allEnrolments)(Future.failed(InsufficientEnrolments()))
+        mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
         val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(ppobPostRequest))
         status(res) shouldBe FORBIDDEN
       }

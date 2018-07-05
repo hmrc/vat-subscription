@@ -42,7 +42,7 @@
 
       "the user does not have an mtd vat enrolment" should {
         "return FORBIDDEN" in {
-          mockAuthorise(vatAuthPredicate, allEnrolments)(Future.failed(InsufficientEnrolments()))
+          mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
@@ -129,7 +129,7 @@
 
       "the user does not have an mtd vat enrolment" should {
         "return FORBIDDEN" in {
-          mockAuthorise(vatAuthPredicate, allEnrolments)(Future.failed(InsufficientEnrolments()))
+          mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 

@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.config.{AppConfig, Constants}
 import uk.gov.hmrc.vatsubscription.models.User
@@ -41,9 +41,9 @@ class VatAuthorised @Inject()(val authConnector: AuthConnector, implicit val app
 
   def async(vrn: String)(f: User[_] => Future[Result])(implicit ec: ExecutionContext): Action[AnyContent] = Action.async {
     implicit request =>
-      authorised(delegatedAuthRule(vrn)).retrieve(Retrievals.allEnrolments) {
-        enrolments =>
-          f(User(vrn, arn(enrolments))(request))
+      authorised(delegatedAuthRule(vrn)).retrieve(Retrievals.allEnrolments and Retrievals.credentials) {
+        case enrolments ~ credentials =>
+          f(User(vrn, arn(enrolments), credentials.providerId)(request))
       } recover {
         case _ =>
           Logger.debug(s"[VatAuthorised][async] - User is not authorised to access the service")

@@ -21,8 +21,7 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
-import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrieval}
-import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.{AuthConnector, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
@@ -47,11 +46,21 @@ trait MockAuthConnector extends BeforeAndAfterEach with MockitoSugar {
     ) thenReturn response
   }
 
+  val retrievals: Retrieval[Enrolments ~ Credentials] = Retrievals.allEnrolments and Retrievals.credentials
+
   def mockAuthRetrieveAgentServicesEnrolled(predicate: Predicate = EmptyPredicate): Unit =
-    mockAuthorise(predicate = predicate, retrievals = allEnrolments)(Future.successful(Enrolments(Set(testAgentServicesEnrolment))))
+    mockAuthorise(predicate, retrievals)(
+      Future.successful(
+        new ~(Enrolments(Set(testAgentServicesEnrolment)), testCredentials)
+      )
+    )
 
   def mockAuthRetrieveMtdVatEnrolled(predicate: Predicate = EmptyPredicate): Unit =
-    mockAuthorise(predicate = predicate, retrievals = allEnrolments)(Future.successful(Enrolments(Set(testMtdVatEnrolment))))
+    mockAuthorise(predicate = predicate, retrievals = retrievals)(
+      Future.successful(
+        new ~(Enrolments(Set(testMtdVatEnrolment)), testCredentials)
+      )
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
