@@ -24,6 +24,7 @@ import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorM
 import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
 import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, User}
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMaxPost
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testCredentials
 
 class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
@@ -34,7 +35,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
   "Calling .updateReturnPeriod" when {
 
-    implicit val user: User[_] = User("123456789", arn = None)(fakeRequest)
+    implicit val user: User[_] = User("123456789", arn = None, testCredentials.providerId)(fakeRequest)
 
     "connector call is successful" should {
       lazy val service = setup(Right(SuccessModel("12345")))
@@ -57,7 +58,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
   "Calling .updatePPOB" when {
 
-    implicit val user: User[_] = User("123456789", arn = None)(fakeRequest)
+    implicit val user: User[_] = User("123456789", arn = None, testCredentials.providerId)(fakeRequest)
 
     "connector call is successful" should {
       lazy val service = setup(Right(SuccessModel("12345")))
@@ -84,7 +85,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is not an Agent" should {
 
-      implicit val user: User[_] = User("123456789", arn = None)(fakeRequest)
+      implicit val user: User[_] = User("123456789", arn = None, testCredentials.providerId)(fakeRequest)
       val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)
 
       val expectedResult = UpdateVatSubscription(
@@ -101,7 +102,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      implicit val user: User[_] = User("123456789", arn = Some("XAIT000000000"))(fakeRequest)
+      implicit val user: User[_] = User("123456789", arn = Some("XAIT000000000"), testCredentials.providerId)(fakeRequest)
       val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)
 
       val expectedResult = UpdateVatSubscription(
@@ -123,7 +124,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is not an Agent" should {
 
-      implicit val user: User[_] = User("123456789", arn = None)(fakeRequest)
+      implicit val user: User[_] = User("123456789", arn = None, testCredentials.providerId)(fakeRequest)
       val result = service.constructPPOBUpdateModel(ppobModelMaxPost)
 
       val expectedResult = UpdateVatSubscription(
@@ -140,7 +141,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      implicit val user: User[_] = User("123456789", arn = Some("XAIT000000000"))(fakeRequest)
+      implicit val user: User[_] = User("123456789", arn = Some("XAIT000000000"), testCredentials.providerId)(fakeRequest)
       val result = service.constructPPOBUpdateModel(ppobModelMaxPost)
 
       val expectedResult = UpdateVatSubscription(

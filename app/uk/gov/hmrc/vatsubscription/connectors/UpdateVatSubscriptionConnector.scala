@@ -17,12 +17,14 @@
 package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -37,6 +39,9 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
     implicit val headerCarrier: HeaderCarrier = hc
       .withExtraHeaders(appConfig.desEnvironmentHeader)
       .copy(authorization = Some(Authorization(appConfig.desAuthorisationToken)))
+
+    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] URL: ${url(vrn)}")
+    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Headers: $headerCarrier")
 
     http.PUT[UpdateVatSubscription, UpdateVatSubscriptionResponse](url(vrn), vatSubscriptionModel)
   }

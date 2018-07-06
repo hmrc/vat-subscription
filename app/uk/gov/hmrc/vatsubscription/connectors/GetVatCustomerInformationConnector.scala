@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
-
+import play.api.Logger
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -37,6 +37,9 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
     val headerCarrier = hc
       .withExtraHeaders(applicationConfig.desEnvironmentHeader)
       .copy(authorization = Some(Authorization(applicationConfig.desAuthorisationToken)))
+
+    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
+    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: $headerCarrier")
 
     http.GET[GetVatCustomerInformationHttpParserResponse](
       url = url(vatNumber)
