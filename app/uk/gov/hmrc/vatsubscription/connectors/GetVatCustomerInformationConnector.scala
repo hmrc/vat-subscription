@@ -39,7 +39,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
       .copy(authorization = Some(Authorization(applicationConfig.desAuthorisationToken)))
 
     Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
-    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: $headerCarrier")
+    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: ${headerCarrier.headers}")
 
     http.GET[GetVatCustomerInformationHttpParserResponse](
       url = url(vatNumber)

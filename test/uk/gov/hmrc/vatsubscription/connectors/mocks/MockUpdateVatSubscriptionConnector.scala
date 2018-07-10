@@ -23,6 +23,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
+import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 
@@ -39,7 +40,7 @@ trait MockUpdateVatSubscriptionConnector extends UnitSpec with MockitoSugar with
 
   def mockUpdateVatSubscriptionResponse(response: Either[ErrorModel, SuccessModel]): Unit = {
     when(mockUpdateVatSubscriptionConnector.updateVatSubscription
-      (any[String](), any[UpdateVatSubscription](), any[HeaderCarrier]())
+      (any[User[_]](), any[UpdateVatSubscription](), any[HeaderCarrier]())
       (any[ExecutionContext]()))
         .thenReturn(Future.successful(response))
   }

@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser._
+import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,16 +34,16 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
 
   private[connectors] val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
 
-  def updateVatSubscription(vrn: String, vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
+  def updateVatSubscription(user: User[_], vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
                            (implicit ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     implicit val headerCarrier: HeaderCarrier = hc
-      .withExtraHeaders(appConfig.desEnvironmentHeader)
+      .withExtraHeaders(appConfig.desEnvironmentHeader, "Credential-Id" -> user.credId)
       .copy(authorization = Some(Authorization(appConfig.desAuthorisationToken)))
 
-    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] URL: ${url(vrn)}")
-    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Headers: $headerCarrier")
+    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] URL: ${url(user.vrn)}")
+    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Headers: ${headerCarrier.headers}")
 
-    http.PUT[UpdateVatSubscription, UpdateVatSubscriptionResponse](url(vrn), vatSubscriptionModel)
+    http.PUT[UpdateVatSubscription, UpdateVatSubscriptionResponse](url(user.vrn), vatSubscriptionModel)
   }
 }
