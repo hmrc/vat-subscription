@@ -18,13 +18,13 @@ package uk.gov.hmrc.vatsubscription.service
 
 import assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMaxPost
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
+import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
-import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, User}
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMaxPost
-import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testCredentials
 
 class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
@@ -35,22 +35,20 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
   "Calling .updateReturnPeriod" when {
 
-    implicit val user: User[_] = User("123456789", arn = None, testCredentials.providerId)(fakeRequest)
-
     "connector call is successful" should {
-      lazy val service = setup(Right(SuccessModel("12345")))
-      lazy val result = service.updateReturnPeriod(MAReturnPeriod)
 
       "return successful UpdateVatSubscriptionResponse model" in {
+        val service = setup(Right(SuccessModel("12345")))
+        val result = service.updateReturnPeriod(MAReturnPeriod)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
 
     "connector call is unsuccessful" should {
-      lazy val service = setup(Left(ErrorModel("ERROR", "Error")))
-      lazy val result = service.updateReturnPeriod(MAReturnPeriod)
 
       "return successful UpdateVatSubscriptionResponse model" in {
+        val service = setup(Left(ErrorModel("ERROR", "Error")))
+        val result = service.updateReturnPeriod(MAReturnPeriod)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -58,22 +56,20 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
   "Calling .updatePPOB" when {
 
-    implicit val user: User[_] = User("123456789", arn = None, testCredentials.providerId)(fakeRequest)
-
     "connector call is successful" should {
-      lazy val service = setup(Right(SuccessModel("12345")))
-      lazy val result = service.updatePPOB(ppobModelMaxPost)
 
       "return successful UpdateVatSubscriptionResponse model" in {
+        val service = setup(Right(SuccessModel("12345")))
+        val result = service.updatePPOB(ppobModelMaxPost)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
 
     "connector call is unsuccessful" should {
-      lazy val service = setup(Left(ErrorModel("ERROR", "Error")))
-      lazy val result = service.updatePPOB(ppobModelMaxPost)
 
       "return successful UpdateVatSubscriptionResponse model" in {
+        val service = setup(Left(ErrorModel("ERROR", "Error")))
+        val result = service.updatePPOB(ppobModelMaxPost)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -85,8 +81,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is not an Agent" should {
 
-      implicit val user: User[_] = User("123456789", arn = None, testCredentials.providerId)(fakeRequest)
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
@@ -102,14 +97,13 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      implicit val user: User[_] = User("123456789", arn = Some("XAIT000000000"), testCredentials.providerId)(fakeRequest)
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
-        declaration = Declaration(Some(AgentOrCapacitor("XAIT000000000")), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
@@ -124,8 +118,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is not an Agent" should {
 
-      implicit val user: User[_] = User("123456789", arn = None, testCredentials.providerId)(fakeRequest)
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
@@ -141,14 +134,13 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      implicit val user: User[_] = User("123456789", arn = Some("XAIT000000000"), testCredentials.providerId)(fakeRequest)
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
-        declaration = Declaration(Some(AgentOrCapacitor("XAIT000000000")), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
@@ -156,5 +148,4 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
       }
     }
   }
-
 }

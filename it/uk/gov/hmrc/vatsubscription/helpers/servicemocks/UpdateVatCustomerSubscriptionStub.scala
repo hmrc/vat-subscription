@@ -26,7 +26,9 @@ object UpdateVatCustomerSubscriptionStub extends WireMockMethods {
     when(method = PUT, uri = s"/vat/subscription/vrn/$vatNumber",
       headers = Map(
         "Authorization" -> "Bearer dev",
-        "Environment" -> "dev"
+        "Environment" -> "dev",
+        "Credential-Id" -> "123456-credid",
+        "X-Session-ID" -> "123456-session"
       )
     ).thenReturn(status = status, body = body)
 

@@ -17,13 +17,12 @@
 package uk.gov.hmrc.vatsubscription.connectors
 
 import assets.{MockHttpClient, TestUtil}
-import play.api.http.Status
-import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testUser
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
+
 import scala.concurrent.Future
 
 class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
@@ -56,7 +55,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
     "http PUT is successful" should {
       lazy val connector = setup(Right(SuccessModel("12345")))
 
-      lazy val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription("123456789", requestModel, hc)
+      lazy val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
 
       "return successful UpdateVatSubscriptionResponse model" in {
         await(result) shouldEqual Right(SuccessModel("12345"))
@@ -66,7 +65,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
     "http PUT is unsuccessful" should {
       lazy val connector = setup(Left(ErrorModel("BAD_REQUEST", "REASON")))
 
-      lazy val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription("123456789", requestModel, hc)
+      lazy val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
 
       "return successful UpdateVatSubscriptionResponse model" in {
         await(result) shouldEqual Left(ErrorModel("BAD_REQUEST", "REASON"))

@@ -33,14 +33,14 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod)
-    updateVatSubscriptionConnector.updateVatSubscription(user.vrn, subscriptionModel, hc)
+    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
   def updatePPOB(updatedPPOB: PPOBPost)
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructPPOBUpdateModel(updatedPPOB)
-    updateVatSubscriptionConnector.updateVatSubscription(user.vrn, subscriptionModel, hc)
+    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
 

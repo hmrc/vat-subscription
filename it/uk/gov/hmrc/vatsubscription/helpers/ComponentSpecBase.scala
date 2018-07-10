@@ -69,7 +69,8 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
     await(
       buildClient(uri)
         .withHeaders(
-          "Content-Type" -> "application/json"
+          "Content-Type" -> "application/json",
+          "X-Session-ID" -> "123456-session"
         )
         .post(writes.writes(body).toString())
     )
@@ -79,7 +80,8 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
     await(
       buildClient(uri)
         .withHeaders(
-          "Content-Type" -> "application/json"
+          "Content-Type" -> "application/json",
+          "X-Session-ID" -> "123456-session"
         )
         .put(writes.writes(body).toString())
     )

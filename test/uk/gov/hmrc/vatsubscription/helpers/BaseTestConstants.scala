@@ -18,12 +18,14 @@ package uk.gov.hmrc.vatsubscription.helpers
 
 import java.util.UUID
 
+import assets.TestUtil
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.vatsubscription.config.Constants._
+import uk.gov.hmrc.vatsubscription.models.User
 
 
-object BaseTestConstants {
+object BaseTestConstants extends TestUtil {
 
   val testVatNumber: String = UUID.randomUUID().toString
   val testArn: String = UUID.randomUUID().toString
@@ -31,6 +33,9 @@ object BaseTestConstants {
   val testAgentServicesEnrolment: Enrolment = Enrolment(AgentServicesEnrolment).withIdentifier(AgentServicesReference, testArn)
 
   val testCredentials: Credentials = Credentials("GG123456789", "GG")
+
+  val testUser: User[_] = User(testVatNumber, None, testCredentials.providerId)(fakeRequest)
+  val testAgentUser: User[_] = User(testVatNumber, Some(testArn), testCredentials.providerId)(fakeRequest)
 
   val testErrorMsg = "this is an error"
 
