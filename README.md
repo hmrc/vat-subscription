@@ -147,6 +147,8 @@ Where:
 
 * **:vatNumber** is a valid VRN, for example: "999999999"
 
+The request takes a header of either "MA", "MB", "MC" or "MM".
+
 #### Success Response
 
 **HTTP Status**: 200
@@ -154,22 +156,46 @@ Where:
 **Example HTTP Response Body**:
 ```
 {
-   "mandationStatus": "MTDfB Mandated"
+   "formBundle": "12345"
+}
+```
+
+### PUT /vat-subscription/:vatNumber/ppob
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+The request takes a header of the form:
+```
+{
+    "address": {
+        "line1": "21 Jump Street",
+        "line2": "JMP STRT"
+    },
+    "contactDetails": {
+        "phoneNumber": "07712345678",
+        "mobileNumber": "07712345679"
+    },
+    "websiteAddress": "www.internet.com"
 }
 ```
 Where:
-* **mandationStatus** can be "MTDfB Mandated", "MTDfB Voluntary", "Non MTDfB" or "Non Digital"
 
-#### Error Responses
+* **address** is mandatory and consists of mandatory fields "line1" and "line2" and optional "line3", "line4", "postCode" and "nonUkCountryCode" fields.
+* **contactDetails** is optional and consists of all optional fields; "phoneNumber", "mobileNumber", "faxNumber", "emailAddress" and "emailVerified".
+* **websiteAddress** is optional.
 
-##### INVALID_VAT_NUMBER
-* **Status**: 400
+#### Success Response
 
-##### VAT_NUMBER_NOT_FOUND
-* **Status**: 404
+**HTTP Status**: 200
 
-##### UNEXPECTED_GET_VAT_CUSTOMER_INFORMATION_FAILURE
-* **Status**: (any)
+**Example HTTP Response Body**:
+```
+{
+   "formBundle": "12345"
+}
+```
 
 
 ### License
