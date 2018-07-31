@@ -147,7 +147,7 @@ Where:
 
 * **:vatNumber** is a valid VRN, for example: "999999999"
 
-The request takes a header of either "MA", "MB", "MC" or "MM".
+The request takes a body of either "MA", "MB", "MC" or "MM".
 
 #### Success Response
 
@@ -166,7 +166,7 @@ Where:
 
 * **:vatNumber** is a valid VRN, for example: "999999999"
 
-The request takes a header of the form:
+The request takes a body of the form:
 ```
 {
     "address": {
