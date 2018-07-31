@@ -112,8 +112,8 @@ Where:
     },
     "bankDetails": {
         "accountHolderName": "Monty Burns",
-        "bankAccountNumber": "00000001",
-        "sortCode": "12-34-56"
+        "bankAccountNumber": "****0001",
+        "sortCode": "****56"
     },
     "returnPeriod": "MA",
     "pendingChanges": {
@@ -147,7 +147,16 @@ Where:
 
 * **:vatNumber** is a valid VRN, for example: "999999999"
 
-The request takes a body of either "MA", "MB", "MC" or "MM".
+The request takes a body of the form:
+```
+{
+    "stdReturnPeriod": MA"
+}
+```
+Where:
+
+* **stdReturnPeriod** is mandatory and can take values "MA", "MB", "MC" or "MM".
+
 
 #### Success Response
 
