@@ -49,7 +49,7 @@ object IntegrationTestConstants {
     Some(addLine4),
     Some(addLine5),
     Some(postcode),
-    None
+    countryCode
   )
 
   val contactDetailsModelMax = ContactDetails(

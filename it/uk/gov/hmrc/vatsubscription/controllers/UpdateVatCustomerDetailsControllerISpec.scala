@@ -32,7 +32,7 @@ class UpdateVatCustomerDetailsControllerISpec extends ComponentSpecBase with Bef
   val invalidReturnPeriodResponse: JsValue = Json.obj("status" -> "RETURN_PERIOD_ERROR", "message" -> "Invalid Json or Invalid Return Period supplied")
 
   val validPPOBJson: JsValue = Json.obj("PPOBAddress" -> Json.obj(
-    "line1" -> "something", "postcode" -> "something")
+    "line1" -> "something", "postcode" -> "something", "countryCode" -> "ES")
   )
   val invalidPPOBJson: JsValue = Json.obj("PPOBAddress" -> "AB")
   val invalidPPOBResponse: JsValue = Json.obj("status" -> "PPOB_ERROR", "message" -> "Invalid Json or Invalid PPOB supplied")
