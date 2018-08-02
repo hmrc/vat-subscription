@@ -22,13 +22,13 @@ import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 
 class PPOBAddressPostSpec extends UnitSpec {
 
-  "PPOBAddressGet Reads" should {
+  "PPOBAddressPost Reads" should {
     "parse the json correctly" in {
       ppobAddressPostJson.as[PPOBAddressPost] shouldBe ppobAddressPostValue
     }
   }
 
-  "PPOBAddressGet Writes" should {
+  "PPOBAddressPost Writes" should {
     "output a populated PPOBAddressGet model" in {
       Json.toJson(ppobAddressPostValue) shouldBe ppobAddressPostWritesResult
     }

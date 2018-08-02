@@ -57,7 +57,7 @@ object PPOBTestConstants {
     Some(addLine4),
     Some(addLine5),
     Some(postcode),
-    None
+    countryCode
   )
 
   val contactDetailsModelMax = ContactDetails(
@@ -78,7 +78,21 @@ object PPOBTestConstants {
   val ppobAddressGetJson: JsValue = Json.obj("line1" -> "Ronaldini Road", "line3" -> "Pell Way", "postCode" -> "R10 AAA", "countryCode" -> "BRAZIL")
   val ppobAddressGetValue: PPOBAddressGet = PPOBAddressGet("Ronaldini Road", None, Some("Pell Way"), None, None, Some("R10 AAA"),"BRAZIL")
 
-  val ppobAddressPostJson: JsValue = Json.obj("line1" -> "Ronaldini Road", "postCode" -> "R10 AAA")
-  val ppobAddressPostValue: PPOBAddressPost = PPOBAddressPost("Ronaldini Road", None, None, None, None, Some("R10 AAA"), None)
-  val ppobAddressPostWritesResult: JsValue = Json.obj("line1" -> "Ronaldini Road", "postCode" -> "R10 AAA", "addressValidated" -> true)
+  val ppobAddressPostJson: JsValue = Json.obj(
+    "line1" -> "Ronaldini Road",
+    "postCode" -> "R10 AAA",
+    "countryCode" -> countryCode
+  )
+  val ppobAddressPostValue: PPOBAddressPost = PPOBAddressPost(
+    "Ronaldini Road",
+    None, None, None, None,
+    Some("R10 AAA"),
+    countryCode
+  )
+  val ppobAddressPostWritesResult: JsValue = Json.obj(
+    "line1" -> "Ronaldini Road",
+    "postCode" -> "R10 AAA",
+    "countryCode" -> countryCode,
+    "addressValidated" -> true
+  )
 }
