@@ -25,6 +25,9 @@ object IntegrationTestConstants {
   val testVatNumber: String = UUID.randomUUID().toString
   val testArn: String = UUID.randomUUID().toString
 
+  val effectiveDate = "1967-08-13"
+  val mandationStatus = "1"
+
   val addLine1 = "Add Line 1"
   val addLine2 = "Add Line 2"
   val addLine3 = "Add Line 3"

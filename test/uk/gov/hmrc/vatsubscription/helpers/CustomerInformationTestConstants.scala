@@ -217,7 +217,8 @@ object CustomerInformationTestConstants {
       "hasFlatRateScheme" -> true,
       "lastName" -> lastName,
       "organisationName" -> orgName,
-      "tradingName" -> tradingName
+      "tradingName" -> tradingName,
+      "vatRegistrationDate" -> effectiveDate
     ),
     "flatRateScheme" -> Json.obj(
       "FRSCategory" -> frsCategory,
@@ -286,7 +287,8 @@ object CustomerInformationTestConstants {
       "hasFlatRateScheme" -> false,
       "lastName" -> lastName,
       "organisationName" -> orgName,
-      "tradingName" -> tradingName
+      "tradingName" -> tradingName,
+      "vatRegistrationDate" -> effectiveDate
     ),
     "mandationStatus" -> mandationStatus,
     "ppob" -> Json.obj(
@@ -374,6 +376,6 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None), None, None, None, None, None
+    MTDfBMandated, CustomerDetails(None, None, None, None, None), None, None, None, None, None
   )
 }

@@ -41,7 +41,7 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
   "getMandationStatus" should {
 
     "return the mandation status if successful" in {
-      val testSuccessfulResponse = VatCustomerInformation(MTDfBMandated, CustomerDetails(None, None, None, None), None, None, None, None, None)
+      val testSuccessfulResponse = VatCustomerInformation(MTDfBMandated, CustomerDetails(None, None, None, None, None), None, None, None, None, None)
 
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(testSuccessfulResponse)))
 

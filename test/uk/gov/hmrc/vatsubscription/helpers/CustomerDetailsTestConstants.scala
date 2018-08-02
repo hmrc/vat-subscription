@@ -22,13 +22,14 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 
 object CustomerDetailsTestConstants {
 
-  val customerDetailsModelMin = CustomerDetails(None, None, None, None)
+  val customerDetailsModelMin = CustomerDetails(None, None, None, None, None)
 
   val customerDetailsModelMax = CustomerDetails(
     Some(firstName),
     Some(lastName),
     Some(orgName),
-    Some(tradingName)
+    Some(tradingName),
+    Some(effectiveDate)
   )
 
   val customerDetailsModelMaxWithFRS = CustomerDetails(
@@ -36,6 +37,7 @@ object CustomerDetailsTestConstants {
     Some(lastName),
     Some(orgName),
     Some(tradingName),
+    Some(effectiveDate),
     hasFlatRateScheme = true
   )
 
@@ -44,6 +46,7 @@ object CustomerDetailsTestConstants {
     "lastName" -> lastName,
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
+    "vatRegistrationDate" -> effectiveDate,
     "hasFlatRateScheme" -> true
   )
 
@@ -52,6 +55,7 @@ object CustomerDetailsTestConstants {
     "lastName" -> lastName,
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
+    "vatRegistrationDate" -> effectiveDate,
     "hasFlatRateScheme" -> false
   )
 
