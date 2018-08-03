@@ -184,6 +184,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "firstName" -> firstName,
         "lastName" -> lastName,
         "tradingName" -> tradingName,
+        "vatRegistrationDate" -> effectiveDate,
         "hasFlatRateScheme" -> true
       )
 
@@ -264,6 +265,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             lastName = Some(lastName),
             organisationName = Some(orgName),
             tradingName = Some(tradingName),
+            vatRegistrationDate = Some(effectiveDate),
             hasFlatRateScheme = true
           ),
           Some(FlatRateScheme(

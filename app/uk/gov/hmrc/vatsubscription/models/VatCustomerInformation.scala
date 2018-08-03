@@ -24,7 +24,7 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   customerDetails: CustomerDetails,
                                   flatRateScheme: Option[FlatRateScheme],
                                   ppob: Option[PPOBGet],
-                                  bankDetails:Option[BankDetails],
+                                  bankDetails: Option[BankDetails],
                                   returnPeriod: Option[ReturnPeriod],
                                   pendingChanges: Option[PendingChanges])
 
@@ -46,6 +46,7 @@ object VatCustomerInformation extends JsonReadUtil {
   val ppobKey = "PPOB"
   val bankDetailsKey = "bankDetails"
   val returnPeriodKey = "returnPeriod"
+  val vatRegistrationDateKey = "effectiveRegistrationDate"
 
   private val path = __ \ approvedInformationKey
   private val customerDetailsPath = path \ customerDetailsKey
@@ -61,6 +62,7 @@ object VatCustomerInformation extends JsonReadUtil {
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
+    vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
@@ -69,7 +71,14 @@ object VatCustomerInformation extends JsonReadUtil {
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges]
   } yield VatCustomerInformation(
     mandationStatus,
-    CustomerDetails(firstName = firstName, lastName = lastName, organisationName = organisationName, tradingName = tradingName, flatRateScheme.isDefined),
+    CustomerDetails(
+      firstName = firstName,
+      lastName = lastName,
+      organisationName = organisationName,
+      tradingName = tradingName,
+      vatRegistrationDate,
+      flatRateScheme.isDefined
+    ),
     flatRateScheme,
     ppob,
     bankDetails,
