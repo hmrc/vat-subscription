@@ -139,7 +139,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
     }
   }
 
-  val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMaxPost))
+  val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
 
   "the.updatePPOB() method" when {
 
