@@ -143,7 +143,7 @@ class UpdateVatCustomerDetailsControllerISpec extends ComponentSpecBase with Bef
           stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMaxPost)))
+          val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax)))
 
           res should have(
             httpStatus(OK),
@@ -159,7 +159,7 @@ class UpdateVatCustomerDetailsControllerISpec extends ComponentSpecBase with Bef
           stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMaxPost)))
+          val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax)))
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),

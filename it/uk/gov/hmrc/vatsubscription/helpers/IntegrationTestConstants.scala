@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.helpers
 import java.util.UUID
 
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
+import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
 import uk.gov.hmrc.vatsubscription.models.post.{PPOBAddressPost, PPOBPost}
 
 object IntegrationTestConstants {
@@ -45,6 +46,16 @@ object IntegrationTestConstants {
   val email = "test@test.com"
   val emailVerified = true
 
+  val ppobAddressModelMax = PPOBAddressGet(
+    addLine1,
+    Some(addLine2),
+    Some(addLine3),
+    Some(addLine4),
+    Some(addLine5),
+    Some(postcode),
+    countryCode
+  )
+
   val ppobAddressModelMaxPost = PPOBAddressPost(
     addLine1,
     Some(addLine2),
@@ -63,5 +74,6 @@ object IntegrationTestConstants {
     Some(emailVerified)
   )
 
+  val ppobModelMax = PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
   val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website))
 }
