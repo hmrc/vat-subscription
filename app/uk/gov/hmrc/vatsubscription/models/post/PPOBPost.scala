@@ -26,8 +26,8 @@ case class PPOBPost(address: PPOBAddressPost,
 
 object PPOBPost {
 
-  private val addressPath = __ \ "address"
-  private val contactDetailsPath = __ \ "contactDetails"
+  private val addressPath = __ \ "PPOBAddress"
+  private val contactDetailsPath = __ \ "PPOBCommDetails"
   private val websiteAddressPath = __ \ "websiteAddress"
 
   implicit val reads: Reads[PPOBPost] = (
