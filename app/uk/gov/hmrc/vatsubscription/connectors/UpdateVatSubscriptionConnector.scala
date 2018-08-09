@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -43,6 +44,8 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
 
     Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] URL: ${url(user.vrn)}")
     Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Headers: ${headerCarrier.headers}")
+    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Body: \n\n"
+      + s"${Json.toJson(vatSubscriptionModel).toString}")
 
     http.PUT[UpdateVatSubscription, UpdateVatSubscriptionResponse](url(user.vrn), vatSubscriptionModel)
   }

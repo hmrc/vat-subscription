@@ -26,15 +26,11 @@ case class PPOBPost(address: PPOBAddressPost,
 
 object PPOBPost {
 
-  private val addressPath = __ \ "address"
-  private val contactDetailsPath = __ \ "contactDetails"
+  private val addressPath = __ \ "PPOBAddress"
+  private val contactDetailsPath = __ \ "PPOBCommDetails"
   private val websiteAddressPath = __ \ "websiteAddress"
 
-  implicit val reads: Reads[PPOBPost] = (
-    addressPath.read[PPOBAddressPost] and
-      contactDetailsPath.readNullable[ContactDetails] and
-      websiteAddressPath.readNullable[String]
-    )(PPOBPost.apply _)
+  implicit val reads: Reads[PPOBPost] = Json.reads[PPOBPost]
 
   implicit val writes: Writes[PPOBPost] = (
     addressPath.write[PPOBAddressPost] and
