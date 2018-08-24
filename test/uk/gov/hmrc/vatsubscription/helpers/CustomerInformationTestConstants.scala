@@ -23,6 +23,7 @@ import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.FlatRateSchemeTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.DeregistrationTestConstants._
 import uk.gov.hmrc.vatsubscription.models._
 
 
@@ -75,6 +76,11 @@ object CustomerInformationTestConstants {
         "FRSPercentage" -> frsPercentage,
         "limitedCostTrader" -> frsLimitedCostTrader,
         "startDate" -> frsStartDate
+      ),
+      "deregistration" -> Json.obj(
+        "deregistrationReason" -> reason,
+        "effectDateOfCancellation" -> cancellationDate,
+        "lastReturnDueDate" -> lastReturnDate
       ),
       "bankDetails" -> Json.obj(
         "accountHolderName" -> accName,
@@ -155,6 +161,11 @@ object CustomerInformationTestConstants {
         ),
         "websiteAddress" -> website
       ),
+      "deregistration" -> Json.obj(
+        "deregistrationReason" -> reason,
+        "effectDateOfCancellation" -> cancellationDate,
+        "lastReturnDueDate" -> lastReturnDate
+      ),
       "bankDetails" -> Json.obj(
         "accountHolderName" -> accName,
         "bankAccountNumber" -> accNum,
@@ -226,6 +237,11 @@ object CustomerInformationTestConstants {
       "limitedCostTrader" -> frsLimitedCostTrader,
       "startDate" -> frsStartDate
     ),
+    "deregistration" -> Json.obj(
+      "deregistrationReason" -> reason,
+      "effectDateOfCancellation" -> cancellationDate,
+      "lastReturnDueDate" -> lastReturnDate
+    ),
     "mandationStatus" -> mandationStatus,
     "ppob" -> Json.obj(
       "address" -> Json.obj(
@@ -277,11 +293,7 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationOutputJsonMax: JsValue = Json.obj(
-    "bankDetails" -> Json.obj(
-      "accountHolderName" -> accName,
-      "bankAccountNumber" -> accNum,
-      "sortCode" -> accSort
-    ),
+    "mandationStatus" -> mandationStatus,
     "customerDetails" -> Json.obj(
       "firstName" -> firstName,
       "hasFlatRateScheme" -> false,
@@ -290,7 +302,6 @@ object CustomerInformationTestConstants {
       "tradingName" -> tradingName,
       "vatRegistrationDate" -> effectiveDate
     ),
-    "mandationStatus" -> mandationStatus,
     "ppob" -> Json.obj(
       "address" -> Json.obj(
         "line1" -> addLine1,
@@ -310,7 +321,17 @@ object CustomerInformationTestConstants {
       ),
       "websiteAddress" -> website
     ),
+    "bankDetails" -> Json.obj(
+      "accountHolderName" -> accName,
+      "bankAccountNumber" -> accNum,
+      "sortCode" -> accSort
+    ),
     "returnPeriod" -> returnPeriodMCJson,
+    "deregistration" -> Json.obj(
+      "deregistrationReason" -> reason,
+      "effectDateOfCancellation" -> cancellationDate,
+      "lastReturnDueDate" -> lastReturnDate
+    ),
     "pendingChanges" -> Json.obj(
       "PPOBDetails" -> Json.obj(
         "address" -> Json.obj(
@@ -354,6 +375,7 @@ object CustomerInformationTestConstants {
     Some(ppobModelMax),
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
+    Some(deregModel),
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
@@ -368,6 +390,7 @@ object CustomerInformationTestConstants {
     Some(ppobModelMax),
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
+    Some(deregModel),
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
@@ -376,6 +399,6 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None, None), None, None, None, None, None
+    MTDfBMandated, CustomerDetails(None, None, None, None, None), None, None, None, None, None, None
   )
 }

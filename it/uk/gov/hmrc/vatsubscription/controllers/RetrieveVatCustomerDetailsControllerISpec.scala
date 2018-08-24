@@ -74,6 +74,11 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
   //Return Period
   private val returnPeriod = "MC"
 
+  //Deregistration
+  private val reason = "I dont play by the rules"
+  private val cancellationDate = "2018-10-01"
+  private val lastReturnDate = "2018-10-01"
+
 
   private val testSuccessDesResponse = Json.obj(
     "approvedInformation" -> Json.obj(
@@ -121,6 +126,11 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "accountHolderName" -> accName,
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
+      ),
+      "deregistration" -> Json.obj(
+        "deregistrationReason" -> reason,
+        "effectDateOfCancellation" -> cancellationDate,
+        "lastReturnDueDate" -> lastReturnDate
       ),
       "returnPeriod" -> Json.obj(
         "stdReturnPeriod" -> returnPeriod
@@ -299,6 +309,11 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(accSort)
           )),
           Some(MCReturnPeriod),
+          Some(Deregistration(
+            Some(reason),
+            Some(cancellationDate),
+            Some(lastReturnDate)
+          )),
           Some(PendingChanges(
             Some(PPOBGet(
               PPOBAddressGet(
