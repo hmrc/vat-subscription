@@ -128,9 +128,9 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "sortCode" -> accSort
       ),
       "deregistration" -> Json.obj(
-        "deregistrationReason" -> "I dont play by the rules",
-        "effectDateOfCancellation" -> "2018-10-01",
-        "lastReturnDueDate" -> "2018-10-01"
+        "deregistrationReason" -> reason,
+        "effectDateOfCancellation" -> cancellationDate,
+        "lastReturnDueDate" -> lastReturnDate
       ),
       "returnPeriod" -> Json.obj(
         "stdReturnPeriod" -> returnPeriod
