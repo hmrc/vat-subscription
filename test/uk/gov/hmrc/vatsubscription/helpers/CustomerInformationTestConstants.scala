@@ -93,7 +93,8 @@ object CustomerInformationTestConstants {
       "changeIndicators" -> Json.obj(
         "PPOBDetails" -> true,
         "bankDetails" -> true,
-        "returnPeriod" -> true
+        "returnPeriod" -> true,
+        "deregister" -> true
       ),
       "inFlightChanges" -> Json.obj(
         "PPOBDetails" -> Json.obj(
@@ -177,7 +178,8 @@ object CustomerInformationTestConstants {
       "changeIndicators" -> Json.obj(
         "PPOBDetails" -> true,
         "bankDetails" -> true,
-        "returnPeriod" -> true
+        "returnPeriod" -> true,
+        "deregister" -> true
       ),
       "inFlightChanges" -> Json.obj(
         "PPOBDetails" -> Json.obj(
@@ -263,6 +265,12 @@ object CustomerInformationTestConstants {
       "websiteAddress" -> website
     ),
     "returnPeriod" -> returnPeriodMCJson,
+    "changeIndicators" -> Json.obj(
+      "PPOBDetails" -> true,
+      "bankDetails" -> true,
+      "returnPeriod" -> true,
+      "deregister" -> true
+    ),
     "pendingChanges" -> Json.obj(
       "PPOBDetails" -> Json.obj(
         "address" -> Json.obj(
@@ -287,8 +295,7 @@ object CustomerInformationTestConstants {
         "accountHolderName" -> accName,
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
-      ),
-      "returnPeriod" -> returnPeriodMCJson
+      )
     )
   )
 
@@ -332,6 +339,12 @@ object CustomerInformationTestConstants {
       "effectDateOfCancellation" -> cancellationDate,
       "lastReturnDueDate" -> lastReturnDate
     ),
+    "changeIndicators" -> Json.obj(
+      "PPOBDetails" -> true,
+      "bankDetails" -> true,
+      "returnPeriod" -> true,
+      "deregister" -> true
+    ),
     "pendingChanges" -> Json.obj(
       "PPOBDetails" -> Json.obj(
         "address" -> Json.obj(
@@ -356,8 +369,7 @@ object CustomerInformationTestConstants {
         "accountHolderName" -> accName,
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
-      ),
-      "returnPeriod" -> returnPeriodMCJson
+      )
     )
   )
 
@@ -376,10 +388,15 @@ object CustomerInformationTestConstants {
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
     Some(deregModel),
+    Some(ChangeIndicators(
+      ppob = true,
+      bankDetails = true,
+      returnPeriod = true,
+      deregister = true
+    )),
     Some(PendingChanges(
       Some(ppobModelMax),
-      Some(bankDetailsModelMax),
-      Some(MCReturnPeriod)
+      Some(bankDetailsModelMax)
     ))
   )
 
@@ -391,14 +408,19 @@ object CustomerInformationTestConstants {
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
     Some(deregModel),
+    Some(ChangeIndicators(
+      ppob = true,
+      bankDetails = true,
+      returnPeriod = true,
+      deregister= true
+    )),
     Some(PendingChanges(
       Some(ppobModelMax),
-      Some(bankDetailsModelMax),
-      Some(MCReturnPeriod)
+      Some(bankDetailsModelMax)
     ))
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None, None), None, None, None, None, None, None
+    MTDfBMandated, CustomerDetails(None, None, None, None, None), None, None, None, None, None, None, None
   )
 }
