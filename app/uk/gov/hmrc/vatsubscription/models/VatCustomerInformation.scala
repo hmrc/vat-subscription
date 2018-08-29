@@ -27,6 +27,7 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   bankDetails: Option[BankDetails],
                                   returnPeriod: Option[ReturnPeriod],
                                   deregistration: Option[Deregistration],
+                                  changeIndicators: Option[ChangeIndicators],
                                   pendingChanges: Option[PendingChanges])
 
 
@@ -35,6 +36,7 @@ object VatCustomerInformation extends JsonReadUtil {
   val approvedInformationKey = "approvedInformation"
   val pendingChangesKey = "inFlightInformation"
   val changes = "inFlightChanges"
+  val changeIndicators = "changeIndicators"
 
   val customerDetailsKey = "customerDetails"
   val individualKey = "individual"
@@ -58,6 +60,7 @@ object VatCustomerInformation extends JsonReadUtil {
   private val returnPeriodPath = path \ returnPeriodKey
   private val deregistrationPath = path \ deregistrationKey
 
+  private val changeIndicatorsPath = __ \ pendingChangesKey \ changeIndicators
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
 
   implicit val desReader: Reads[VatCustomerInformation] = for {
@@ -72,6 +75,7 @@ object VatCustomerInformation extends JsonReadUtil {
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
     deregistration <- deregistrationPath.readOpt[Deregistration]
+    changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges]
   } yield VatCustomerInformation(
     mandationStatus,
@@ -88,6 +92,7 @@ object VatCustomerInformation extends JsonReadUtil {
     bankDetails,
     returnPeriod,
     deregistration,
+    changeIndicators,
     pendingChanges
   )
 

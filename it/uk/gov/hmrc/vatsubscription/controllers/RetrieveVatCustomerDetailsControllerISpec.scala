@@ -140,7 +140,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       "changeIndicators" -> Json.obj(
         "PPOBDetails" -> true,
         "bankDetails" -> true,
-        "returnPeriod" -> true
+        "returnPeriod" -> true,
+        "deregister" -> true
       ),
       "inFlightChanges" -> Json.obj(
         "PPOBDetails" -> Json.obj(
@@ -313,6 +314,12 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(reason),
             Some(cancellationDate),
             Some(lastReturnDate)
+          )),
+          Some(ChangeIndicators(
+            ppob = true,
+            bankDetails = true,
+            returnPeriod = true,
+            deregister = true
           )),
           Some(PendingChanges(
             Some(PPOBGet(
