@@ -345,7 +345,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accName),
               Some(accNum),
               Some(accSort)
-            ))
+            )),
+            Some(MCReturnPeriod)
           ))
         )
 

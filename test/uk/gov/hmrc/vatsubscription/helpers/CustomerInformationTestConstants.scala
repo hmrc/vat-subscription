@@ -295,7 +295,8 @@ object CustomerInformationTestConstants {
         "accountHolderName" -> accName,
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
-      )
+      ),
+      "returnPeriod" -> returnPeriodMCJson
     )
   )
 
@@ -369,7 +370,8 @@ object CustomerInformationTestConstants {
         "accountHolderName" -> accName,
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
-      )
+      ),
+      "returnPeriod" -> returnPeriodMCJson
     )
   )
 
@@ -396,7 +398,8 @@ object CustomerInformationTestConstants {
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
-      Some(bankDetailsModelMax)
+      Some(bankDetailsModelMax),
+      Some(MCReturnPeriod)
     ))
   )
 
@@ -416,7 +419,8 @@ object CustomerInformationTestConstants {
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
-      Some(bankDetailsModelMax)
+      Some(bankDetailsModelMax),
+      Some(MCReturnPeriod)
     ))
   )
 
