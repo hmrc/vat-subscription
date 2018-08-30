@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import cats.data.EitherT
 import cats.instances.future._
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationFailure
@@ -32,19 +33,25 @@ import scala.concurrent.{ExecutionContext, Future}
 class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVatCustomerInformationConnector)
                                                   (implicit ec: ExecutionContext) {
 
-  def retrieveVatCustomerDetails(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, CustomerDetails]] =
+  def retrieveVatCustomerDetails(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, CustomerDetails]] = {
+    Logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer details for vat number - $vatNumber")
     (EitherT(vatCustomerDetailsConnector.getInformation(vatNumber)) map {
-      vatCustomerInformation =>  CustomerDetails(
-        firstName = vatCustomerInformation.customerDetails.firstName,
-        lastName = vatCustomerInformation.customerDetails.lastName,
-        organisationName = vatCustomerInformation.customerDetails.organisationName,
-        tradingName = vatCustomerInformation.customerDetails.tradingName,
-        vatRegistrationDate = vatCustomerInformation.customerDetails.vatRegistrationDate,
-        hasFlatRateScheme = vatCustomerInformation.flatRateScheme.isDefined)
+      vatCustomerInformation =>
+        CustomerDetails(
+          firstName = vatCustomerInformation.customerDetails.firstName,
+          lastName = vatCustomerInformation.customerDetails.lastName,
+          organisationName = vatCustomerInformation.customerDetails.organisationName,
+          tradingName = vatCustomerInformation.customerDetails.tradingName,
+          vatRegistrationDate = vatCustomerInformation.customerDetails.vatRegistrationDate,
+          hasFlatRateScheme = vatCustomerInformation.flatRateScheme.isDefined)
     }).value
+  }
 
-  def retrieveCircumstanceInformation(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]] =
+  def retrieveCircumstanceInformation(vatNumber: String)
+                                     (implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]] = {
+    Logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer circumstances for vat number - $vatNumber")
     vatCustomerDetailsConnector.getInformation(vatNumber)
+  }
 
 }
 

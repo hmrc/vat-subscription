@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
 
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
@@ -34,10 +35,19 @@ class RetrieveVatKnownFactsController @Inject()(vatKnownFactsRetrievalService: V
     implicit user =>
       vatKnownFactsRetrievalService.retrieveVatKnownFacts(vatNumber) map {
         case Right(knownFacts) => Ok(Json.toJson(knownFacts))
-        case Left(InvalidVatNumber) => BadRequest
-        case Left(VatNumberNotFound) => NotFound
-        case Left(InvalidVatKnownFacts) => BadGateway
-        case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
+        case Left(InvalidVatNumber) =>
+          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
+          BadRequest
+        case Left(VatNumberNotFound) =>
+          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
+          NotFound
+        case Left(InvalidVatKnownFacts) =>
+          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: InvalidVatKnownFacts returned from CustomerDetailsRetrieval Service")
+          BadGateway
+        case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
+          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: " +
+            s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
+          BadGateway(Json.obj("status" -> status, "body" -> body))
       }
   }
 

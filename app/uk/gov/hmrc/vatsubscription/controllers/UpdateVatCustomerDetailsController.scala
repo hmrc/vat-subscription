@@ -56,7 +56,9 @@ class UpdateVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorised,
         case period =>
           vatSubscriptionService.updateReturnPeriod(period) map {
             case Right(success) => Ok(Json.toJson(success))
-            case Left(error) => InternalServerError(Json.toJson(error))
+            case Left(error) =>
+              Logger.debug(s"[UpdateVatCustomerDetailsController][updateVatReturnPeriod]: error returned from vatSubcriptionService - $error")
+              InternalServerError(Json.toJson(error))
           }
       }
   }

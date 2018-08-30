@@ -17,6 +17,8 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
+
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
@@ -35,9 +37,16 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
     implicit user =>
       vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vatNumber) map {
         case Right(customerDetails) => Ok(Json.toJson(customerDetails))
-        case Left(InvalidVatNumber) => BadRequest
-        case Left(VatNumberNotFound) => NotFound
-        case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
+        case Left(InvalidVatNumber) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
+          BadRequest
+        case Left(VatNumberNotFound) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
+          NotFound
+        case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
+            s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
+          BadGateway(Json.obj("status" -> status, "body" -> body))
       }
   }
 
@@ -45,9 +54,16 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
     implicit user =>
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
         case Right(vatInformation) => Ok(Json.toJson(vatInformation))
-        case Left(InvalidVatNumber) => BadRequest
-        case Left(VatNumberNotFound) => NotFound
-        case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
+        case Left(InvalidVatNumber) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
+          BadRequest
+        case Left(VatNumberNotFound) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
+          NotFound
+        case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
+            s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
+          BadGateway(Json.obj("status" -> status, "body" -> body))
       }
   }
 }
