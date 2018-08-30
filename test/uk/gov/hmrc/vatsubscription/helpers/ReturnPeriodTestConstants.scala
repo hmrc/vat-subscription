@@ -30,4 +30,9 @@ object ReturnPeriodTestConstants {
   val returnPeriodMCJson: JsValue = Json.obj("stdReturnPeriod" -> mcReturnPeriod)
   val returnPeriodMMJson: JsValue = Json.obj("stdReturnPeriod" -> mmReturnPeriod)
 
+  val inflightReturnPeriodMAJson: JsValue = Json.obj("returnPeriod" -> maReturnPeriod)
+  val inflightReturnPeriodMBJson: JsValue = Json.obj("returnPeriod" -> mbReturnPeriod)
+  val inflightReturnPeriodMCJson: JsValue = Json.obj("returnPeriod" -> mcReturnPeriod)
+  val inflightReturnPeriodMMJson: JsValue = Json.obj("returnPeriod" -> mmReturnPeriod)
+
 }

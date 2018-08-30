@@ -22,7 +22,7 @@ import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
 
 case class PendingChanges(ppob: Option[PPOBGet],
                           bankDetails: Option[BankDetails],
-                          returnPeriod: Option[ReturnPeriod])
+                          returnPeriod: Option[InflightReturnPeriod])
 
 object PendingChanges {
 
@@ -33,12 +33,12 @@ object PendingChanges {
   implicit val reads: Reads[PendingChanges] = (
     ppobPath.readNullable[PPOBGet] and
       bankDetailsPath.readNullable[BankDetails] and
-      returnPeriodPath.readNullable[ReturnPeriod]
+      returnPeriodPath.readNullable[InflightReturnPeriod]
     )(PendingChanges.apply _)
 
   implicit val writes: Writes[PendingChanges] = (
     ppobPath.writeNullable[PPOBGet] and
       bankDetailsPath.writeNullable[BankDetails] and
-      returnPeriodPath.writeNullable[ReturnPeriod]
+      returnPeriodPath.writeNullable[InflightReturnPeriod]
     )(unlift(PendingChanges.unapply))
 }
