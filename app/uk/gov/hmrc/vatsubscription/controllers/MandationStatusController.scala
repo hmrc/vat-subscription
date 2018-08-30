@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
 
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
@@ -40,9 +41,15 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
       authorised() {
         mandationStatusService.getMandationStatus(vatNumber) map {
           case Right(status) => Ok(Json.obj(mandationStatusKey -> status))
-          case Left(InvalidVatNumber) => BadRequest
-          case Left(VatNumberNotFound) => NotFound
-          case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) => BadGateway(Json.obj("status" -> status, "body" -> body))
+          case Left(InvalidVatNumber) =>
+            Logger.debug(s"[MandationStatusController][getMandationStatus]: InvalidVatNumber returned from MandationStatusService")
+            BadRequest
+          case Left(VatNumberNotFound) =>
+            Logger.debug(s"[MandationStatusController][getMandationStatus]: VatNumberNotFound returned from MandationStatusService")
+            NotFound
+          case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
+            Logger.debug(s"[MandationStatusController][getMandationStatus]: Unexpected Failure returned from MandationStatusService, status - $status")
+            BadGateway(Json.obj("status" -> status, "body" -> body))
         }
       }
   }

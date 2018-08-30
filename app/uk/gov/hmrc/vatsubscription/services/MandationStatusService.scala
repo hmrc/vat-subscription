@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import cats.data._
 import cats.implicits._
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationFailure
@@ -30,7 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class MandationStatusService @Inject()(getVatCustomerInformationConnector: GetVatCustomerInformationConnector)(implicit ec: ExecutionContext) {
 
-  def getMandationStatus(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, MandationStatus]] =
+  def getMandationStatus(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, MandationStatus]] = {
+    Logger.debug(s"[MandationStatusService][getMandationStatus]: retrieving mandation status from connector for vat number - $vatNumber")
     EitherT(getVatCustomerInformationConnector.getInformation(vatNumber)).map(_.mandationStatus).value
+  }
 
 }

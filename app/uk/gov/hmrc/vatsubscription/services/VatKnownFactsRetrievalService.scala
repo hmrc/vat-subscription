@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.{Inject, Singleton}
 
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.httpparsers
@@ -33,6 +34,7 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
   import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService._
 
   def retrieveVatKnownFacts(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatKnownFactsFailures, VatKnownFacts]] = {
+    Logger.debug(s"[VatKnownFactsRetrievalService][retrieveVatKnownFacts]: retrieving Vat known facts for vat number - $vatNumber")
     vatCustomerDetailsConnector.getInformation(vatNumber) map {
       case Right(vatCustomerInformation) =>
         (vatCustomerInformation.customerDetails.vatRegistrationDate, vatCustomerInformation.ppob.flatMap(_.address.postCode)) match {

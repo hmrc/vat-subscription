@@ -17,6 +17,8 @@
 package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.{Inject, Singleton}
+
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
@@ -33,6 +35,7 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod)
+    Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
@@ -40,6 +43,7 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructPPOBUpdateModel(updatedPPOB)
+    Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating PPOB for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
