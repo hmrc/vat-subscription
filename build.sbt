@@ -4,7 +4,7 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 name := "vat-subscription"
 
 lazy val root = (project in file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
 
@@ -36,6 +36,7 @@ coverageSettings
 scalaSettings
 publishingSettings
 defaultSettings()
+majorVersion := 0
 
 libraryDependencies ++= AppDependencies.appDependencies
 retrieveManaged := true
