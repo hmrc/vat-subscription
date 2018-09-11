@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.config.featureswitch
+package uk.gov.hmrc.vatsubscription.config.featureSwitch
 
-trait FeatureSwitching {
-  val FEATURE_SWITCH_ON = "true"
-  val FEATURE_SWITCH_OFF = "false"
+import play.api.libs.json.{Json, OFormat}
 
+case class FeatureSwitchModel(latestApi1363Version: Boolean,
+                              stubDes: Boolean)
 
-  protected def isEnabled(featureSwitch: FeatureSwitch): Boolean =
-    sys.props get featureSwitch.name contains FEATURE_SWITCH_ON
-
-  protected def enable(featureSwitch: FeatureSwitch): Unit =
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
-
-  protected def disable(featureSwitch: FeatureSwitch): Unit =
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
+object FeatureSwitchModel {
+  implicit val format: OFormat[FeatureSwitchModel] = Json.format[FeatureSwitchModel]
 }

@@ -24,7 +24,7 @@ import play.api.{Application, Environment, Mode}
 import play.api.libs.json.Writes
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.config.featureswitch.{FeatureSwitch, FeatureSwitching}
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.FeatureSwitch
 
 trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with WiremockHelper
   with BeforeAndAfterAll with BeforeAndAfterEach with FeatureSwitching {

@@ -17,33 +17,26 @@
 package uk.gov.hmrc.vatsubscription.testonly.controllers
 
 import javax.inject.Inject
-import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.config.featureswitch.FeatureSwitch.switches
-import uk.gov.hmrc.vatsubscription.config.featureswitch.{FeatureSwitch, FeatureSwitchSetting, FeatureSwitching}
+import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.FeatureSwitchModel
 
-class FeatureSwitchController @Inject()(val messagesApi: MessagesApi)
-  extends BaseController with FeatureSwitching {
+class FeatureSwitchController @Inject()(appConfig: AppConfig) extends BaseController {
 
-  private def returnCurrentSettings = {
-    val featureSwitches = switches map (featureSwitch => FeatureSwitchSetting(featureSwitch, isEnabled(featureSwitch)))
+  val get: Action[AnyContent] = Action { implicit request => result }
 
-    Ok(Json.toJson(featureSwitches))
+  lazy val update: Action[FeatureSwitchModel] = Action(parse.json[FeatureSwitchModel]) { req =>
+    appConfig.features.latestApi1363Version(req.body.latestApi1363Version)
+    appConfig.features.stubDes(req.body.stubDes)
+    result
   }
 
-  lazy val get: Action[AnyContent] = Action {
-    returnCurrentSettings
-  }
-
-  lazy val update: Action[List[FeatureSwitchSetting]] = Action(parse.json[List[FeatureSwitchSetting]]) { req =>
-    req.body foreach { setting =>
-      val featureSwitch = FeatureSwitch(setting)
-
-      if (setting.enable) enable(featureSwitch)
-      else disable(featureSwitch)
-    }
-    returnCurrentSettings
+  def result: Result = {
+    Ok(Json.toJson(FeatureSwitchModel(
+      latestApi1363Version = appConfig.features.latestApi1363Version(),
+      stubDes = appConfig.features.stubDes()
+    )))
   }
 }

@@ -31,7 +31,7 @@ import scala.concurrent.Future
 trait MockMandationStatusService extends MockitoSugar with BeforeAndAfterEach {
   self: Suite =>
 
-  override protected def beforeEach(): Unit = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockMandationStatusService)
   }
