@@ -31,6 +31,7 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
         requestedChanges = changeReturnPeriod,
         updatedPPOB = None,
         updatedReturnPeriod = Some(updatedReturnPeriod),
+        updateDeregInfo = None,
         declaration = Declaration(Some(agentOrCapacitor), Signing())
       )
 
@@ -53,6 +54,7 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
         requestedChanges = changePPOB,
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
+        updateDeregInfo = None,
         declaration = Declaration(Some(agentOrCapacitor), Signing())
       )
 
@@ -75,6 +77,7 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
         requestedChanges = changePPOBandRP,
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = Some(updatedReturnPeriod),
+        updateDeregInfo = None,
         declaration = Declaration(Some(agentOrCapacitor), Signing())
       )
 
@@ -98,6 +101,7 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
         requestedChanges = changeReturnPeriod,
         updatedPPOB = None,
         updatedReturnPeriod = None,
+        updateDeregInfo = None,
         declaration = Declaration(Some(agentOrCapacitor), Signing())
       )
 
