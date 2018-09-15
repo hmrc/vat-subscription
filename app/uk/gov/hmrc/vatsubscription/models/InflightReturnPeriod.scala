@@ -18,8 +18,9 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.Logger
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 
-sealed trait InflightReturnPeriod{
+sealed trait InflightReturnPeriod {
   def returnPeriod: String
 }
 
@@ -31,11 +32,9 @@ case object MBInflightReturnPeriod extends InflightReturnPeriod {
   override val returnPeriod: String = "MB"
 }
 
-
 case object MCInflightReturnPeriod extends InflightReturnPeriod {
   override val returnPeriod: String = "MC"
 }
-
 
 case object MMInflightReturnPeriod extends InflightReturnPeriod {
   override val returnPeriod: String = "MM"
@@ -59,18 +58,21 @@ object InflightReturnPeriod {
 
   def unapply(arg: InflightReturnPeriod): String = arg.returnPeriod
 
-  implicit val inflightReturnPeriodReader: Reads[InflightReturnPeriod] = for {
-    value <- (__ \ "returnPeriod").readNullable[String] map {
-      case Some(MAInflightReturnPeriod.returnPeriod) => MAInflightReturnPeriod
-      case Some(MBInflightReturnPeriod.returnPeriod) => MBInflightReturnPeriod
-      case Some(MCInflightReturnPeriod.returnPeriod) => MCInflightReturnPeriod
-      case Some(MMInflightReturnPeriod.returnPeriod) => MMInflightReturnPeriod
-      case invalid =>
-        Logger.warn(s"[InflightReturnPeriod][apply] Invalid Inflight Return Period: '$invalid'")
-        InvalidInflightReturnPeriod
-    }
-  } yield value
-
+  implicit def inflightReturnPeriodReader(appConfig: AppConfig): Reads[InflightReturnPeriod] = {
+    val path = if (appConfig.features.latestApi1363Version()) "returnPeriod" else "stdReturnPeriod"
+    println(path)
+      for {
+        value <- (__ \ path).readNullable[String] map {
+          case Some(MAInflightReturnPeriod.returnPeriod) => MAInflightReturnPeriod
+          case Some(MBInflightReturnPeriod.returnPeriod) => MBInflightReturnPeriod
+          case Some(MCInflightReturnPeriod.returnPeriod) => MCInflightReturnPeriod
+          case Some(MMInflightReturnPeriod.returnPeriod) => MMInflightReturnPeriod
+          case invalid =>
+            Logger.warn(s"[InflightReturnPeriod][apply] Invalid Inflight Return Period: '$invalid'")
+            InvalidInflightReturnPeriod
+        }
+      } yield value
+  }
 
   implicit val inflightReturnPeriodWriter: Writes[InflightReturnPeriod] = Writes {
     period => Json.obj("stdReturnPeriod" -> period.returnPeriod)

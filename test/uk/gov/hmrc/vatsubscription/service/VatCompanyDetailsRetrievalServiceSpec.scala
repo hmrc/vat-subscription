@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomerInformationConnector {
 
   object TestVatCompanyDetailsRetrievalService extends VatCustomerDetailsRetrievalService(
-    mockGetVatCustomerInformationConnector
+    mockConnector
   )
 
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)

@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
 import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
 
@@ -63,7 +64,7 @@ object VatCustomerInformation extends JsonReadUtil {
   private val changeIndicatorsPath = __ \ pendingChangesKey \ changeIndicators
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
 
-  implicit val desReader: Reads[VatCustomerInformation] = for {
+  implicit def desReader(appConfig: AppConfig): Reads[VatCustomerInformation] = for {
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
@@ -76,7 +77,7 @@ object VatCustomerInformation extends JsonReadUtil {
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges]
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(appConfig))
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(

@@ -16,31 +16,37 @@
 
 package uk.gov.hmrc.vatsubscription.httpparsers
 
+import assets.TestUtil
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
-import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads
 
-class GetVatCustomerInformationHttpParserSpec extends UnitSpec {
+class GetVatCustomerInformationHttpParserSpec extends TestUtil {
   val testHttpVerb = "GET"
   val testUri = "/"
 
-  "CustomerSignUpHttpReads" when {
+  "GetVatCustomerInformationHttpReads" should {
+
+    val httpClient = mock[HttpClient]
+    val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
     "read" should {
+
       "parse an OK response with a valid json as a VatCustomerInformation" in {
         val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRS))
 
-        val res = GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
         res shouldBe Right(customerInformationModelMaxWithFRS)
       }
 
-      "parse an OK response with an ivalid json as a UnexpectedGetVatCustomerInformationFailure" in {
+      "parse an OK response with an invalid json as a UnexpectedGetVatCustomerInformationFailure" in {
         val httpResponse = HttpResponse(OK, responseJson = Some(Json.obj()))
 
-        val res = GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
         res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(OK, "{ }"))
       }
@@ -48,7 +54,7 @@ class GetVatCustomerInformationHttpParserSpec extends UnitSpec {
       "parse a BAD_REQUEST response as a InvalidVatNumber" in {
         val httpResponse = HttpResponse(BAD_REQUEST)
 
-        val res = GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
         res shouldBe Left(InvalidVatNumber)
       }
@@ -56,7 +62,7 @@ class GetVatCustomerInformationHttpParserSpec extends UnitSpec {
       "parse a NOT_FOUND response as a VatNumberNotFound" in {
         val httpResponse = HttpResponse(NOT_FOUND)
 
-        val res = GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
         res shouldBe Left(VatNumberNotFound)
       }
@@ -64,7 +70,7 @@ class GetVatCustomerInformationHttpParserSpec extends UnitSpec {
       "parse any other response as a UnexpectedGetVatCustomerInformationFailure" in {
         val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, responseJson = Some(Json.obj()))
 
-        val res = GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
         res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "{ }"))
       }

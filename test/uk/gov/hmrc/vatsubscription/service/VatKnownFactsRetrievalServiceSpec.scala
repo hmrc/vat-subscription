@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class VatKnownFactsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomerInformationConnector {
 
   object TestVatKnownFactsRetrievalService extends VatKnownFactsRetrievalService(
-    mockGetVatCustomerInformationConnector
+    mockConnector
   )
 
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)

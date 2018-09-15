@@ -33,7 +33,7 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
   with MockGetVatCustomerInformationConnector {
 
   object TestMandationStatusService extends MandationStatusService(
-    mockGetVatCustomerInformationConnector
+    mockConnector
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
