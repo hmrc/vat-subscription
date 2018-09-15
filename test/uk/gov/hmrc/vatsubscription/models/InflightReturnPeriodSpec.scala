@@ -39,7 +39,6 @@ class InflightReturnPeriodSpec extends TestUtil {
 
     "latestApi1363Version feature switch is off" should {
 
-
       val json = Json.obj(
         "stdReturnPeriod" -> "MA"
       )
