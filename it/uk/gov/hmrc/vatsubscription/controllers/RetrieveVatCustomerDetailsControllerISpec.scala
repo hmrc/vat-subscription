@@ -346,7 +346,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accNum),
               Some(accSort)
             )),
-            Some(MCInflightReturnPeriod)
+            Some(MCReturnPeriod)
           ))
         )
 

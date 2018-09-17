@@ -60,8 +60,8 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
           case OK =>
             Logger.debug("[CustomerCircumstancesHttpParser][read]: Status OK")
             response.json.validate(
-              if(applicationConfig.features.latestApi1363Version()) VatCustomerInformation.readsV3_3
-              else VatCustomerInformation.readsV3_2_1
+              if(applicationConfig.features.latestApi1363Version()) VatCustomerInformation.newReads
+              else VatCustomerInformation.currentReads
             ) match {
               case JsSuccess(vatCustomerInformation, _) => Right(vatCustomerInformation)
               case _ =>

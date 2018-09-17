@@ -31,7 +31,6 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   changeIndicators: Option[ChangeIndicators],
                                   pendingChanges: Option[PendingChanges])
 
-
 object VatCustomerInformation extends JsonReadUtil {
 
   val approvedInformationKey = "approvedInformation"
@@ -64,7 +63,7 @@ object VatCustomerInformation extends JsonReadUtil {
   private val changeIndicatorsPath = __ \ pendingChangesKey \ changeIndicators
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
 
-  implicit val readsV3_2_1: Reads[VatCustomerInformation] = for {
+  val currentReads: Reads[VatCustomerInformation] = for {
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
@@ -74,10 +73,10 @@ object VatCustomerInformation extends JsonReadUtil {
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
-    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
+    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.readsV3_2_1)
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.currentReads)
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(
@@ -97,7 +96,7 @@ object VatCustomerInformation extends JsonReadUtil {
     pendingChanges
   )
 
-  implicit val readsV3_3: Reads[VatCustomerInformation] = for {
+  val newReads: Reads[VatCustomerInformation] = for {
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
@@ -107,10 +106,10 @@ object VatCustomerInformation extends JsonReadUtil {
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
-    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
+    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.readsV3_3)
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(

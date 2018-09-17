@@ -35,7 +35,7 @@ class UpdateVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorised,
                                                   (implicit ec: ExecutionContext) extends BaseController {
 
   private def returnPeriod(implicit user: User[_]): ReturnPeriod = user.body match {
-    case body: AnyContentAsJson => body.json.as[ReturnPeriod]
+    case body: AnyContentAsJson => body.json.as[ReturnPeriod](ReturnPeriod.currentReads)
     case _ =>
       Logger.warn("[UpdateVatCustomerDetailsController][AnyContentAsJson] Body of request was not JSON")
       InvalidReturnPeriod

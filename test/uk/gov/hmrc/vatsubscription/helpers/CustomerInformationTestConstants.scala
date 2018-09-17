@@ -486,7 +486,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCInflightReturnPeriod)
+      Some(MCReturnPeriod)
     ))
   )
 
@@ -507,7 +507,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCInflightReturnPeriod)
+      Some(MCReturnPeriod)
     ))
   )
 
