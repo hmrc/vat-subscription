@@ -24,7 +24,7 @@ case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
                                  requestedChanges: RequestedChanges,
                                  updatedPPOB: Option[UpdatedPPOB],
                                  updatedReturnPeriod: Option[UpdatedReturnPeriod],
-                                 updateDeregInfo: Option[DeregInfo],
+                                 updateDeregistrationInfo: Option[DeregistrationInfo],
                                  declaration: Declaration)
 
 object UpdateVatSubscription {
@@ -35,7 +35,7 @@ object UpdateVatSubscription {
     (JsPath \ "requestedChange").write[RequestedChanges] and
     (JsPath \ "contactDetails").writeNullable[UpdatedPPOB] and
     (JsPath \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
-    (JsPath \ "deregistrationInfo").writeNullable[DeregInfo] and
+    (JsPath \ "deregistrationInfo").writeNullable[DeregistrationInfo] and
     (JsPath \ "declaration").write[Declaration]
   )(unlift(UpdateVatSubscription.unapply))
 }

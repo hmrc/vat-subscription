@@ -19,16 +19,16 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Writes}
 
-case class DeregInfo(deregReason: Option[String],
-                     deregDate: Option[String],
-                     deregLaterDate: Option[String])
+case class DeregistrationInfo(deregReason: String,
+                              deregDate: Option[String],
+                              deregLaterDate: Option[String])
 
-object DeregInfo {
+object DeregistrationInfo {
 
-  implicit val writes: Writes[DeregInfo] = (
-    (JsPath \ "deregReason").writeNullable[String] and
+  implicit val writes: Writes[DeregistrationInfo] = (
+    (JsPath \ "deregReason").write[String] and
       (JsPath \ "deregDate").writeNullable[String] and
       (JsPath \ "deregLaterDate").writeNullable[String]
-    )(unlift(DeregInfo.unapply))
+    )(unlift(DeregistrationInfo.unapply))
 
 }

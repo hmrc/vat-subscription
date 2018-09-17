@@ -19,12 +19,12 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
-class DeregInfoSpec extends UnitSpec {
+class DeregistrationInfoSpec extends UnitSpec {
 
   "DeregInfo Writes" should {
 
-    val model: DeregInfo = DeregInfo(
-      deregReason = Some("0003"),
+    val model: DeregistrationInfo = DeregistrationInfo(
+      deregReason = "0003",
       deregDate = Some("2018-10-25"),
       deregLaterDate = Some("2018-10-26")
     )
@@ -36,7 +36,7 @@ class DeregInfoSpec extends UnitSpec {
         "deregLaterDate" -> "2018-10-26"
       )
 
-      DeregInfo.writes.writes(model) shouldBe result
+      DeregistrationInfo.writes.writes(model) shouldBe result
     }
   }
 }
