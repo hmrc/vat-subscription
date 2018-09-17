@@ -21,7 +21,7 @@ import org.mockito.Mockito._
 import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationFailure
+import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationFailure
 import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, VatCustomerInformation}
 import uk.gov.hmrc.vatsubscription.services._
 

@@ -31,10 +31,16 @@ object PendingChanges {
   private val bankDetailsPath =  __ \ "bankDetails"
   private val returnPeriodPath = __ \ "returnPeriod"
 
-  implicit def reads(appConfig: AppConfig): Reads[PendingChanges] = (
+  implicit val readsV3_2_1: Reads[PendingChanges] = (
     ppobPath.readNullable[PPOBGet] and
       bankDetailsPath.readNullable[BankDetails] and
-      returnPeriodPath.readNullable[InflightReturnPeriod](InflightReturnPeriod.inflightReturnPeriodReader(appConfig))
+      returnPeriodPath.readNullable[InflightReturnPeriod](InflightReturnPeriod.readsV3_2_1)
+    )(PendingChanges.apply _)
+
+  implicit val readsV3_3: Reads[PendingChanges] = (
+    ppobPath.readNullable[PPOBGet] and
+      bankDetailsPath.readNullable[BankDetails] and
+      returnPeriodPath.readNullable[InflightReturnPeriod](InflightReturnPeriod.readsV3_3)
     )(PendingChanges.apply _)
 
   implicit val writes: Writes[PendingChanges] = (

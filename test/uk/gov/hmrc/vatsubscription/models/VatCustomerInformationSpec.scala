@@ -22,13 +22,24 @@ import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 
 class VatCustomerInformationSpec extends TestUtil {
 
-  "desReader" should {
+  "readsV3_2_1" should {
+
     "parse the json correctly when all optional fields are populated" in {
-      VatCustomerInformation.desReader(mockAppConfig).reads(customerInformationDESJsonMax).get shouldBe customerInformationModelMax
+      VatCustomerInformation.readsV3_2_1.reads(customerInformationDESJsonMaxV3_2_1).get shouldBe customerInformationModelMax
     }
 
     "parse the json correctly when no optional fields are returned" in {
-      VatCustomerInformation.desReader(mockAppConfig).reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
+      VatCustomerInformation.readsV3_2_1.reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
+    }
+  }
+
+  "readsV3_3" should {
+    "parse the json correctly when all optional fields are populated" in {
+      VatCustomerInformation.readsV3_3.reads(customerInformationDESJsonMaxV3_3).get shouldBe customerInformationModelMax
+    }
+
+    "parse the json correctly when no optional fields are returned" in {
+      VatCustomerInformation.readsV3_3.reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
     }
   }
 }

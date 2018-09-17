@@ -24,7 +24,7 @@ import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformatio
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.VatKnownFactsTestConstants._
-import uk.gov.hmrc.vatsubscription.httpparsers
+import uk.gov.hmrc.vatsubscription.connectors
 import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService._
 import uk.gov.hmrc.vatsubscription.services._
 
@@ -54,7 +54,7 @@ class VatKnownFactsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomer
     }
 
     "return a failure if the connection to get vat customer details fails" in {
-      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(httpparsers.InvalidVatNumber)))
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(connectors.InvalidVatNumber)))
       val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)
       await(res) shouldBe Left(InvalidVatNumber)
     }

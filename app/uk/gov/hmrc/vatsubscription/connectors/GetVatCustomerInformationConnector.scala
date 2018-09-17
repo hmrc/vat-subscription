@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.httpparsers._
 import uk.gov.hmrc.vatsubscription.models.VatCustomerInformation
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -60,7 +59,10 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
         response.status match {
           case OK =>
             Logger.debug("[CustomerCircumstancesHttpParser][read]: Status OK")
-            response.json.validate(VatCustomerInformation.desReader(applicationConfig)) match {
+            response.json.validate(
+              if(applicationConfig.features.latestApi1363Version()) VatCustomerInformation.readsV3_3
+              else VatCustomerInformation.readsV3_2_1
+            ) match {
               case JsSuccess(vatCustomerInformation, _) => Right(vatCustomerInformation)
               case _ =>
                 Logger.warn(s"[CustomerCircumstancesHttpParser][read]: Invalid Success Response Json")
@@ -77,7 +79,13 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
             Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
         }
     }
-
   }
 }
 
+sealed trait GetVatCustomerInformationFailure
+
+case object InvalidVatNumber extends GetVatCustomerInformationFailure
+
+case object VatNumberNotFound extends GetVatCustomerInformationFailure
+
+case class UnexpectedGetVatCustomerInformationFailure(status: Int, body: String) extends GetVatCustomerInformationFailure

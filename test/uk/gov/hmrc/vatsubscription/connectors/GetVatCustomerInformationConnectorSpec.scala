@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.httpparsers
+package uk.gov.hmrc.vatsubscription.connectors
 
 import assets.TestUtil
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
-import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants.{customerInformationDESJsonMaxWithFRS, customerInformationModelMaxWithFRS}
 
-class GetVatCustomerInformationHttpParserSpec extends TestUtil {
+class GetVatCustomerInformationConnectorSpec extends TestUtil {
+
   val testHttpVerb = "GET"
   val testUri = "/"
 
-  "GetVatCustomerInformationHttpReads" should {
+  "GetVatCustomerInformationConnector GetVatCustomerInformationHttpReads" should {
 
     val httpClient = mock[HttpClient]
     val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)

@@ -21,7 +21,7 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationFailure
+import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationFailure
 import uk.gov.hmrc.vatsubscription.models.MandationStatus
 import uk.gov.hmrc.vatsubscription.services.MandationStatusService
 

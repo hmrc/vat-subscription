@@ -64,7 +64,7 @@ object VatCustomerInformation extends JsonReadUtil {
   private val changeIndicatorsPath = __ \ pendingChangesKey \ changeIndicators
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
 
-  implicit def desReader(appConfig: AppConfig): Reads[VatCustomerInformation] = for {
+  implicit val readsV3_2_1: Reads[VatCustomerInformation] = for {
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
@@ -77,7 +77,40 @@ object VatCustomerInformation extends JsonReadUtil {
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(appConfig))
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.readsV3_2_1)
+  } yield VatCustomerInformation(
+    mandationStatus,
+    CustomerDetails(
+      firstName = firstName,
+      lastName = lastName,
+      organisationName = organisationName,
+      tradingName = tradingName,
+      vatRegistrationDate,
+      flatRateScheme.isDefined
+    ),
+    flatRateScheme,
+    ppob,
+    bankDetails,
+    returnPeriod,
+    deregistration,
+    changeIndicators,
+    pendingChanges
+  )
+
+  implicit val readsV3_3: Reads[VatCustomerInformation] = for {
+    firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
+    lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
+    organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
+    tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
+    vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
+    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
+    ppob <- ppobPath.readOpt[PPOBGet]
+    bankDetails <- bankDetailsPath.readOpt[BankDetails]
+    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod]
+    deregistration <- deregistrationPath.readOpt[Deregistration]
+    changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.readsV3_3)
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(

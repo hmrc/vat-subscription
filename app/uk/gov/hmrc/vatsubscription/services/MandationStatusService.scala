@@ -17,13 +17,11 @@
 package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.{Inject, Singleton}
-
 import cats.data._
 import cats.implicits._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
-import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationFailure
+import uk.gov.hmrc.vatsubscription.connectors.{GetVatCustomerInformationConnector, GetVatCustomerInformationFailure}
 import uk.gov.hmrc.vatsubscription.models.MandationStatus
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,5 +33,4 @@ class MandationStatusService @Inject()(getVatCustomerInformationConnector: GetVa
     Logger.debug(s"[MandationStatusService][getMandationStatus]: retrieving mandation status from connector for vat number - $vatNumber")
     EitherT(getVatCustomerInformationConnector.getInformation(vatNumber)).map(_.mandationStatus).value
   }
-
 }

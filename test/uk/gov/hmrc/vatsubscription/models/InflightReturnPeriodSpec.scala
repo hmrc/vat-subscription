@@ -23,21 +23,7 @@ class InflightReturnPeriodSpec extends TestUtil {
 
   "InFlightReturnPeriod Reads" when {
 
-    "latestApi1363Version feature switch is on" should {
-
-      val json = Json.obj(
-        "returnPeriod" -> "MA"
-      )
-
-      val model: InflightReturnPeriod = MAInflightReturnPeriod
-
-      "output a correctly formatted UpdatedReturnPeriod json" in {
-        mockAppConfig.features.latestApi1363Version(true)
-        InflightReturnPeriod.inflightReturnPeriodReader(mockAppConfig).reads(json).get shouldEqual model
-      }
-    }
-
-    "latestApi1363Version feature switch is off" should {
+    "calling .readsV3_2_1" should {
 
       val json = Json.obj(
         "stdReturnPeriod" -> "MA"
@@ -46,8 +32,20 @@ class InflightReturnPeriodSpec extends TestUtil {
       val model: InflightReturnPeriod = MAInflightReturnPeriod
 
       "output a correctly formatted UpdatedReturnPeriod json" in {
-        mockAppConfig.features.latestApi1363Version(false)
-        InflightReturnPeriod.inflightReturnPeriodReader(mockAppConfig).reads(json).get shouldEqual model
+        InflightReturnPeriod.readsV3_2_1.reads(json).get shouldEqual model
+      }
+    }
+
+    "calling .readsV3_3" should {
+
+      val json = Json.obj(
+        "returnPeriod" -> "MA"
+      )
+
+      val model: InflightReturnPeriod = MAInflightReturnPeriod
+
+      "output a correctly formatted UpdatedReturnPeriod json" in {
+        InflightReturnPeriod.readsV3_3.reads(json).get shouldEqual model
       }
     }
   }

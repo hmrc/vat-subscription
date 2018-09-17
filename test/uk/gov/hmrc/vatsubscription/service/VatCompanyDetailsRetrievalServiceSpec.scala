@@ -24,7 +24,7 @@ import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformatio
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
-import uk.gov.hmrc.vatsubscription.httpparsers.InvalidVatNumber
+import uk.gov.hmrc.vatsubscription.connectors.InvalidVatNumber
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future

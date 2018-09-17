@@ -58,20 +58,32 @@ object InflightReturnPeriod {
 
   def unapply(arg: InflightReturnPeriod): String = arg.returnPeriod
 
-  implicit def inflightReturnPeriodReader(appConfig: AppConfig): Reads[InflightReturnPeriod] = {
-    val path = if (appConfig.features.latestApi1363Version()) "returnPeriod" else "stdReturnPeriod"
-    println(path)
-      for {
-        value <- (__ \ path).readNullable[String] map {
-          case Some(MAInflightReturnPeriod.returnPeriod) => MAInflightReturnPeriod
-          case Some(MBInflightReturnPeriod.returnPeriod) => MBInflightReturnPeriod
-          case Some(MCInflightReturnPeriod.returnPeriod) => MCInflightReturnPeriod
-          case Some(MMInflightReturnPeriod.returnPeriod) => MMInflightReturnPeriod
-          case invalid =>
-            Logger.warn(s"[InflightReturnPeriod][apply] Invalid Inflight Return Period: '$invalid'")
-            InvalidInflightReturnPeriod
-        }
-      } yield value
+  implicit val readsV3_2_1: Reads[InflightReturnPeriod] = {
+    for {
+      value <- (__ \ "stdReturnPeriod").readNullable[String] map {
+        case Some(MAInflightReturnPeriod.returnPeriod) => MAInflightReturnPeriod
+        case Some(MBInflightReturnPeriod.returnPeriod) => MBInflightReturnPeriod
+        case Some(MCInflightReturnPeriod.returnPeriod) => MCInflightReturnPeriod
+        case Some(MMInflightReturnPeriod.returnPeriod) => MMInflightReturnPeriod
+        case invalid =>
+          Logger.warn(s"[InflightReturnPeriod][apply] Invalid Inflight Return Period: '$invalid'")
+          InvalidInflightReturnPeriod
+      }
+    } yield value
+  }
+
+  implicit val readsV3_3: Reads[InflightReturnPeriod] = {
+    for {
+      value <- (__ \ "returnPeriod").readNullable[String] map {
+        case Some(MAInflightReturnPeriod.returnPeriod) => MAInflightReturnPeriod
+        case Some(MBInflightReturnPeriod.returnPeriod) => MBInflightReturnPeriod
+        case Some(MCInflightReturnPeriod.returnPeriod) => MCInflightReturnPeriod
+        case Some(MMInflightReturnPeriod.returnPeriod) => MMInflightReturnPeriod
+        case invalid =>
+          Logger.warn(s"[InflightReturnPeriod][apply] Invalid Inflight Return Period: '$invalid'")
+          InvalidInflightReturnPeriod
+      }
+    } yield value
   }
 
   implicit val inflightReturnPeriodWriter: Writes[InflightReturnPeriod] = Writes {

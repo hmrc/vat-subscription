@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
-import uk.gov.hmrc.vatsubscription.httpparsers.InvalidVatNumber
+import uk.gov.hmrc.vatsubscription.connectors.InvalidVatNumber
 import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, MTDfBMandated, VatCustomerInformation}
 import uk.gov.hmrc.vatsubscription.services.MandationStatusService
 

@@ -126,7 +126,94 @@ object CustomerInformationTestConstants {
     )
   )
 
-  val customerInformationDESJsonMax: JsValue = Json.obj(
+  val customerInformationDESJsonMaxV3_2_1: JsValue = Json.obj(
+    "approvedInformation" -> Json.obj(
+      "customerDetails" -> Json.obj(
+        "organisationName" -> orgName,
+        "individual" -> Json.obj(
+          "title" -> title,
+          "firstName" -> firstName,
+          "middleName" -> middleName,
+          "lastName" -> lastName
+        ),
+        "tradingName" -> tradingName,
+        "mandationStatus" -> mandationStatusCode,
+        "registrationReason" -> regReason,
+        "effectiveRegistrationDate" -> effectiveDate,
+        "businessStartDate" -> startDate
+      ),
+      "PPOB" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        ),
+        "RLS" -> rlsIndicator,
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
+      ),
+      "deregistration" -> Json.obj(
+        "deregistrationReason" -> reason,
+        "effectDateOfCancellation" -> cancellationDate,
+        "lastReturnDueDate" -> lastReturnDate
+      ),
+      "bankDetails" -> Json.obj(
+        "accountHolderName" -> accName,
+        "bankAccountNumber" -> accNum,
+        "sortCode" -> accSort
+      ),
+      "returnPeriod" -> returnPeriodMCJson
+    ),
+    "inFlightInformation" -> Json.obj(
+      "changeIndicators" -> Json.obj(
+        "PPOBDetails" -> true,
+        "bankDetails" -> true,
+        "returnPeriod" -> true,
+        "deregister" -> true
+      ),
+      "inFlightChanges" -> Json.obj(
+        "PPOBDetails" -> Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "line2" -> addLine2,
+            "line3" -> addLine3,
+            "line4" -> addLine4,
+            "line5" -> addLine5,
+            "postCode" -> postcode,
+            "countryCode" -> countryCode
+          ),
+          "contactDetails" -> Json.obj(
+            "primaryPhoneNumber" -> phoneNumber,
+            "mobileNumber" -> mobileNumber,
+            "faxNumber" -> faxNumber,
+            "emailAddress" -> email,
+            "emailVerified" -> emailVerified
+          ),
+          "websiteAddress" -> website
+        ),
+        "bankDetails" -> Json.obj(
+          "accountHolderName" -> accName,
+          "bankAccountNumber" -> accNum,
+          "sortCode" -> accSort
+        ),
+        "returnPeriod" -> Json.obj(
+          "stdReturnPeriod" -> mcReturnPeriod
+        )
+      )
+    )
+  )
+
+  val customerInformationDESJsonMaxV3_3: JsValue = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "organisationName" -> orgName,
