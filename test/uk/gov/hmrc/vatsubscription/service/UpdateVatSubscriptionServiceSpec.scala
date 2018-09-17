@@ -87,6 +87,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
         requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
+        updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing())
       )
 
@@ -103,6 +104,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
         requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
+        updateDeregistrationInfo = None,
         declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
       )
 
@@ -124,6 +126,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
         requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
+        updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing())
       )
 
@@ -140,6 +143,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
         requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
+        updateDeregistrationInfo = None,
         declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
       )
 

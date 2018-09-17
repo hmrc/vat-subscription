@@ -44,6 +44,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
       requestedChanges = changeReturnPeriod,
       updatedPPOB = None,
       updatedReturnPeriod = Some(updatedReturnPeriod),
+      updateDeregistrationInfo = None,
       declaration = nonAgentDeclaration
     )
 
