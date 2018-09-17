@@ -26,12 +26,9 @@ import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 
 class UpdatePPOBControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
-  val invalidJson: JsValue = Json.obj()
   val validPPOBJson: JsValue = Json.obj("PPOBAddress" -> Json.obj(
     "line1" -> "something", "postcode" -> "something", "countryCode" -> "ES")
   )
-  val invalidPPOBJson: JsValue = Json.obj("PPOBAddress" -> "AB")
-  val invalidPPOBResponse: JsValue = Json.obj("status" -> "PPOB_ERROR", "message" -> "Invalid Json or Invalid PPOB supplied")
 
   val testSuccessDesResponse: JsValue = Json.obj("formBundle" -> "XAIT000000123456")
   val testErrorDesResponse: JsValue = Json.obj("code" -> "TEST", "reason" -> "ERROR")
