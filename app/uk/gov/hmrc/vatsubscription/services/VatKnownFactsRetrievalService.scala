@@ -20,12 +20,10 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.vatsubscription.connectors
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
-import uk.gov.hmrc.vatsubscription.httpparsers
 import uk.gov.hmrc.vatsubscription.models._
-
 import scala.concurrent.{ExecutionContext, Future}
-
 
 @Singleton
 class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVatCustomerInformationConnector)
@@ -46,9 +44,9 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
           )
           case _ => Left(InvalidVatKnownFacts)
         }
-      case Left(httpparsers.InvalidVatNumber) => Left(InvalidVatNumber)
-      case Left(httpparsers.VatNumberNotFound) => Left(VatNumberNotFound)
-      case Left(httpparsers.UnexpectedGetVatCustomerInformationFailure(status, body)) => Left(UnexpectedGetVatCustomerInformationFailure(status, body))
+      case Left(connectors.InvalidVatNumber) => Left(InvalidVatNumber)
+      case Left(connectors.VatNumberNotFound) => Left(VatNumberNotFound)
+      case Left(connectors.UnexpectedGetVatCustomerInformationFailure(status, body)) => Left(UnexpectedGetVatCustomerInformationFailure(status, body))
     }
   }
 

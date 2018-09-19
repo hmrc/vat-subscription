@@ -24,10 +24,9 @@ import play.api.{Application, Environment, Mode}
 import play.api.libs.json.Writes
 import play.api.libs.ws.{WSClient, WSResponse}
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.config.featureswitch.{FeatureSwitch, FeatureSwitching}
 
 trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with WiremockHelper
-  with BeforeAndAfterAll with BeforeAndAfterEach with FeatureSwitching {
+  with BeforeAndAfterAll with BeforeAndAfterEach {
   lazy val ws = app.injector.instanceOf[WSClient]
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -47,11 +46,6 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
   override def beforeAll(): Unit = {
     super.beforeAll()
     startWiremock()
-  }
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    FeatureSwitch.switches foreach disable
   }
 
   override def afterAll(): Unit = {

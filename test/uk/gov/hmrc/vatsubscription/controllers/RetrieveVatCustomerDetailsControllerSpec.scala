@@ -26,7 +26,7 @@
   import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
   import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
   import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
-  import uk.gov.hmrc.vatsubscription.httpparsers.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
+  import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
   import uk.gov.hmrc.vatsubscription.models.CustomerDetails
   import uk.gov.hmrc.vatsubscription.service.mocks.MockVatCustomerDetailsRetrievalService
 

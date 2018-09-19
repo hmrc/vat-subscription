@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, Writes, __}
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
 
 case class PendingChanges(ppob: Option[PPOBGet],
@@ -30,10 +31,16 @@ object PendingChanges {
   private val bankDetailsPath =  __ \ "bankDetails"
   private val returnPeriodPath = __ \ "returnPeriod"
 
-  implicit val reads: Reads[PendingChanges] = (
+  val currentReads: Reads[PendingChanges] = (
     ppobPath.readNullable[PPOBGet] and
       bankDetailsPath.readNullable[BankDetails] and
-      returnPeriodPath.readNullable[ReturnPeriod]
+      returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.currentReads)
+    )(PendingChanges.apply _)
+
+  val newReads: Reads[PendingChanges] = (
+    ppobPath.readNullable[PPOBGet] and
+      bankDetailsPath.readNullable[BankDetails] and
+      returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.newReads)
     )(PendingChanges.apply _)
 
   implicit val writes: Writes[PendingChanges] = (
