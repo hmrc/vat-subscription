@@ -17,27 +17,24 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import assets.TestUtil
+import play.api.libs.json.Json
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, AnyContentAsJson, Result}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
-import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
-import uk.gov.hmrc.vatsubscription.models._
+import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MBReturnPeriod, MCReturnPeriod, MMReturnPeriod}
 import uk.gov.hmrc.vatsubscription.service.mocks.MockUpdateVatsubscriptionService
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateVatsubscriptionService {
+class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateVatsubscriptionService {
 
-  object TestUpdateVatCustomerDetailsController
-    extends UpdateVatCustomerDetailsController(mockVatAuthorised, mockUpdateVatSubscriptionService)
+  object TestUpdateReturnPeriodController
+    extends UpdateReturnPeriodController(mockVatAuthorised, mockUpdateVatSubscriptionService)
 
   val maRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MAReturnPeriod))
   val mbRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MBReturnPeriod))
@@ -50,7 +47,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
 
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(maRequest))
+        val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(maRequest))
         status(res) shouldBe FORBIDDEN
       }
     }
@@ -64,7 +61,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockUpdateReturnPeriod(MAReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(maRequest))
+          val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(maRequest))
 
           status(res) shouldBe OK
           jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
@@ -75,7 +72,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockUpdateReturnPeriod(MBReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(mbRequest))
+          val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mbRequest))
 
           status(res) shouldBe OK
           jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
@@ -86,7 +83,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockUpdateReturnPeriod(MCReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(mcRequest))
+          val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mcRequest))
 
           status(res) shouldBe OK
           jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
@@ -97,7 +94,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockUpdateReturnPeriod(MMReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(mmRequest))
+          val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mmRequest))
 
           status(res) shouldBe OK
           jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
@@ -109,7 +106,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
         "no json body is supplied for the PUT" should {
 
           val unknownReturnPeriodRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(unknownReturnPeriodRequest))
+          lazy val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(unknownReturnPeriodRequest))
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -123,7 +120,7 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
 
         "a valid return period is supplied but an error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updateVatReturnPeriod(testVatNumber)(maRequest))
+          lazy val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(maRequest))
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -139,67 +136,4 @@ class UpdateVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthor
     }
   }
 
-  val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
-
-  "the.updatePPOB() method" when {
-
-    "the user is not authorised" should {
-
-      "return FORBIDDEN" in {
-        mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(ppobPostRequest))
-        status(res) shouldBe FORBIDDEN
-      }
-    }
-
-    "The user is authorised" should {
-
-      "return a successful response" when {
-
-        "a valid PPOBPost is supplied and the response from the UpdateVatSubscription service is successful" in {
-
-          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-          mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Right(updateSuccessResponse)))
-
-          val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(ppobPostRequest))
-
-          status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
-        }
-      }
-
-      "return an error response" when {
-
-        "no json body is supplied for the PUT" should {
-
-          val emptyPPOBRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(emptyPPOBRequest))
-
-          "return status BAD_REQUEST (400)" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            status(res) shouldBe BAD_REQUEST
-          }
-
-          "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("PPOB_ERROR", "Unknown body retrieved"))
-          }
-        }
-
-        "a valid PPOB is supplied but an error is returned from the UpdateVatSubscription Service" should {
-
-          lazy val res: Result = await(TestUpdateVatCustomerDetailsController.updatePPOB(testVatNumber)(ppobPostRequest))
-
-          "return status INTERNAL_SERVER_ERROR (500)" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Left(updateErrorResponse)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
-          }
-
-          "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
-          }
-        }
-      }
-    }
-  }
 }

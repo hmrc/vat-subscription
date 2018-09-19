@@ -17,30 +17,23 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.Status._
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
-import uk.gov.hmrc.vatsubscription.helpers.servicemocks.UpdateVatCustomerSubscriptionStub._
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.testVatNumber
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub.{mtdVatEnrolment, stubAuth, stubAuthFailure, successfulAuthResponse}
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.UpdateVatCustomerSubscriptionStub.stubUpdateSubscription
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 
-class UpdateVatCustomerDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
+class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
   val validReturnPeriodJson: JsValue = Json.obj("stdReturnPeriod" -> "MA")
   val invalidJson: JsValue = Json.obj()
   val invalidReturnPeriodJson: JsValue = Json.obj("stdReturnPeriod" -> "AB")
   val invalidReturnPeriodResponse: JsValue = Json.obj("status" -> "RETURN_PERIOD_ERROR", "message" -> "Invalid Json or Invalid Return Period supplied")
 
-  val validPPOBJson: JsValue = Json.obj("PPOBAddress" -> Json.obj(
-    "line1" -> "something", "postcode" -> "something", "countryCode" -> "ES")
-  )
-  val invalidPPOBJson: JsValue = Json.obj("PPOBAddress" -> "AB")
-  val invalidPPOBResponse: JsValue = Json.obj("status" -> "PPOB_ERROR", "message" -> "Invalid Json or Invalid PPOB supplied")
-
   val testSuccessDesResponse: JsValue = Json.obj("formBundle" -> "XAIT000000123456")
   val testErrorDesResponse: JsValue = Json.obj("code" -> "TEST", "reason" -> "ERROR")
   val testErrorResponse: JsValue = Json.obj("status" -> "TEST", "message" -> "ERROR")
-
 
   "PUT /vat-subscription/:vatNumber/return-period" when {
 
@@ -109,57 +102,6 @@ class UpdateVatCustomerDetailsControllerISpec extends ComponentSpecBase with Bef
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
           val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
-
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR),
-            jsonBodyAs(testErrorResponse)
-          )
-        }
-      }
-    }
-  }
-
-  "PUT /vat-subscription/:vatNumber/ppob" when {
-
-    "the user is unauthorised" should {
-      "return FORBIDDEN" in {
-
-        stubAuthFailure()
-
-        val res = await(put(s"/$testVatNumber/ppob")(validPPOBJson))
-
-        res should have(
-          httpStatus(FORBIDDEN)
-        )
-      }
-    }
-
-    "the user is authorised" should {
-
-      "calls to DES is successful" should {
-
-        "return OK with the status" in {
-
-          stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-          stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
-
-          val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax)))
-
-          res should have(
-            httpStatus(OK),
-            jsonBodyAs(testSuccessDesResponse)
-          )
-        }
-      }
-
-      "calls to DES return an error" should {
-
-        "return ISE with the error response" in {
-
-          stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-          stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
-
-          val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax)))
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),
