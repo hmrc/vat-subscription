@@ -95,4 +95,16 @@ object PPOBTestConstants {
     "countryCode" -> countryCode,
     "addressValidated" -> true
   )
+
+  val ppobPostExample = PPOBPost(
+    ppobAddressPostValue,
+    Some(contactDetailsModelMax),
+    Some("awesomeness@totallyrad.com")
+  )
+
+  val ppobPostExampleJson: JsValue = Json.obj(
+    "address" -> ppobAddressPostJson,
+    "contactDetails" -> Json.toJson(contactDetailsModelMax),
+    "websiteAddress" -> "awesomeness@totallyrad.com"
+  )
 }
