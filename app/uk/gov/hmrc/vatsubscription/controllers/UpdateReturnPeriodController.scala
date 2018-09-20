@@ -33,10 +33,11 @@ class UpdateReturnPeriodController @Inject()(VatAuthorised: VatAuthorised,
 
   def updateVatReturnPeriod(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
-      parseJsonBody[ReturnPeriod] match {
+      parseJsonBody[ReturnPeriod](user, ReturnPeriod.frontendRds) match {
         case Left(error) =>
           Future.successful(BadRequest(Json.toJson(error)))
-        case Right(invalid) if invalid.stdReturnPeriod.equals("XX") => Future.successful(BadRequest(Json.toJson(ErrorModel("RETURN_PERIOD_ERROR","Invalid Return Period supplied"))))
+        case Right(invalid) if invalid.stdReturnPeriod.equals("XX") =>
+          Future.successful(BadRequest(Json.toJson(ErrorModel("RETURN_PERIOD_ERROR","Invalid Return Period supplied"))))
         case Right(period) =>
           vatSubscriptionService.updateReturnPeriod(period) map {
             case Right(success) => Ok(Json.toJson(success))

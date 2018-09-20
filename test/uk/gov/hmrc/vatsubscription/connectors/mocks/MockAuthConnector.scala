@@ -62,9 +62,8 @@ trait MockAuthConnector extends BeforeAndAfterEach with MockitoSugar {
       )
     )
 
-  override protected def beforeEach(): Unit = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuthConnector)
   }
-
 }

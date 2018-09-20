@@ -59,18 +59,24 @@ object ReturnPeriod {
 
   def unapply(arg: ReturnPeriod): String = arg.stdReturnPeriod
 
-  implicit val returnPeriodReader: Reads[ReturnPeriod] = for {
-    value <- (__ \ "stdReturnPeriod").readNullable[String] map {
-      case Some(MAReturnPeriod.stdReturnPeriod) => MAReturnPeriod
-      case Some(MBReturnPeriod.stdReturnPeriod) => MBReturnPeriod
-      case Some(MCReturnPeriod.stdReturnPeriod) => MCReturnPeriod
-      case Some(MMReturnPeriod.stdReturnPeriod) => MMReturnPeriod
-      case invalid =>
-        Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$invalid'")
-        InvalidReturnPeriod
-    }
-  } yield value
+  val frontendRds: Reads[ReturnPeriod] = readReturnPeriod("stdReturnPeriod")
 
+  val currentDesReads: Reads[ReturnPeriod] = readReturnPeriod("stdReturnPeriod")
+
+  val newDesReads: Reads[ReturnPeriod] = readReturnPeriod("returnPeriod")
+
+  private def readReturnPeriod(attributeName: String): Reads[ReturnPeriod] =
+    for {
+      value <- (__ \ attributeName).readNullable[String] map {
+        case Some(MAReturnPeriod.stdReturnPeriod) => MAReturnPeriod
+        case Some(MBReturnPeriod.stdReturnPeriod) => MBReturnPeriod
+        case Some(MCReturnPeriod.stdReturnPeriod) => MCReturnPeriod
+        case Some(MMReturnPeriod.stdReturnPeriod) => MMReturnPeriod
+        case invalid =>
+          Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$invalid'")
+          InvalidReturnPeriod
+      }
+    } yield value
 
   implicit val returnPeriodWriter: Writes[ReturnPeriod] = Writes {
     period => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)

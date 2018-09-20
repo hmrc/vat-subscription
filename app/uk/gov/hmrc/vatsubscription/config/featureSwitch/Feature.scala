@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.config.featureswitch
+package uk.gov.hmrc.vatsubscription.config.featureSwitch
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.Configuration
 
+class Feature(val key: String, config: Configuration) {
 
-case class FeatureSwitchSetting(feature: String, enable: Boolean)
+  def apply(value: Boolean): Unit = sys.props += key -> value.toString
 
-object FeatureSwitchSetting {
-
-  implicit val format: OFormat[FeatureSwitchSetting] = Json.format[FeatureSwitchSetting]
-
-  def apply(featureSwitch: FeatureSwitch, enable: Boolean): FeatureSwitchSetting =
-    FeatureSwitchSetting(featureSwitch.displayName, enable)
-
+  def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
 }

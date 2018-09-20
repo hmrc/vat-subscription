@@ -64,23 +64,32 @@ class ReturnPeriodSpec extends UnitSpec {
     }
   }
 
-  "ReturnPeriod Reads" should {
-    "parse the json correctly for MA types" in {
-      returnPeriodMAJson.as[ReturnPeriod] shouldBe MAReturnPeriod
-    }
+  "ReturnPeriod .currentReads" should {
 
-    "parse the json correctly for MB types" in {
-      returnPeriodMBJson.as[ReturnPeriod] shouldBe MBReturnPeriod
-    }
+      val json = Json.obj(
+        "stdReturnPeriod" -> "MA"
+      )
 
-    "parse the json correctly for MC types" in {
-      returnPeriodMCJson.as[ReturnPeriod] shouldBe MCReturnPeriod
-    }
+      val model: ReturnPeriod = MAReturnPeriod
 
-    "parse the json correctly for MM types" in {
-      returnPeriodMMJson.as[ReturnPeriod] shouldBe MMReturnPeriod
-    }
+      "output a correctly formatted UpdatedReturnPeriod json" in {
+          ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
+      }
   }
+
+  "ReturnPeriod .newReads" should {
+
+      val json = Json.obj(
+        "returnPeriod" -> "MA"
+      )
+
+      val model: ReturnPeriod = MAReturnPeriod
+
+      "output a correctly formatted UpdatedReturnPeriod json" in {
+          ReturnPeriod.newDesReads.reads(json).get shouldEqual model
+      }
+  }
+
 
   "ReturnPeriod Writes" should {
 

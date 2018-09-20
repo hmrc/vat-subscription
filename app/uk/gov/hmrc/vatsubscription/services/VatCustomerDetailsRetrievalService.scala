@@ -23,7 +23,7 @@ import cats.instances.future._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
-import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationFailure
+import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationFailure
 import uk.gov.hmrc.vatsubscription.models._
 
 import scala.concurrent.{ExecutionContext, Future}

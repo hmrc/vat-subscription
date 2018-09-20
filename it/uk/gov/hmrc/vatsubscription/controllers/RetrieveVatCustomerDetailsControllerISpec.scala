@@ -169,7 +169,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           "sortCode" -> accSort
         ),
         "returnPeriod" -> Json.obj(
-          "stdReturnPeriod" -> returnPeriod
+          "returnPeriod" -> returnPeriod
         )
       )
     )

@@ -22,7 +22,6 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
-import uk.gov.hmrc.vatsubscription.httpparsers.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpParserResponse
 
 import scala.concurrent.Future
 
@@ -30,16 +29,16 @@ trait MockGetVatCustomerInformationConnector extends MockitoSugar with BeforeAnd
   this: Suite =>
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockGetVatCustomerInformationConnector)
+    reset(mockConnector)
   }
 
-  val mockGetVatCustomerInformationConnector: GetVatCustomerInformationConnector = mock[GetVatCustomerInformationConnector]
+  val mockConnector: GetVatCustomerInformationConnector = mock[GetVatCustomerInformationConnector]
 
-  def mockGetVatCustomerInformationConnector(vatNumber: String
-                                            )(response: Future[GetVatCustomerInformationHttpParserResponse]): Unit = {
-    when(mockGetVatCustomerInformationConnector.getInformation(
+  def mockGetVatCustomerInformationConnector(vatNumber: String)
+                                            (response: Future[mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpParserResponse])
+  : Unit = {
+    when(mockConnector.getInformation(
       ArgumentMatchers.eq(vatNumber)
     )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
   }
-
 }

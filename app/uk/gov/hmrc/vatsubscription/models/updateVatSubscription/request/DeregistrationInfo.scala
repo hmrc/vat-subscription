@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.vatsubscription.config.featureswitch
+package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-trait FeatureSwitching {
-  val FEATURE_SWITCH_ON = "true"
-  val FEATURE_SWITCH_OFF = "false"
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Writes}
 
+case class DeregistrationInfo(deregReason: String,
+                              deregDate: Option[String],
+                              deregLaterDate: Option[String])
 
-  protected def isEnabled(featureSwitch: FeatureSwitch): Boolean =
-    sys.props get featureSwitch.name contains FEATURE_SWITCH_ON
+object DeregistrationInfo {
 
-  protected def enable(featureSwitch: FeatureSwitch): Unit =
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+  implicit val writes: Writes[DeregistrationInfo] = (
+    (JsPath \ "deregReason").write[String] and
+      (JsPath \ "deregDate").writeNullable[String] and
+      (JsPath \ "deregLaterDate").writeNullable[String]
+    )(unlift(DeregistrationInfo.unapply))
 
-  protected def disable(featureSwitch: FeatureSwitch): Unit =
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
 }

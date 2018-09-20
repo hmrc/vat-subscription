@@ -17,7 +17,8 @@
 package assets
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.Injector
@@ -30,13 +31,23 @@ import uk.gov.hmrc.vatsubscription.config.AppConfig
 
 import scala.concurrent.ExecutionContext
 
-class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    mockAppConfig.features.stubDes(false)
+    mockAppConfig.features.latestApi1363Version(true)
+  }
+
+  override def afterEach(): Unit = {
+    super.afterEach()
+    mockAppConfig.features.stubDes(false)
+    mockAppConfig.features.latestApi1363Version(true)
+  }
 
   lazy val injector: Injector = app.injector
-
   implicit lazy val system: ActorSystem = ActorSystem()
-  implicit lazy val materializer: ActorMaterializer = ActorMaterializer()
-
+  implicit lazy val materializer: Materializer = app.materializer
   implicit lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   implicit lazy val mockAppConfig: AppConfig = injector.instanceOf[AppConfig]
   implicit lazy val mockHttp: HttpClient = mock[HttpClient]
