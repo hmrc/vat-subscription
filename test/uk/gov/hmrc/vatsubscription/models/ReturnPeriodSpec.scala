@@ -73,7 +73,7 @@ class ReturnPeriodSpec extends UnitSpec {
       val model: ReturnPeriod = MAReturnPeriod
 
       "output a correctly formatted UpdatedReturnPeriod json" in {
-          ReturnPeriod.currentReads.reads(json).get shouldEqual model
+          ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
       }
   }
 
@@ -86,7 +86,7 @@ class ReturnPeriodSpec extends UnitSpec {
       val model: ReturnPeriod = MAReturnPeriod
 
       "output a correctly formatted UpdatedReturnPeriod json" in {
-          ReturnPeriod.newReads.reads(json).get shouldEqual model
+          ReturnPeriod.newDesReads.reads(json).get shouldEqual model
       }
   }
 

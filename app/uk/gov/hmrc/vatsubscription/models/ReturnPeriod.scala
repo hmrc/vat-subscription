@@ -59,9 +59,11 @@ object ReturnPeriod {
 
   def unapply(arg: ReturnPeriod): String = arg.stdReturnPeriod
 
-  val currentReads: Reads[ReturnPeriod] = readReturnPeriod("stdReturnPeriod")
+  val frontendRds: Reads[ReturnPeriod] = readReturnPeriod("stdReturnPeriod")
 
-  val newReads: Reads[ReturnPeriod] = readReturnPeriod("returnPeriod")
+  val currentDesReads: Reads[ReturnPeriod] = readReturnPeriod("stdReturnPeriod")
+
+  val newDesReads: Reads[ReturnPeriod] = readReturnPeriod("returnPeriod")
 
   private def readReturnPeriod(attributeName: String): Reads[ReturnPeriod] =
     for {

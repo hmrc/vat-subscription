@@ -73,7 +73,7 @@ object VatCustomerInformation extends JsonReadUtil {
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
-    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentReads)
+    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.currentReads)
@@ -106,7 +106,7 @@ object VatCustomerInformation extends JsonReadUtil {
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
-    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentReads)
+    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)

@@ -114,7 +114,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("RETURN_PERIOD_ERROR", "Invalid Json or Invalid Return Period supplied"))
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${unknownReturnPeriodRequest.body}"))
           }
         }
 

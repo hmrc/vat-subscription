@@ -78,7 +78,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("PPOB_ERROR", "Unknown body retrieved"))
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyPPOBRequest.body}"))
           }
         }
 

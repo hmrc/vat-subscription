@@ -29,7 +29,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
   val validReturnPeriodJson: JsValue = Json.obj("stdReturnPeriod" -> "MA")
   val invalidJson: JsValue = Json.obj()
   val invalidReturnPeriodJson: JsValue = Json.obj("stdReturnPeriod" -> "AB")
-  val invalidReturnPeriodResponse: JsValue = Json.obj("status" -> "RETURN_PERIOD_ERROR", "message" -> "Invalid Json or Invalid Return Period supplied")
+  val invalidReturnPeriodResponse: JsValue = Json.obj("status" -> "RETURN_PERIOD_ERROR", "message" -> "Invalid Return Period supplied")
 
   val testSuccessDesResponse: JsValue = Json.obj("formBundle" -> "XAIT000000123456")
   val testErrorDesResponse: JsValue = Json.obj("code" -> "TEST", "reason" -> "ERROR")

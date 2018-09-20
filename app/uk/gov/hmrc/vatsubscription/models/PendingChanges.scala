@@ -34,13 +34,13 @@ object PendingChanges {
   val currentReads: Reads[PendingChanges] = (
     ppobPath.readNullable[PPOBGet] and
       bankDetailsPath.readNullable[BankDetails] and
-      returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.currentReads)
+      returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.currentDesReads)
     )(PendingChanges.apply _)
 
   val newReads: Reads[PendingChanges] = (
     ppobPath.readNullable[PPOBGet] and
       bankDetailsPath.readNullable[BankDetails] and
-      returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.newReads)
+      returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.newDesReads)
     )(PendingChanges.apply _)
 
   implicit val writes: Writes[PendingChanges] = (
