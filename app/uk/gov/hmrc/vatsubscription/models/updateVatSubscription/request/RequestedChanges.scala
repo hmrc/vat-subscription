@@ -26,7 +26,7 @@ case class RequestedChanges(addressDetails: Boolean = false,
 
 object ChangePPOB extends RequestedChanges(addressDetails = true)
 object ChangeReturnPeriod extends RequestedChanges(returnPeriod = true)
-object Deregistration extends RequestedChanges(deregInfo = true)
+object DeregistrationRequest extends RequestedChanges(deregInfo = true)
 
 object RequestedChanges {
 
