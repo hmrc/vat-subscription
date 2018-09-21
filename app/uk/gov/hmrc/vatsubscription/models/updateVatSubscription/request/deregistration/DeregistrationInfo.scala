@@ -18,7 +18,6 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregis
 
 import java.time.LocalDate
 
-import play.api.libs.json
 import play.api.libs.json._
 
 case class DeregistrationInfo(deregReason: DeregistrationReason,

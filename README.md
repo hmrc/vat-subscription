@@ -244,7 +244,7 @@ The request takes a body of the form:
 Where:
 
 * **deregReason** is mandatory and should be `ceased` or `belowThreshold`
-* **ceasedTradingDate** is mandatory IF the deregReason is `ceased`
+* **deregDate** is mandatory IF the deregReason is `ceased`
 * **deregLaterDate** is optional and only required if the Taxpayer wants a delayed date of deregistration
 * **intendSellCapitalAssets** is mandatory and should be `true` or `false`
 * **capitalAssetsValue** is mandatory IF intendSellCapitalAssets is `true`
