@@ -37,7 +37,7 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
     extends RequestDeregistrationController(mockVatAuthorised, mockDeregistrationRequestService)
 
   val deregRequest: FakeRequest[AnyContentAsJson] =
-    FakeRequest().withJsonBody(DeregistrationInfoTestConstants.deregistrationInfoFrontendJsonMax)
+    FakeRequest().withJsonBody(DeregistrationInfoTestConstants.deregInfoCeasedTradingFrontendJson)
 
   "the .deregister() method" when {
 
@@ -57,7 +57,7 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
         "a valid Deregistration Model is received" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-          mockDeregister(DeregistrationInfoTestConstants.deregistrationInfoModelMax)(Future.successful(Right(updateSuccessResponse)))
+          mockDeregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(deregRequest))
 
@@ -89,7 +89,7 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockDeregister(DeregistrationInfoTestConstants.deregistrationInfoModelMax)(Future.successful(Left(updateErrorResponse)))
+            mockDeregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 

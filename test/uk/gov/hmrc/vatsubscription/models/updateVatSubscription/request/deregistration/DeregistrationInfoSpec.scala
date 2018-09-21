@@ -16,22 +16,143 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration
 
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.DeregistrationInfoTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.{DeregistrationInfoTestConstants, TurnoverBelowThresholdTestConstants}
 
 class DeregistrationInfoSpec extends UnitSpec {
 
   "DeregInfo" when {
 
+    "calling the .validate method" should {
+
+      "Return 'unexpxected turnoverBelowThreshold object when journey is ceasedTrading'" in {
+        val invalid = DeregistrationInfo(
+          deregReason = CeasedTrading,
+          deregDate = Some(DeregistrationInfoTestConstants.deregDate),
+          deregLaterDate = None,
+          turnoverBelowThreshold = Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax),
+          optionToTax = false,
+          intendSellCapitalAssets = false,
+          additionalTaxInvoices = false,
+          cashAccountingScheme = false,
+          optionToTaxValue = None,
+          stocksValue = None,
+          capitalAssetsValue = None
+        )
+
+        invalid.validate shouldBe JsError("unexpxected turnoverBelowThreshold object when journey is ceasedTrading")
+      }
+
+      "Return 'deregDate is mandatory when journey is ceasedTrading'" in {
+        val invalid = DeregistrationInfo(
+          deregReason = CeasedTrading,
+          deregDate = None,
+          deregLaterDate = None,
+          turnoverBelowThreshold = None,
+          optionToTax = false,
+          intendSellCapitalAssets = false,
+          additionalTaxInvoices = false,
+          cashAccountingScheme = false,
+          optionToTaxValue = None,
+          stocksValue = None,
+          capitalAssetsValue = None
+        )
+
+        invalid.validate shouldBe JsError("deregDate is mandatory when journey is ceasedTrading")
+      }
+
+      "Return 'optionToTaxValue is mandatory when optionToTax is true'" in {
+        val invalid = DeregistrationInfo(
+          deregReason = CeasedTrading,
+          deregDate = Some(DeregistrationInfoTestConstants.deregDate),
+          deregLaterDate = None,
+          turnoverBelowThreshold = None,
+          optionToTax = true,
+          intendSellCapitalAssets = false,
+          additionalTaxInvoices = false,
+          cashAccountingScheme = false,
+          optionToTaxValue = None,
+          stocksValue = None,
+          capitalAssetsValue = None
+        )
+
+        invalid.validate shouldBe JsError("optionToTaxValue is mandatory when optionToTax is true")
+      }
+
+      "Return 'capitalAssetsValue is mandatory when intendSellCapitalAssets is true'" in {
+        val invalid = DeregistrationInfo(
+          deregReason = CeasedTrading,
+          deregDate = Some(DeregistrationInfoTestConstants.deregDate),
+          deregLaterDate = None,
+          turnoverBelowThreshold = None,
+          optionToTax = false,
+          intendSellCapitalAssets = true,
+          additionalTaxInvoices = false,
+          cashAccountingScheme = false,
+          optionToTaxValue = None,
+          stocksValue = None,
+          capitalAssetsValue = None
+        )
+
+        invalid.validate shouldBe JsError("capitalAssetsValue is mandatory when intendSellCapitalAssets is true")
+      }
+
+      "Return 'turnoverBelowThreshold is mandatory when deregReason is belowThreshold'" in {
+        val invalid = DeregistrationInfo(
+          deregReason = ReducedTurnover,
+          deregDate = None,
+          deregLaterDate = None,
+          turnoverBelowThreshold = None,
+          optionToTax = false,
+          intendSellCapitalAssets = false,
+          additionalTaxInvoices = false,
+          cashAccountingScheme = false,
+          optionToTaxValue = None,
+          stocksValue = None,
+          capitalAssetsValue = None
+        )
+
+        invalid.validate shouldBe JsError("turnoverBelowThreshold is mandatory when deregReason is belowThreshold")
+      }
+
+      "Return 'whyTurnoverBelow is mandatory when belowThreshold is belowNext12Months'" in {
+        val invalid = DeregistrationInfo(
+          deregReason = ReducedTurnover,
+          deregDate = None,
+          deregLaterDate = None,
+          turnoverBelowThreshold = Some(TurnoverBelowThreshold(
+            BelowNext12Months,
+            123,
+            None
+          )),
+          optionToTax = false,
+          intendSellCapitalAssets = false,
+          additionalTaxInvoices = false,
+          cashAccountingScheme = false,
+          optionToTaxValue = None,
+          stocksValue = None,
+          capitalAssetsValue = None
+        )
+
+        invalid.validate shouldBe JsError("whyTurnoverBelow is mandatory when belowThreshold is belowNext12Months")
+      }
+
+      "Return itself if it validates" in {
+        deregistrationInfoReducedTurnoverModel.validate shouldBe JsSuccess(deregistrationInfoReducedTurnoverModel)
+      }
+
+    }
+
     "deserializing JSON" should {
 
       "return correct DeregistrationInfo model when valid JSON max is received" in {
-        deregistrationInfoFrontendJsonMax.as[DeregistrationInfo] shouldBe deregistrationInfoModelMax
+        deregInfoCeasedTradingFrontendJson.as[DeregistrationInfo] shouldBe deregInfoCeasedTradingModel
       }
 
       "return correct DeregistrationInfo model when valid JSON min is received" in {
-        deregistrationInfoFrontendJsonMin.as[DeregistrationInfo] shouldBe deregistrationInfoModelMin
+        deregInfoReducedTurnoverFrontendJson.as[DeregistrationInfo] shouldBe deregistrationInfoReducedTurnoverModel
       }
 
       "return JsError when invalid JSON is received" in {
@@ -42,11 +163,11 @@ class DeregistrationInfoSpec extends UnitSpec {
     "serializing to JSON" should {
 
       "for turnoverBelowThresholdModelMax output correct JSON" in {
-        Json.toJson(deregistrationInfoModelMax) shouldBe deregistrationInfoDESJsonMax
+        Json.toJson(deregInfoCeasedTradingModel) shouldBe deregInfoCeasedTradingDESJson
       }
 
       "for turnoverBelowThresholdModelMin output correct JSON" in {
-        Json.toJson(deregistrationInfoModelMin) shouldBe deregistrationInfoDESJsonMin
+        Json.toJson(deregistrationInfoReducedTurnoverModel) shouldBe deregInfoReducedTurnoverDESJson
       }
     }
   }

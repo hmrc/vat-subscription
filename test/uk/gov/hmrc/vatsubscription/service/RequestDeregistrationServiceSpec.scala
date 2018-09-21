@@ -38,7 +38,7 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.deregister(DeregistrationInfoTestConstants.deregistrationInfoModelMax)(testUser, hc, ec)
+        val result = service.deregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -47,7 +47,7 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.deregister(DeregistrationInfoTestConstants.deregistrationInfoModelMax)(testUser, hc, ec)
+        val result = service.deregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -59,13 +59,13 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is not an Agent" should {
 
-      val result = service.constructDeregistrationModel(DeregistrationInfoTestConstants.deregistrationInfoModelMax)(testUser)
+      val result = service.constructDeregistrationModel(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = DeregistrationRequest,
         updatedPPOB = None,
         updatedReturnPeriod = None,
-        updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregistrationInfoModelMax),
+        updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
         declaration = Declaration(None, Signing())
       )
 
@@ -76,13 +76,13 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      val result = service.constructDeregistrationModel(DeregistrationInfoTestConstants.deregistrationInfoModelMax)(testAgentUser)
+      val result = service.constructDeregistrationModel(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = DeregistrationRequest,
         updatedPPOB = None,
         updatedReturnPeriod = None,
-        updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregistrationInfoModelMax),
+        updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
         declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
       )
 

@@ -18,8 +18,8 @@ package uk.gov.hmrc.vatsubscription.helpers
 
 import java.time.LocalDate
 
-import play.api.libs.json.{JsString, JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{CeasedTrading, DeregistrationInfo, DeregistrationReason, TurnoverBelowThreshold}
+import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{CeasedTrading, DeregistrationInfo, ReducedTurnover}
 
 object DeregistrationInfoTestConstants {
 
@@ -31,11 +31,10 @@ object DeregistrationInfoTestConstants {
   val stocksValue: BigDecimal = 600.99
   val captialAssetsValue: BigDecimal = 12.99
 
-  val deregistrationInfoFrontendJsonMax: JsValue = Json.obj(
+  val deregInfoCeasedTradingFrontendJson: JsValue = Json.obj(
     "deregReason" -> CeasedTrading.value,
     "deregDate" -> deregDateString,
     "deregLaterDate" -> deregLaterDateString,
-    "turnoverBelowThreshold" -> TurnoverBelowThresholdTestConstants.turnoverBelowThresholdFrontendJsonMax,
     "optionToTax" -> true,
     "intendSellCapitalAssets" -> true,
     "additionalTaxInvoices" -> true,
@@ -45,11 +44,11 @@ object DeregistrationInfoTestConstants {
     "capitalAssetsValue" -> captialAssetsValue
   )
 
-  val deregistrationInfoModelMax: DeregistrationInfo = DeregistrationInfo(
+  val deregInfoCeasedTradingModel: DeregistrationInfo = DeregistrationInfo(
     CeasedTrading,
     Some(deregDate),
     Some(deregLaterDate),
-    Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax),
+    None,
     optionToTax = true,
     intendSellCapitalAssets = true,
     additionalTaxInvoices = true,
@@ -59,11 +58,10 @@ object DeregistrationInfoTestConstants {
     Some(captialAssetsValue)
   )
 
-  val deregistrationInfoDESJsonMax: JsValue = Json.obj(
+  val deregInfoCeasedTradingDESJson: JsValue = Json.obj(
     "deregReason" -> CeasedTrading.desValue,
     "deregDate" -> deregDateString,
     "deregLaterDate" -> deregLaterDateString,
-    "turnoverBelowDeregLimit" -> TurnoverBelowThresholdTestConstants.turnoverBelowThresholdDESJsonMax,
     "deregDetails" -> Json.obj(
       "optionTaxProperty" -> true,
       "intendSellCapitalAssets" -> true,
@@ -74,19 +72,20 @@ object DeregistrationInfoTestConstants {
   )
 
 
-  val deregistrationInfoFrontendJsonMin: JsValue = Json.obj(
-    "deregReason" -> CeasedTrading.value,
+  val deregInfoReducedTurnoverFrontendJson: JsValue = Json.obj(
+    "deregReason" -> ReducedTurnover.value,
+    "turnoverBelowThreshold" -> TurnoverBelowThresholdTestConstants.turnoverBelowThresholdFrontendJsonMax,
     "optionToTax" -> false,
     "intendSellCapitalAssets" -> false,
     "additionalTaxInvoices" -> false,
     "cashAccountingScheme" -> true
   )
 
-  val deregistrationInfoModelMin: DeregistrationInfo = DeregistrationInfo(
-    CeasedTrading,
+  val deregistrationInfoReducedTurnoverModel: DeregistrationInfo = DeregistrationInfo(
+    ReducedTurnover,
     None,
     None,
-    None,
+    Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax),
     optionToTax = false,
     intendSellCapitalAssets = false,
     additionalTaxInvoices = false,
@@ -96,8 +95,10 @@ object DeregistrationInfoTestConstants {
     None
   )
 
-  val deregistrationInfoDESJsonMin: JsValue = Json.obj(
-    "deregReason" -> CeasedTrading.desValue,
+  val deregInfoReducedTurnoverDESJson: JsValue = Json.obj(
+    "deregReason" -> ReducedTurnover.desValue,
+    "deregDate" -> LocalDate.now(),
+    "turnoverBelowDeregLimit" -> TurnoverBelowThresholdTestConstants.turnoverBelowThresholdDESJsonMax,
     "deregDetails" -> Json.obj(
       "optionTaxProperty" -> false,
       "intendSellCapitalAssets" -> false,

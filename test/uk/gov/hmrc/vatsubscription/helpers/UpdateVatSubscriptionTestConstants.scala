@@ -37,7 +37,7 @@ object UpdateVatSubscriptionTestConstants {
     requestedChanges = changeAll,
     updatedPPOB = Some(updatedPPOB),
     updatedReturnPeriod = Some(updatedReturnPeriod),
-    updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregistrationInfoModelMax),
+    updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
     declaration = DeclarationTestConstants.declarationModelAgent
   )
 
@@ -47,7 +47,7 @@ object UpdateVatSubscriptionTestConstants {
     "requestedChange" -> Json.toJson(changeAll),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
-    "deregistrationInfo" -> DeregistrationInfoTestConstants.deregistrationInfoDESJsonMax,
+    "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
     "declaration" -> DeclarationTestConstants.declarationDESJsonAgent
   )
 

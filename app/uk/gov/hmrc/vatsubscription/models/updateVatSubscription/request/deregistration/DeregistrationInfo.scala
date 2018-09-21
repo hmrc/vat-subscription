@@ -18,7 +18,6 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregis
 
 import java.time.LocalDate
 
-import play.api.libs.functional.syntax.unlift
 import play.api.libs.json
 import play.api.libs.json._
 
@@ -36,17 +35,47 @@ case class DeregistrationInfo(deregReason: DeregistrationReason,
 
   val ottStocksAssetsValue: BigDecimal = List(optionToTaxValue, stocksValue, capitalAssetsValue).flatten.sum
 
+  private val validateCeasedTrading: JsResult[DeregistrationInfo] = (turnoverBelowThreshold, deregDate) match {
+    case (Some(_), _) => JsError("unexpxected turnoverBelowThreshold object when journey is ceasedTrading")
+    case (_, None) => JsError("deregDate is mandatory when journey is ceasedTrading")
+    case _ => JsSuccess(this)
+  }
+
+  private val validateReducedTurnover: JsResult[DeregistrationInfo] = turnoverBelowThreshold match {
+    case None =>
+      JsError("turnoverBelowThreshold is mandatory when deregReason is belowThreshold")
+    case Some(x) if x.belowThreshold == BelowNext12Months && x.whyTurnoverBelow.isEmpty =>
+      JsError("whyTurnoverBelow is mandatory when belowThreshold is belowNext12Months")
+    case _ => JsSuccess(this)
+  }
+
+  val validate: JsResult[DeregistrationInfo] =
+    (optionToTax, optionToTaxValue, intendSellCapitalAssets, capitalAssetsValue) match {
+      case (true, None, _, _) => JsError("optionToTaxValue is mandatory when optionToTax is true")
+      case (_, _, true, None) => JsError("capitalAssetsValue is mandatory when intendSellCapitalAssets is true")
+      case (_, _, _, _) => deregReason match {
+        case ReducedTurnover => validateReducedTurnover
+        case CeasedTrading => validateCeasedTrading
+      }
+    }
 }
 
 object DeregistrationInfo {
 
-  implicit val frontendReads: Reads[DeregistrationInfo] = Json.reads[DeregistrationInfo]
+  implicit val frontendReads: Reads[DeregistrationInfo] = new Reads[DeregistrationInfo] {
+    override def reads(json: JsValue): JsResult[DeregistrationInfo] = {
+        json.validate[DeregistrationInfo](Json.reads[DeregistrationInfo]) match {
+          case JsSuccess(model, _) => model.validate
+          case err => err
+        }
+    }
+  }
 
   implicit val desWrites: Writes[DeregistrationInfo] = Writes { model =>
     JsObject(
       List(
         Some("deregReason" -> Json.toJson(model.deregReason)),
-        model.deregDate.map("deregDate" -> Json.toJson(_)),
+        Some("deregDate" -> Json.toJson(model.deregDate.getOrElse(LocalDate.now()))),
         model.deregLaterDate.map("deregLaterDate" -> Json.toJson(_)),
         model.turnoverBelowThreshold.map("turnoverBelowDeregLimit" -> Json.toJson(_)),
         Some("deregDetails" -> JsObject(

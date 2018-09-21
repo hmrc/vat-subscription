@@ -207,6 +207,77 @@ Where:
 ```
 
 
+### PUT /vat-subscription/:vatNumber/deregister
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+The request takes a body of the form:
+```
+{
+    "deregReason": "belowThreshold",
+    "ceasedTradingDate": "2018-12-22",
+    "deregLaterDate": "2018-12-30",
+    "intendSellCapitalAssets": true,
+    "capitalAssetsValue": 12.99,
+    "optionToTax": true,
+    "optionToTaxValue": 500.21,
+    "stocksValue": 600.99,
+    "cashAccountingScheme": true,
+    "additionalTaxInvoices": true,
+    "turnoverBelowThreshold": {
+        "belowThreshold": "belowPast12Months",
+        "nextTwelveMonthsTurnover": 650.55,
+        "whyTurnoverBelow": {
+            "closedPlacesOfBusiness": true,
+            "lostContract": true,
+            "moreCompetitors": true,
+            "reducedTradingHours": true,
+            "seasonalBusiness": true,
+            "semiRetiring": true,
+            "turnoverLowerThanExpected": true
+        }
+    }
+}
+```
+Where:
+
+* **deregReason** is mandatory and should be `ceased` or `belowThreshold`
+* **ceasedTradingDate** is mandatory IF the deregReason is `ceased`
+* **deregLaterDate** is optional and only required if the Taxpayer wants a delayed date of deregistration
+* **intendSellCapitalAssets** is mandatory and should be `true` or `false`
+* **capitalAssetsValue** is mandatory IF intendSellCapitalAssets is `true`
+* **optionToTax** is mandatory and should be `true` or `false`
+* **optionToTaxValue** is mandatory IF optionToTax is `true`
+* **stocksValue** is optional
+* **cashAccountingScheme** is mandatory and should be `true` or `false`
+* **additionalTaxInvoices** is mandatory, true if the Taxpayer has outstanding invoices to issue or be paid for
+* **turnoverBelowThreshold** is mandatory IF the deregReason is `belowThreshold`
+    * **belowThreshold** is mandatory and should be `belowPast12Months` or `belowNext12Months`
+    * **nextTwelveMonthsTurnover** is mandatory
+    * **whyTurnoverBelow** is mandatory IF the belowThreshold reason is `belowNext12Months`
+        * **closedPlacesOfBusiness** is mandatory and should be `true` or `false`
+        * **lostContract** is mandatory and should be `true` or `false`
+        * **moreCompetitors** is mandatory and should be `true` or `false`
+        * **reducedTradingHours** is mandatory and should be `true` or `false`
+        * **seasonalBusiness** is mandatory and should be `true` or `false`
+        * **semiRetiring** is mandatory and should be `true` or `false`
+        * **turnoverLowerThanExpected** is mandatory and should be `true` or `false`
+
+
+#### Success Response
+
+**HTTP Status**: 200
+
+**Example HTTP Response Body**:
+```
+{
+   "formBundle": "12345"
+}
+```
+
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
