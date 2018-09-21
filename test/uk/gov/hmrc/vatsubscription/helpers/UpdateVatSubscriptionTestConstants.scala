@@ -25,7 +25,6 @@ object UpdateVatSubscriptionTestConstants {
 
   val messageType: String = "SubscriptionUpdate"
 
-  val changeReturnPeriod: RequestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true, deregInfo = false)
   val changeAll: RequestedChanges = RequestedChanges(addressDetails = true, returnPeriod = true, deregInfo = true)
 
   val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod)
@@ -54,7 +53,7 @@ object UpdateVatSubscriptionTestConstants {
 
 
   val updateVatSubscriptionModelMin: UpdateVatSubscription = UpdateVatSubscription(
-    requestedChanges = changeReturnPeriod,
+    requestedChanges = ChangeReturnPeriod,
     updatedPPOB = None,
     updatedReturnPeriod = Some(updatedReturnPeriod),
     updateDeregistrationInfo = None,
@@ -64,7 +63,7 @@ object UpdateVatSubscriptionTestConstants {
   val updateVatSubscriptionDESJsonMin: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(),
-    "requestedChange" -> Json.toJson(changeReturnPeriod),
+    "requestedChange" -> Json.toJson(ChangeReturnPeriod),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
   )
