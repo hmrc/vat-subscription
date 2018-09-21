@@ -46,7 +46,7 @@ class MandationStatusControllerSpec extends TestUtil
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe OK
 
-      jsonBodyOf(await(res)) shouldBe Json.obj(TestMandationStatusController.mandationStatusKey -> testStatus.Name)
+      jsonBodyOf(await(res)) shouldBe Json.obj(TestMandationStatusController.mandationStatusKey -> testStatus.value)
     }
 
     "return the BAD_REQUEST when InvalidVatNumber" in {

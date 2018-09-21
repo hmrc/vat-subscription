@@ -19,52 +19,43 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.json._
 
 sealed trait MandationStatus {
-  def DesString: String
-
-  def Name: String
+  def desValue: String
+  def value: String
 }
 
 case object MTDfBMandated extends MandationStatus {
-  override val DesString: String = "1"
-
-  override val Name: String = "MTDfB Mandated"
+  override val desValue: String = "1"
+  override val value: String = "MTDfB Mandated"
 }
 
 case object MTDfBVoluntary extends MandationStatus {
-  override val DesString: String = "2"
-
-  override val Name: String = "MTDfB Voluntary"
+  override val desValue: String = "2"
+  override val value: String = "MTDfB Voluntary"
 }
 
 
 case object NonMTDfB extends MandationStatus {
-  override val DesString: String = "3"
-
-  override val Name: String = "Non MTDfB"
+  override val desValue: String = "3"
+  override val value: String = "Non MTDfB"
 }
 
 
 case object NonDigital extends MandationStatus {
-  override val DesString: String = "4"
-
-  override val Name: String = "Non Digital"
+  override val desValue: String = "4"
+  override val value: String = "Non Digital"
 }
 
 
 object MandationStatus {
 
-  def unapply(arg: MandationStatus): Option[String] = Some(arg.Name)
-
-  implicit val desReader: Reads[MandationStatus] = for {
-    value <- JsPath.read[String].map {
-      case MTDfBMandated.DesString => MTDfBMandated
-      case MTDfBVoluntary.DesString => MTDfBVoluntary
-      case NonMTDfB.DesString => NonMTDfB
-      case NonDigital.DesString => NonDigital
-    }
-  } yield value
+  implicit val desReader: Reads[MandationStatus] = JsPath.read[String].map {
+    case MTDfBMandated.`desValue` => MTDfBMandated
+    case MTDfBVoluntary.`desValue` => MTDfBVoluntary
+    case NonMTDfB.`desValue` => NonMTDfB
+    case NonDigital.`desValue` => NonDigital
+  }
 
   implicit val writer: Writes[MandationStatus] = Writes(
-    status => JsString(status.Name)
+    status => JsString(status.value)
   )
 }
