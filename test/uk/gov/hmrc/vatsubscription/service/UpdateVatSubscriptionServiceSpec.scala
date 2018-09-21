@@ -84,7 +84,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
       val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)(testUser)
 
       val expectedResult = UpdateVatSubscription(
-        requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+        requestedChanges = ChangeReturnPeriod,
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
         updateDeregistrationInfo = None,
@@ -101,7 +101,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
       val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
-        requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+        requestedChanges = ChangeReturnPeriod,
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
         updateDeregistrationInfo = None,
@@ -123,7 +123,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
       val result = service.constructPPOBUpdateModel(ppobModelMaxPost)(testUser)
 
       val expectedResult = UpdateVatSubscription(
-        requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
+        requestedChanges = ChangePPOB,
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -140,7 +140,7 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
       val result = service.constructPPOBUpdateModel(ppobModelMaxPost)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
-        requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
+        requestedChanges = ChangePPOB,
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,

@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.DeregistrationInfo
 
 case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
                                  controlInformation: ControlInformation = ControlInformation(),

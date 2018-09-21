@@ -55,7 +55,7 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
 
     UpdateVatSubscription(
-      requestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true),
+      requestedChanges = ChangeReturnPeriod,
       updatedPPOB = None,
       updatedReturnPeriod = Some(UpdatedReturnPeriod(updatedReturnPeriod)),
       updateDeregistrationInfo = None,
@@ -69,7 +69,7 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
 
     UpdateVatSubscription(
-      requestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false),
+      requestedChanges = ChangePPOB,
       updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
