@@ -21,13 +21,13 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
-import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
+import uk.gov.hmrc.vatsubscription.services.UpdatePPOBService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
-                                     vatSubscriptionService: UpdateVatSubscriptionService)
+                                     vatSubscriptionService: UpdatePPOBService)
                                     (implicit ec: ExecutionContext) extends MicroserviceBaseController {
 
   def updatePPOB(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {

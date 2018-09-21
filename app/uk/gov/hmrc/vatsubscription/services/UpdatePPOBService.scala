@@ -17,27 +17,18 @@
 package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
+import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
-import uk.gov.hmrc.vatsubscription.models.{ReturnPeriod, User}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
-
-  def updateReturnPeriod(updatedReturnPeriod: ReturnPeriod)
-                        (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
-
-    val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod)
-    Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
-    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
-  }
+class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
   def updatePPOB(updatedPPOB: PPOBPost)
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
@@ -45,22 +36,6 @@ class UpdateVatSubscriptionService @Inject()(updateVatSubscriptionConnector: Upd
     val subscriptionModel = constructPPOBUpdateModel(updatedPPOB)
     Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating PPOB for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
-  }
-
-
-
-  def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod)
-                                      (implicit user: User[_]): UpdateVatSubscription = {
-
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
-
-    UpdateVatSubscription(
-      requestedChanges = ChangeReturnPeriod,
-      updatedPPOB = None,
-      updatedReturnPeriod = Some(UpdatedReturnPeriod(updatedReturnPeriod)),
-      updateDeregistrationInfo = None,
-      declaration = Declaration(agentOrCapacitor, Signing())
-    )
   }
 
   def constructPPOBUpdateModel(updatedPPOB: PPOBPost)

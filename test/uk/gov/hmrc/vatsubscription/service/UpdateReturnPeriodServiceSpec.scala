@@ -19,18 +19,17 @@ package uk.gov.hmrc.vatsubscription.service
 import assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMaxPost
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
+import uk.gov.hmrc.vatsubscription.services.{UpdatePPOBService, UpdateReturnPeriodService}
 
-class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
+class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
-  def setup(response: UpdateVatSubscriptionResponse): UpdateVatSubscriptionService = {
+  def setup(response: UpdateVatSubscriptionResponse): UpdateReturnPeriodService = {
     mockUpdateVatSubscriptionResponse(response)
-    new UpdateVatSubscriptionService(mockUpdateVatSubscriptionConnector)
+    new UpdateReturnPeriodService(mockUpdateVatSubscriptionConnector)
   }
 
   "Calling .updateReturnPeriod" when {
@@ -54,30 +53,9 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
     }
   }
 
-  "Calling .updatePPOB" when {
-
-    "connector call is successful" should {
-
-      "return successful UpdateVatSubscriptionResponse model" in {
-        val service = setup(Right(SuccessModel("12345")))
-        val result = service.updatePPOB(ppobModelMaxPost)(testUser, hc, ec)
-        await(result) shouldEqual Right(SuccessModel("12345"))
-      }
-    }
-
-    "connector call is unsuccessful" should {
-
-      "return successful UpdateVatSubscriptionResponse model" in {
-        val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updatePPOB(ppobModelMaxPost)(testUser, hc, ec)
-        await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
-      }
-    }
-  }
-
   "Calling .constructReturnPeriodUpdateModel" when {
 
-    val service = new UpdateVatSubscriptionService(mockUpdateVatSubscriptionConnector)
+    val service = new UpdateReturnPeriodService(mockUpdateVatSubscriptionConnector)
 
     "user is not an Agent" should {
 
@@ -104,45 +82,6 @@ class UpdateVatSubscriptionServiceSpec extends TestUtil with MockUpdateVatSubscr
         requestedChanges = ChangeReturnPeriod,
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
-        updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
-      )
-
-      "return an UpdateVatSubscription model containing agentOrCapacitor" in {
-        result shouldEqual expectedResult
-      }
-    }
-  }
-
-  "Calling .constructPPOBUpdateModel" when {
-
-    val service = new UpdateVatSubscriptionService(mockUpdateVatSubscriptionConnector)
-
-    "user is not an Agent" should {
-
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)(testUser)
-
-      val expectedResult = UpdateVatSubscription(
-        requestedChanges = ChangePPOB,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing())
-      )
-
-      "return a correct UpdateVatSubscription model" in {
-        result shouldEqual expectedResult
-      }
-    }
-
-    "user is an Agent" should {
-
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)(testAgentUser)
-
-      val expectedResult = UpdateVatSubscription(
-        requestedChanges = ChangePPOB,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
-        updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
         declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
       )

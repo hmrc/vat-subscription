@@ -21,14 +21,13 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.models.ReturnPeriod
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
-import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
+import uk.gov.hmrc.vatsubscription.services.UpdateReturnPeriodService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdateReturnPeriodController @Inject()(VatAuthorised: VatAuthorised,
-                                             vatSubscriptionService: UpdateVatSubscriptionService)
+                                             vatSubscriptionService: UpdateReturnPeriodService)
                                             (implicit ec: ExecutionContext) extends MicroserviceBaseController {
 
   def updateVatReturnPeriod(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {

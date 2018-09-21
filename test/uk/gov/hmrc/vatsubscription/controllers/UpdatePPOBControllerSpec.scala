@@ -17,8 +17,8 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import assets.TestUtil
-import play.api.libs.json.Json
 import play.api.http.Status._
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
@@ -27,14 +27,14 @@ import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobModelMax, ppobModelMaxPost}
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
-import uk.gov.hmrc.vatsubscription.service.mocks.MockUpdateVatsubscriptionService
+import uk.gov.hmrc.vatsubscription.service.mocks.MockUpdatePPOBService
 
 import scala.concurrent.Future
 
-class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateVatsubscriptionService {
+class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with MockUpdatePPOBService {
 
   object TestUpdatePPOBController
-    extends UpdatePPOBController(mockVatAuthorised, mockUpdateVatSubscriptionService)
+    extends UpdatePPOBController(mockVatAuthorised, mockUpdatePPOBService)
 
   val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
 

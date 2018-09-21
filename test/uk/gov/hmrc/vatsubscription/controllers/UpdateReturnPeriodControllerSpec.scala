@@ -27,14 +27,14 @@ import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MBReturnPeriod, MCReturnPeriod, MMReturnPeriod}
-import uk.gov.hmrc.vatsubscription.service.mocks.MockUpdateVatsubscriptionService
+import uk.gov.hmrc.vatsubscription.service.mocks.MockUpdateReturnPeriodService
 
 import scala.concurrent.Future
 
-class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateVatsubscriptionService {
+class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateReturnPeriodService {
 
   object TestUpdateReturnPeriodController
-    extends UpdateReturnPeriodController(mockVatAuthorised, mockUpdateVatSubscriptionService)
+    extends UpdateReturnPeriodController(mockVatAuthorised, mockUpdateReturnPeriodService)
 
   val maRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MAReturnPeriod))
   val mbRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MBReturnPeriod))
