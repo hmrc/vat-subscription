@@ -22,48 +22,6 @@ import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 
 class ReturnPeriodSpec extends UnitSpec {
 
-  "ReturnPeriod.apply" should {
-
-    "for 'January' should return Jan case object" in {
-      ReturnPeriod("MA") shouldBe MAReturnPeriod
-    }
-
-    "for 'February' should return Feb case object" in {
-      ReturnPeriod("MB") shouldBe MBReturnPeriod
-    }
-
-    "for 'March' should return Mar case object" in {
-      ReturnPeriod("MC") shouldBe MCReturnPeriod
-    }
-
-    "for 'Monthly' should return Monthly case object" in {
-      ReturnPeriod("MM") shouldBe MMReturnPeriod
-    }
-
-    "for an invalid return period should return 'None'" in {
-      ReturnPeriod("AB") shouldBe InvalidReturnPeriod
-    }
-  }
-
-  "ReturnPeriod.unapply" should {
-
-    "for Jan case object return 'January'" in {
-      ReturnPeriod.unapply(MAReturnPeriod) shouldBe "MA"
-    }
-
-    "for Feb case object return 'February'" in {
-      ReturnPeriod.unapply(MBReturnPeriod) shouldBe "MB"
-    }
-
-    "for Mar case object return 'March'" in {
-      ReturnPeriod.unapply(MCReturnPeriod) shouldBe "MC"
-    }
-
-    "for Monthly case object return 'Monthly'" in {
-      ReturnPeriod.unapply(MMReturnPeriod) shouldBe "MM"
-    }
-  }
-
   "ReturnPeriod .currentReads" should {
 
       val json = Json.obj(

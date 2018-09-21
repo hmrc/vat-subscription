@@ -41,23 +41,7 @@ case object MMReturnPeriod extends ReturnPeriod {
   override val stdReturnPeriod: String = "MM"
 }
 
-case object InvalidReturnPeriod extends ReturnPeriod {
-  override val stdReturnPeriod: String = "XX"
-}
-
 object ReturnPeriod {
-
-  def apply(period: String): ReturnPeriod = period match {
-    case MAReturnPeriod.stdReturnPeriod => MAReturnPeriod
-    case MBReturnPeriod.stdReturnPeriod => MBReturnPeriod
-    case MCReturnPeriod.stdReturnPeriod => MCReturnPeriod
-    case MMReturnPeriod.stdReturnPeriod => MMReturnPeriod
-    case _ =>
-      Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$period'")
-      InvalidReturnPeriod
-  }
-
-  def unapply(arg: ReturnPeriod): String = arg.stdReturnPeriod
 
   val frontendRds: Reads[ReturnPeriod] = readReturnPeriod("stdReturnPeriod")
 
@@ -65,18 +49,17 @@ object ReturnPeriod {
 
   val newDesReads: Reads[ReturnPeriod] = readReturnPeriod("returnPeriod")
 
-  private def readReturnPeriod(attributeName: String): Reads[ReturnPeriod] =
-    for {
-      value <- (__ \ attributeName).readNullable[String] map {
-        case Some(MAReturnPeriod.stdReturnPeriod) => MAReturnPeriod
-        case Some(MBReturnPeriod.stdReturnPeriod) => MBReturnPeriod
-        case Some(MCReturnPeriod.stdReturnPeriod) => MCReturnPeriod
-        case Some(MMReturnPeriod.stdReturnPeriod) => MMReturnPeriod
-        case invalid =>
-          Logger.warn(s"[ReturnPeriod][apply] Invalid Return Period: '$invalid'")
-          InvalidReturnPeriod
+  private def readReturnPeriod(attributeName: String): Reads[ReturnPeriod] = new Reads[ReturnPeriod] {
+    override def reads(json: JsValue): JsResult[ReturnPeriod] = {
+      json.as[Option[String]]((__ \ attributeName).readNullable[String]) match {
+        case Some(MAReturnPeriod.stdReturnPeriod) => JsSuccess(MAReturnPeriod)
+        case Some(MBReturnPeriod.stdReturnPeriod) => JsSuccess(MBReturnPeriod)
+        case Some(MCReturnPeriod.stdReturnPeriod) => JsSuccess(MCReturnPeriod)
+        case Some(MMReturnPeriod.stdReturnPeriod) => JsSuccess(MMReturnPeriod)
+        case _ => JsError("Invalid Return Period supplied")
       }
-    } yield value
+    }
+  }
 
   implicit val returnPeriodWriter: Writes[ReturnPeriod] = Writes {
     period => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
