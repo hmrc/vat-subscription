@@ -34,7 +34,10 @@ class RequestedChangesSpec extends UnitSpec {
         "PPOBDetails" -> true,
         "returnPeriod" -> true,
         "deregInfo" -> true,
-        "repaymentBankDetails" -> false
+        "repaymentBankDetails" -> false,
+        "businessActivities" -> false,
+        "flateRateScheme" -> false,
+        "correspDetails" -> false
       )
 
       RequestedChanges.writes.writes(model) shouldBe result

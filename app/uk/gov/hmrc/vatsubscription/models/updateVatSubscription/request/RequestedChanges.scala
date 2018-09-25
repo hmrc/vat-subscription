@@ -22,7 +22,10 @@ import play.api.libs.functional.syntax._
 case class RequestedChanges(addressDetails: Boolean = false,
                             returnPeriod: Boolean = false,
                             deregInfo: Boolean = false,
-                            repaymentBankDetails: Boolean = false)
+                            repaymentBankDetails: Boolean = false,
+                            businessActivities: Boolean = false,
+                            flateRateScheme: Boolean = false,
+                            correspDetails: Boolean = false)
 
 object ChangePPOB extends RequestedChanges(addressDetails = true)
 object ChangeReturnPeriod extends RequestedChanges(returnPeriod = true)
@@ -34,6 +37,9 @@ object RequestedChanges {
     (JsPath \ "PPOBDetails").write[Boolean] and
     (JsPath \ "returnPeriod").write[Boolean] and
     (JsPath \ "deregInfo").write[Boolean] and
-    (JsPath \ "repaymentBankDetails").write[Boolean]
+    (JsPath \ "repaymentBankDetails").write[Boolean] and
+    (JsPath \ "businessActivities").write[Boolean] and
+    (JsPath \ "flateRateScheme").write[Boolean] and
+    (JsPath \ "correspDetails").write[Boolean]
   )(unlift(RequestedChanges.unapply))
 }
