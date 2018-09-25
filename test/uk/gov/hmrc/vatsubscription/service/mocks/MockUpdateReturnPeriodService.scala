@@ -28,24 +28,14 @@ import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockUpdateVatsubscriptionService extends MockitoSugar {
+trait MockUpdateReturnPeriodService extends MockitoSugar {
   self: Suite =>
 
-  val mockUpdateVatSubscriptionService: UpdateVatSubscriptionService = mock[UpdateVatSubscriptionService]
+  val mockUpdateReturnPeriodService: UpdateReturnPeriodService = mock[UpdateReturnPeriodService]
 
   def mockUpdateReturnPeriod(newPeriod: ReturnPeriod)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
-    when(mockUpdateVatSubscriptionService
+    when(mockUpdateReturnPeriodService
       .updateReturnPeriod(ArgumentMatchers.eq(newPeriod))(
-        ArgumentMatchers.any[User[_]],
-        ArgumentMatchers.any[HeaderCarrier],
-        ArgumentMatchers.any[ExecutionContext]
-      )
-    ).thenReturn(response)
-  }
-
-  def mockUpdatePPOB(newPPOB: PPOBPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
-    when(mockUpdateVatSubscriptionService
-      .updatePPOB(ArgumentMatchers.eq(newPPOB))(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

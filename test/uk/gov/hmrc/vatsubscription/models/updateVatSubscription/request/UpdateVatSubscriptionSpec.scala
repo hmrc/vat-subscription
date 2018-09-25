@@ -23,99 +23,17 @@ import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 
 class UpdateVatSubscriptionSpec extends UnitSpec {
 
-  "UpdateVatSubscription Writes" when {
+  "UpdateVatSubscription" when {
 
-    "supplied with an UpdatedReturnPeriod" should {
+    "serializing to JSON" should {
 
-      val model: UpdateVatSubscription = UpdateVatSubscription(
-        requestedChanges = changeReturnPeriod,
-        updatedPPOB = None,
-        updatedReturnPeriod = Some(updatedReturnPeriod),
-        updateDeregistrationInfo = None,
-        declaration = Declaration(Some(agentOrCapacitor), Signing())
-      )
-
-      "output a correctly formatted UpdateVatSubscription json object" in {
-        val result =
-          Json.obj(
-            "messageType" -> messageType,
-            "controlInformation" -> controlInformation,
-            "requestedChange" -> model.requestedChanges,
-            "returnPeriods" -> model.updatedReturnPeriod,
-            "declaration" -> model.declaration
-          )
-        UpdateVatSubscription.writes.writes(model) shouldBe result
+      "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
+        Json.toJson(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionDESJsonMax
       }
-    }
 
-    "supplied with an UpdatedPPOB" should {
-
-      val model: UpdateVatSubscription = UpdateVatSubscription(
-        requestedChanges = changePPOB,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(Some(agentOrCapacitor), Signing())
-      )
-
-      "output a correctly formatted UpdateVatSubscription json object" in {
-        val result =
-          Json.obj(
-            "messageType" -> messageType,
-            "controlInformation" -> controlInformation,
-            "requestedChange" -> model.requestedChanges,
-            "contactDetails" -> model.updatedPPOB,
-            "declaration" -> model.declaration
-          )
-        UpdateVatSubscription.writes.writes(model) shouldBe result
-      }
-    }
-
-    "supplied with an UpdatedPPOB and an UpdatedReturnPeriod" should {
-
-      val model: UpdateVatSubscription = UpdateVatSubscription(
-        requestedChanges = changePPOBandRP,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
-        updatedReturnPeriod = Some(updatedReturnPeriod),
-        updateDeregistrationInfo = None,
-        declaration = Declaration(Some(agentOrCapacitor), Signing())
-      )
-
-      "output a correctly formatted UpdateVatSubscription json object" in {
-        val result =
-          Json.obj(
-            "messageType" -> messageType,
-            "controlInformation" -> controlInformation,
-            "requestedChange" -> model.requestedChanges,
-            "contactDetails" -> model.updatedPPOB,
-            "returnPeriods" -> model.updatedReturnPeriod,
-            "declaration" -> model.declaration
-          )
-        UpdateVatSubscription.writes.writes(model) shouldBe result
-      }
-    }
-
-    "not supplied with any updates" should {
-
-      val model: UpdateVatSubscription = UpdateVatSubscription(
-        requestedChanges = changeReturnPeriod,
-        updatedPPOB = None,
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(Some(agentOrCapacitor), Signing())
-      )
-
-      "output a correctly formatted UpdateVatSubscription json object" in {
-        val result =
-          Json.obj(
-            "messageType" -> messageType,
-            "controlInformation" -> controlInformation,
-            "requestedChange" -> model.requestedChanges,
-            "declaration" -> model.declaration
-          )
-        UpdateVatSubscription.writes.writes(model) shouldBe result
+      "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
+        Json.toJson(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionDESJsonMin
       }
     }
   }
-
 }

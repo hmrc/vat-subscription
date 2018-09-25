@@ -21,25 +21,25 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
-import uk.gov.hmrc.vatsubscription.services.UpdateVatSubscriptionService
+import uk.gov.hmrc.vatsubscription.services.UpdatePPOBService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
-                                     vatSubscriptionService: UpdateVatSubscriptionService)
+                                     updatePPOBService: UpdatePPOBService)
                                     (implicit ec: ExecutionContext) extends MicroserviceBaseController {
 
   def updatePPOB(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
       parseJsonBody[PPOBPost] match {
-        case Left(error) =>
-          Future.successful(BadRequest(Json.toJson(error)))
-        case Right(updatedPpob) =>
-          vatSubscriptionService.updatePPOB(updatedPpob) map {
+        case Right(updatedPPOB) =>
+          updatePPOBService.updatePPOB(updatedPPOB) map {
             case Right(success) => Ok(Json.toJson(success))
             case Left(error) => InternalServerError(Json.toJson(error))
           }
+        case Left(error) =>
+          Future.successful(BadRequest(Json.toJson(error)))
       }
   }
 

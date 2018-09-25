@@ -24,27 +24,28 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobModelMax, ppobModelMaxPost}
+import uk.gov.hmrc.vatsubscription.helpers.DeregistrationInfoTestConstants
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
-import uk.gov.hmrc.vatsubscription.service.mocks.MockUpdatePPOBService
+import uk.gov.hmrc.vatsubscription.service.mocks.MockDeregistrationRequestService
 
 import scala.concurrent.Future
 
-class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with MockUpdatePPOBService {
+class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorised with MockDeregistrationRequestService {
 
-  object TestUpdatePPOBController
-    extends UpdatePPOBController(mockVatAuthorised, mockUpdatePPOBService)
+  object TestRequestDeregistrationController
+    extends RequestDeregistrationController(mockVatAuthorised, mockDeregistrationRequestService)
 
-  val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
+  val deregRequest: FakeRequest[AnyContentAsJson] =
+    FakeRequest().withJsonBody(DeregistrationInfoTestConstants.deregInfoCeasedTradingFrontendJson)
 
-  "the.updatePPOB() method" when {
+  "the .deregister() method" when {
 
     "the user is not authorised" should {
 
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+        val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(deregRequest))
         status(res) shouldBe FORBIDDEN
       }
     }
@@ -53,12 +54,12 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
 
       "return a successful response" when {
 
-        "a valid PPOBPost is supplied and the response from the UpdateVatSubscription service is successful" in {
+        "a valid Deregistration Model is received" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-          mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Right(updateSuccessResponse)))
+          mockDeregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+          val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(deregRequest))
 
           status(res) shouldBe OK
           jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
@@ -69,8 +70,8 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
 
         "no json body is supplied for the PUT" should {
 
-          val emptyPPOBRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          lazy val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(emptyPPOBRequest))
+          val unknownReturnPeriodRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+          lazy val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(unknownReturnPeriodRequest))
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -78,17 +79,17 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyPPOBRequest.body}"))
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${unknownReturnPeriodRequest.body}"))
           }
         }
 
-        "a valid PPOB is supplied but an error is returned from the UpdateVatSubscription Service" should {
+        "a valid return period is supplied but an error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+          lazy val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(deregRequest))
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Left(updateErrorResponse)))
+            mockDeregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
@@ -99,5 +100,4 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
       }
     }
   }
-
 }

@@ -42,4 +42,10 @@ class RoutesSpec extends TestUtil {
     UpdatePPOBController.updatePPOB(testVatNumber).url shouldBe s"/vat-subscription/$testVatNumber/ppob"
   }
 
+  s"The RequestDeregistrationController.deregister route should be a PUT to '/vat-subscription/$testVatNumber/deregister'" in {
+    val route = RequestDeregistrationController.deregister(testVatNumber)
+    route.url shouldBe s"/vat-subscription/$testVatNumber/deregister"
+    route.method shouldBe "PUT"
+  }
+
 }

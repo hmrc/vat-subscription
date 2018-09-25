@@ -23,26 +23,35 @@ import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.testVatNumbe
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub.{mtdVatEnrolment, stubAuth, stubAuthFailure, successfulAuthResponse}
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.UpdateVatCustomerSubscriptionStub.stubUpdateSubscription
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.CeasedTrading
 
-class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
+class RequestDeregistrationControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
-  val validReturnPeriodJson: JsValue = Json.obj("stdReturnPeriod" -> "MA")
-  val invalidJson: JsValue = Json.obj()
-  val invalidReturnPeriodJson: JsValue = Json.obj("stdReturnPeriod" -> "AB")
-  val invalidReturnPeriodResponse: JsValue = Json.obj("status" -> "INVALID_JSON", "message" -> "Json received, but did not validate")
+  val validDeregistrationRequestJson: JsValue = Json.obj(
+    "deregReason" -> CeasedTrading.value,
+    "deregDate" -> "2018-02-02",
+    "deregLaterDate" -> "2018-02-04",
+    "optionToTax" -> true,
+    "intendSellCapitalAssets" -> true,
+    "additionalTaxInvoices" -> true,
+    "cashAccountingScheme" -> true,
+    "optionToTaxValue" -> 400,
+    "stocksValue" -> 600,
+    "capitalAssetsValue" -> 10.99
+  )
 
   val testSuccessDesResponse: JsValue = Json.obj("formBundle" -> "XAIT000000123456")
   val testErrorDesResponse: JsValue = Json.obj("code" -> "TEST", "reason" -> "ERROR")
   val testErrorResponse: JsValue = Json.obj("status" -> "TEST", "message" -> "ERROR")
 
-  "PUT /vat-subscription/:vatNumber/return-period" when {
+  "PUT /vat-subscription/:vatNumber/deregister" when {
 
     "the user is unauthorised" should {
       "return FORBIDDEN" in {
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
+        val res = await(put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson))
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -52,32 +61,6 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
 
     "the user is authorised" should {
 
-      "return BAD_REQUEST if the Return Period is invalid" in {
-
-        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-        stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
-
-        val res = await(put(s"/$testVatNumber/return-period")(invalidReturnPeriodJson))
-
-        res should have(
-          httpStatus(BAD_REQUEST),
-          jsonBodyAs(invalidReturnPeriodResponse)
-        )
-      }
-
-      "return BAD_REQUEST if the JSON is invalid" in {
-
-        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-        stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
-
-        val res = await(put(s"/$testVatNumber/return-period")(invalidJson))
-
-        res should have(
-          httpStatus(BAD_REQUEST),
-          jsonBodyAs(invalidReturnPeriodResponse)
-        )
-      }
-
       "calls to DES is successful" should {
 
         "return OK with the status" in {
@@ -85,7 +68,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
           stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
+          val res = await(put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson))
 
           res should have(
             httpStatus(OK),
@@ -101,7 +84,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
           stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
+          val res = await(put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson))
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),
@@ -111,4 +94,5 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
       }
     }
   }
+
 }

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.helpers
 
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
@@ -23,15 +24,47 @@ import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorM
 object UpdateVatSubscriptionTestConstants {
 
   val messageType: String = "SubscriptionUpdate"
-  val controlInformation: ControlInformation = ControlInformation()
-  val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
-  val changeReturnPeriod: RequestedChanges = RequestedChanges(addressDetails = false, returnPeriod = true)
-  val changePPOB: RequestedChanges = RequestedChanges(addressDetails = true, returnPeriod = false)
-  val changePPOBandRP: RequestedChanges = RequestedChanges(addressDetails = true, returnPeriod = true)
-  val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod)
 
-  val nonAgentDeclaration: Declaration = Declaration(None, Signing())
+  val changeAll: RequestedChanges = RequestedChanges(addressDetails = true, returnPeriod = true, deregInfo = true)
+
+  val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod)
+  val updatedPPOB: UpdatedPPOB = UpdatedPPOB(PPOBTestConstants.ppobModelMaxPost)
 
   val updateSuccessResponse: SuccessModel = SuccessModel("XAVV0000000123456")
   val updateErrorResponse: ErrorModel = ErrorModel("TEST","ERROR")
+
+  val updateVatSubscriptionModelMax: UpdateVatSubscription = UpdateVatSubscription(
+    requestedChanges = changeAll,
+    updatedPPOB = Some(updatedPPOB),
+    updatedReturnPeriod = Some(updatedReturnPeriod),
+    updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
+    declaration = DeclarationTestConstants.declarationModelAgent
+  )
+
+  val updateVatSubscriptionDESJsonMax: JsValue = Json.obj(
+    "messageType" -> messageType,
+    "controlInformation" -> ControlInformation(),
+    "requestedChange" -> Json.toJson(changeAll),
+    "contactDetails" -> Json.toJson(updatedPPOB),
+    "returnPeriods" -> Json.toJson(updatedReturnPeriod),
+    "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
+    "declaration" -> DeclarationTestConstants.declarationDESJsonAgent
+  )
+
+
+  val updateVatSubscriptionModelMin: UpdateVatSubscription = UpdateVatSubscription(
+    requestedChanges = ChangeReturnPeriod,
+    updatedPPOB = None,
+    updatedReturnPeriod = Some(updatedReturnPeriod),
+    updateDeregistrationInfo = None,
+    declaration = Declaration(None, Signing())
+  )
+
+  val updateVatSubscriptionDESJsonMin: JsValue = Json.obj(
+    "messageType" -> messageType,
+    "controlInformation" -> ControlInformation(),
+    "requestedChange" -> Json.toJson(ChangeReturnPeriod),
+    "returnPeriods" -> Json.toJson(updatedReturnPeriod),
+    "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
+  )
 }

@@ -25,14 +25,19 @@ class RequestedChangesSpec extends UnitSpec {
 
     val model: RequestedChanges = RequestedChanges(
       addressDetails = true,
-      returnPeriod = true
+      returnPeriod = true,
+      deregInfo = true
     )
 
     "output a correctly formatted RequestedChanges json" in {
       val result = Json.obj(
         "PPOBDetails" -> true,
         "returnPeriod" -> true,
-        "repaymentBankDetails" -> false
+        "deregInfo" -> true,
+        "repaymentBankDetails" -> false,
+        "businessActivities" -> false,
+        "flateRateScheme" -> false,
+        "correspDetails" -> false
       )
 
       RequestedChanges.writes.writes(model) shouldBe result
