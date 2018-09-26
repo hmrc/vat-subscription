@@ -41,10 +41,20 @@ object UpdateVatSubscriptionTestConstants {
     declaration = DeclarationTestConstants.declarationModelAgent
   )
 
-  val updateVatSubscriptionDESJsonMax: JsValue = Json.obj(
+  val updateVatSubscriptionLatestDESApi1365JsonMax: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(),
-    "requestedChange" -> Json.toJson(changeAll),
+    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.latestDESApi1365Writes),
+    "contactDetails" -> Json.toJson(updatedPPOB),
+    "returnPeriods" -> Json.toJson(updatedReturnPeriod),
+    "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
+    "declaration" -> DeclarationTestConstants.declarationDESJsonAgent
+  )
+
+  val updateVatSubscriptionCurrentDESApi1365JsonMax: JsValue = Json.obj(
+    "messageType" -> messageType,
+    "controlInformation" -> ControlInformation(),
+    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.currentDESApi1365Writes),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
@@ -60,10 +70,18 @@ object UpdateVatSubscriptionTestConstants {
     declaration = Declaration(None, Signing())
   )
 
-  val updateVatSubscriptionDESJsonMin: JsValue = Json.obj(
+  val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(),
-    "requestedChange" -> Json.toJson(ChangeReturnPeriod),
+    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.latestDESApi1365Writes),
+    "returnPeriods" -> Json.toJson(updatedReturnPeriod),
+    "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
+  )
+
+  val updateVatSubscriptionCurrentDESApi1365JsonMin: JsValue = Json.obj(
+    "messageType" -> messageType,
+    "controlInformation" -> ControlInformation(),
+    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.currentDESApi1365Writes),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
   )

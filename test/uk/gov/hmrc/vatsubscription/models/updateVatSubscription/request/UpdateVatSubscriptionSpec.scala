@@ -16,10 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 
 class UpdateVatSubscriptionSpec extends UnitSpec {
 
@@ -27,12 +25,26 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
 
     "serializing to JSON" should {
 
-      "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-        Json.toJson(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionDESJsonMax
+      "for the current DES API1365 writes" should {
+
+        "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
+          UpdateVatSubscription.currentDESApi1365Writes.writes(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionCurrentDESApi1365JsonMax
+        }
+
+        "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
+          UpdateVatSubscription.currentDESApi1365Writes.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionCurrentDESApi1365JsonMin
+        }
       }
 
-      "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-        Json.toJson(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionDESJsonMin
+      "for the latest DES API1365 writes" should {
+
+        "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
+          UpdateVatSubscription.latestDESApi1365Writes.writes(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionLatestDESApi1365JsonMax
+        }
+
+        "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
+          UpdateVatSubscription.latestDESApi1365Writes.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionLatestDESApi1365JsonMin
+        }
       }
     }
   }

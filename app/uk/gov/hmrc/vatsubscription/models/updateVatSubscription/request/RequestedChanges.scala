@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class RequestedChanges(addressDetails: Boolean = false,
                             returnPeriod: Boolean = false,
@@ -33,13 +33,21 @@ object DeregistrationRequest extends RequestedChanges(deregInfo = true)
 
 object RequestedChanges {
 
-  implicit val writes: Writes[RequestedChanges] = (
-    (JsPath \ "PPOBDetails").write[Boolean] and
-    (JsPath \ "returnPeriod").write[Boolean] and
-    (JsPath \ "deregInfo").write[Boolean] and
-    (JsPath \ "repaymentBankDetails").write[Boolean] and
-    (JsPath \ "businessActivities").write[Boolean] and
-    (JsPath \ "flateRateScheme").write[Boolean] and
-    (JsPath \ "correspDetails").write[Boolean]
-  )(unlift(RequestedChanges.unapply))
+  val currentDESApi1365Writes: Writes[RequestedChanges] = Writes { model =>
+    Json.obj(
+      "PPOBDetails" -> model.addressDetails,
+      "returnPeriod" -> model.returnPeriod,
+      "repaymentBankDetails" -> model.repaymentBankDetails
+    )
+  }
+
+  val latestDESApi1365Writes: Writes[RequestedChanges] = (
+    (__ \ "PPOBDetails").write[Boolean] and
+      (__ \ "returnPeriod").write[Boolean] and
+      (__ \ "deregInfo").write[Boolean] and
+      (__ \ "repaymentBankDetails").write[Boolean] and
+      (__ \ "businessActivities").write[Boolean] and
+      (__ \ "flateRateScheme").write[Boolean] and
+      (__ \ "correspDetails").write[Boolean]
+    )(unlift(RequestedChanges.unapply))
 }

@@ -29,7 +29,17 @@ class RequestedChangesSpec extends UnitSpec {
       deregInfo = true
     )
 
-    "output a correctly formatted RequestedChanges json" in {
+    "output a correctly formatted RequestedChanges json for the current DES API1365 writes" in {
+      val result = Json.obj(
+        "PPOBDetails" -> true,
+        "returnPeriod" -> true,
+        "repaymentBankDetails" -> false
+      )
+
+      RequestedChanges.currentDESApi1365Writes.writes(model) shouldBe result
+    }
+
+    "output a correctly formatted RequestedChanges json for the latest DES API1365 writes" in {
       val result = Json.obj(
         "PPOBDetails" -> true,
         "returnPeriod" -> true,
@@ -40,7 +50,7 @@ class RequestedChangesSpec extends UnitSpec {
         "correspDetails" -> false
       )
 
-      RequestedChanges.writes.writes(model) shouldBe result
+      RequestedChanges.latestDESApi1365Writes.writes(model) shouldBe result
     }
   }
 }
