@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.config.featureSwitch
 import play.api.libs.json.{Json, OFormat}
 
 case class FeatureSwitchModel(latestApi1363Version: Boolean,
+                              latestApi1365Version: Boolean,
                               stubDes: Boolean)
 
 object FeatureSwitchModel {

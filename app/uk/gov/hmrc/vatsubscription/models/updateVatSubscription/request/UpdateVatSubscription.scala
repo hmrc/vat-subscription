@@ -30,15 +30,20 @@ case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
 
 object UpdateVatSubscription {
 
-  implicit val writes: Writes[UpdateVatSubscription] = (
-    (JsPath \ "messageType").write[String] and
-    (JsPath \ "controlInformation").write[ControlInformation] and
-    (JsPath \ "requestedChange").write[RequestedChanges] and
-    (JsPath \ "contactDetails").writeNullable[UpdatedPPOB] and
-    (JsPath \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
-    (JsPath \ "deregistrationInfo").writeNullable[DeregistrationInfo] and
-    (JsPath \ "declaration").write[Declaration]
-  )(unlift(UpdateVatSubscription.unapply))
+  val currentDESApi1365Writes: Writes[UpdateVatSubscription] = writes(RequestedChanges.currentDESApi1365Writes)
+
+  val latestDESApi1365Writes: Writes[UpdateVatSubscription] = writes(RequestedChanges.latestDESApi1365Writes)
+
+  def writes(requestedChangesWrites: Writes[RequestedChanges]): Writes[UpdateVatSubscription] = (
+    (__ \ "messageType").write[String] and
+      (__ \ "controlInformation").write[ControlInformation] and
+      (__ \ "requestedChange").write[RequestedChanges](requestedChangesWrites) and
+      (__ \ "contactDetails").writeNullable[UpdatedPPOB] and
+      (__ \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
+      (__ \ "deregistrationInfo").writeNullable[DeregistrationInfo] and
+      (__ \ "declaration").write[Declaration]
+    )(unlift(UpdateVatSubscription.unapply))
+
 }
 
 case class ControlInformation(source: String = "100",

@@ -18,8 +18,8 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import assets.{MockHttpClient, TestUtil}
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testUser
-import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.DeclarationTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{ChangeReturnPeriod, UpdateVatSubscription}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
@@ -32,10 +32,8 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
 
     object TestConnector extends UpdateVatSubscriptionConnector(mockHttp, mockAppConfig)
 
-    lazy val result: String = TestConnector.url("123456789")
-
     "correctly format the url" in {
-      result shouldEqual "http://localhost:9156/vat/subscription/vrn/123456789"
+      TestConnector.url("123456789") shouldEqual "http://localhost:9156/vat/subscription/vrn/123456789"
     }
   }
 
@@ -55,21 +53,38 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
     }
 
     "http PUT is successful" should {
-      lazy val connector = setup(Right(SuccessModel("12345")))
 
-      lazy val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+      "return successful UpdateVatSubscriptionResponse model when using the latest API version" in {
 
-      "return successful UpdateVatSubscriptionResponse model" in {
-        await(result) shouldEqual Right(SuccessModel("12345"))
+        mockAppConfig.features.latestApi1365Version(true)
+
+        val connector = setup(Right(SuccessModel("12345")))
+        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+
+        await(result) shouldBe Right(SuccessModel("12345"))
+        connector.writes shouldBe UpdateVatSubscription.latestDESApi1365Writes
+      }
+
+      "return successful UpdateVatSubscriptionResponse model when using the current API version" in {
+
+        mockAppConfig.features.latestApi1365Version(false)
+
+        val connector = setup(Right(SuccessModel("12345")))
+        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+
+        await(result) shouldBe Right(SuccessModel("12345"))
+        connector.writes shouldBe UpdateVatSubscription.currentDESApi1365Writes
       }
     }
 
     "http PUT is unsuccessful" should {
-      lazy val connector = setup(Left(ErrorModel("BAD_REQUEST", "REASON")))
 
-      lazy val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
 
       "return successful UpdateVatSubscriptionResponse model" in {
+
+        val connector = setup(Left(ErrorModel("BAD_REQUEST", "REASON")))
+        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+
         await(result) shouldEqual Left(ErrorModel("BAD_REQUEST", "REASON"))
       }
     }

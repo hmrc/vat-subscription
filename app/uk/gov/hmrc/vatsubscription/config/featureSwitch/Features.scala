@@ -24,6 +24,7 @@ class Features @Inject()(config: Configuration) {
 
   private val featureSwitch: String = "feature-switch"
   lazy val latestApi1363Version = new Feature(s"$featureSwitch.latestApi1363Version", config)
+  lazy val latestApi1365Version = new Feature(s"$featureSwitch.latestApi1365Version", config)
   lazy val stubDes = new Feature(s"$featureSwitch.stubDes", config)
 
 }

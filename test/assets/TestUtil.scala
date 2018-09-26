@@ -37,12 +37,14 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
     super.beforeEach()
     mockAppConfig.features.stubDes(false)
     mockAppConfig.features.latestApi1363Version(true)
+    mockAppConfig.features.latestApi1365Version(true)
   }
 
   override def afterEach(): Unit = {
     super.afterEach()
     mockAppConfig.features.stubDes(false)
     mockAppConfig.features.latestApi1363Version(true)
+    mockAppConfig.features.latestApi1365Version(true)
   }
 
   lazy val injector: Injector = app.injector
