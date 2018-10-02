@@ -45,6 +45,7 @@ object VatCustomerInformation extends JsonReadUtil {
   val organisationNameKey = "organisationName"
   val tradingNameKey = "tradingName"
   val mandationStatusKey = "mandationStatus"
+  val isPartialMigrationKey = "isPartialMigration"
   val flatRateSchemeKey = "flatRateScheme"
   val ppobKey = "PPOB"
   val bankDetailsKey = "bankDetails"
@@ -70,6 +71,7 @@ object VatCustomerInformation extends JsonReadUtil {
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
     vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
@@ -85,7 +87,8 @@ object VatCustomerInformation extends JsonReadUtil {
       organisationName = organisationName,
       tradingName = tradingName,
       vatRegistrationDate,
-      flatRateScheme.isDefined
+      flatRateScheme.isDefined,
+      isPartialMigration
     ),
     flatRateScheme,
     ppob,
@@ -103,6 +106,7 @@ object VatCustomerInformation extends JsonReadUtil {
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
     vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
@@ -118,7 +122,8 @@ object VatCustomerInformation extends JsonReadUtil {
       organisationName = organisationName,
       tradingName = tradingName,
       vatRegistrationDate,
-      flatRateScheme.isDefined
+      flatRateScheme.isDefined,
+      isPartialMigration
     ),
     flatRateScheme,
     ppob,

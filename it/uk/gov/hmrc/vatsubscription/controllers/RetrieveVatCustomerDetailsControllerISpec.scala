@@ -94,7 +94,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "mandationStatus" -> mandationStatus,
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
-        "businessStartDate" -> startDate
+        "businessStartDate" -> startDate,
+        "isPartialMigration" -> true
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -196,7 +197,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "lastName" -> lastName,
         "tradingName" -> tradingName,
         "vatRegistrationDate" -> effectiveDate,
-        "hasFlatRateScheme" -> true
+        "hasFlatRateScheme" -> true,
+        "isPartialMigration" -> true
       )
 
       "return OK with the status" in {
@@ -277,7 +279,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             organisationName = Some(orgName),
             tradingName = Some(tradingName),
             vatRegistrationDate = Some(effectiveDate),
-            hasFlatRateScheme = true
+            hasFlatRateScheme = true,
+            isPartialMigration = Some(true)
           ),
           Some(FlatRateScheme(
             Some(frsCategory),
