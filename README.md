@@ -57,7 +57,8 @@ Where:
    "lastName": "Grimes",
    "organisationName": "Grimey Org",
    "tradingName": "Grimey Ltd",
-   "hasFlatRateScheme": true
+   "hasFlatRateScheme": true,
+   "isPartialMigration": false
 }
 ```
 
@@ -91,7 +92,8 @@ Where:
         "lastName": "Grimes",
         "organisationName": "Grimey Org",
         "tradingName": "Grimey Ltd",
-        "hasFlatRateScheme": true
+        "hasFlatRateScheme": true,
+        "isPartialMigration": false
     },
     "flatRateScheme": {
         "FRSCategory": "001",
