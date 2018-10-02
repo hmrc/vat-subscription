@@ -16,20 +16,21 @@
 
 package uk.gov.hmrc.vatsubscription.helpers
 
-import uk.gov.hmrc.vatsubscription.models.CustomerDetails
 import BaseTestConstants._
 import play.api.libs.json.{JsObject, JsValue, Json}
+import uk.gov.hmrc.vatsubscription.models.CustomerDetails
 
 object CustomerDetailsTestConstants {
 
-  val customerDetailsModelMin = CustomerDetails(None, None, None, None, None)
+  val customerDetailsModelMin = CustomerDetails(None, None, None, None, None, isPartialMigration = None)
 
   val customerDetailsModelMax = CustomerDetails(
     Some(firstName),
     Some(lastName),
     Some(orgName),
     Some(tradingName),
-    Some(effectiveDate)
+    Some(effectiveDate),
+    isPartialMigration = Some(false)
   )
 
   val customerDetailsModelMaxWithFRS = CustomerDetails(
@@ -38,7 +39,8 @@ object CustomerDetailsTestConstants {
     Some(orgName),
     Some(tradingName),
     Some(effectiveDate),
-    hasFlatRateScheme = true
+    hasFlatRateScheme = true,
+    isPartialMigration = Some(false)
   )
 
   val customerDetailsJsonMaxWithFRS: JsValue = Json.obj(
@@ -47,7 +49,8 @@ object CustomerDetailsTestConstants {
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
     "vatRegistrationDate" -> effectiveDate,
-    "hasFlatRateScheme" -> true
+    "hasFlatRateScheme" -> true,
+    "isPartialMigration" -> false
   )
 
   val customerDetailsJsonMax: JsValue = Json.obj(
@@ -56,7 +59,8 @@ object CustomerDetailsTestConstants {
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
     "vatRegistrationDate" -> effectiveDate,
-    "hasFlatRateScheme" -> false
+    "hasFlatRateScheme" -> false,
+    "isPartialMigration" -> false
   )
 
   val customerDetailsJsonMin: JsObject = Json.obj("hasFlatRateScheme" -> false)

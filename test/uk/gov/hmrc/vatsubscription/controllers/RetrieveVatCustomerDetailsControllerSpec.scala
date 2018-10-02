@@ -74,7 +74,7 @@
           }
           "the customer details are empty" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(CustomerDetails(None, None, None, None, None))))
+            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(CustomerDetails(None, None, None, None, None, isPartialMigration = None))))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
@@ -113,7 +113,9 @@
 
             val responseBody = "error"
 
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody))))
+            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(
+              UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody)
+            )))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 

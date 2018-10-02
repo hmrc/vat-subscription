@@ -49,7 +49,8 @@ object CustomerInformationTestConstants {
         "mandationStatus" -> mandationStatusCode,
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
-        "businessStartDate" -> startDate
+        "businessStartDate" -> startDate,
+        "isPartialMigration" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -140,7 +141,8 @@ object CustomerInformationTestConstants {
         "mandationStatus" -> mandationStatusCode,
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
-        "businessStartDate" -> startDate
+        "businessStartDate" -> startDate,
+        "isPartialMigration" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -227,7 +229,8 @@ object CustomerInformationTestConstants {
         "mandationStatus" -> mandationStatusCode,
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
-        "businessStartDate" -> startDate
+        "businessStartDate" -> startDate,
+        "isPartialMigration" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -318,7 +321,8 @@ object CustomerInformationTestConstants {
       "lastName" -> lastName,
       "organisationName" -> orgName,
       "tradingName" -> tradingName,
-      "vatRegistrationDate" -> effectiveDate
+      "vatRegistrationDate" -> effectiveDate,
+      "isPartialMigration" -> false
     ),
     "flatRateScheme" -> Json.obj(
       "FRSCategory" -> frsCategory,
@@ -395,7 +399,8 @@ object CustomerInformationTestConstants {
       "lastName" -> lastName,
       "organisationName" -> orgName,
       "tradingName" -> tradingName,
-      "vatRegistrationDate" -> effectiveDate
+      "vatRegistrationDate" -> effectiveDate,
+      "isPartialMigration" -> false
     ),
     "ppob" -> Json.obj(
       "address" -> Json.obj(
@@ -512,6 +517,6 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None, None), None, None, None, None, None, None, None
+    MTDfBMandated, CustomerDetails(None, None, None, None, None, isPartialMigration = None), None, None, None, None, None, None, None
   )
 }
