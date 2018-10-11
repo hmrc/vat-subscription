@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hmrc/vat-subscription.svg)](https://travis-ci.org/hmrc/vat-subscription) [ ![Download](https://api.bintray.com/packages/hmrc/releases/vat-subscription/images/download.svg) ](https://bintray.com/hmrc/releases/vat-subscription/_latestVersion)
 
-This is a placeholder README.md for a new repository
+This is a placeholder README.md for a new repository.
 
 ### License
 
