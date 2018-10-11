@@ -25,6 +25,7 @@ case class CustomerDetails(firstName: Option[String],
                            tradingName: Option[String],
                            vatRegistrationDate: Option[String],
                            hasFlatRateScheme: Boolean = false,
+                           welshIndicator: Option[Boolean],
                            isPartialMigration: Option[Boolean])
 
 object CustomerDetails {
@@ -35,6 +36,7 @@ object CustomerDetails {
   private val tradingNamePath = JsPath \ "tradingName"
   private val vatRegistrationDatePath = JsPath \ "vatRegistrationDate"
   private val hasFlatRateSchemePath = JsPath \ "hasFlatRateScheme"
+  private val welshIndicatorPath = JsPath \ "welshIndicator"
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
 
   implicit val cdReader: Reads[CustomerDetails] = for {
@@ -44,6 +46,7 @@ object CustomerDetails {
     tradingName <- tradingNamePath.readNullable[String]
     vatRegistrationDate <- vatRegistrationDatePath.readNullable[String]
     hasFlatRateScheme <- hasFlatRateSchemePath.read[Boolean]
+    welshIndicator <- welshIndicatorPath.readNullable[Boolean]
     isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
   } yield CustomerDetails(
     firstName,
@@ -52,6 +55,7 @@ object CustomerDetails {
     tradingName,
     vatRegistrationDate,
     hasFlatRateScheme,
+    welshIndicator,
     isPartialMigration
   )
 
@@ -62,6 +66,7 @@ object CustomerDetails {
       tradingNamePath.writeNullable[String] and
       vatRegistrationDatePath.writeNullable[String] and
       hasFlatRateSchemePath.write[Boolean] and
+      welshIndicatorPath.writeNullable[Boolean] and
       isPartialMigrationPath.writeNullable[Boolean]
     )(unlift(CustomerDetails.unapply))
 }

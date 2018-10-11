@@ -95,6 +95,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
         "businessStartDate" -> startDate,
+        "welshIndicator" -> true,
         "isPartialMigration" -> true
       ),
       "PPOB" -> Json.obj(
@@ -198,6 +199,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "tradingName" -> tradingName,
         "vatRegistrationDate" -> effectiveDate,
         "hasFlatRateScheme" -> true,
+        "welshIndicator" -> true,
         "isPartialMigration" -> true
       )
 
@@ -280,6 +282,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             tradingName = Some(tradingName),
             vatRegistrationDate = Some(effectiveDate),
             hasFlatRateScheme = true,
+            welshIndicator = Some(true),
             isPartialMigration = Some(true)
           ),
           Some(FlatRateScheme(

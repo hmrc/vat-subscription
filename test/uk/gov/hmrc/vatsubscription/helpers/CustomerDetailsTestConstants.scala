@@ -22,7 +22,7 @@ import uk.gov.hmrc.vatsubscription.models.CustomerDetails
 
 object CustomerDetailsTestConstants {
 
-  val customerDetailsModelMin = CustomerDetails(None, None, None, None, None, isPartialMigration = None)
+  val customerDetailsModelMin = CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = None)
 
   val customerDetailsModelMax = CustomerDetails(
     Some(firstName),
@@ -30,6 +30,7 @@ object CustomerDetailsTestConstants {
     Some(orgName),
     Some(tradingName),
     Some(effectiveDate),
+    welshIndicator = Some(false),
     isPartialMigration = Some(false)
   )
 
@@ -40,6 +41,7 @@ object CustomerDetailsTestConstants {
     Some(tradingName),
     Some(effectiveDate),
     hasFlatRateScheme = true,
+    welshIndicator = Some(false),
     isPartialMigration = Some(false)
   )
 
@@ -50,6 +52,7 @@ object CustomerDetailsTestConstants {
     "tradingName" -> tradingName,
     "vatRegistrationDate" -> effectiveDate,
     "hasFlatRateScheme" -> true,
+    "welshIndicator" -> false,
     "isPartialMigration" -> false
   )
 
@@ -60,6 +63,7 @@ object CustomerDetailsTestConstants {
     "tradingName" -> tradingName,
     "vatRegistrationDate" -> effectiveDate,
     "hasFlatRateScheme" -> false,
+    "welshIndicator" -> false,
     "isPartialMigration" -> false
   )
 
