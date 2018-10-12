@@ -22,19 +22,21 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.vatsubscription.connectors.UnexpectedGetVatCustomerInformationFailure
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobModelMax, ppobModelMaxPost}
+import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants.customerDetailsModelMax
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
-import uk.gov.hmrc.vatsubscription.service.mocks.MockUpdatePPOBService
+import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdatePPOBService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 
-class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with MockUpdatePPOBService {
+class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with MockUpdatePPOBService with MockVatCustomerDetailsRetrievalService{
 
   object TestUpdatePPOBController
-    extends UpdatePPOBController(mockVatAuthorised, mockUpdatePPOBService)
+    extends UpdatePPOBController(mockVatAuthorised, mockUpdatePPOBService, mockVatCustomerDetailsRetrievalService)
 
   val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
 
@@ -56,6 +58,19 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
         "a valid PPOBPost is supplied and the response from the UpdateVatSubscription service is successful" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future(Right(customerDetailsModelMax)))
+          mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Right(updateSuccessResponse)))
+
+          val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+        }
+
+        "a valid PPOBPost is supplied and the response from the retrieveVatCustomerDetails service is an error" in {
+
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, body = "ERROR"))))
           mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
@@ -74,6 +89,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockRetrieveVatCustomerDetails(testVatNumber)(Future(Right(customerDetailsModelMax)))
             status(res) shouldBe BAD_REQUEST
           }
 
@@ -88,6 +104,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockRetrieveVatCustomerDetails(testVatNumber)(Future(Right(customerDetailsModelMax)))
             mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }

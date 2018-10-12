@@ -20,27 +20,42 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
+import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
-import uk.gov.hmrc.vatsubscription.services.UpdatePPOBService
+import uk.gov.hmrc.vatsubscription.services.{UpdatePPOBService, VatCustomerDetailsRetrievalService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
-                                     updatePPOBService: UpdatePPOBService)
+                                     updatePPOBService: UpdatePPOBService,
+                                     vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService)
                                     (implicit ec: ExecutionContext) extends MicroserviceBaseController {
+
+  private def extractWelshIndicator(implicit user: User[_]): Future[Boolean] = {
+    vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(user.vrn).map {
+      case Right(details) => details.welshIndicator.contains(true)
+      case Left(_) => false
+    }
+  }
 
   def updatePPOB(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
-      parseJsonBody[PPOBPost] match {
-        case Right(updatedPPOB) =>
-          updatePPOBService.updatePPOB(updatedPPOB) map {
-            case Right(success) => Ok(Json.toJson(success))
-            case Left(error) => InternalServerError(Json.toJson(error))
-          }
-        case Left(error) =>
-          Future.successful(BadRequest(Json.toJson(error)))
+      extractWelshIndicator.flatMap { welshIndicator =>
+        parseJsonBody[PPOBPost] match {
+          case Right(updatedPPOB) =>
+            updatePPOBService.updatePPOB(updatedPPOB,welshIndicator) map {
+              case Right(success) => Ok(Json.toJson(success))
+              case Left(error) => InternalServerError(Json.toJson(error))
+            }
+          case Left(error) =>
+            Future.successful(BadRequest(Json.toJson(error)))
+        }
       }
   }
-
 }
+
+
+
+
+

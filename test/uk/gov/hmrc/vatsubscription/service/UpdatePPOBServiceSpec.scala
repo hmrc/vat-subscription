@@ -39,7 +39,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updatePPOB(ppobModelMaxPost)(testUser, hc, ec)
+        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -48,7 +48,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updatePPOB(ppobModelMaxPost)(testUser, hc, ec)
+        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -60,7 +60,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
     "user is not an Agent" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)(testUser)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = ChangePPOB,
@@ -77,7 +77,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
     "user is an Agent" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost)(testAgentUser)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = false)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
         requestedChanges = ChangePPOB,
@@ -88,6 +88,24 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
+        result shouldEqual expectedResult
+      }
+    }
+
+    "user has a welshIndicator" should {
+
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = true)(testUser)
+
+      val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = true),
+        requestedChanges = ChangePPOB,
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
+        updatedReturnPeriod = None,
+        updateDeregistrationInfo = None,
+        declaration = Declaration(None, Signing())
+      )
+
+      "return a correct UpdateVatSubscription model" in {
         result shouldEqual expectedResult
       }
     }

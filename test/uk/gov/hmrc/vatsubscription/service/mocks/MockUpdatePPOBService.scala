@@ -35,7 +35,7 @@ trait MockUpdatePPOBService extends MockitoSugar {
 
   def mockUpdatePPOB(newPPOB: PPOBPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdatePPOBService
-      .updatePPOB(ArgumentMatchers.eq(newPPOB))(
+      .updatePPOB(ArgumentMatchers.eq(newPPOB),ArgumentMatchers.any[Boolean])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

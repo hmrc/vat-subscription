@@ -46,7 +46,8 @@ object UpdateVatSubscription {
 
 }
 
-case class ControlInformation(source: String = "100",
+case class ControlInformation(welshIndicator: Boolean = false,
+                              source: String = "100",
                               mandationStatus: String = "1")
 
 object ControlInformation {

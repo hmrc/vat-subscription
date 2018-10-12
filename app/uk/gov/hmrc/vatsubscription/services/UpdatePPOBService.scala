@@ -30,20 +30,22 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def updatePPOB(updatedPPOB: PPOBPost)
+  def updatePPOB(updatedPPOB: PPOBPost, welshIndicator: Boolean)
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
-    val subscriptionModel = constructPPOBUpdateModel(updatedPPOB)
+    val subscriptionModel = constructPPOBUpdateModel(updatedPPOB, welshIndicator)
     Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating PPOB for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructPPOBUpdateModel(updatedPPOB: PPOBPost)
+  def constructPPOBUpdateModel(updatedPPOB: PPOBPost,
+                               welshIndicator: Boolean)
                               (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
 
     UpdateVatSubscription(
+      controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangePPOB,
       updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
       updatedReturnPeriod = None,
