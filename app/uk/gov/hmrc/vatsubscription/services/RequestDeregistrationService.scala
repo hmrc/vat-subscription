@@ -30,19 +30,20 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RequestDeregistrationService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def deregister(deregistration: DeregistrationInfo)
+  def deregister(deregistration: DeregistrationInfo, welshIndicator: Boolean)
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
-    val subscriptionModel = constructDeregistrationModel(deregistration)
+    val subscriptionModel = constructDeregistrationModel(deregistration, welshIndicator)
     Logger.debug(s"[RequestDeregistrationService][deregister] Submitting Deregistration Request for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructDeregistrationModel(deregistration: DeregistrationInfo)(implicit user: User[_]): UpdateVatSubscription = {
+  def constructDeregistrationModel(deregistration: DeregistrationInfo, welshIndicator: Boolean)(implicit user: User[_]): UpdateVatSubscription = {
 
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
 
     UpdateVatSubscription(
+      controlInformation = ControlInformation(welshIndicator),
       requestedChanges = DeregistrationRequest,
       updatedPPOB = None,
       updatedReturnPeriod = None,

@@ -21,20 +21,24 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.DeregistrationInfo
-import uk.gov.hmrc.vatsubscription.services.RequestDeregistrationService
+import uk.gov.hmrc.vatsubscription.services.{RequestDeregistrationService, VatCustomerDetailsRetrievalService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RequestDeregistrationController @Inject()(VatAuthorised: VatAuthorised,
-                                                requestDeregistrationService: RequestDeregistrationService)
+                                                requestDeregistrationService: RequestDeregistrationService,
+                                                vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService)
                                                (implicit ec: ExecutionContext) extends MicroserviceBaseController {
 
   def deregister(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
       parseJsonBody[DeregistrationInfo] match {
         case Right(period) =>
-          requestDeregistrationService.deregister(period) map {
+          for {
+            welshIndicator <- vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn)
+            result <- requestDeregistrationService.deregister(period, welshIndicator)
+          } yield result match {
             case Right(success) => Ok(Json.toJson(success))
             case Left(error) => InternalServerError(Json.toJson(error))
           }

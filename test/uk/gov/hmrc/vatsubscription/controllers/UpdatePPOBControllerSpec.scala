@@ -33,7 +33,7 @@ import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdatePPOBService, MockVat
 
 import scala.concurrent.Future
 
-class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with MockUpdatePPOBService with MockVatCustomerDetailsRetrievalService{
+class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with MockUpdatePPOBService with MockVatCustomerDetailsRetrievalService {
 
   object TestUpdatePPOBController
     extends UpdatePPOBController(mockVatAuthorised, mockUpdatePPOBService, mockVatCustomerDetailsRetrievalService)

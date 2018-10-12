@@ -21,6 +21,7 @@ import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub.{mtdVatEnrolment, stubAuth, stubAuthFailure, successfulAuthResponse}
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub.stubGetInformation
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.UpdateVatCustomerSubscriptionStub.stubUpdateSubscription
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 
@@ -55,6 +56,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
       "return BAD_REQUEST if the Return Period is invalid" in {
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(OK, testSuccessDesResponse)
         stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
         val res = await(put(s"/$testVatNumber/return-period")(invalidReturnPeriodJson))
@@ -68,6 +70,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
       "return BAD_REQUEST if the JSON is invalid" in {
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(OK, testSuccessDesResponse)
         stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
         val res = await(put(s"/$testVatNumber/return-period")(invalidJson))
@@ -83,6 +86,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
         "return OK with the status" in {
 
           stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+          stubGetInformation(testVatNumber)(OK, testSuccessDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
           val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
@@ -99,6 +103,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
         "return ISE with the error response" in {
 
           stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+          stubGetInformation(testVatNumber)(OK, testSuccessDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
           val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
