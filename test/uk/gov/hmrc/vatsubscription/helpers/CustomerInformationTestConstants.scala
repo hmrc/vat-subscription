@@ -50,7 +50,7 @@ object CustomerInformationTestConstants {
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
         "businessStartDate" -> startDate,
-        "welshIndicator" -> false,
+        "welshIndicator" -> true,
         "isPartialMigration" -> false
       ),
       "PPOB" -> Json.obj(
@@ -325,7 +325,7 @@ object CustomerInformationTestConstants {
       "organisationName" -> orgName,
       "tradingName" -> tradingName,
       "vatRegistrationDate" -> effectiveDate,
-      "welshIndicator" -> false,
+      "welshIndicator" -> true,
       "isPartialMigration" -> false
     ),
     "flatRateScheme" -> Json.obj(
@@ -519,6 +519,10 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod)
     ))
+  )
+
+  val customerInformationModelNoWelshIndicator: VatCustomerInformation = VatCustomerInformation(
+    MTDfBMandated, customerDetailsModelNoWelshIndicator, None, None, None, None, None, None, None
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(

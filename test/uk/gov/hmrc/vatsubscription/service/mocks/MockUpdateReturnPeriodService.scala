@@ -35,7 +35,7 @@ trait MockUpdateReturnPeriodService extends MockitoSugar {
 
   def mockUpdateReturnPeriod(newPeriod: ReturnPeriod)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdateReturnPeriodService
-      .updateReturnPeriod(ArgumentMatchers.eq(newPeriod))(
+      .updateReturnPeriod(ArgumentMatchers.eq(newPeriod),ArgumentMatchers.any[Boolean])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

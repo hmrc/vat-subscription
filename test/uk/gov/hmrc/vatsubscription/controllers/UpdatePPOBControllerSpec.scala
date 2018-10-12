@@ -58,19 +58,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
         "a valid PPOBPost is supplied and the response from the UpdateVatSubscription service is successful" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-          mockRetrieveVatCustomerDetails(testVatNumber)(Future(Right(customerDetailsModelMax)))
-          mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Right(updateSuccessResponse)))
-
-          val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
-
-          status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
-        }
-
-        "a valid PPOBPost is supplied and the response from the retrieveVatCustomerDetails service is an error" in {
-
-          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-          mockRetrieveVatCustomerDetails(testVatNumber)(Future(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, body = "ERROR"))))
+          mockExtractWelshIndicator(testVatNumber)(Future(false))
           mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
@@ -89,7 +77,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future(Right(customerDetailsModelMax)))
+            mockExtractWelshIndicator(testVatNumber)(Future(false))
             status(res) shouldBe BAD_REQUEST
           }
 
@@ -104,7 +92,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future(Right(customerDetailsModelMax)))
+            mockExtractWelshIndicator(testVatNumber)(Future(false))
             mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }

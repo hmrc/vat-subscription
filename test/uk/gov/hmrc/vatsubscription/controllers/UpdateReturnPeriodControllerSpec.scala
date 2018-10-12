@@ -24,17 +24,18 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
+import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants.customerDetailsModelMax
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MBReturnPeriod, MCReturnPeriod, MMReturnPeriod}
-import uk.gov.hmrc.vatsubscription.service.mocks.MockUpdateReturnPeriodService
+import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdateReturnPeriodService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 
-class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateReturnPeriodService {
+class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateReturnPeriodService with MockVatCustomerDetailsRetrievalService{
 
   object TestUpdateReturnPeriodController
-    extends UpdateReturnPeriodController(mockVatAuthorised, mockUpdateReturnPeriodService)
+    extends UpdateReturnPeriodController(mockVatAuthorised, mockUpdateReturnPeriodService, mockVatCustomerDetailsRetrievalService)
 
   val maRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MAReturnPeriod))
   val mbRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MBReturnPeriod))
@@ -59,6 +60,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
         "the 'MA' return period is supplied and the response from the UpdateVatSubscription service is successful" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockExtractWelshIndicator(testVatNumber)(Future(false))
           mockUpdateReturnPeriod(MAReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(maRequest))
@@ -70,6 +72,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
         "the 'MB' return period is supplied and the response from the UpdateVatSubscription service is successful" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockExtractWelshIndicator(testVatNumber)(Future(false))
           mockUpdateReturnPeriod(MBReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mbRequest))
@@ -81,6 +84,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
         "the 'MC' return period is supplied and the response from the UpdateVatSubscription service is successful" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockExtractWelshIndicator(testVatNumber)(Future(false))
           mockUpdateReturnPeriod(MCReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mcRequest))
@@ -92,6 +96,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
         "the 'MM' return period is supplied and the response from the UpdateVatSubscription service is successful" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockExtractWelshIndicator(testVatNumber)(Future(false))
           mockUpdateReturnPeriod(MMReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mmRequest))
@@ -124,6 +129,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockExtractWelshIndicator(testVatNumber)(Future(false))
             mockUpdateReturnPeriod(MAReturnPeriod)(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }

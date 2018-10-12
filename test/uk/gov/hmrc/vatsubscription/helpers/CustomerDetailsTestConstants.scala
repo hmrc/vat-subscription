@@ -41,7 +41,18 @@ object CustomerDetailsTestConstants {
     Some(tradingName),
     Some(effectiveDate),
     hasFlatRateScheme = true,
-    welshIndicator = Some(false),
+    welshIndicator = Some(true),
+    isPartialMigration = Some(false)
+  )
+
+  val customerDetailsModelNoWelshIndicator = CustomerDetails(
+    Some(firstName),
+    Some(lastName),
+    Some(orgName),
+    Some(tradingName),
+    Some(effectiveDate),
+    hasFlatRateScheme = true,
+    welshIndicator = None,
     isPartialMigration = Some(false)
   )
 
@@ -52,7 +63,17 @@ object CustomerDetailsTestConstants {
     "tradingName" -> tradingName,
     "vatRegistrationDate" -> effectiveDate,
     "hasFlatRateScheme" -> true,
-    "welshIndicator" -> false,
+    "welshIndicator" -> true,
+    "isPartialMigration" -> false
+  )
+
+  val customerDetailsJsonNoWelshIndicator: JsValue = Json.obj(
+    "firstName" -> firstName,
+    "lastName" -> lastName,
+    "organisationName" -> orgName,
+    "tradingName" -> tradingName,
+    "vatRegistrationDate" -> effectiveDate,
+    "hasFlatRateScheme" -> true,
     "isPartialMigration" -> false
   )
 

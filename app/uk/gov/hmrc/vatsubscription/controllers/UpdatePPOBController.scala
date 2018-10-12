@@ -32,19 +32,14 @@ class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
                                      vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService)
                                     (implicit ec: ExecutionContext) extends MicroserviceBaseController {
 
-  private def extractWelshIndicator(implicit user: User[_]): Future[Boolean] = {
-    vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(user.vrn).map {
-      case Right(details) => details.welshIndicator.contains(true)
-      case Left(_) => false
-    }
-  }
-
   def updatePPOB(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
-      extractWelshIndicator.flatMap { welshIndicator =>
         parseJsonBody[PPOBPost] match {
           case Right(updatedPPOB) =>
-            updatePPOBService.updatePPOB(updatedPPOB,welshIndicator) map {
+            for {
+              welshIndicator <- vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn)
+              result <- updatePPOBService.updatePPOB(updatedPPOB, welshIndicator)
+            } yield result match {
               case Right(success) => Ok(Json.toJson(success))
               case Left(error) => InternalServerError(Json.toJson(error))
             }
@@ -52,7 +47,6 @@ class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
             Future.successful(BadRequest(Json.toJson(error)))
         }
       }
-  }
 }
 
 

@@ -49,6 +49,13 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
     }).value
   }
 
+  def extractWelshIndicator(vrn: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    retrieveVatCustomerDetails(vrn).map {
+      case Right(details) => details.welshIndicator.contains(true)
+      case Left(_) => false
+    }
+  }
+
   def retrieveCircumstanceInformation(vatNumber: String)
                                      (implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]] = {
     Logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer circumstances for vat number - $vatNumber")
