@@ -117,28 +117,6 @@ class DeregistrationInfoSpec extends UnitSpec {
         invalid.validate shouldBe JsError("turnoverBelowThreshold is mandatory when deregReason is belowThreshold")
       }
 
-      "Return 'whyTurnoverBelow is mandatory when belowThreshold is belowNext12Months'" in {
-        val invalid = DeregistrationInfo(
-          deregReason = ReducedTurnover,
-          deregDate = None,
-          deregLaterDate = None,
-          turnoverBelowThreshold = Some(TurnoverBelowThreshold(
-            BelowNext12Months,
-            123,
-            None
-          )),
-          optionToTax = false,
-          intendSellCapitalAssets = false,
-          additionalTaxInvoices = false,
-          cashAccountingScheme = false,
-          optionToTaxValue = None,
-          stocksValue = None,
-          capitalAssetsValue = None
-        )
-
-        invalid.validate shouldBe JsError("whyTurnoverBelow is mandatory when belowThreshold is belowNext12Months")
-      }
-
       "Return itself if it validates" in {
         deregistrationInfoReducedTurnoverModel.validate shouldBe JsSuccess(deregistrationInfoReducedTurnoverModel)
       }

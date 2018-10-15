@@ -25,7 +25,7 @@ case class WhyTurnoverBelow(lostContract: Boolean,
                             seasonalBusiness: Boolean,
                             closedPlacesOfBusiness: Boolean,
                             turnoverLowerThanExpected: Boolean,
-                            alreadyBelow: Boolean) {
+                            alreadyBelow: Boolean = false) {
 
   override def toString: String = List(
     lostContract -> "Lost Contract",
@@ -39,6 +39,17 @@ case class WhyTurnoverBelow(lostContract: Boolean,
   ).filter(_._1).map(_._2).mkString(";")
 
 }
+
+object TurnoverAlreadyBelow extends WhyTurnoverBelow(
+  lostContract = false,
+  semiRetiring = false,
+  moreCompetitors = false,
+  reducedTradingHours = false,
+  seasonalBusiness = false,
+  closedPlacesOfBusiness = false,
+  turnoverLowerThanExpected = false,
+  alreadyBelow = true
+)
 
 object WhyTurnoverBelow {
 
