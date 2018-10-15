@@ -50,6 +50,7 @@ object CustomerInformationTestConstants {
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
         "businessStartDate" -> startDate,
+        "welshIndicator" -> false,
         "isPartialMigration" -> false
       ),
       "PPOB" -> Json.obj(
@@ -142,6 +143,7 @@ object CustomerInformationTestConstants {
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
         "businessStartDate" -> startDate,
+        "welshIndicator" -> false,
         "isPartialMigration" -> false
       ),
       "PPOB" -> Json.obj(
@@ -230,6 +232,7 @@ object CustomerInformationTestConstants {
         "registrationReason" -> regReason,
         "effectiveRegistrationDate" -> effectiveDate,
         "businessStartDate" -> startDate,
+        "welshIndicator" -> false,
         "isPartialMigration" -> false
       ),
       "PPOB" -> Json.obj(
@@ -322,6 +325,7 @@ object CustomerInformationTestConstants {
       "organisationName" -> orgName,
       "tradingName" -> tradingName,
       "vatRegistrationDate" -> effectiveDate,
+      "welshIndicator" -> false,
       "isPartialMigration" -> false
     ),
     "flatRateScheme" -> Json.obj(
@@ -400,6 +404,7 @@ object CustomerInformationTestConstants {
       "organisationName" -> orgName,
       "tradingName" -> tradingName,
       "vatRegistrationDate" -> effectiveDate,
+      "welshIndicator" -> false,
       "isPartialMigration" -> false
     ),
     "ppob" -> Json.obj(
@@ -517,6 +522,6 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None, None, isPartialMigration = None), None, None, None, None, None, None, None
+    MTDfBMandated, CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = None), None, None, None, None, None, None, None
   )
 }

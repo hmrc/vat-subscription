@@ -45,6 +45,7 @@ object VatCustomerInformation extends JsonReadUtil {
   val organisationNameKey = "organisationName"
   val tradingNameKey = "tradingName"
   val mandationStatusKey = "mandationStatus"
+  val welshIndicatorKey = "welshIndicator"
   val isPartialMigrationKey = "isPartialMigration"
   val flatRateSchemeKey = "flatRateScheme"
   val ppobKey = "PPOB"
@@ -71,6 +72,7 @@ object VatCustomerInformation extends JsonReadUtil {
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
     vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
@@ -88,6 +90,7 @@ object VatCustomerInformation extends JsonReadUtil {
       tradingName = tradingName,
       vatRegistrationDate,
       flatRateScheme.isDefined,
+      welshIndicator,
       isPartialMigration
     ),
     flatRateScheme,
@@ -106,6 +109,7 @@ object VatCustomerInformation extends JsonReadUtil {
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
     vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
@@ -123,6 +127,7 @@ object VatCustomerInformation extends JsonReadUtil {
       tradingName = tradingName,
       vatRegistrationDate,
       flatRateScheme.isDefined,
+      welshIndicator,
       isPartialMigration
     ),
     flatRateScheme,
