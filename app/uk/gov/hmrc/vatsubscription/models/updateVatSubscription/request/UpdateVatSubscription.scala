@@ -21,7 +21,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.DeregistrationInfo
 
 case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
-                                 controlInformation: ControlInformation = ControlInformation(),
+                                 controlInformation: ControlInformation,
                                  requestedChanges: RequestedChanges,
                                  updatedPPOB: Option[UpdatedPPOB],
                                  updatedReturnPeriod: Option[UpdatedReturnPeriod],
@@ -46,7 +46,7 @@ object UpdateVatSubscription {
 
 }
 
-case class ControlInformation(welshIndicator: Boolean = false,
+case class ControlInformation(welshIndicator: Boolean,
                               source: String = "100",
                               mandationStatus: String = "1")
 

@@ -62,6 +62,7 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
       val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod, welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeReturnPeriod,
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
@@ -97,6 +98,7 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
       val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod, welshIndicator = false)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeReturnPeriod,
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),

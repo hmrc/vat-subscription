@@ -21,7 +21,7 @@ import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testUser
 import uk.gov.hmrc.vatsubscription.helpers.DeclarationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{ChangeReturnPeriod, UpdateVatSubscription}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{ChangeReturnPeriod, ControlInformation, UpdateVatSubscription}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 
 import scala.concurrent.Future
@@ -40,6 +40,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
   "UpdateVatSubscriptionConnector .updateVatSubscription()" when {
 
     val requestModel: UpdateVatSubscription = UpdateVatSubscription(
+      controlInformation = ControlInformation(welshIndicator = false),
       requestedChanges = ChangeReturnPeriod,
       updatedPPOB = None,
       updatedReturnPeriod = Some(updatedReturnPeriod),
