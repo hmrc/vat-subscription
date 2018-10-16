@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{BelowPast12Months, TurnoverBelowThreshold}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{BelowPast12Months, TurnoverAlreadyBelow, TurnoverBelowThreshold}
 
 object TurnoverBelowThresholdTestConstants {
 
@@ -42,19 +42,20 @@ object TurnoverBelowThresholdTestConstants {
 
   val turnoverBelowThresholdDESJsonMin: JsValue = Json.obj(
     "aboveBelowThreshold" -> BelowPast12Months.desValue,
-    "taxableSuppliesValue" -> nextTwelveMonthsTurnoverAmt
+    "taxableSuppliesValue" -> nextTwelveMonthsTurnoverAmt,
+    "reason" -> TurnoverAlreadyBelow
   )
 
   val turnoverBelowThresholdModelMax: TurnoverBelowThreshold = TurnoverBelowThreshold(
     BelowPast12Months,
     nextTwelveMonthsTurnoverAmt,
-    Some(WhyTurnoverBelowTestConstants.whyTurnoverBelowModel)
+    WhyTurnoverBelowTestConstants.whyTurnoverBelowModel
   )
 
   val turnoverBelowThresholdModelMin: TurnoverBelowThreshold = TurnoverBelowThreshold(
     BelowPast12Months,
     nextTwelveMonthsTurnoverAmt,
-    None
+    TurnoverAlreadyBelow
   )
 
 

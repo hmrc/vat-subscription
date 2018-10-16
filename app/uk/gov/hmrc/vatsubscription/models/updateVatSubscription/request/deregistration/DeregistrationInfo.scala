@@ -43,8 +43,6 @@ case class DeregistrationInfo(deregReason: DeregistrationReason,
   private val validateReducedTurnover: JsResult[DeregistrationInfo] = turnoverBelowThreshold match {
     case None =>
       JsError("turnoverBelowThreshold is mandatory when deregReason is belowThreshold")
-    case Some(x) if x.belowThreshold == BelowNext12Months && x.whyTurnoverBelow.isEmpty =>
-      JsError("whyTurnoverBelow is mandatory when belowThreshold is belowNext12Months")
     case _ => JsSuccess(this)
   }
 

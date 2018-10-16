@@ -17,20 +17,27 @@
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, Reads, Writes, _}
+import play.api.libs.json.{Reads, Writes, _}
 
 case class TurnoverBelowThreshold(belowThreshold: BelowThreshold,
                                   nextTwelveMonthsTurnover: BigDecimal,
-                                  whyTurnoverBelow: Option[WhyTurnoverBelow])
+                                  whyTurnoverBelow: WhyTurnoverBelow)
 
 object TurnoverBelowThreshold {
 
-  implicit val frontendReads: Reads[TurnoverBelowThreshold] = Json.reads[TurnoverBelowThreshold]
+  implicit val frontendReads: Reads[TurnoverBelowThreshold] = (
+    (__ \ "belowThreshold").read[BelowThreshold] and
+      (__ \ "nextTwelveMonthsTurnover").read[BigDecimal] and
+      (__ \ "whyTurnoverBelow").readNullable[WhyTurnoverBelow].map {
+        case Some(reasons) => reasons
+        case None => TurnoverAlreadyBelow
+      }
+    )(TurnoverBelowThreshold.apply _)
 
   implicit val desWrites: Writes[TurnoverBelowThreshold] = (
     (__ \ "aboveBelowThreshold").write[BelowThreshold] and
       (__ \ "taxableSuppliesValue").write[BigDecimal] and
-      (__ \ "reason").writeNullable[WhyTurnoverBelow]
+      (__ \ "reason").write[WhyTurnoverBelow]
     )(unlift(TurnoverBelowThreshold.unapply))
 
 }
