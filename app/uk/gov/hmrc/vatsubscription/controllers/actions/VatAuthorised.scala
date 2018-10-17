@@ -45,7 +45,7 @@ class VatAuthorised @Inject()(val authConnector: AuthConnector, implicit val app
         case enrolments ~ credentials =>
           f(User(vrn, arn(enrolments), credentials.providerId)(request))
       } recover {
-        case _ =>
+        case _: AuthorisationException =>
           Logger.debug(s"[VatAuthorised][async] - User is not authorised to access the service")
           Forbidden
       }
