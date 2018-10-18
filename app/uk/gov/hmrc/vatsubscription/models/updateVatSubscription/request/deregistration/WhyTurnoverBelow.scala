@@ -16,10 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration
 
-import play.api.libs.json
 import play.api.libs.json._
-import uk.gov.hmrc.vatsubscription.models.get.PPOBAddressGet
-import uk.gov.hmrc.vatsubscription.models.get.PPOBAddressGet.{countryCodePath, line1Path, line2Path, line3Path, line4Path, line5Path, postCodePath}
 
 case class WhyTurnoverBelow(lostContract: Boolean,
                             semiRetiring: Boolean,
