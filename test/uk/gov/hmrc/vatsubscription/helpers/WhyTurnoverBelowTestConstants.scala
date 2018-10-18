@@ -21,29 +21,30 @@ import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregist
 
 object WhyTurnoverBelowTestConstants {
 
-  val whyTurnoverBelowModel: WhyTurnoverBelow = WhyTurnoverBelow(
+  val whyTurnoverBelowModelMax: WhyTurnoverBelow = WhyTurnoverBelow(
     lostContract = true,
     semiRetiring = true,
     moreCompetitors = true,
     reducedTradingHours = true,
     seasonalBusiness = true,
     closedPlacesOfBusiness = true,
-    turnoverLowerThanExpected = true,
-    alreadyBelow = true)
+    turnoverLowerThanExpected = true)
 
-  val whyTurnoverBelowJson: JsValue = Json.obj(
+  val whyTurnoverBelowJsonMax: JsValue = Json.obj(
     "lostContract" -> true,
     "semiRetiring" -> true,
     "moreCompetitors" -> true,
     "reducedTradingHours" -> true,
     "seasonalBusiness" -> true,
     "closedPlacesOfBusiness" -> true,
-    "turnoverLowerThanExpected" -> true,
-    "alreadyBelow" -> true
+    "turnoverLowerThanExpected" -> true
   )
 
-  val whyTurnoverBelowString: String =
-    "Lost Contract;Semi-Retiring;More Competitors;Reduced Trading Hours;Seasonal Business;Closed Places of Business;Turnover Lower than Expected;Already below the threshold"
+  val whyTurnoverBelowStringMax: String =
+    "Lost Contract;Semi-Retiring;More Competitors;Reduced Trading Hours;Seasonal Business;Closed Places of Business;Turnover Lower than Expected"
+
+  val whyTurnoverBelowStringAlreadyBelow: String =
+    "Already below the threshold"
 
 
 }

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration
 
-import play.api.libs.json.{JsString, Json, Reads, Writes}
+import play.api.libs.json._
 
 case class WhyTurnoverBelow(lostContract: Boolean,
                             semiRetiring: Boolean,
@@ -53,7 +53,23 @@ object TurnoverAlreadyBelow extends WhyTurnoverBelow(
 
 object WhyTurnoverBelow {
 
-  implicit val frontendReads: Reads[WhyTurnoverBelow] = Json.reads[WhyTurnoverBelow]
+  implicit val frontendReads: Reads[WhyTurnoverBelow] = for {
+    lostContract <- (__ \ "lostContract").read[Boolean]
+    semiRetiring <- (__ \ "semiRetiring").read[Boolean]
+    moreCompetitors <- (__ \ "moreCompetitors").read[Boolean]
+    reducedTradingHours <- (__ \ "reducedTradingHours").read[Boolean]
+    seasonalBusiness <- (__ \ "seasonalBusiness").read[Boolean]
+    closedPlacesOfBusiness <- (__ \ "closedPlacesOfBusiness").read[Boolean]
+    turnoverLowerThanExpected <- (__ \ "turnoverLowerThanExpected").read[Boolean]
+  } yield WhyTurnoverBelow(
+    lostContract,
+    semiRetiring,
+    moreCompetitors,
+    reducedTradingHours,
+    seasonalBusiness,
+    closedPlacesOfBusiness,
+    turnoverLowerThanExpected
+  )
 
   implicit val desWrites: Writes[WhyTurnoverBelow] = Writes { model => JsString(model.toString) }
 

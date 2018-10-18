@@ -27,7 +27,7 @@ class WhyTurnoverBelowSpec extends UnitSpec {
     "deserializing JSON" should {
 
       "return correct WhyTurnoverBelowModel when valid JSON is received" in {
-        whyTurnoverBelowJson.as[WhyTurnoverBelow] shouldBe whyTurnoverBelowModel
+        whyTurnoverBelowJsonMax.as[WhyTurnoverBelow] shouldBe whyTurnoverBelowModelMax
       }
 
       "return JsError when invalid JSON is received" in {
@@ -38,12 +38,17 @@ class WhyTurnoverBelowSpec extends UnitSpec {
     "serializing to JSON" should {
 
       "for whyTurnoverBelowModel output correct String" in {
-        Json.toJson(whyTurnoverBelowModel) shouldBe JsString(whyTurnoverBelowModel.toString)
+        Json.toJson(whyTurnoverBelowModelMax) shouldBe JsString(whyTurnoverBelowModelMax.toString)
       }
     }
 
-    "calling the .whyTurnoverBelowString" in {
-      whyTurnoverBelowModel.toString shouldBe whyTurnoverBelowString
+    "calling the .whyTurnoverBelowString" should {
+
+      "return all reasons as a correctly formatted string" in {
+
+        whyTurnoverBelowModelMax.toString shouldBe whyTurnoverBelowStringMax
+        TurnoverAlreadyBelow.toString shouldBe whyTurnoverBelowStringAlreadyBelow
+      }
     }
   }
 }

@@ -26,13 +26,13 @@ object TurnoverBelowThresholdTestConstants {
   val turnoverBelowThresholdFrontendJsonMax: JsValue = Json.obj(
     "belowThreshold" -> BelowPast12Months.value,
     "nextTwelveMonthsTurnover" -> nextTwelveMonthsTurnoverAmt,
-    "whyTurnoverBelow" -> WhyTurnoverBelowTestConstants.whyTurnoverBelowJson
+    "whyTurnoverBelow" -> WhyTurnoverBelowTestConstants.whyTurnoverBelowJsonMax
   )
 
   val turnoverBelowThresholdDESJsonMax: JsValue = Json.obj(
     "aboveBelowThreshold" -> BelowPast12Months.desValue,
     "taxableSuppliesValue" -> nextTwelveMonthsTurnoverAmt,
-    "reason" -> WhyTurnoverBelowTestConstants.whyTurnoverBelowModel.toString
+    "reason" -> WhyTurnoverBelowTestConstants.whyTurnoverBelowModelMax.toString
   )
 
   val turnoverBelowThresholdFrontendJsonMin: JsValue = Json.obj(
@@ -49,7 +49,7 @@ object TurnoverBelowThresholdTestConstants {
   val turnoverBelowThresholdModelMax: TurnoverBelowThreshold = TurnoverBelowThreshold(
     BelowPast12Months,
     nextTwelveMonthsTurnoverAmt,
-    WhyTurnoverBelowTestConstants.whyTurnoverBelowModel
+    WhyTurnoverBelowTestConstants.whyTurnoverBelowModelMax
   )
 
   val turnoverBelowThresholdModelMin: TurnoverBelowThreshold = TurnoverBelowThreshold(
