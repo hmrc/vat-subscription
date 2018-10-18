@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
+import cats.data.EitherT
+import cats.instances.future._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
-import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
 import uk.gov.hmrc.vatsubscription.services.{UpdatePPOBService, VatCustomerDetailsRetrievalService}
 
@@ -36,12 +37,14 @@ class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
     implicit user =>
         parseJsonBody[PPOBPost] match {
           case Right(updatedPPOB) =>
-            for {
-              welshIndicator <- vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn)
-              result <- updatePPOBService.updatePPOB(updatedPPOB, welshIndicator)
-            } yield result match {
-              case Right(success) => Ok(Json.toJson(success))
-              case Left(error) => InternalServerError(Json.toJson(error))
+            vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
+              case Right(welshIndicator) => {
+                updatePPOBService.updatePPOB(updatedPPOB, welshIndicator).map {
+                  case Right(success) => Ok(Json.toJson(success))
+                  case Left(error) => InternalServerError(Json.toJson(error))
+                }
+              }
+              case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
             }
           case Left(error) =>
             Future.successful(BadRequest(Json.toJson(error)))

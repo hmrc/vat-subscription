@@ -18,17 +18,26 @@ package uk.gov.hmrc.vatsubscription.helpers
 
 import java.util.UUID
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
 import uk.gov.hmrc.vatsubscription.models.post.{PPOBAddressPost, PPOBPost}
 
 object IntegrationTestConstants {
-  val testVatNumber: String = UUID.randomUUID().toString
-  val testArn: String = UUID.randomUUID().toString
 
-  val effectiveDate = "1967-08-13"
+  //Customer Details
+  val title = "0001"
+  val orgName = "Ancient Antiques Ltd"
+  val tradingName = "Dusty Relics"
+  val firstName = "Fred"
+  val lastName = "Flintstone"
+  val middleName = "M"
   val mandationStatus = "1"
+  val regReason = "0001"
+  val effectiveDate = "1967-08-13"
+  val startDate = "1967-08-13"
 
+  //PPOB
   val addLine1 = "Add Line 1"
   val addLine2 = "Add Line 2"
   val addLine3 = "Add Line 3"
@@ -45,6 +54,126 @@ object IntegrationTestConstants {
   val faxNumber = "01234 098765"
   val email = "test@test.com"
   val emailVerified = true
+
+  //FRS
+  val frsCategory = "001"
+  val frsPercent = 22.9
+  val frsLtdCostTrader = true
+  val frsStartDate = "2001-01-01"
+
+  //Bank Details
+  val accName = "**********************"
+  val accNum = "**7425"
+  val accSort = "69***"
+
+  //Return Period
+  val returnPeriod = "MC"
+
+  //Deregistration
+  val reason = "I dont play by the rules"
+  val cancellationDate = "2018-10-01"
+  val lastReturnDate = "2018-10-01"
+
+
+  val testSuccessCustomerDetailsDesResponse = Json.obj(
+    "approvedInformation" -> Json.obj(
+      "customerDetails" -> Json.obj(
+        "organisationName" -> orgName,
+        "individual" -> Json.obj(
+          "title" -> title,
+          "firstName" -> firstName,
+          "middleName" -> middleName,
+          "lastName" -> lastName
+        ),
+        "tradingName" -> tradingName,
+        "mandationStatus" -> mandationStatus,
+        "registrationReason" -> regReason,
+        "effectiveRegistrationDate" -> effectiveDate,
+        "businessStartDate" -> startDate,
+        "welshIndicator" -> true,
+        "isPartialMigration" -> true
+      ),
+      "PPOB" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        ),
+        "RLS" -> rlsIndicator,
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
+      ),
+      "flatRateScheme" -> Json.obj(
+        "FRSCategory" -> frsCategory,
+        "FRSPercentage" -> frsPercent,
+        "limitedCostTrader" -> frsLtdCostTrader,
+        "startDate" -> frsStartDate
+      ),
+      "bankDetails" -> Json.obj(
+        "accountHolderName" -> accName,
+        "bankAccountNumber" -> accNum,
+        "sortCode" -> accSort
+      ),
+      "deregistration" -> Json.obj(
+        "deregistrationReason" -> reason,
+        "effectDateOfCancellation" -> cancellationDate,
+        "lastReturnDueDate" -> lastReturnDate
+      ),
+      "returnPeriod" -> Json.obj(
+        "stdReturnPeriod" -> returnPeriod
+      )
+    ),
+    "inFlightInformation" -> Json.obj(
+      "changeIndicators" -> Json.obj(
+        "PPOBDetails" -> true,
+        "bankDetails" -> true,
+        "returnPeriod" -> true,
+        "deregister" -> true
+      ),
+      "inFlightChanges" -> Json.obj(
+        "PPOBDetails" -> Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "line2" -> addLine2,
+            "line3" -> addLine3,
+            "line4" -> addLine4,
+            "line5" -> addLine5,
+            "postCode" -> postcode,
+            "countryCode" -> countryCode
+          ),
+          "contactDetails" -> Json.obj(
+            "primaryPhoneNumber" -> phoneNumber,
+            "mobileNumber" -> mobileNumber,
+            "faxNumber" -> faxNumber,
+            "emailAddress" -> email,
+            "emailVerified" -> emailVerified
+          ),
+          "websiteAddress" -> website
+        ),
+        "bankDetails" -> Json.obj(
+          "accountHolderName" -> accName,
+          "bankAccountNumber" -> accNum,
+          "sortCode" -> accSort
+        ),
+        "returnPeriod" -> Json.obj(
+          "returnPeriod" -> returnPeriod
+        )
+      )
+    )
+  )
+
+  val testVatNumber: String = UUID.randomUUID().toString
+  val testArn: String = UUID.randomUUID().toString
 
   val ppobAddressModelMax = PPOBAddressGet(
     addLine1,

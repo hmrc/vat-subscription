@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
+import cats.data.EitherT
+import cats.instances.future._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
@@ -35,12 +37,14 @@ class RequestDeregistrationController @Inject()(VatAuthorised: VatAuthorised,
     implicit user =>
       parseJsonBody[DeregistrationInfo] match {
         case Right(period) =>
-          for {
-            welshIndicator <- vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn)
-            result <- requestDeregistrationService.deregister(period, welshIndicator)
-          } yield result match {
-            case Right(success) => Ok(Json.toJson(success))
-            case Left(error) => InternalServerError(Json.toJson(error))
+          vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
+            case Right(welshIndicator) => {
+              requestDeregistrationService.deregister(period, welshIndicator).map {
+                case Right(success) => Ok(Json.toJson(success))
+                case Left(error) => InternalServerError(Json.toJson(error))
+              }
+            }
+            case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
           }
         case Left(error) =>
           Future.successful(BadRequest(Json.toJson(error)))

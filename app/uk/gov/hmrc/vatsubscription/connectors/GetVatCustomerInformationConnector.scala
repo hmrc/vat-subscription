@@ -18,14 +18,15 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
-import play.api.libs.json.JsSuccess
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.libs.json.{JsSuccess, Json, Writes}
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.VatCustomerInformation
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -82,10 +83,23 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
   }
 }
 
-sealed trait GetVatCustomerInformationFailure
+sealed trait GetVatCustomerInformationFailure {
+  val status: Int = INTERNAL_SERVER_ERROR
+  val body: String
+}
 
-case object InvalidVatNumber extends GetVatCustomerInformationFailure
+object GetVatCustomerInformationFailure {
+  implicit val writes: Writes[GetVatCustomerInformationFailure] = Writes {
+    error => Json.obj("status" -> error.status, "body" -> error.body)
+  }
+}
 
-case object VatNumberNotFound extends GetVatCustomerInformationFailure
+case object InvalidVatNumber extends GetVatCustomerInformationFailure {
+  override val body = "Invalid vat number"
+}
 
-case class UnexpectedGetVatCustomerInformationFailure(status: Int, body: String) extends GetVatCustomerInformationFailure
+case object VatNumberNotFound extends GetVatCustomerInformationFailure {
+  override val body = "Vat number not found"
+}
+
+case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val body: String) extends GetVatCustomerInformationFailure

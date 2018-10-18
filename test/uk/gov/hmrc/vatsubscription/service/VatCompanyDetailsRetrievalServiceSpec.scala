@@ -20,7 +20,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.vatsubscription.connectors.InvalidVatNumber
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, VatNumberNotFound}
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
@@ -87,19 +87,25 @@ class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCust
     "return true when customer details has welshIndicator set to true" in {
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
       val res = TestVatCompanyDetailsRetrievalService.extractWelshIndicator(testVatNumber)
-      await(res) shouldBe true
+      await(res) shouldBe Right(true)
     }
 
     "return false when customer details has welshIndicator set to false" in {
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
       val res = TestVatCompanyDetailsRetrievalService.extractWelshIndicator(testVatNumber)
-      await(res) shouldBe false
+      await(res) shouldBe Right(false)
     }
 
     "return false when customer details doesn't have a welsh indicator" in {
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelNoWelshIndicator)))
       val res = TestVatCompanyDetailsRetrievalService.extractWelshIndicator(testVatNumber)
-      await(res) shouldBe false
+      await(res) shouldBe Right(false)
+    }
+
+    "return a Left when there is an error" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
+      val res = TestVatCompanyDetailsRetrievalService.extractWelshIndicator(testVatNumber)
+      await(res) shouldBe Left(VatNumberNotFound)
     }
   }
 }
