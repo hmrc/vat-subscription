@@ -38,7 +38,7 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.deregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(testUser, hc, ec)
+        val result = service.deregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -47,7 +47,7 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.deregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(testUser, hc, ec)
+        val result = service.deregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -59,9 +59,10 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is not an Agent" should {
 
-      val result = service.constructDeregistrationModel(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(testUser)
+      val result = service.constructDeregistrationModel(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel, welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = DeregistrationRequest,
         updatedPPOB = None,
         updatedReturnPeriod = None,
@@ -76,9 +77,10 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      val result = service.constructDeregistrationModel(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(testAgentUser)
+      val result = service.constructDeregistrationModel(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel, welshIndicator = false)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = DeregistrationRequest,
         updatedPPOB = None,
         updatedReturnPeriod = None,

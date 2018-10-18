@@ -29,21 +29,22 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def updateReturnPeriod(updatedReturnPeriod: ReturnPeriod)
+  def updateReturnPeriod(updatedReturnPeriod: ReturnPeriod, welshIndicator: Boolean)
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
-    val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod)
+    val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod, welshIndicator)
     Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
 
-  def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod)
+  def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod, welshIndicator: Boolean)
                                       (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
 
     UpdateVatSubscription(
+      controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangeReturnPeriod,
       updatedPPOB = None,
       updatedReturnPeriod = Some(UpdatedReturnPeriod(updatedReturnPeriod)),

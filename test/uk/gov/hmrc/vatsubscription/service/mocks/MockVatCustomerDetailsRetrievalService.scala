@@ -38,6 +38,11 @@ trait MockVatCustomerDetailsRetrievalService extends MockitoSugar {
                                                                           (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
   }
 
+  def mockExtractWelshIndicator(vrn: String)(response: Future[Either[GetVatCustomerInformationFailure, Boolean]]): Unit = {
+    when(mockVatCustomerDetailsRetrievalService.extractWelshIndicator(ArgumentMatchers.eq(vrn))
+                                                                     (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+  }
+
   def mockRetrieveVatInformation(vatNumber: String)
                                     (response: Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]]): Unit = {
     when(mockVatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(ArgumentMatchers.eq(vatNumber))

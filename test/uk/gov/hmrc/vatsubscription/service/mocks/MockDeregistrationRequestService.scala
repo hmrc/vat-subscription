@@ -34,7 +34,7 @@ trait MockDeregistrationRequestService extends MockitoSugar {
   val mockDeregistrationRequestService: RequestDeregistrationService = mock[RequestDeregistrationService]
 
   def mockDeregister(deregInfo: DeregistrationInfo)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
-    when(mockDeregistrationRequestService.deregister(ArgumentMatchers.eq(deregInfo))(
+    when(mockDeregistrationRequestService.deregister(ArgumentMatchers.eq(deregInfo), ArgumentMatchers.any[Boolean])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

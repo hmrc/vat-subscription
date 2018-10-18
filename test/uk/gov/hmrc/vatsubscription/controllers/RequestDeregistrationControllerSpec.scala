@@ -22,19 +22,21 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.vatsubscription.connectors.VatNumberNotFound
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.helpers.DeregistrationInfoTestConstants
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
-import uk.gov.hmrc.vatsubscription.service.mocks.MockDeregistrationRequestService
+import uk.gov.hmrc.vatsubscription.service.mocks.{MockDeregistrationRequestService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 
-class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorised with MockDeregistrationRequestService {
+class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorised with MockDeregistrationRequestService
+  with MockVatCustomerDetailsRetrievalService {
 
   object TestRequestDeregistrationController
-    extends RequestDeregistrationController(mockVatAuthorised, mockDeregistrationRequestService)
+    extends RequestDeregistrationController(mockVatAuthorised, mockDeregistrationRequestService, mockVatCustomerDetailsRetrievalService)
 
   val deregRequest: FakeRequest[AnyContentAsJson] =
     FakeRequest().withJsonBody(DeregistrationInfoTestConstants.deregInfoCeasedTradingFrontendJson)
@@ -57,6 +59,7 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
         "a valid Deregistration Model is received" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockExtractWelshIndicator(testVatNumber)(Future.successful(Right(false)))
           mockDeregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(deregRequest))
@@ -89,12 +92,28 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockExtractWelshIndicator(testVatNumber)(Future.successful(Right(false)))
             mockDeregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
             jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+          }
+        }
+
+        "a valid return period is supplied but an error is returned instead of a welshIndicator" should {
+
+          lazy val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(deregRequest))
+
+          "return status INTERNAL_SERVER_ERROR (500)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockExtractWelshIndicator(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
+            status(res) shouldBe INTERNAL_SERVER_ERROR
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
           }
         }
       }

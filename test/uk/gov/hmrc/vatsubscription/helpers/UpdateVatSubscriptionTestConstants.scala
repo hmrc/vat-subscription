@@ -34,6 +34,7 @@ object UpdateVatSubscriptionTestConstants {
   val updateErrorResponse: ErrorModel = ErrorModel("TEST","ERROR")
 
   val updateVatSubscriptionModelMax: UpdateVatSubscription = UpdateVatSubscription(
+    controlInformation = ControlInformation(welshIndicator = false),
     requestedChanges = changeAll,
     updatedPPOB = Some(updatedPPOB),
     updatedReturnPeriod = Some(updatedReturnPeriod),
@@ -43,7 +44,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val updateVatSubscriptionLatestDESApi1365JsonMax: JsValue = Json.obj(
     "messageType" -> messageType,
-    "controlInformation" -> ControlInformation(),
+    "controlInformation" -> ControlInformation(welshIndicator = false),
     "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.latestDESApi1365Writes),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
@@ -53,7 +54,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val updateVatSubscriptionCurrentDESApi1365JsonMax: JsValue = Json.obj(
     "messageType" -> messageType,
-    "controlInformation" -> ControlInformation(),
+    "controlInformation" -> ControlInformation(welshIndicator = false),
     "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.currentDESApi1365Writes),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
@@ -63,6 +64,7 @@ object UpdateVatSubscriptionTestConstants {
 
 
   val updateVatSubscriptionModelMin: UpdateVatSubscription = UpdateVatSubscription(
+    controlInformation = ControlInformation(welshIndicator = false),
     requestedChanges = ChangeReturnPeriod,
     updatedPPOB = None,
     updatedReturnPeriod = Some(updatedReturnPeriod),
@@ -72,7 +74,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(
     "messageType" -> messageType,
-    "controlInformation" -> ControlInformation(),
+    "controlInformation" -> ControlInformation(welshIndicator = false),
     "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.latestDESApi1365Writes),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
@@ -80,7 +82,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val updateVatSubscriptionCurrentDESApi1365JsonMin: JsValue = Json.obj(
     "messageType" -> messageType,
-    "controlInformation" -> ControlInformation(),
+    "controlInformation" -> ControlInformation(welshIndicator = false),
     "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.currentDESApi1365Writes),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent

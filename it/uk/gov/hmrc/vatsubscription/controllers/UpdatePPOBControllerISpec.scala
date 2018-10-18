@@ -19,8 +19,9 @@ package uk.gov.hmrc.vatsubscription.controllers
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.{ppobModelMax, testVatNumber}
+import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.{ppobModelMax, testSuccessCustomerDetailsDesResponse, testVatNumber}
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub.{mtdVatEnrolment, stubAuth, stubAuthFailure, successfulAuthResponse}
+import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub.stubGetInformation
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.UpdateVatCustomerSubscriptionStub.stubUpdateSubscription
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 
@@ -56,6 +57,7 @@ class UpdatePPOBControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
         "return OK with the status" in {
 
           stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+          stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
           val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax)))
@@ -72,6 +74,7 @@ class UpdatePPOBControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
         "return ISE with the error response" in {
 
           stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+          stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
           val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax)))

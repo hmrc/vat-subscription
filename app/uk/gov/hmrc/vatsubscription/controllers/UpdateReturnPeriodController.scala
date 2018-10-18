@@ -16,31 +16,39 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
+import cats.data.EitherT
+import cats.instances.future._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.models.ReturnPeriod
-import uk.gov.hmrc.vatsubscription.services.UpdateReturnPeriodService
+import uk.gov.hmrc.vatsubscription.services.{UpdateReturnPeriodService, VatCustomerDetailsRetrievalService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdateReturnPeriodController @Inject()(VatAuthorised: VatAuthorised,
-                                             updateReturnPeriodService: UpdateReturnPeriodService)
+                                             updateReturnPeriodService: UpdateReturnPeriodService,
+                                             vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService)
                                             (implicit ec: ExecutionContext) extends MicroserviceBaseController {
 
   def updateVatReturnPeriod(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
       parseJsonBody[ReturnPeriod](user, ReturnPeriod.frontendRds) match {
         case Right(period) =>
-          updateReturnPeriodService.updateReturnPeriod(period) map {
-            case Right(success) => Ok(Json.toJson(success))
-            case Left(error) => InternalServerError(Json.toJson(error))
+          vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
+            case Right(welshIndicator) => {
+              updateReturnPeriodService.updateReturnPeriod(period, welshIndicator).map {
+                case Right(success) => Ok(Json.toJson(success))
+                case Left(error) => InternalServerError(Json.toJson(error))
+              }
+            }
+            case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
           }
-        case Left(error) =>
-          Future.successful(BadRequest(Json.toJson(error)))
+          case Left(error) =>
+            Future.successful(BadRequest(Json.toJson(error)))
+        }
       }
-  }
 
 }

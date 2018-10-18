@@ -20,15 +20,15 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, VatNumberNotFound}
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
-import uk.gov.hmrc.vatsubscription.connectors.InvalidVatNumber
+import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 import uk.gov.hmrc.vatsubscription.services._
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomerInformationConnector {
 
@@ -80,5 +80,32 @@ class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCust
       await(res) shouldBe Left(InvalidVatNumber)
     }
 
+  }
+
+  "extractWelshIndicator" should {
+
+    "return true when customer details has welshIndicator set to true" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
+      val res = TestVatCompanyDetailsRetrievalService.extractWelshIndicator(testVatNumber)
+      await(res) shouldBe Right(true)
+    }
+
+    "return false when customer details has welshIndicator set to false" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
+      val res = TestVatCompanyDetailsRetrievalService.extractWelshIndicator(testVatNumber)
+      await(res) shouldBe Right(false)
+    }
+
+    "return false when customer details doesn't have a welsh indicator" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelNoWelshIndicator)))
+      val res = TestVatCompanyDetailsRetrievalService.extractWelshIndicator(testVatNumber)
+      await(res) shouldBe Right(false)
+    }
+
+    "return a Left when there is an error" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
+      val res = TestVatCompanyDetailsRetrievalService.extractWelshIndicator(testVatNumber)
+      await(res) shouldBe Left(VatNumberNotFound)
+    }
   }
 }
