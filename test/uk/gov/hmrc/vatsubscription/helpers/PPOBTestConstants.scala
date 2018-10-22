@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
-import uk.gov.hmrc.vatsubscription.models.post.{PPOBAddressPost, PPOBPost}
+import uk.gov.hmrc.vatsubscription.models.post.{PPOBAddressPost, EmailPost, PPOBPost}
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
 
 object PPOBTestConstants {
@@ -74,9 +74,58 @@ object PPOBTestConstants {
 
   val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website))
 
+  val ppobModelEmailMaxPost = EmailPost(ppobAddressModelMaxPost, contactDetailsModelMax, Some(website))
+
 
   val ppobAddressGetJson: JsValue = Json.obj("line1" -> "Ronaldini Road", "line3" -> "Pell Way", "postCode" -> "R10 AAA", "countryCode" -> "BRAZIL")
   val ppobAddressGetValue: PPOBAddressGet = PPOBAddressGet("Ronaldini Road", None, Some("Pell Way"), None, None, Some("R10 AAA"),"BRAZIL")
+
+  val emailPostJson: JsValue =  Json.parse(s"""{
+                                              |	"address": {
+                                              |		"line1": "$addLine1",
+                                              |		"line2": "$addLine2",
+                                              |		"line3": "$addLine3",
+                                              |		"line4": "$addLine4",
+                                              |		"line5": "$addLine5",
+                                              |		"postCode": "$postcode",
+                                              |		"countryCode": "$countryCode"
+                                              |	},
+                                              |	"contactDetails": {
+                                              |		"primaryPhoneNumber": "$phoneNumber",
+                                              |		"mobileNumber": "$mobileNumber",
+                                              |		"faxNumber": "$faxNumber",
+                                              |		"emailAddress": "$email",
+                                              |		"emailVerified": $emailVerified
+                                              |	},
+                                              | "websiteAddress": "$website"
+                                              |
+                                             |}""".stripMargin)
+
+  val emailPostValue: EmailPost = EmailPost(ppobAddressModelMaxPost,
+    ContactDetails(Some(phoneNumber), Some(mobileNumber), Some(faxNumber), Some(email), Some(emailVerified)), Some(website))
+
+  val emailPostWriteResult: JsValue = Json.parse(s"""{
+                                             |	"PPOBAddress": {
+                                             |		"line1": "$addLine1",
+                                             |		"line2": "$addLine2",
+                                             |		"line3": "$addLine3",
+                                             |		"line4": "$addLine4",
+                                             |		"line5": "$addLine5",
+                                             |		"postCode": "$postcode",
+                                             |		"countryCode": "$countryCode",
+                                             |		"addressValidated": true
+                                             |	},
+                                             |	"PPOBCommDetails": {
+                                             |		"primaryPhoneNumber": "$phoneNumber",
+                                             |		"mobileNumber": "$mobileNumber",
+                                             |		"faxNumber": "$faxNumber",
+                                             |		"emailAddress": "$email",
+                                             |		"emailVerified": $emailVerified
+                                             |	},
+                                             | "websiteAddress": "$website"
+                                             |
+                                             |}""".stripMargin)
+
 
   val ppobAddressPostJson: JsValue = Json.obj(
     "line1" -> "Ronaldini Road",

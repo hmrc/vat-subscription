@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class RequestedChanges(addressDetails: Boolean = false,
+case class RequestedChanges(ppobDetails: Boolean = false,
                             returnPeriod: Boolean = false,
                             deregInfo: Boolean = false,
                             repaymentBankDetails: Boolean = false,
@@ -27,7 +27,7 @@ case class RequestedChanges(addressDetails: Boolean = false,
                             flateRateScheme: Boolean = false,
                             correspDetails: Boolean = false)
 
-object ChangePPOB extends RequestedChanges(addressDetails = true)
+object ChangePPOB extends RequestedChanges(ppobDetails = true)
 object ChangeReturnPeriod extends RequestedChanges(returnPeriod = true)
 object DeregistrationRequest extends RequestedChanges(deregInfo = true)
 
@@ -35,7 +35,7 @@ object RequestedChanges {
 
   val currentDESApi1365Writes: Writes[RequestedChanges] = Writes { model =>
     Json.obj(
-      "PPOBDetails" -> model.addressDetails,
+      "PPOBDetails" -> model.ppobDetails,
       "returnPeriod" -> model.returnPeriod,
       "repaymentBankDetails" -> model.repaymentBankDetails
     )

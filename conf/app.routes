@@ -13,3 +13,5 @@ PUT         /:vatNumber/return-period                                           
 PUT         /:vatNumber/ppob                                                         @uk.gov.hmrc.vatsubscription.controllers.UpdatePPOBController.updatePPOB(vatNumber: String)
 
 PUT         /:vatNumber/deregister                                                   @uk.gov.hmrc.vatsubscription.controllers.RequestDeregistrationController.deregister(vatNumber: String)
+
+PUT         /:vatNumber/email-address                                                @uk.gov.hmrc.vatsubscription.controllers.UpdateEmailAddressController.updateEmail(vatNumber: String)
