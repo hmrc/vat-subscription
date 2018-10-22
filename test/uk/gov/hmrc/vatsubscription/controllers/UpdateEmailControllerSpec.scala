@@ -39,7 +39,7 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
 
   val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
 
-  "the.updatePPOB() method" when {
+  "the.updateEmail() method" when {
 
     "the user is not authorised" should {
 
