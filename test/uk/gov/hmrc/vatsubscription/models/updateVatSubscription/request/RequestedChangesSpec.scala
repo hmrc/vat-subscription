@@ -52,19 +52,5 @@ class RequestedChangesSpec extends UnitSpec {
 
       RequestedChanges.latestDESApi1365Writes.writes(model) shouldBe result
     }
-
-    "output a correctly formatted RequestedChanges json for the latest DES API1365 writes with email" in {
-      val result = Json.obj(
-        "PPOBDetails" -> true,
-        "returnPeriod" -> true,
-        "deregInfo" -> true,
-        "repaymentBankDetails" -> false,
-        "businessActivities" -> false,
-        "flateRateScheme" -> false,
-        "correspDetails" -> false
-      )
-
-      RequestedChanges.latestDESApi1365Writes.writes(model) shouldBe result
-    }
   }
 }
