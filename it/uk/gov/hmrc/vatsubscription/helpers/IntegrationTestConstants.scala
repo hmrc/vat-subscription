@@ -21,7 +21,7 @@ import java.util.UUID
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
-import uk.gov.hmrc.vatsubscription.models.post.{PPOBAddressPost, PPOBPost}
+import uk.gov.hmrc.vatsubscription.models.post.{EmailPost, PPOBAddressPost, PPOBPost}
 
 object IntegrationTestConstants {
 
@@ -203,6 +203,7 @@ object IntegrationTestConstants {
     Some(emailVerified)
   )
 
+  val ppobModelEmailMaxPost = EmailPost(ppobAddressModelMaxPost, contactDetailsModelMax, Some(website))
   val ppobModelMax = PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
   val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website))
 }

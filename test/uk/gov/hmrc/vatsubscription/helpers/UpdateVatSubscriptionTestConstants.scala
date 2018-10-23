@@ -25,7 +25,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val messageType: String = "SubscriptionUpdate"
 
-  val changeAll: RequestedChanges = RequestedChanges(addressDetails = true, returnPeriod = true, deregInfo = true)
+  val changeAll: RequestedChanges = RequestedChanges(ppobDetails = true, returnPeriod = true, deregInfo = true)
 
   val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod)
   val updatedPPOB: UpdatedPPOB = UpdatedPPOB(PPOBTestConstants.ppobModelMaxPost)

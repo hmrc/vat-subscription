@@ -24,7 +24,7 @@ class RequestedChangesSpec extends UnitSpec {
   "RequestedChanges Writes" should {
 
     val model: RequestedChanges = RequestedChanges(
-      addressDetails = true,
+      ppobDetails = true,
       returnPeriod = true,
       deregInfo = true
     )
