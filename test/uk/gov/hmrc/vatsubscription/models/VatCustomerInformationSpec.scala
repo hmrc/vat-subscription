@@ -42,4 +42,13 @@ class VatCustomerInformationSpec extends TestUtil {
       VatCustomerInformation.newReads.reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
     }
   }
+
+  "r7Reads" should {
+    "parse the json correctly when all optional fields are populated" in {
+      VatCustomerInformation.r7Reads.reads(customerInformationDESJsonMaxR7).get shouldBe customerInformationModelMaxR7
+    }
+
+    "parse the json correctly when no optional fields are returned" in {
+      VatCustomerInformation.r7Reads.reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
+    }  }
 }

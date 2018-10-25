@@ -26,7 +26,8 @@ case class CustomerDetails(firstName: Option[String],
                            vatRegistrationDate: Option[String],
                            hasFlatRateScheme: Boolean = false,
                            welshIndicator: Option[Boolean],
-                           isPartialMigration: Option[Boolean])
+                           isPartialMigration: Option[Boolean],
+                           partyType: Option[String] = None)
 
 object CustomerDetails {
 
@@ -38,6 +39,7 @@ object CustomerDetails {
   private val hasFlatRateSchemePath = JsPath \ "hasFlatRateScheme"
   private val welshIndicatorPath = JsPath \ "welshIndicator"
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
+  private val partyTypePath = JsPath \ "partyType"
 
   implicit val cdReader: Reads[CustomerDetails] = for {
     firstName <- firstNamePath.readNullable[String]
@@ -67,7 +69,8 @@ object CustomerDetails {
       vatRegistrationDatePath.writeNullable[String] and
       hasFlatRateSchemePath.write[Boolean] and
       welshIndicatorPath.writeNullable[Boolean] and
-      isPartialMigrationPath.writeNullable[Boolean]
+      isPartialMigrationPath.writeNullable[Boolean] and
+      partyTypePath.writeNullable[String]
     )(unlift(CustomerDetails.unapply))
 }
 

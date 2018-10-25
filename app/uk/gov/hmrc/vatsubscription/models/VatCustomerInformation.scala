@@ -53,6 +53,7 @@ object VatCustomerInformation extends JsonReadUtil {
   val returnPeriodKey = "returnPeriod"
   val vatRegistrationDateKey = "effectiveRegistrationDate"
   val deregistrationKey = "deregistration"
+  val partyTypeKey = "partyType"
 
   private val path = __ \ approvedInformationKey
   private val customerDetailsPath = path \ customerDetailsKey
@@ -129,6 +130,45 @@ object VatCustomerInformation extends JsonReadUtil {
       flatRateScheme.isDefined,
       welshIndicator,
       isPartialMigration
+    ),
+    flatRateScheme,
+    ppob,
+    bankDetails,
+    returnPeriod,
+    deregistration,
+    changeIndicators,
+    pendingChanges
+  )
+
+  val r7Reads: Reads[VatCustomerInformation] = for {
+    firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
+    lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
+    organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
+    tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
+    vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
+    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
+    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
+    flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
+    ppob <- ppobPath.readOpt[PPOBGet]
+    bankDetails <- bankDetailsPath.readOpt[BankDetails]
+    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
+    deregistration <- deregistrationPath.readOpt[Deregistration]
+    changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
+    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[String]
+  } yield VatCustomerInformation(
+    mandationStatus,
+    CustomerDetails(
+      firstName = firstName,
+      lastName = lastName,
+      organisationName = organisationName,
+      tradingName = tradingName,
+      vatRegistrationDate,
+      flatRateScheme.isDefined,
+      welshIndicator,
+      isPartialMigration,
+      partyType
     ),
     flatRateScheme,
     ppob,
