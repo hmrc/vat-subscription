@@ -49,6 +49,6 @@ class VatCustomerInformationSpec extends TestUtil {
     }
 
     "parse the json correctly when no optional fields are returned" in {
-      VatCustomerInformation.r7Reads.reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
+      VatCustomerInformation.r7Reads.reads(customerInformationDESJsonMinR7).get shouldBe customerInformationModelMinR7
     }  }
 }

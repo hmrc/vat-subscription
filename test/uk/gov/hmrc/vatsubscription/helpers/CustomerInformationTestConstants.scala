@@ -402,6 +402,15 @@ object CustomerInformationTestConstants {
     )
   )
 
+  val customerInformationDESJsonMinR7: JsValue = Json.obj(
+    "approvedInformation" -> Json.obj(
+      "customerDetails" -> Json.obj(
+        "mandationStatus" -> mandationStatusCode,
+        "isPartialMigration" -> false
+      )
+    )
+  )
+
   val customerInformationOutputJsonMaxWithFRS: JsValue = Json.obj(
     "bankDetails" -> Json.obj(
       "accountHolderName" -> accName,
@@ -638,5 +647,9 @@ object CustomerInformationTestConstants {
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
     MTDfBMandated, CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = None), None, None, None, None, None, None, None
+  )
+
+  val customerInformationModelMinR7: VatCustomerInformation = VatCustomerInformation(
+    MTDfBMandated, CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = Some(false)), None, None, None, None, None, None, None
   )
 }

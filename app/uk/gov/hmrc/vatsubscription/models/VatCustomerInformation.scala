@@ -148,7 +148,7 @@ object VatCustomerInformation extends JsonReadUtil {
     vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
-    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
+    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).read[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     ppob <- ppobPath.readOpt[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
@@ -167,7 +167,7 @@ object VatCustomerInformation extends JsonReadUtil {
       vatRegistrationDate,
       flatRateScheme.isDefined,
       welshIndicator,
-      isPartialMigration,
+      Some(isPartialMigration),
       partyType
     ),
     flatRateScheme,

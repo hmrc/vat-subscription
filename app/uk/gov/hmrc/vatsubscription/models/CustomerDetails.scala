@@ -50,6 +50,7 @@ object CustomerDetails {
     hasFlatRateScheme <- hasFlatRateSchemePath.read[Boolean]
     welshIndicator <- welshIndicatorPath.readNullable[Boolean]
     isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
+    partyType <- partyTypePath.readNullable[String]
   } yield CustomerDetails(
     firstName,
     lastName,
@@ -58,7 +59,8 @@ object CustomerDetails {
     vatRegistrationDate,
     hasFlatRateScheme,
     welshIndicator,
-    isPartialMigration
+    isPartialMigration,
+    partyType
   )
 
   implicit val cdWriter: Writes[CustomerDetails] = (
