@@ -41,8 +41,7 @@ object CustomerDetailsTestConstants {
     Some(tradingName),
     Some(effectiveDate),
     welshIndicator = Some(false),
-    isPartialMigration = Some(false),
-    partyType = Some("0")
+    isPartialMigration = Some(false)
   )
 
   val customerDetailsModelMaxWithFRS = CustomerDetails(

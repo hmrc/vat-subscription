@@ -29,7 +29,8 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   returnPeriod: Option[ReturnPeriod],
                                   deregistration: Option[Deregistration],
                                   changeIndicators: Option[ChangeIndicators],
-                                  pendingChanges: Option[PendingChanges])
+                                  pendingChanges: Option[PendingChanges],
+                                  partyType: Option[String] = None)
 
 object VatCustomerInformation extends JsonReadUtil {
 
@@ -167,8 +168,7 @@ object VatCustomerInformation extends JsonReadUtil {
       vatRegistrationDate,
       flatRateScheme.isDefined,
       welshIndicator,
-      Some(isPartialMigration),
-      partyType
+      Some(isPartialMigration)
     ),
     flatRateScheme,
     ppob,
@@ -176,7 +176,8 @@ object VatCustomerInformation extends JsonReadUtil {
     returnPeriod,
     deregistration,
     changeIndicators,
-    pendingChanges
+    pendingChanges,
+    partyType
   )
 
   implicit val writes: Writes[VatCustomerInformation] = Json.writes[VatCustomerInformation]

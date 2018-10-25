@@ -638,18 +638,57 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod)
-    ))
+    )),
+    Some("0")
   )
 
   val customerInformationModelNoWelshIndicator: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, customerDetailsModelNoWelshIndicator, None, None, None, None, None, None, None
+    mandationStatus = MTDfBMandated,
+    customerDetails = customerDetailsModelNoWelshIndicator,
+    flatRateScheme = None,
+    ppob = None,
+    bankDetails = None,
+    returnPeriod = None,
+    deregistration = None,
+    changeIndicators = None,
+    pendingChanges = None
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = None), None, None, None, None, None, None, None
+    mandationStatus = MTDfBMandated,
+    customerDetails = CustomerDetails(
+      firstName = None,
+      lastName = None,
+      organisationName = None,
+      tradingName = None,
+      vatRegistrationDate = None,
+      welshIndicator = None,
+      isPartialMigration = None),
+    flatRateScheme = None,
+    ppob = None,
+    bankDetails = None,
+    returnPeriod = None,
+    deregistration = None,
+    changeIndicators = None,
+    pendingChanges = None
   )
 
   val customerInformationModelMinR7: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = Some(false)), None, None, None, None, None, None, None
+    mandationStatus = MTDfBMandated,
+    customerDetails = CustomerDetails(
+      firstName = None,
+      lastName = None,
+      organisationName = None,
+      tradingName = None,
+      vatRegistrationDate = None,
+      welshIndicator = None,
+      isPartialMigration = Some(false)),
+    flatRateScheme = None,
+    ppob = None,
+    bankDetails = None,
+    returnPeriod = None,
+    deregistration = None,
+    changeIndicators = None,
+    pendingChanges = None
   )
 }
