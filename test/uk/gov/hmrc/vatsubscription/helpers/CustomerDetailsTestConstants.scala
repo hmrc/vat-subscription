@@ -22,7 +22,15 @@ import uk.gov.hmrc.vatsubscription.models.CustomerDetails
 
 object CustomerDetailsTestConstants {
 
-  val customerDetailsModelMin = CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = None)
+  val customerDetailsModelMin = CustomerDetails(
+    None,
+    None,
+    None,
+    None,
+    None,
+    welshIndicator = None,
+    isPartialMigration = false
+  )
 
   val customerDetailsModelMax = CustomerDetails(
     Some(firstName),
@@ -31,7 +39,7 @@ object CustomerDetailsTestConstants {
     Some(tradingName),
     Some(effectiveDate),
     welshIndicator = Some(false),
-    isPartialMigration = Some(false)
+    isPartialMigration = false
   )
 
   val customerDetailsModelMaxR7 = CustomerDetails(
@@ -41,7 +49,7 @@ object CustomerDetailsTestConstants {
     Some(tradingName),
     Some(effectiveDate),
     welshIndicator = Some(false),
-    isPartialMigration = Some(false)
+    isPartialMigration = false
   )
 
   val customerDetailsModelMaxWithFRS = CustomerDetails(
@@ -52,7 +60,7 @@ object CustomerDetailsTestConstants {
     Some(effectiveDate),
     hasFlatRateScheme = true,
     welshIndicator = Some(true),
-    isPartialMigration = Some(false)
+    isPartialMigration = false
   )
 
   val customerDetailsModelNoWelshIndicator = CustomerDetails(
@@ -63,7 +71,7 @@ object CustomerDetailsTestConstants {
     Some(effectiveDate),
     hasFlatRateScheme = true,
     welshIndicator = None,
-    isPartialMigration = Some(false)
+    isPartialMigration = false
   )
 
   val customerDetailsJsonMaxWithFRS: JsValue = Json.obj(
@@ -98,5 +106,8 @@ object CustomerDetailsTestConstants {
     "isPartialMigration" -> false
   )
 
-  val customerDetailsJsonMin: JsObject = Json.obj("hasFlatRateScheme" -> false)
+  val customerDetailsJsonMin: JsObject = Json.obj(
+    "hasFlatRateScheme" -> false,
+    "isPartialMigration" -> false
+  )
 }

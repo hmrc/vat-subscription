@@ -93,7 +93,7 @@ object VatCustomerInformation extends JsonReadUtil {
       vatRegistrationDate,
       flatRateScheme.isDefined,
       welshIndicator,
-      isPartialMigration
+      isPartialMigration.contains(true)
     ),
     flatRateScheme,
     ppob,
@@ -120,43 +120,6 @@ object VatCustomerInformation extends JsonReadUtil {
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
-  } yield VatCustomerInformation(
-    mandationStatus,
-    CustomerDetails(
-      firstName = firstName,
-      lastName = lastName,
-      organisationName = organisationName,
-      tradingName = tradingName,
-      vatRegistrationDate,
-      flatRateScheme.isDefined,
-      welshIndicator,
-      isPartialMigration
-    ),
-    flatRateScheme,
-    ppob,
-    bankDetails,
-    returnPeriod,
-    deregistration,
-    changeIndicators,
-    pendingChanges
-  )
-
-  val r7Reads: Reads[VatCustomerInformation] = for {
-    firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
-    lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
-    organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
-    tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
-    vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
-    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
-    welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
-    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).read[Boolean]
-    flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
-    ppob <- ppobPath.readOpt[PPOBGet]
-    bankDetails <- bankDetailsPath.readOpt[BankDetails]
-    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
-    deregistration <- deregistrationPath.readOpt[Deregistration]
-    changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[String]
   } yield VatCustomerInformation(
     mandationStatus,
@@ -168,7 +131,7 @@ object VatCustomerInformation extends JsonReadUtil {
       vatRegistrationDate,
       flatRateScheme.isDefined,
       welshIndicator,
-      Some(isPartialMigration)
+      isPartialMigration.contains(true)
     ),
     flatRateScheme,
     ppob,

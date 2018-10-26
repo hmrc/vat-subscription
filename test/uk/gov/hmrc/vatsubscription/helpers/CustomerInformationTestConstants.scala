@@ -572,9 +572,7 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
-    "customerDetails" -> Json.obj(
-      "hasFlatRateScheme" -> false
-    ),
+    "customerDetails" -> customerDetailsJsonMin,
     "mandationStatus" -> "MTDfB Mandated"
   )
 
@@ -663,7 +661,7 @@ object CustomerInformationTestConstants {
       tradingName = None,
       vatRegistrationDate = None,
       welshIndicator = None,
-      isPartialMigration = None),
+      isPartialMigration = false),
     flatRateScheme = None,
     ppob = None,
     bankDetails = None,
@@ -673,22 +671,4 @@ object CustomerInformationTestConstants {
     pendingChanges = None
   )
 
-  val customerInformationModelMinR7: VatCustomerInformation = VatCustomerInformation(
-    mandationStatus = MTDfBMandated,
-    customerDetails = CustomerDetails(
-      firstName = None,
-      lastName = None,
-      organisationName = None,
-      tradingName = None,
-      vatRegistrationDate = None,
-      welshIndicator = None,
-      isPartialMigration = Some(false)),
-    flatRateScheme = None,
-    ppob = None,
-    bankDetails = None,
-    returnPeriod = None,
-    deregistration = None,
-    changeIndicators = None,
-    pendingChanges = None
-  )
 }
