@@ -29,7 +29,8 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   returnPeriod: Option[ReturnPeriod],
                                   deregistration: Option[Deregistration],
                                   changeIndicators: Option[ChangeIndicators],
-                                  pendingChanges: Option[PendingChanges])
+                                  pendingChanges: Option[PendingChanges],
+                                  partyType: Option[String] = None)
 
 object VatCustomerInformation extends JsonReadUtil {
 
@@ -53,6 +54,7 @@ object VatCustomerInformation extends JsonReadUtil {
   val returnPeriodKey = "returnPeriod"
   val vatRegistrationDateKey = "effectiveRegistrationDate"
   val deregistrationKey = "deregistration"
+  val partyTypeKey = "partyType"
 
   private val path = __ \ approvedInformationKey
   private val customerDetailsPath = path \ customerDetailsKey
@@ -91,7 +93,7 @@ object VatCustomerInformation extends JsonReadUtil {
       vatRegistrationDate,
       flatRateScheme.isDefined,
       welshIndicator,
-      isPartialMigration
+      isPartialMigration.contains(true)
     ),
     flatRateScheme,
     ppob,
@@ -118,6 +120,7 @@ object VatCustomerInformation extends JsonReadUtil {
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
+    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[String]
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(
@@ -128,7 +131,7 @@ object VatCustomerInformation extends JsonReadUtil {
       vatRegistrationDate,
       flatRateScheme.isDefined,
       welshIndicator,
-      isPartialMigration
+      isPartialMigration.contains(true)
     ),
     flatRateScheme,
     ppob,
@@ -136,7 +139,8 @@ object VatCustomerInformation extends JsonReadUtil {
     returnPeriod,
     deregistration,
     changeIndicators,
-    pendingChanges
+    pendingChanges,
+    partyType
   )
 
   implicit val writes: Writes[VatCustomerInformation] = Json.writes[VatCustomerInformation]

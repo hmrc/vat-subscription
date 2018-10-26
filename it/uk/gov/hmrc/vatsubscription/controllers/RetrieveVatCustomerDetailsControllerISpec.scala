@@ -134,7 +134,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             vatRegistrationDate = Some(effectiveDate),
             hasFlatRateScheme = true,
             welshIndicator = Some(true),
-            isPartialMigration = Some(true)
+            isPartialMigration = true
           ),
           Some(FlatRateScheme(
             Some(frsCategory),

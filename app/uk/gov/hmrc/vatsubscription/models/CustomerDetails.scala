@@ -26,7 +26,7 @@ case class CustomerDetails(firstName: Option[String],
                            vatRegistrationDate: Option[String],
                            hasFlatRateScheme: Boolean = false,
                            welshIndicator: Option[Boolean],
-                           isPartialMigration: Option[Boolean])
+                           isPartialMigration: Boolean)
 
 object CustomerDetails {
 
@@ -56,7 +56,7 @@ object CustomerDetails {
     vatRegistrationDate,
     hasFlatRateScheme,
     welshIndicator,
-    isPartialMigration
+    isPartialMigration.contains(true)
   )
 
   implicit val cdWriter: Writes[CustomerDetails] = (
@@ -67,7 +67,7 @@ object CustomerDetails {
       vatRegistrationDatePath.writeNullable[String] and
       hasFlatRateSchemePath.write[Boolean] and
       welshIndicatorPath.writeNullable[Boolean] and
-      isPartialMigrationPath.writeNullable[Boolean]
+      isPartialMigrationPath.write[Boolean]
     )(unlift(CustomerDetails.unapply))
 }
 

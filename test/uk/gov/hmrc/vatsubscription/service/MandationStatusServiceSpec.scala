@@ -43,9 +43,23 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
     "return the mandation status if successful" in {
       val testSuccessfulResponse =
         VatCustomerInformation(
-          MTDfBMandated,
-          CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = None),
-          None, None, None, None, None, None, None)
+          mandationStatus = MTDfBMandated,
+          customerDetails = CustomerDetails(
+            firstName = None,
+            lastName = None,
+            organisationName = None,
+            tradingName = None,
+            vatRegistrationDate = None,
+            welshIndicator = None,
+            isPartialMigration = false),
+          flatRateScheme = None,
+          ppob = None,
+          bankDetails = None,
+          returnPeriod = None,
+          deregistration = None,
+          changeIndicators = None,
+          pendingChanges = None
+        )
 
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(testSuccessfulResponse)))
 

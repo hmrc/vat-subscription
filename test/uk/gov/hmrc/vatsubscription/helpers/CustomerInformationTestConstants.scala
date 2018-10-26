@@ -304,10 +304,109 @@ object CustomerInformationTestConstants {
     )
   )
 
+
+  val customerInformationDESJsonMaxR7: JsValue = Json.obj(
+    "approvedInformation" -> Json.obj(
+      "customerDetails" -> Json.obj(
+        "organisationName" -> orgName,
+        "individual" -> Json.obj(
+          "title" -> title,
+          "firstName" -> firstName,
+          "middleName" -> middleName,
+          "lastName" -> lastName
+        ),
+        "tradingName" -> tradingName,
+        "mandationStatus" -> mandationStatusCode,
+        "registrationReason" -> regReason,
+        "effectiveRegistrationDate" -> effectiveDate,
+        "businessStartDate" -> startDate,
+        "welshIndicator" -> false,
+        "isPartialMigration" -> false,
+        "partyType" -> "0"
+      ),
+      "PPOB" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        ),
+        "RLS" -> rlsIndicator,
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
+      ),
+      "deregistration" -> Json.obj(
+        "deregistrationReason" -> reason,
+        "effectDateOfCancellation" -> cancellationDate,
+        "lastReturnDueDate" -> lastReturnDate
+      ),
+      "bankDetails" -> Json.obj(
+        "accountHolderName" -> accName,
+        "bankAccountNumber" -> accNum,
+        "sortCode" -> accSort
+      ),
+      "returnPeriod" -> returnPeriodMCJson
+    ),
+    "inFlightInformation" -> Json.obj(
+      "changeIndicators" -> Json.obj(
+        "PPOBDetails" -> true,
+        "bankDetails" -> true,
+        "returnPeriod" -> true,
+        "deregister" -> true
+      ),
+      "inFlightChanges" -> Json.obj(
+        "PPOBDetails" -> Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "line2" -> addLine2,
+            "line3" -> addLine3,
+            "line4" -> addLine4,
+            "line5" -> addLine5,
+            "postCode" -> postcode,
+            "countryCode" -> countryCode
+          ),
+          "contactDetails" -> Json.obj(
+            "primaryPhoneNumber" -> phoneNumber,
+            "mobileNumber" -> mobileNumber,
+            "faxNumber" -> faxNumber,
+            "emailAddress" -> email,
+            "emailVerified" -> emailVerified
+          ),
+          "websiteAddress" -> website
+        ),
+        "bankDetails" -> Json.obj(
+          "accountHolderName" -> accName,
+          "bankAccountNumber" -> accNum,
+          "sortCode" -> accSort
+        ),
+        "returnPeriod" -> inflightReturnPeriodMCJson
+      )
+    )
+  )
+
+
   val customerInformationDESJsonMin: JsValue = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "mandationStatus" -> mandationStatusCode
+      )
+    )
+  )
+
+  val customerInformationDESJsonMinR7: JsValue = Json.obj(
+    "approvedInformation" -> Json.obj(
+      "customerDetails" -> Json.obj(
+        "mandationStatus" -> mandationStatusCode,
+        "isPartialMigration" -> false
       )
     )
   )
@@ -473,9 +572,7 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
-    "customerDetails" -> Json.obj(
-      "hasFlatRateScheme" -> false
-    ),
+    "customerDetails" -> customerDetailsJsonMin,
     "mandationStatus" -> "MTDfB Mandated"
   )
 
@@ -521,11 +618,57 @@ object CustomerInformationTestConstants {
     ))
   )
 
+  val customerInformationModelMaxR7: VatCustomerInformation = VatCustomerInformation(
+    MTDfBMandated,
+    customerDetailsModelMaxR7,
+    None,
+    Some(ppobModelMax),
+    Some(bankDetailsModelMax),
+    Some(MCReturnPeriod),
+    Some(deregModel),
+    Some(ChangeIndicators(
+      ppob = true,
+      bankDetails = true,
+      returnPeriod = true,
+      deregister= true
+    )),
+    Some(PendingChanges(
+      Some(ppobModelMax),
+      Some(bankDetailsModelMax),
+      Some(MCReturnPeriod)
+    )),
+    Some("0")
+  )
+
   val customerInformationModelNoWelshIndicator: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, customerDetailsModelNoWelshIndicator, None, None, None, None, None, None, None
+    mandationStatus = MTDfBMandated,
+    customerDetails = customerDetailsModelNoWelshIndicator,
+    flatRateScheme = None,
+    ppob = None,
+    bankDetails = None,
+    returnPeriod = None,
+    deregistration = None,
+    changeIndicators = None,
+    pendingChanges = None
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated, CustomerDetails(None, None, None, None, None, welshIndicator = None, isPartialMigration = None), None, None, None, None, None, None, None
+    mandationStatus = MTDfBMandated,
+    customerDetails = CustomerDetails(
+      firstName = None,
+      lastName = None,
+      organisationName = None,
+      tradingName = None,
+      vatRegistrationDate = None,
+      welshIndicator = None,
+      isPartialMigration = false),
+    flatRateScheme = None,
+    ppob = None,
+    bankDetails = None,
+    returnPeriod = None,
+    deregistration = None,
+    changeIndicators = None,
+    pendingChanges = None
   )
+
 }
