@@ -25,6 +25,7 @@ case class RequestedChanges(ppobDetails: Boolean = false,
                             repaymentBankDetails: Boolean = false,
                             businessActivities: Boolean = false,
                             flateRateScheme: Boolean = false,
+                            organisationDetails: Boolean = false,
                             correspDetails: Boolean = false)
 
 object ChangePPOB extends RequestedChanges(ppobDetails = true)
@@ -48,6 +49,7 @@ object RequestedChanges {
       (__ \ "repaymentBankDetails").write[Boolean] and
       (__ \ "businessActivities").write[Boolean] and
       (__ \ "flateRateScheme").write[Boolean] and
+      (__ \ "organisationDetails").write[Boolean] and
       (__ \ "correspDetails").write[Boolean]
     )(unlift(RequestedChanges.unapply))
 }
