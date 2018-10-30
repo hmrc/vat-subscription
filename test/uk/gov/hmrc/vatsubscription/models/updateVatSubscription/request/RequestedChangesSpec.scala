@@ -47,6 +47,7 @@ class RequestedChangesSpec extends UnitSpec {
         "repaymentBankDetails" -> false,
         "businessActivities" -> false,
         "flateRateScheme" -> false,
+        "organisationDetails" -> false,
         "correspDetails" -> false
       )
 
