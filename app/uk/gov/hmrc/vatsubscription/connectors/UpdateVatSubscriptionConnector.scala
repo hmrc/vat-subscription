@@ -19,14 +19,15 @@ package uk.gov.hmrc.vatsubscription.connectors
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365R5, Api1365R6, Api1365R7}
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser._
 import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription.{currentDESApi1365Writes, latestDESApi1365Writes}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,8 +37,11 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
 
   private[connectors] val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
 
-  implicit val writes: Writes[UpdateVatSubscription] =
-    if (appConfig.features.latestApi1365Version()) latestDESApi1365Writes else currentDESApi1365Writes
+  implicit val writes: Writes[UpdateVatSubscription] = appConfig.features.api1365Version() match {
+    case Api1365R5 => DESApi1365WritesR5
+    case Api1365R6 => DESApi1365WritesR6
+    case Api1365R7 => DESApi1365WritesR7
+  }
 
   def updateVatSubscription(user: User[_], vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
                            (implicit ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {

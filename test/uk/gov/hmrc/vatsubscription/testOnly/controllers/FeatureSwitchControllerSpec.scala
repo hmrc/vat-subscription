@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.FeatureSwitchModel
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365R6, Api1365R7, FeatureSwitchModel}
 import uk.gov.hmrc.vatsubscription.testonly.controllers.FeatureSwitchController
 
 import scala.concurrent.Future
@@ -44,7 +44,8 @@ class FeatureSwitchControllerSpec extends TestUtil {
     }
 
     "return feature switch configuration" in {
-      await(jsonBodyOf(result)) shouldEqual Json.toJson(FeatureSwitchModel(latestApi1363Version = true, stubDes = false, latestApi1365Version = true))
+      await(jsonBodyOf(result)) shouldEqual Json.toJson(
+        FeatureSwitchModel(latestApi1363Version = true, stubDes = false, Api1365Version = Api1365R7))
     }
   }
 
@@ -52,7 +53,7 @@ class FeatureSwitchControllerSpec extends TestUtil {
 
     val body = Json.toJson(FeatureSwitchModel(
       latestApi1363Version = true,
-      latestApi1365Version = false,
+      Api1365Version = Api1365R6,
       stubDes = true)
     )
 

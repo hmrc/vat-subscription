@@ -28,22 +28,22 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
       "for the current DES API1365 writes" should {
 
         "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-          UpdateVatSubscription.currentDESApi1365Writes.writes(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionCurrentDESApi1365JsonMax
+          UpdateVatSubscription.DESApi1365WritesR5.writes(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionCurrentDESApi1365JsonMax
         }
 
         "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-          UpdateVatSubscription.currentDESApi1365Writes.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionCurrentDESApi1365JsonMin
+          UpdateVatSubscription.DESApi1365WritesR5.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionCurrentDESApi1365JsonMin
         }
       }
 
       "for the latest DES API1365 writes" should {
 
         "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-          UpdateVatSubscription.latestDESApi1365Writes.writes(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionLatestDESApi1365JsonMax
+          UpdateVatSubscription.DESApi1365WritesR6.writes(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionLatestDESApi1365JsonMax
         }
 
         "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-          UpdateVatSubscription.latestDESApi1365Writes.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionLatestDESApi1365JsonMin
+          UpdateVatSubscription.DESApi1365WritesR6.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionLatestDESApi1365JsonMin
         }
       }
     }

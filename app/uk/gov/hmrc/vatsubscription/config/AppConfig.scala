@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.vatsubscription.config.featureSwitch.Features
 
 @Singleton
-class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
+class AppConfig @Inject()(implicit val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
   override protected def mode: Mode = environment.mode
 
   def desUrl: String =
@@ -36,6 +36,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val desEnvironmentHeader: (String, String) =
     "Environment" -> getString("microservice.services.des.environment")
 
-  lazy val features = new Features(runModeConfiguration)
+  lazy val features = new Features
 
 }
