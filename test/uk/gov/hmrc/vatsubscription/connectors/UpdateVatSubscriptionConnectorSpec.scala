@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatsubscription.connectors
 
 import assets.{MockHttpClient, TestUtil}
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365R5, Api1365R6, Api1365R7}
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testUser
 import uk.gov.hmrc.vatsubscription.helpers.DeclarationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
@@ -55,26 +56,37 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
 
     "http PUT is successful" should {
 
-      "return successful UpdateVatSubscriptionResponse model when using the latest API version" in {
+      "return successful UpdateVatSubscriptionResponse model when using the R7 API version" in {
 
-        mockAppConfig.features.latestApi1365Version(true)
+        mockAppConfig.features.api1365Version(Api1365R7)
 
         val connector = setup(Right(SuccessModel("12345")))
         val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
 
         await(result) shouldBe Right(SuccessModel("12345"))
-        connector.writes shouldBe UpdateVatSubscription.latestDESApi1365Writes
+        connector.writes shouldBe UpdateVatSubscription.DESApi1365WritesR7
       }
 
-      "return successful UpdateVatSubscriptionResponse model when using the current API version" in {
+      "return successful UpdateVatSubscriptionResponse model when using the R6 API version" in {
 
-        mockAppConfig.features.latestApi1365Version(false)
+        mockAppConfig.features.api1365Version(Api1365R6)
 
         val connector = setup(Right(SuccessModel("12345")))
         val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
 
         await(result) shouldBe Right(SuccessModel("12345"))
-        connector.writes shouldBe UpdateVatSubscription.currentDESApi1365Writes
+        connector.writes shouldBe UpdateVatSubscription.DESApi1365WritesR6
+      }
+
+      "return successful UpdateVatSubscriptionResponse model when using the R5 API version" in {
+
+        mockAppConfig.features.api1365Version(Api1365R5)
+
+        val connector = setup(Right(SuccessModel("12345")))
+        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+
+        await(result) shouldBe Right(SuccessModel("12345"))
+        connector.writes shouldBe UpdateVatSubscription.DESApi1365WritesR5
       }
     }
 

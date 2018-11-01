@@ -29,28 +29,43 @@ class RequestedChangesSpec extends UnitSpec {
       deregInfo = true
     )
 
-    "output a correctly formatted RequestedChanges json for the current DES API1365 writes" in {
+    "output a correctly formatted RequestedChanges json for the current DES API1365 writes R5" in {
       val result = Json.obj(
         "PPOBDetails" -> true,
         "returnPeriod" -> true,
         "repaymentBankDetails" -> false
       )
 
-      RequestedChanges.currentDESApi1365Writes.writes(model) shouldBe result
+      RequestedChanges.DESApi1365WritesR5.writes(model) shouldBe result
     }
 
-    "output a correctly formatted RequestedChanges json for the latest DES API1365 writes" in {
+    "output a correctly formatted RequestedChanges json for the latest DES API1365 writes R6" in {
       val result = Json.obj(
         "PPOBDetails" -> true,
         "returnPeriod" -> true,
         "deregInfo" -> true,
         "repaymentBankDetails" -> false,
         "businessActivities" -> false,
-        "flateRateScheme" -> false,
+        "flatRateScheme" -> false,
         "correspDetails" -> false
       )
 
-      RequestedChanges.latestDESApi1365Writes.writes(model) shouldBe result
+      RequestedChanges.DESApi1365WritesR6.writes(model) shouldBe result
+    }
+
+    "output a correctly formatted RequestedChanges json for the latest DES API1365 writes R7" in {
+      val result = Json.obj(
+        "PPOBDetails" -> true,
+        "returnPeriod" -> true,
+        "deregInfo" -> true,
+        "repaymentBankDetails" -> false,
+        "businessActivities" -> false,
+        "flatRateScheme" -> false,
+        "organisationDetails" -> false,
+        "correspDetails" -> false
+      )
+
+      RequestedChanges.DESApi1365WritesR7.writes(model) shouldBe result
     }
   }
 }

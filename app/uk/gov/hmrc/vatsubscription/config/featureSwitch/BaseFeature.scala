@@ -16,15 +16,11 @@
 
 package uk.gov.hmrc.vatsubscription.config.featureSwitch
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
-@Singleton
-class Features @Inject()(implicit config: Configuration) extends BaseFeature {
+trait BaseFeature {
 
-  private val featureSwitch: String = "feature-switch"
-  lazy val latestApi1363Version = new Feature(s"$featureSwitch.latestApi1363Version")
-  lazy val stubDes = new Feature(s"$featureSwitch.stubDes")
-  lazy val api1365Version = new Api1365VersionFeature(s"$featureSwitch.Api1365Version")
+  def getConfig(key: String)(implicit config: Configuration): String =
+    sys.props.get(key).fold(config.getString(key).getOrElse(throw new RuntimeException(s"Missing config for key: ${key}")))(x => x)
 
 }

@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class RequestedChanges(ppobDetails: Boolean = false,
@@ -24,7 +23,8 @@ case class RequestedChanges(ppobDetails: Boolean = false,
                             deregInfo: Boolean = false,
                             repaymentBankDetails: Boolean = false,
                             businessActivities: Boolean = false,
-                            flateRateScheme: Boolean = false,
+                            flatRateScheme: Boolean = false,
+                            organisationDetails: Boolean = false,
                             correspDetails: Boolean = false)
 
 object ChangePPOB extends RequestedChanges(ppobDetails = true)
@@ -33,7 +33,7 @@ object DeregistrationRequest extends RequestedChanges(deregInfo = true)
 
 object RequestedChanges {
 
-  val currentDESApi1365Writes: Writes[RequestedChanges] = Writes { model =>
+  val DESApi1365WritesR5: Writes[RequestedChanges] = Writes { model =>
     Json.obj(
       "PPOBDetails" -> model.ppobDetails,
       "returnPeriod" -> model.returnPeriod,
@@ -41,13 +41,28 @@ object RequestedChanges {
     )
   }
 
-  val latestDESApi1365Writes: Writes[RequestedChanges] = (
-    (__ \ "PPOBDetails").write[Boolean] and
-      (__ \ "returnPeriod").write[Boolean] and
-      (__ \ "deregInfo").write[Boolean] and
-      (__ \ "repaymentBankDetails").write[Boolean] and
-      (__ \ "businessActivities").write[Boolean] and
-      (__ \ "flateRateScheme").write[Boolean] and
-      (__ \ "correspDetails").write[Boolean]
-    )(unlift(RequestedChanges.unapply))
+  val DESApi1365WritesR6: Writes[RequestedChanges] = Writes { model =>
+    Json.obj(
+      "PPOBDetails" -> model.ppobDetails,
+    "returnPeriod" -> model.returnPeriod,
+    "deregInfo" -> model.deregInfo,
+    "repaymentBankDetails" -> model.repaymentBankDetails,
+    "businessActivities" -> model.businessActivities,
+    "flatRateScheme" -> model.flatRateScheme,
+    "correspDetails" -> model.correspDetails
+    )
+  }
+
+  val DESApi1365WritesR7: Writes[RequestedChanges] = Writes { model =>
+    Json.obj(
+      "PPOBDetails" -> model.ppobDetails,
+      "returnPeriod" -> model.returnPeriod,
+      "deregInfo" -> model.deregInfo,
+      "repaymentBankDetails" -> model.repaymentBankDetails,
+      "businessActivities" -> model.businessActivities,
+      "flatRateScheme" -> model.flatRateScheme,
+      "correspDetails" -> model.correspDetails,
+      "organisationDetails" -> model.organisationDetails
+    )
+  }
 }

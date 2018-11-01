@@ -18,9 +18,10 @@ package uk.gov.hmrc.vatsubscription.config.featureSwitch
 
 import play.api.Configuration
 
-class Feature(val key: String, config: Configuration) {
+class Feature(val key: String)(implicit config: Configuration) extends BaseFeature {
 
   def apply(value: Boolean): Unit = sys.props += key -> value.toString
 
-  def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
+  def apply(): Boolean = getConfig(key).toBoolean
+
 }
