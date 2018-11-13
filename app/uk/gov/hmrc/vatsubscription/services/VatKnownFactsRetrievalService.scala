@@ -35,7 +35,7 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
     Logger.debug(s"[VatKnownFactsRetrievalService][retrieveVatKnownFacts]: retrieving Vat known facts for vat number - $vatNumber")
     vatCustomerDetailsConnector.getInformation(vatNumber) map {
       case Right(vatCustomerInformation) =>
-        (vatCustomerInformation.customerDetails.vatRegistrationDate, vatCustomerInformation.ppob.flatMap(_.address.postCode)) match {
+        (vatCustomerInformation.customerDetails.vatRegistrationDate, vatCustomerInformation.ppob.address.postCode) match {
           case (Some(date), Some(postcode)) => Right(
             VatKnownFacts(
               vatRegistrationDate = date,

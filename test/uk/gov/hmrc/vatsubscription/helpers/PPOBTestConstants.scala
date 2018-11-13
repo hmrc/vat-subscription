@@ -70,6 +70,7 @@ object PPOBTestConstants {
 
   val contactDetailsModelMin = ContactDetails(None, None, None, None, None)
 
+  val ppobModelMin = PPOBGet(ppobAddressModelMax, None, None)
   val ppobModelMax = PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
 
   val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website))

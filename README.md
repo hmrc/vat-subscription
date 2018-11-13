@@ -135,10 +135,61 @@ Where:
 * **mandationStatus** can be "MTDfB Mandated", "MTDfB Voluntary", "Non MTDfB" or "Non Digital".
 * **CustomerDetails** is mandatory.
 * **flatRateScheme** is optional and its elements are also all optional.
-* **ppob** is optional and consists of mandatory "line1" and "countryCode" with optional "line2", "line3", "line4", "line5" and "postCode".
+* **ppob** is mandatory and consists of mandatory "line1" and "countryCode" with optional "line2", "line3", "line4", "line5" and "postCode".
 * **bankDetails** is optional and its elements are also all optional.
 * **returnPeriod** is optional and can be either "MA", "MB", "MC" or "MM".
 * **pendingChanges** is optional and consists of optional elements "ppob", "bankDetails" and "returnPeriod".
+
+#### Error Responses
+
+##### INVALID_VAT_NUMBER
+* **Status**: 400
+
+##### VAT_NUMBER_NOT_FOUND
+* **Status**: 404
+
+##### UNEXPECTED_GET_VAT_CUSTOMER_INFORMATION_FAILURE
+* **Status**: (any)
+
+### GET /vat-subscription/:vatNumber/manage-account-summary
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+Provides a summary view of the Customers VAT Subscription for the Manage Account section on the Business Tax Account.
+
+#### Success Response
+
+**HTTP Status**: 200
+
+**Example HTTP Response Body**:
+```
+{   
+    "mandationStatus": "MTDfB Mandated",
+    "ppobAddress": {
+      "line1": "addLine1",
+      "line2": "addLine2",
+      "line3": "addLine3",
+      "line4": "addLine4",
+      "line5": "addLine5",
+      "postCode": "TE3 3TT,
+      "countryCode": "EN"
+    },
+    "contactEmail": "test@testemail.com",
+    "businessName": "Grimey Org",
+    "repaymentBankDetails": {
+       "accountHolderName": "Monty Burns",
+       "bankAccountNumber": "****0001",
+       "sortCode": "****56"
+    }
+}
+```
+Where:
+* **mandationStatus** is mandatory and can be "MTDfB Mandated", "MTDfB Voluntary", "Non MTDfB" or "Non Digital".
+* **ppobAddress** is mandatory and consists of mandatory "line1" and "countryCode" with optional "line2", "line3", "line4", "line5" and "postCode".
+* **bankDetails** is optional and its elements are also all optional.
+* **businessName** is optional and is only returned if there is an organisation name for the VRN
 
 #### Error Responses
 

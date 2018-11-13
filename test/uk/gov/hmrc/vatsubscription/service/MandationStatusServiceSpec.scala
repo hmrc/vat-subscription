@@ -23,6 +23,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.connectors.InvalidVatNumber
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
 import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, MTDfBMandated, VatCustomerInformation}
 import uk.gov.hmrc.vatsubscription.services.MandationStatusService
 
@@ -53,7 +54,7 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
             welshIndicator = None,
             isPartialMigration = false),
           flatRateScheme = None,
-          ppob = None,
+          ppob = ppobModelMax,
           bankDetails = None,
           returnPeriod = None,
           deregistration = None,

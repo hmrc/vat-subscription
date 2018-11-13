@@ -17,10 +17,48 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import assets.TestUtil
+import play.api.libs.json.Json
+import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants.bankDetailsModelMax
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
 
 
 class VatCustomerInformationSpec extends TestUtil {
+
+  ".pendingBankDetails method" when {
+
+    "there are pending bank detail changes" should {
+
+      "return the pending changes" in {
+        customerInformationModelMax.pendingBankDetails shouldBe Some(bankDetailsModelMax)
+      }
+    }
+
+    "there are NO pending bank detail changes" should {
+
+      "return None" in {
+        customerInformationModelMin.pendingBankDetails shouldBe None
+      }
+    }
+  }
+
+  ".pendingPPOBAddress method" when {
+
+    "there is a pending PPOB Address change" should {
+
+      "return the pending changes" in {
+        customerInformationModelMax.pendingPPOBAddress shouldBe Some(ppobModelMax.address)
+      }
+    }
+
+    "there is NO pending PPOB Address change" should {
+
+      "return None" in {
+        customerInformationModelMin.pendingPPOBAddress shouldBe None
+      }
+    }
+  }
+
 
   "currentReads" should {
 
@@ -50,6 +88,16 @@ class VatCustomerInformationSpec extends TestUtil {
 
     "parse the json correctly when no optional fields are returned for release 7" in {
       VatCustomerInformation.newReads.reads(customerInformationDESJsonMinR7).get shouldBe customerInformationModelMin
+    }
+  }
+
+  "Manage Account writes" should {
+    "write the json correctly when all optional fields are populated" in {
+      Json.toJson(customerInformationModelMax)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMax
+    }
+
+    "write the json correctly when no optional fields are populated" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMin
     }
   }
 }
