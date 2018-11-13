@@ -258,4 +258,157 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       }
     }
   }
+
+  "/:vatNumber/manage-account-summary" when {
+
+    "the user does not have an mtd vat enrolment" should {
+      "return FORBIDDEN" in {
+        stubAuthFailure()
+
+        val res = await(get(s"/$testVatNumber/manage-account-summary"))
+
+        res should have(
+          httpStatus(FORBIDDEN)
+        )
+      }
+    }
+
+    "calls to DES is successful" should {
+      "return OK with the status" in {
+
+        val expectedCustomerInformationModel = VatCustomerInformation(
+          MTDfBMandated,
+          CustomerDetails(
+            firstName = Some(firstName),
+            lastName = Some(lastName),
+            organisationName = Some(orgName),
+            tradingName = Some(tradingName),
+            vatRegistrationDate = Some(effectiveDate),
+            hasFlatRateScheme = true,
+            welshIndicator = Some(true),
+            isPartialMigration = true
+          ),
+          Some(FlatRateScheme(
+            Some(frsCategory),
+            Some(frsPercent),
+            Some(frsLtdCostTrader),
+            Some(frsStartDate)
+          )),
+          PPOBGet(
+            PPOBAddressGet(
+              addLine1,
+              Some(addLine2),
+              Some(addLine3),
+              Some(addLine4),
+              Some(addLine5),
+              Some(postcode),
+              countryCode
+            ),
+            Some(ContactDetails(
+              Some(phoneNumber),
+              Some(mobileNumber),
+              Some(faxNumber),
+              Some(email),
+              Some(emailVerified)
+            )),
+            Some(website)
+          ),
+          Some(BankDetails(
+            Some(accName),
+            Some(accNum),
+            Some(accSort)
+          )),
+          Some(MCReturnPeriod),
+          Some(Deregistration(
+            Some(reason),
+            Some(cancellationDate),
+            Some(lastReturnDate)
+          )),
+          Some(ChangeIndicators(
+            ppob = true,
+            bankDetails = true,
+            returnPeriod = true,
+            deregister = true
+          )),
+          Some(PendingChanges(
+            Some(PPOBGet(
+              PPOBAddressGet(
+                addLine1,
+                Some(addLine2),
+                Some(addLine3),
+                Some(addLine4),
+                Some(addLine5),
+                Some(postcode),
+                countryCode
+              ),
+              Some(ContactDetails(
+                Some(phoneNumber),
+                Some(mobileNumber),
+                Some(faxNumber),
+                Some(email),
+                Some(emailVerified)
+              )),
+              Some(website)
+            )),
+            Some(BankDetails(
+              Some(accName),
+              Some(accNum),
+              Some(accSort)
+            )),
+            Some(MCReturnPeriod)
+          ))
+        )
+
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
+
+        val res = await(get(s"/$testVatNumber/manage-account-summary"))
+
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(Json.toJson(expectedCustomerInformationModel)(VatCustomerInformation.manageAccountWrites))
+        )
+      }
+    }
+
+    "calls to DES returned BAD_REQUEST" should {
+      "return BAD_REQUEST with the status" in {
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
+
+        val res = await(get(s"/$testVatNumber/manage-account-summary"))
+
+        res should have(
+          httpStatus(BAD_REQUEST)
+        )
+      }
+    }
+
+    "calls to DES returned NOT_FOUND" should {
+      "return NOT_FOUND with the status" in {
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
+
+        val res = await(get(s"/$testVatNumber/manage-account-summary"))
+
+        res should have(
+          httpStatus(NOT_FOUND)
+        )
+      }
+    }
+
+    "calls to DES returned anything else" should {
+      "return INTERNAL_SERVER_ERROR with the status" in {
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
+
+        val res = await(get(s"/$testVatNumber/manage-account-summary"))
+
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+    }
+  }
+
 }

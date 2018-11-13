@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import assets.TestUtil
+import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 
 
@@ -50,6 +51,16 @@ class VatCustomerInformationSpec extends TestUtil {
 
     "parse the json correctly when no optional fields are returned for release 7" in {
       VatCustomerInformation.newReads.reads(customerInformationDESJsonMinR7).get shouldBe customerInformationModelMin
+    }
+  }
+
+  "Manage Account writes" should {
+    "write the json correctly when all optional fields are populated" in {
+      Json.toJson(customerInformationModelMax)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMax
+    }
+
+    "write the json correctly when no optional fields are populated" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMin
     }
   }
 }

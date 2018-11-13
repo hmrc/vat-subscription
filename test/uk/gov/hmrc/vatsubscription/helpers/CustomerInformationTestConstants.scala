@@ -609,6 +609,40 @@ object CustomerInformationTestConstants {
     )
   )
 
+  val manageAccountSummaryOutputJsonMax: JsValue = Json.obj(
+    "mandationStatus" -> mandationStatus,
+    "ppobAddress" -> Json.obj(
+      "line1" -> addLine1,
+      "line2" -> addLine2,
+      "line3" -> addLine3,
+      "line4" -> addLine4,
+      "line5" -> addLine5,
+      "postCode" -> postcode,
+      "countryCode" -> countryCode
+    ),
+    "contactEmail" -> email,
+    "businessName" -> orgName,
+    "repaymentBankDetails" -> Json.obj(
+      "accountHolderName" -> accName,
+      "bankAccountNumber" -> accNum,
+      "sortCode" -> accSort
+    )
+  )
+
+  val manageAccountSummaryOutputJsonMin: JsValue = Json.obj(
+    "mandationStatus" -> mandationStatus,
+    "ppobAddress" -> Json.obj(
+      "line1" -> addLine1,
+      "line2" -> addLine2,
+      "line3" -> addLine3,
+      "line4" -> addLine4,
+      "line5" -> addLine5,
+      "postCode" -> postcode,
+      "countryCode" -> countryCode
+    )
+  )
+
+
   val customerInformationModelMaxWithFRS: VatCustomerInformation = VatCustomerInformation(
     MTDfBMandated,
     customerDetailsModelMaxWithFRS,

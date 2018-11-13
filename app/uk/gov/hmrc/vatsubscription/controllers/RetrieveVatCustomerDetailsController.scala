@@ -17,13 +17,13 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
+import uk.gov.hmrc.vatsubscription.models.VatCustomerInformation
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.ExecutionContext
@@ -70,17 +70,17 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
   def manageAccountSummary(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
     implicit user =>
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
-        case Right(vatInformation) => Ok(Json.toJson(vatInformation))
+        case Right(vatInformation) => Ok(Json.toJson(vatInformation)(VatCustomerInformation.manageAccountWrites))
         case Left(InvalidVatNumber) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][manageAccountSummary]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest
         case Left(VatNumberNotFound) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][manageAccountSummary]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
           NotFound
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][manageAccountSummary]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
-          BadGateway(Json.obj("status" -> status, "body" -> body))
+          Status(status)(Json.obj("status" -> status, "body" -> body))
       }
   }
 }
