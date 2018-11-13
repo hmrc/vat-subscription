@@ -24,7 +24,7 @@ import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
 case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   customerDetails: CustomerDetails,
                                   flatRateScheme: Option[FlatRateScheme],
-                                  ppob: Option[PPOBGet],
+                                  ppob: PPOBGet,
                                   bankDetails: Option[BankDetails],
                                   returnPeriod: Option[ReturnPeriod],
                                   deregistration: Option[Deregistration],
@@ -77,7 +77,7 @@ object VatCustomerInformation extends JsonReadUtil {
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
-    ppob <- ppobPath.readOpt[PPOBGet]
+    ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
@@ -114,7 +114,7 @@ object VatCustomerInformation extends JsonReadUtil {
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
-    ppob <- ppobPath.readOpt[PPOBGet]
+    ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
@@ -144,5 +144,11 @@ object VatCustomerInformation extends JsonReadUtil {
   )
 
   implicit val writes: Writes[VatCustomerInformation] = Json.writes[VatCustomerInformation]
+
+  val manageAccountWrites: Writes[VatCustomerInformation] = Writes { model =>
+    Json.obj(
+      "ppobAddress" -> model.ppob.address
+    )
+  }
 
 }

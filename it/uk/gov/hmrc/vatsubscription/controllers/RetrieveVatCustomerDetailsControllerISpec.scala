@@ -142,7 +142,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(frsLtdCostTrader),
             Some(frsStartDate)
           )),
-          Some(PPOBGet(
+          PPOBGet(
             PPOBAddressGet(
               addLine1,
               Some(addLine2),
@@ -160,7 +160,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(emailVerified)
             )),
             Some(website)
-          )),
+          ),
           Some(BankDetails(
             Some(accName),
             Some(accNum),

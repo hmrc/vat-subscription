@@ -66,4 +66,21 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
           BadGateway(Json.obj("status" -> status, "body" -> body))
       }
   }
+
+  def manageAccountSummary(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
+    implicit user =>
+      vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
+        case Right(vatInformation) => Ok(Json.toJson(vatInformation))
+        case Left(InvalidVatNumber) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
+          BadRequest
+        case Left(VatNumberNotFound) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
+          NotFound
+        case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
+            s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
+          BadGateway(Json.obj("status" -> status, "body" -> body))
+      }
+  }
 }

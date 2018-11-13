@@ -398,6 +398,17 @@ object CustomerInformationTestConstants {
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "mandationStatus" -> mandationStatusCode
+      ),
+      "PPOB" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        )
       )
     )
   )
@@ -407,6 +418,17 @@ object CustomerInformationTestConstants {
       "customerDetails" -> Json.obj(
         "mandationStatus" -> mandationStatusCode,
         "isPartialMigration" -> false
+      ),
+      "PPOB" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        )
       )
     )
   )
@@ -573,14 +595,25 @@ object CustomerInformationTestConstants {
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
     "customerDetails" -> customerDetailsJsonMin,
-    "mandationStatus" -> "MTDfB Mandated"
+    "mandationStatus" -> "MTDfB Mandated",
+    "ppob" -> Json.obj(
+      "address" -> Json.obj(
+        "line1" -> addLine1,
+        "line2" -> addLine2,
+        "line3" -> addLine3,
+        "line4" -> addLine4,
+        "line5" -> addLine5,
+        "postCode" -> postcode,
+        "countryCode" -> countryCode
+      )
+    )
   )
 
   val customerInformationModelMaxWithFRS: VatCustomerInformation = VatCustomerInformation(
     MTDfBMandated,
     customerDetailsModelMaxWithFRS,
     Some(frsModelMax),
-    Some(ppobModelMax),
+    ppobModelMax,
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
     Some(deregModel),
@@ -601,7 +634,7 @@ object CustomerInformationTestConstants {
     MTDfBMandated,
     customerDetailsModelMax,
     None,
-    Some(ppobModelMax),
+    ppobModelMax,
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
     Some(deregModel),
@@ -622,7 +655,7 @@ object CustomerInformationTestConstants {
     MTDfBMandated,
     customerDetailsModelMaxR7,
     None,
-    Some(ppobModelMax),
+    ppobModelMax,
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod),
     Some(deregModel),
@@ -644,7 +677,7 @@ object CustomerInformationTestConstants {
     mandationStatus = MTDfBMandated,
     customerDetails = customerDetailsModelNoWelshIndicator,
     flatRateScheme = None,
-    ppob = None,
+    ppob = ppobModelMax,
     bankDetails = None,
     returnPeriod = None,
     deregistration = None,
@@ -663,7 +696,7 @@ object CustomerInformationTestConstants {
       welshIndicator = None,
       isPartialMigration = false),
     flatRateScheme = None,
-    ppob = None,
+    ppob = ppobModelMin,
     bankDetails = None,
     returnPeriod = None,
     deregistration = None,
