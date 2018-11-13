@@ -60,6 +60,24 @@ class VatCustomerInformationSpec extends TestUtil {
   }
 
 
+  ".pendingEmailAddress method" when {
+
+    "there is a pending Email Address change" should {
+
+      "return the pending changes" in {
+        customerInformationModelMax.pendingContactEmail shouldBe ppobModelMax.contactDetails.flatMap(_.emailAddress)
+      }
+    }
+
+    "there is NO pending Email Address change" should {
+
+      "return None" in {
+        customerInformationModelMin.pendingContactEmail shouldBe None
+      }
+    }
+  }
+
+
   "currentReads" should {
 
     "parse the json correctly when all optional fields are populated" in {

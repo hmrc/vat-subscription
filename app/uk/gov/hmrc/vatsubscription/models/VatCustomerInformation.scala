@@ -33,6 +33,7 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
 
   val pendingPPOBAddress: Option[PPOBAddressGet] = pendingChanges.flatMap(_.ppob.map(_.address))
   val pendingBankDetails: Option[BankDetails] = pendingChanges.flatMap(_.bankDetails)
+  val pendingContactEmail: Option[String] = pendingChanges.flatMap(_.ppob.flatMap(_.contactDetails.flatMap(_.emailAddress)))
 
 }
 
@@ -153,7 +154,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     jsonObjNoNulls(
       "mandationStatus" -> model.mandationStatus,
       "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
-      "contactEmail" -> model.ppob.contactDetails.flatMap(_.emailAddress.map(x => x)),
+      "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
       "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),
       "businessName" -> model.customerDetails.organisationName
     )
