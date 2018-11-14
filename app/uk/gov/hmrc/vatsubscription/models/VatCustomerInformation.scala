@@ -17,22 +17,27 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
-import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
-import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
+import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
+import uk.gov.hmrc.vatsubscription.utils.{JsonObjectSugar, JsonReadUtil}
 
 case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   customerDetails: CustomerDetails,
                                   flatRateScheme: Option[FlatRateScheme],
-                                  ppob: Option[PPOBGet],
+                                  ppob: PPOBGet,
                                   bankDetails: Option[BankDetails],
                                   returnPeriod: Option[ReturnPeriod],
                                   deregistration: Option[Deregistration],
                                   changeIndicators: Option[ChangeIndicators],
                                   pendingChanges: Option[PendingChanges],
-                                  partyType: Option[String] = None)
+                                  partyType: Option[String] = None) {
 
-object VatCustomerInformation extends JsonReadUtil {
+  val pendingPPOBAddress: Option[PPOBAddressGet] = pendingChanges.flatMap(_.ppob.map(_.address))
+  val pendingBankDetails: Option[BankDetails] = pendingChanges.flatMap(_.bankDetails)
+  val pendingContactEmail: Option[String] = pendingChanges.flatMap(_.ppob.flatMap(_.contactDetails.flatMap(_.emailAddress)))
+
+}
+
+object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
 
   val approvedInformationKey = "approvedInformation"
   val pendingChangesKey = "inFlightInformation"
@@ -77,7 +82,7 @@ object VatCustomerInformation extends JsonReadUtil {
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
-    ppob <- ppobPath.readOpt[PPOBGet]
+    ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
@@ -114,7 +119,7 @@ object VatCustomerInformation extends JsonReadUtil {
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
-    ppob <- ppobPath.readOpt[PPOBGet]
+    ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
@@ -144,5 +149,15 @@ object VatCustomerInformation extends JsonReadUtil {
   )
 
   implicit val writes: Writes[VatCustomerInformation] = Json.writes[VatCustomerInformation]
+
+  val manageAccountWrites: Writes[VatCustomerInformation] = Writes { model =>
+    jsonObjNoNulls(
+      "mandationStatus" -> model.mandationStatus,
+      "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
+      "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
+      "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),
+      "businessName" -> model.customerDetails.organisationName
+    )
+  }
 
 }
