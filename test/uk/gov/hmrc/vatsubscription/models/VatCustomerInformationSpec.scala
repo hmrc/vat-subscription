@@ -20,7 +20,7 @@ import assets.TestUtil
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants.bankDetailsModelMax
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{email, ppobModelMax}
 
 
 class VatCustomerInformationSpec extends TestUtil {
@@ -65,7 +65,7 @@ class VatCustomerInformationSpec extends TestUtil {
     "there is a pending Email Address change" should {
 
       "return the pending changes" in {
-        customerInformationModelMax.pendingContactEmail shouldBe ppobModelMax.contactDetails.flatMap(_.emailAddress)
+        customerInformationModelMax.pendingContactEmail shouldBe Some(email)
       }
     }
 
