@@ -64,7 +64,9 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
               if(applicationConfig.features.latestApi1363Version()) VatCustomerInformation.newReads
               else VatCustomerInformation.currentReads
             ) match {
-              case JsSuccess(vatCustomerInformation, _) => Right(vatCustomerInformation)
+              case JsSuccess(vatCustomerInformation, _) =>
+                Logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
+                Right(vatCustomerInformation)
               case _ =>
                 Logger.warn(s"[CustomerCircumstancesHttpParser][read]: Invalid Success Response Json")
                 Left(UnexpectedGetVatCustomerInformationFailure(OK, response.body))
