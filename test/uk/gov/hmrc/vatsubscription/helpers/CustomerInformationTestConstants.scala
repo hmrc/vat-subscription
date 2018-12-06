@@ -642,6 +642,9 @@ object CustomerInformationTestConstants {
     )
   )
 
+  val notMasteredDesJson: JsValue = Json.obj(
+    "code" -> "NOT_MASTERED"
+  )
 
   val customerInformationModelMaxWithFRS: VatCustomerInformation = VatCustomerInformation(
     MTDfBMandated,

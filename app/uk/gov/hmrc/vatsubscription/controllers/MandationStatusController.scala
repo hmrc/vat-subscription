@@ -17,13 +17,13 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, NotMastered,
+  UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResponse}
 import uk.gov.hmrc.vatsubscription.services.MandationStatusService
 
 import scala.concurrent.ExecutionContext
@@ -47,6 +47,12 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
           case Left(VatNumberNotFound) =>
             Logger.debug(s"[MandationStatusController][getMandationStatus]: VatNumberNotFound returned from MandationStatusService")
             NotFound
+          case Left(ForbiddenResponse) =>
+            Logger.debug(s"[MandationStatusController][getMandationStatus]: Forbidden returned from MandationStatusService")
+            Forbidden
+          case Left(NotMastered) =>
+            Logger.debug(s"[MandationStatusController][getMandationStatus]: Not mastered returned from MandationStatusService")
+            PreconditionFailed
           case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
             Logger.debug(s"[MandationStatusController][getMandationStatus]: Unexpected Failure returned from MandationStatusService, status - $status")
             BadGateway(Json.obj("status" -> status, "body" -> body))

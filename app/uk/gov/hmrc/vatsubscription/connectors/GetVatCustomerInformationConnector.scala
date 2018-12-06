@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, FORBIDDEN, PRECONDITION_FAILED}
 import play.api.libs.json.{JsSuccess, Json, Writes}
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
@@ -52,6 +52,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
     )
   }
 
+  //scalastyle:off
   object GetVatCustomerInformationHttpParser {
     type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
 
@@ -77,6 +78,13 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
           case NOT_FOUND =>
             Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status NOT FOUND returned")
             Left(VatNumberNotFound)
+          case FORBIDDEN if response.body.contains("NOT_MASTERED") =>
+            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, " +
+              "status FORBIDDEN returned with NOT_MASTERED")
+            Left(NotMastered)
+          case FORBIDDEN =>
+            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status FORBIDDEN returned")
+            Left(Forbidden)
           case status =>
             Logger.warn(s"[CustomerCircumstancesHttpParser][read]: Unexpected response, status $status returned")
             Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
@@ -84,6 +92,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
     }
   }
 }
+//scalastyle:on
 
 sealed trait GetVatCustomerInformationFailure {
   val status: Int = INTERNAL_SERVER_ERROR
@@ -104,4 +113,15 @@ case object VatNumberNotFound extends GetVatCustomerInformationFailure {
   override val body = "Vat number not found"
 }
 
-case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val body: String) extends GetVatCustomerInformationFailure
+case object Forbidden extends GetVatCustomerInformationFailure {
+  override val status: Int = FORBIDDEN
+  override val body: String = null
+}
+
+case object NotMastered extends GetVatCustomerInformationFailure {
+  override val status: Int = PRECONDITION_FAILED
+  override val body: String = "Not mastered"
+}
+
+case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val body: String)
+  extends GetVatCustomerInformationFailure

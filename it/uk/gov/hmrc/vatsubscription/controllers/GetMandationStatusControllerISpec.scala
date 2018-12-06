@@ -44,6 +44,10 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
     )
   )
 
+  val testNotMasteredResponse = Json.obj(
+    "code" -> "NOT_MASTERED"
+  )
+
   "/:vatNumber/mandation-status " when {
     "calls to DES is successful" should {
       "return OK with the status" in {
@@ -59,7 +63,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
       }
     }
 
-    "calls to DES returend BAD_REQUEST" should {
+    "calls to DES returned BAD_REQUEST" should {
       "return BAD_REQUEST with the status" in {
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
@@ -72,7 +76,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
       }
     }
 
-    "calls to DES returend NOT_FOUND" should {
+    "calls to DES returned NOT_FOUND" should {
       "return NOT_FOUND with the status" in {
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
@@ -85,7 +89,33 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
       }
     }
 
-    "calls to DES returend anything else" should {
+    "calls to DES returned FORBIDDEN with NOT_MASTERED code" should {
+      "return PRECONDITION_FAILED with the status 412" in {
+        stubAuth(OK, successfulAuthResponse())
+        stubGetInformation(testVatNumber)(FORBIDDEN, testNotMasteredResponse)
+
+        val res = await(get(s"/$testVatNumber/mandation-status"))
+
+        res should have(
+          httpStatus(PRECONDITION_FAILED)
+        )
+      }
+    }
+
+    "calls to DES returned FORBIDDEN with no body" should {
+      "return FORBIDDEN with the status 403" in {
+        stubAuth(OK, successfulAuthResponse())
+        stubGetInformation(testVatNumber)(FORBIDDEN, Json.obj())
+
+        val res = await(get(s"/$testVatNumber/mandation-status"))
+
+        res should have(
+          httpStatus(FORBIDDEN)
+        )
+      }
+    }
+
+    "calls to DES returned anything else" should {
       "return INTERNAL_SERVER_ERROR with the status" in {
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())

@@ -22,7 +22,8 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
-import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, NotMastered,
+  UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResult}
 import uk.gov.hmrc.vatsubscription.models.VatCustomerInformation
 import uk.gov.hmrc.vatsubscription.services._
 
@@ -47,6 +48,14 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
           Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
           BadGateway(Json.obj("status" -> status, "body" -> body))
+        case Left(ForbiddenResult) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
+            s"Forbidden returned from CustomerDetailsRetrieval Service")
+          BadGateway(Json.obj("status" -> BAD_GATEWAY))
+        case Left(NotMastered) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
+            s"Forbidden (NOT_MASTERED) returned from CustomerDetailsRetrieval Service")
+          BadGateway(Json.obj("status" -> BAD_GATEWAY))
       }
   }
 
@@ -64,6 +73,14 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
           Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
           BadGateway(Json.obj("status" -> status, "body" -> body))
+        case Left(ForbiddenResult) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
+            s"Forbidden returned from CustomerDetailsRetrieval Service")
+          BadGateway(Json.obj("status" -> BAD_GATEWAY))
+        case Left(NotMastered) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
+            s"Forbidden (NOT_MASTERED) returned from CustomerDetailsRetrieval Service")
+          BadGateway(Json.obj("status" -> BAD_GATEWAY))
       }
   }
 
@@ -81,6 +98,14 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
           Logger.debug(s"[RetrieveVatCustomerDetailsController][manageAccountSummary]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
           Status(status)(Json.obj("status" -> status, "body" -> body))
+        case Left(ForbiddenResult) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][manageAccountSummary]:" +
+            s"Forbidden returned from CustomerDetailsRetrieval Service")
+          BadGateway(Json.obj("status" -> BAD_GATEWAY))
+        case Left(NotMastered) =>
+          Logger.debug(s"[RetrieveVatCustomerDetailsController][manageAccountSummary]:" +
+            s"Forbidden (NOT_MASTERED) returned from CustomerDetailsRetrieval Service")
+          BadGateway(Json.obj("status" -> BAD_GATEWAY))
       }
   }
 }

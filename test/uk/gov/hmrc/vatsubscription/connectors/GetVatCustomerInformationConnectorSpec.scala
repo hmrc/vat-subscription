@@ -17,11 +17,12 @@
 package uk.gov.hmrc.vatsubscription.connectors
 
 import assets.TestUtil
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, FORBIDDEN}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants.{customerInformationDESJsonMaxWithFRS, customerInformationModelMaxWithFRS}
+import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants.{customerInformationDESJsonMaxWithFRS,
+  customerInformationModelMaxWithFRS, notMasteredDesJson}
 
 class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
@@ -65,6 +66,22 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
         res shouldBe Left(VatNumberNotFound)
+      }
+
+      "parse a FORBIDDEN response with code NOT_MASTERED as a NotMastered" in {
+        val httpResponse = HttpResponse(FORBIDDEN, Some(notMasteredDesJson))
+
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Left(NotMastered)
+      }
+
+      "parse a FORBIDDEN response without code NOT_MASTERED as a Forbidden" in {
+        val httpResponse = HttpResponse(FORBIDDEN, responseJson = Some(Json.obj()))
+
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Left(Forbidden)
       }
 
       "parse any other response as a UnexpectedGetVatCustomerInformationFailure" in {

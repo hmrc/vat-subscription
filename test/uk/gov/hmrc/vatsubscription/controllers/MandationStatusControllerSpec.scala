@@ -22,7 +22,8 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
-import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure,
+  VatNumberNotFound, Forbidden, NotMastered}
 import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
 import uk.gov.hmrc.vatsubscription.service.mocks.MockMandationStatusService
 
@@ -67,6 +68,26 @@ class MandationStatusControllerSpec extends TestUtil
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe NOT_FOUND
+    }
+
+    "return the FORBIDDEN when Forbidden with no json body" in {
+      mockAuthorise()(Future.successful(Unit))
+
+      val testStatus = MTDfBMandated
+      mockGetMandationStatus(testVatNumber)(Future.successful(Left(Forbidden)))
+
+      val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
+      status(res) shouldBe FORBIDDEN
+    }
+
+    "return the PRECONDITION_FAILED when Forbidden with NOT_MASTERED code in json body" in {
+      mockAuthorise()(Future.successful(Unit))
+
+      val testStatus = MTDfBMandated
+      mockGetMandationStatus(testVatNumber)(Future.successful(Left(NotMastered)))
+
+      val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
+      status(res) shouldBe PRECONDITION_FAILED
     }
 
     "return the INTERNAL_SERVER_ERROR and the error when failed unexpectedly" in {
