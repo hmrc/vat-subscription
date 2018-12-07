@@ -26,6 +26,10 @@ import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 
 class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
+  val migrationResponse = Json.obj(
+    "code" -> "MIGRATION"
+  )
+
   val testMinDesResponse = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
@@ -101,6 +105,31 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
 
         res should have(
           httpStatus(BAD_REQUEST)
+        )
+      }
+    }
+    "DES returned FORBIDDEN with MIGRATION code" should {
+      "return PRECONDITION_FAILED with the status" in {
+        stubAuth(OK, successfulAuthResponse())
+        stubGetInformation(testVatNumber)(FORBIDDEN, migrationResponse)
+
+        val res = await(get(s"/$testVatNumber/known-facts"))
+
+        res should have(
+          httpStatus(PRECONDITION_FAILED)
+        )
+      }
+    }
+
+    "DES returned FORBIDDEN with no body" should {
+      "return FORBIDDEN with the status" in {
+        stubAuth(OK, successfulAuthResponse())
+        stubGetInformation(testVatNumber)(FORBIDDEN, Json.obj())
+
+        val res = await(get(s"/$testVatNumber/known-facts"))
+
+        res should have(
+          httpStatus(FORBIDDEN)
         )
       }
     }

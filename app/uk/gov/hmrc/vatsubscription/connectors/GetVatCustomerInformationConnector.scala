@@ -78,10 +78,10 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
           case NOT_FOUND =>
             Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status NOT FOUND returned")
             Left(VatNumberNotFound)
-          case FORBIDDEN if response.body.contains("NOT_MASTERED") =>
+          case FORBIDDEN if response.body.contains("MIGRATION") =>
             Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, " +
-              "status FORBIDDEN returned with NOT_MASTERED")
-            Left(NotMastered)
+              "status FORBIDDEN returned with MIGRATION")
+            Left(Migration)
           case FORBIDDEN =>
             Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status FORBIDDEN returned")
             Left(Forbidden)
@@ -115,12 +115,12 @@ case object VatNumberNotFound extends GetVatCustomerInformationFailure {
 
 case object Forbidden extends GetVatCustomerInformationFailure {
   override val status: Int = FORBIDDEN
-  override val body: String = null
+  override val body: String = ""
 }
 
-case object NotMastered extends GetVatCustomerInformationFailure {
+case object Migration extends GetVatCustomerInformationFailure {
   override val status: Int = PRECONDITION_FAILED
-  override val body: String = "Not mastered"
+  override val body: String = "Migration"
 }
 
 case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val body: String)

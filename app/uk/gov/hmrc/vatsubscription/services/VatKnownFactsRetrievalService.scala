@@ -17,12 +17,12 @@
 package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.models._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -46,6 +46,8 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
         }
       case Left(connectors.InvalidVatNumber) => Left(InvalidVatNumber)
       case Left(connectors.VatNumberNotFound) => Left(VatNumberNotFound)
+      case Left(connectors.Migration) => Left(Migration)
+      case Left(connectors.Forbidden) => Left(Forbidden)
       case Left(connectors.UnexpectedGetVatCustomerInformationFailure(status, body)) => Left(UnexpectedGetVatCustomerInformationFailure(status, body))
     }
   }
@@ -61,6 +63,10 @@ object VatKnownFactsRetrievalService {
   sealed trait GetVatCustomerInformationFailure extends GetVatKnownFactsFailures
 
   case object InvalidVatNumber extends GetVatCustomerInformationFailure
+
+  case object Migration extends GetVatCustomerInformationFailure
+
+  case object Forbidden extends GetVatCustomerInformationFailure
 
   case object VatNumberNotFound extends GetVatCustomerInformationFailure
 

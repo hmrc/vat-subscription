@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, NotMastered,
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, Migration,
   UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResponse}
 import uk.gov.hmrc.vatsubscription.services.MandationStatusService
 
@@ -50,8 +50,8 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
           case Left(ForbiddenResponse) =>
             Logger.debug(s"[MandationStatusController][getMandationStatus]: Forbidden returned from MandationStatusService")
             Forbidden
-          case Left(NotMastered) =>
-            Logger.debug(s"[MandationStatusController][getMandationStatus]: Not mastered returned from MandationStatusService")
+          case Left(Migration) =>
+            Logger.debug(s"[MandationStatusController][getMandationStatus]: Migration returned from MandationStatusService")
             PreconditionFailed
           case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
             Logger.debug(s"[MandationStatusController][getMandationStatus]: Unexpected Failure returned from MandationStatusService, status - $status")

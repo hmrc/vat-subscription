@@ -14,37 +14,157 @@
  * limitations under the License.
  */
 
-  package uk.gov.hmrc.vatsubscription.controllers
+package uk.gov.hmrc.vatsubscription.controllers
 
-  import assets.TestUtil
-  import play.api.http.Status._
-  import play.api.libs.json.Json
-  import play.api.mvc.Result
-  import play.api.test.FakeRequest
-  import uk.gov.hmrc.auth.core.InsufficientEnrolments
-  import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
-  import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
-  import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
-  import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
-  import uk.gov.hmrc.vatsubscription.connectors._
-  import uk.gov.hmrc.vatsubscription.models.CustomerDetails
-  import uk.gov.hmrc.vatsubscription.service.mocks.MockVatCustomerDetailsRetrievalService
+import assets.TestUtil
+import play.api.http.Status._
+import play.api.libs.json.Json
+import play.api.mvc.Result
+import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
+import uk.gov.hmrc.vatsubscription.connectors._
+import uk.gov.hmrc.vatsubscription.models.CustomerDetails
+import uk.gov.hmrc.vatsubscription.service.mocks.MockVatCustomerDetailsRetrievalService
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-  import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-  class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthorised with MockVatCustomerDetailsRetrievalService {
+class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthorised with MockVatCustomerDetailsRetrievalService {
 
-    object TestRetrieveVatCustomerDetailsController
-      extends RetrieveVatCustomerDetailsController(mockVatAuthorised, mockVatCustomerDetailsRetrievalService)
+  object TestRetrieveVatCustomerDetailsController
+    extends RetrieveVatCustomerDetailsController(mockVatAuthorised, mockVatCustomerDetailsRetrievalService)
 
-    "the retrieveVatCustomerDetails method" when {
+  "the retrieveVatCustomerDetails method" when {
+
+    "the user does not have an mtd vat enrolment" should {
+      "return FORBIDDEN" in {
+        mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
+
+        val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+        status(res) shouldBe FORBIDDEN
+      }
+    }
+
+    "the customer details have been successfully retrieved" should {
+      "return the customer details" when {
+        "the customer details are populated" in {
+
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe customerDetailsJsonMax
+        }
+
+        "the customer details and flat rate scheme are populated" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMaxWithFRS)))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe customerDetailsJsonMaxWithFRS
+        }
+        "the customer details are empty" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(
+            CustomerDetails(
+              firstName = None,
+              lastName = None,
+              organisationName = None,
+              tradingName = None,
+              vatRegistrationDate = None,
+              welshIndicator = None,
+              isPartialMigration = false
+            )
+          )))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe customerDetailsJsonMin
+        }
+      }
+    }
+
+    "the customer details could not be retrieved" when {
+      "the vat number is invalid" should {
+        "return a BadRequest" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe BAD_REQUEST
+        }
+      }
+
+      "the vat number is not found" should {
+        "return a NotFound" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe NOT_FOUND
+        }
+      }
+
+      "response status is Forbidden with no json body" should {
+        "return a FORBIDDEN" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(Forbidden)))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe FORBIDDEN
+        }
+      }
+
+      "response status is Forbidden with MIGRATION code in json body" should {
+        "return a PRECONDITION_FAILED" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(Migration)))
+
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          status(res) shouldBe PRECONDITION_FAILED
+        }
+
+
+        "another failure occurred" should {
+          "return the corresponding failure" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+
+            val responseBody = "error"
+
+            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(
+              UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody)
+            )))
+
+            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
+            status(res) shouldBe BAD_GATEWAY
+            jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
+          }
+        }
+      }
+    }
+
+
+    "the retrieveVatInformation (all details) method" when {
 
       "the user does not have an mtd vat enrolment" should {
         "return FORBIDDEN" in {
           mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 
           status(res) shouldBe FORBIDDEN
         }
@@ -53,43 +173,32 @@
       "the customer details have been successfully retrieved" should {
         "return the customer details" when {
           "the customer details are populated" in {
-
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
+            mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 
             status(res) shouldBe OK
-            jsonBodyOf(res) shouldBe customerDetailsJsonMax
+            jsonBodyOf(res) shouldBe customerInformationOutputJsonMax
           }
 
           "the customer details and flat rate scheme are populated" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMaxWithFRS)))
+            mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 
             status(res) shouldBe OK
-            jsonBodyOf(res) shouldBe customerDetailsJsonMaxWithFRS
+            jsonBodyOf(res) shouldBe customerInformationOutputJsonMaxWithFRS
           }
           "the customer details are empty" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(
-              CustomerDetails(
-                firstName = None,
-                lastName = None,
-                organisationName = None,
-                tradingName = None,
-                vatRegistrationDate = None,
-                welshIndicator = None,
-                isPartialMigration = false
-              )
-            )))
+            mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMin)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 
             status(res) shouldBe OK
-            jsonBodyOf(res) shouldBe customerDetailsJsonMin
+            jsonBodyOf(res) shouldBe customerInformationOutputJsonMin
           }
         }
       }
@@ -98,170 +207,58 @@
         "the vat number is invalid" should {
           "return a BadRequest" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
+            mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
-
+            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
             status(res) shouldBe BAD_REQUEST
-          }
-        }
-
-        "the vat number is not found" should {
-          "return a NotFound" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
-
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
-
-            status(res) shouldBe NOT_FOUND
-          }
-        }
-
-        "response status is Forbidden with no json body" should {
-          "return a BAD_GATEWAY" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(Forbidden)))
-
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
-
-            status(res) shouldBe BAD_GATEWAY
-          }
-        }
-
-        "response status is Forbidden with NOT_MASTERED code in json body" should {
-          "return a BAD_GATEWAY" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(NotMastered)))
-
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
-            status(res) shouldBe BAD_GATEWAY
-          }
-
-
-          "another failure occurred" should {
-            "return the corresponding failure" in {
-              mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-
-              val responseBody = "error"
-
-              mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(
-                UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody)
-              )))
-
-              val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
-
-              status(res) shouldBe BAD_GATEWAY
-              jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
-            }
           }
         }
       }
 
+      "the vat number is not found" should {
+        "return a NotFound" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
-      "the retrieveVatInformation (all details) method" when {
-
-        "the user does not have an mtd vat enrolment" should {
-          "return FORBIDDEN" in {
-            mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
-
-            status(res) shouldBe FORBIDDEN
-          }
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          status(res) shouldBe NOT_FOUND
         }
+      }
 
-        "the customer details have been successfully retrieved" should {
-          "return the customer details" when {
-            "the customer details are populated" in {
-              mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-              mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
+      "response status is Forbidden with no json body" should {
+        "return a FORBIDDEN" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(Forbidden)))
 
-              val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
-
-              status(res) shouldBe OK
-              jsonBodyOf(res) shouldBe customerInformationOutputJsonMax
-            }
-
-            "the customer details and flat rate scheme are populated" in {
-              mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-              mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
-
-              val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
-
-              status(res) shouldBe OK
-              jsonBodyOf(res) shouldBe customerInformationOutputJsonMaxWithFRS
-            }
-            "the customer details are empty" in {
-              mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-              mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMin)))
-
-              val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
-
-              status(res) shouldBe OK
-              jsonBodyOf(res) shouldBe customerInformationOutputJsonMin
-            }
-          }
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          status(res) shouldBe FORBIDDEN
         }
+      }
 
-        "the customer details could not be retrieved" when {
-          "the vat number is invalid" should {
-            "return a BadRequest" in {
-              mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-              mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
+      "response status is Forbidden with MIGRATION code in json body" should {
+        "return a PRECONDITION_FAILED" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(Migration)))
 
-              val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
-
-              status(res) shouldBe BAD_REQUEST
-            }
-          }
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          status(res) shouldBe PRECONDITION_FAILED
         }
+      }
 
-        "the vat number is not found" should {
-          "return a NotFound" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
+      "another failure occurred" should {
+        "return the corresponding failure" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          val responseBody = "error"
 
-            status(res) shouldBe NOT_FOUND
-          }
-        }
+          mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody))))
 
-        "response status is Forbidden with no json body" should {
-          "return a BAD_GATEWAY" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(Forbidden)))
+          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
-
-            status(res) shouldBe BAD_GATEWAY
-          }
-        }
-
-        "response status is Forbidden with NOT_MASTERED code in json body" should {
-          "return a BAD_GATEWAY" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(NotMastered)))
-
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
-            status(res) shouldBe BAD_GATEWAY
-          }
-        }
-
-        "another failure occurred" should {
-          "return the corresponding failure" in {
-            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-
-            val responseBody = "error"
-
-            mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody))))
-
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
-
-            status(res) shouldBe BAD_GATEWAY
-            jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
-          }
+          status(res) shouldBe BAD_GATEWAY
+          jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
         }
       }
     }
   }
+}

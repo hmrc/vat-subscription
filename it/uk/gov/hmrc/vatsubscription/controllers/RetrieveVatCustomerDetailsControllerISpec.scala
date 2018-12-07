@@ -28,8 +28,8 @@ import uk.gov.hmrc.vatsubscription.models.get.{PPOBGet, PPOBAddressGet}
 
 class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
-  val testNotMasteredResponse = Json.obj(
-    "code" -> "NOT_MASTERED"
+  val migrationResponse = Json.obj(
+    "code" -> "MIGRATION"
   )
 
   "/:vatNumber/customer-details" when {
@@ -97,28 +97,28 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       }
     }
 
-    "calls to DES returned FORBIDDEN with NOT_MASTERED code" should {
-      "return BAD_GATEWAY with the status" in {
+    "calls to DES returned FORBIDDEN with MIGRATION code" should {
+      "return PRECONDITION_FAILED with the status" in {
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-        stubGetInformation(testVatNumber)(FORBIDDEN, testNotMasteredResponse)
+        stubGetInformation(testVatNumber)(FORBIDDEN, migrationResponse)
 
         val res = await(get(s"/$testVatNumber/customer-details"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(PRECONDITION_FAILED)
         )
       }
     }
 
     "calls to DES returned FORBIDDEN with no body" should {
-      "return BAD_GATEWAY with the status" in {
+      "return FORBIDDEN with the status" in {
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(FORBIDDEN, Json.obj())
 
         val res = await(get(s"/$testVatNumber/customer-details"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(FORBIDDEN)
         )
       }
     }
@@ -275,15 +275,15 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       }
     }
 
-    "calls to DES returned FORBIDDEN with NOT_MASTERED code" should {
+    "calls to DES returned FORBIDDEN with MIGRATION code" should {
       "return BAD_GATEWAY with the status" in {
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-        stubGetInformation(testVatNumber)(FORBIDDEN, testNotMasteredResponse)
+        stubGetInformation(testVatNumber)(FORBIDDEN, migrationResponse)
 
         val res = await(get(s"/$testVatNumber/full-information"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(PRECONDITION_FAILED)
         )
       }
     }
@@ -296,7 +296,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         val res = await(get(s"/$testVatNumber/full-information"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(FORBIDDEN)
         )
       }
     }
@@ -453,15 +453,15 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       }
     }
 
-    "calls to DES returned FORBIDDEN with NOT_MASTERED code" should {
+    "calls to DES returned FORBIDDEN with MIGRATION code" should {
       "return BAD_GATEWAY with the status" in {
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-        stubGetInformation(testVatNumber)(FORBIDDEN, testNotMasteredResponse)
+        stubGetInformation(testVatNumber)(FORBIDDEN, migrationResponse)
 
         val res = await(get(s"/$testVatNumber/manage-account-summary"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(PRECONDITION_FAILED)
         )
       }
     }
@@ -474,7 +474,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         val res = await(get(s"/$testVatNumber/manage-account-summary"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(FORBIDDEN)
         )
       }
     }

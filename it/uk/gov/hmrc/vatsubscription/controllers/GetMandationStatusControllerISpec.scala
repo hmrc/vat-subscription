@@ -44,8 +44,8 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
     )
   )
 
-  val testNotMasteredResponse = Json.obj(
-    "code" -> "NOT_MASTERED"
+  val testMigrationResponse = Json.obj(
+    "code" -> "MIGRATION"
   )
 
   "/:vatNumber/mandation-status " when {
@@ -89,10 +89,10 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
       }
     }
 
-    "calls to DES returned FORBIDDEN with NOT_MASTERED code" should {
+    "calls to DES returned FORBIDDEN with MIGRATION code" should {
       "return PRECONDITION_FAILED with the status 412" in {
         stubAuth(OK, successfulAuthResponse())
-        stubGetInformation(testVatNumber)(FORBIDDEN, testNotMasteredResponse)
+        stubGetInformation(testVatNumber)(FORBIDDEN, testMigrationResponse)
 
         val res = await(get(s"/$testVatNumber/mandation-status"))
 
@@ -129,5 +129,4 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
     }
 
   }
-
 }

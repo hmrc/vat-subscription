@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants.{customerInformationDESJsonMaxWithFRS,
-  customerInformationModelMaxWithFRS, notMasteredDesJson}
+  customerInformationModelMaxWithFRS, migrationDESJson}
 
 class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
@@ -68,15 +68,15 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
         res shouldBe Left(VatNumberNotFound)
       }
 
-      "parse a FORBIDDEN response with code NOT_MASTERED as a NotMastered" in {
-        val httpResponse = HttpResponse(FORBIDDEN, Some(notMasteredDesJson))
+      "parse a FORBIDDEN response with code MIGRATION as a Migration" in {
+        val httpResponse = HttpResponse(FORBIDDEN, Some(migrationDESJson))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Left(NotMastered)
+        res shouldBe Left(Migration)
       }
 
-      "parse a FORBIDDEN response without code NOT_MASTERED as a Forbidden" in {
+      "parse a FORBIDDEN response without code MIGRATION as a Forbidden" in {
         val httpResponse = HttpResponse(FORBIDDEN, responseJson = Some(Json.obj()))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)

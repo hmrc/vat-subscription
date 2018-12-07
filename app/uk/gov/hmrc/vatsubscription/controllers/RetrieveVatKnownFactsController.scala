@@ -24,6 +24,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService._
 import uk.gov.hmrc.vatsubscription.services._
+import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService.{Migration, Forbidden => ForbiddenResponse}
 
 import scala.concurrent.ExecutionContext
 
@@ -44,6 +45,12 @@ class RetrieveVatKnownFactsController @Inject()(vatKnownFactsRetrievalService: V
         case Left(InvalidVatKnownFacts) =>
           Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: InvalidVatKnownFacts returned from CustomerDetailsRetrieval Service")
           BadGateway
+        case Left(ForbiddenResponse) =>
+          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: Forbidden returned from CustomerDetailsRetrieval Service")
+          Forbidden
+        case Left(Migration) =>
+          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: Forbidden (Migration) returned from CustomerDetailsRetrieval Service")
+          PreconditionFailed
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
           Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: " +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")

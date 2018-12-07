@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockGetVatCustomerInformationConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
-import uk.gov.hmrc.vatsubscription.connectors.{Forbidden, InvalidVatNumber, NotMastered}
+import uk.gov.hmrc.vatsubscription.connectors.{Forbidden, InvalidVatNumber, Migration}
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
 import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, MTDfBMandated, VatCustomerInformation}
 import uk.gov.hmrc.vatsubscription.services.MandationStatusService
@@ -67,16 +67,16 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
       await(TestMandationStatusService.getMandationStatus(testVatNumber)) shouldBe Right(testSuccessfulResponse.mandationStatus)
     }
 
-    "return a Forbidden if forbidden" in {
+    "return a Forbidden if forbidden returned" in {
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(Forbidden)))
 
       await(TestMandationStatusService.getMandationStatus(testVatNumber)) shouldBe Left(Forbidden)
     }
 
-    "return a NotMastered if not mastered" in {
-      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(NotMastered)))
+    "return a Migration if migration returned" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(Migration)))
 
-      await(TestMandationStatusService.getMandationStatus(testVatNumber)) shouldBe Left(NotMastered)
+      await(TestMandationStatusService.getMandationStatus(testVatNumber)) shouldBe Left(Migration)
     }
 
     "return the failure if unsuccessful" in {

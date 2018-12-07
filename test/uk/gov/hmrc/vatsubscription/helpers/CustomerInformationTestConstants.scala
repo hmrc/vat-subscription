@@ -642,8 +642,8 @@ object CustomerInformationTestConstants {
     )
   )
 
-  val notMasteredDesJson: JsValue = Json.obj(
-    "code" -> "NOT_MASTERED"
+  val migrationDESJson: JsValue = Json.obj(
+    "code" -> "MIGRATION"
   )
 
   val customerInformationModelMaxWithFRS: VatCustomerInformation = VatCustomerInformation(

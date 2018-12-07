@@ -23,7 +23,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure,
-  VatNumberNotFound, Forbidden, NotMastered}
+  VatNumberNotFound, Forbidden, Migration}
 import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
 import uk.gov.hmrc.vatsubscription.service.mocks.MockMandationStatusService
 
@@ -53,7 +53,6 @@ class MandationStatusControllerSpec extends TestUtil
     "return the BAD_REQUEST when InvalidVatNumber" in {
       mockAuthorise()(Future.successful(Unit))
 
-      val testStatus = MTDfBMandated
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
@@ -63,7 +62,6 @@ class MandationStatusControllerSpec extends TestUtil
     "return the NOT_FOUND when VatNumberNotFound" in {
       mockAuthorise()(Future.successful(Unit))
 
-      val testStatus = MTDfBMandated
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
@@ -73,18 +71,16 @@ class MandationStatusControllerSpec extends TestUtil
     "return the FORBIDDEN when Forbidden with no json body" in {
       mockAuthorise()(Future.successful(Unit))
 
-      val testStatus = MTDfBMandated
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(Forbidden)))
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe FORBIDDEN
     }
 
-    "return the PRECONDITION_FAILED when Forbidden with NOT_MASTERED code in json body" in {
+    "return the PRECONDITION_FAILED when Forbidden with MIGRATION code in json body" in {
       mockAuthorise()(Future.successful(Unit))
 
-      val testStatus = MTDfBMandated
-      mockGetMandationStatus(testVatNumber)(Future.successful(Left(NotMastered)))
+      mockGetMandationStatus(testVatNumber)(Future.successful(Left(Migration)))
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe PRECONDITION_FAILED
@@ -93,7 +89,6 @@ class MandationStatusControllerSpec extends TestUtil
     "return the INTERNAL_SERVER_ERROR and the error when failed unexpectedly" in {
       mockAuthorise()(Future.successful(Unit))
 
-      val testStatus = MTDfBMandated
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(OK, "failure"))))
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())

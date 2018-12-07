@@ -74,6 +74,31 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
         status(res) shouldBe NOT_FOUND
       }
     }
+
+    "return FORBIDDEN" when {
+      "Forbidden with no json body is returned from the from VatKnownFactsRetrievalService" in {
+        mockAuthorise()(Future.successful(Unit))
+
+        mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(Forbidden)))
+
+        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+
+        status(res) shouldBe FORBIDDEN
+      }
+    }
+
+    "return PRECONDITION_FAILED" when {
+      "Forbidden with MIGRATION code in json body is returned from VatKnownFactsRetrievalService" in {
+
+        mockAuthorise()(Future.successful(Unit))
+
+        mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(Migration)))
+
+        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+        status(res) shouldBe PRECONDITION_FAILED
+      }
+    }
+
     "return BAD_GATEWAY" when {
       "InvalidVatKnownFacts is returned from the VatKnownFactsRetrievalService" in {
 
@@ -86,6 +111,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
         status(res) shouldBe BAD_GATEWAY
       }
     }
+
     "return BAD_GATEWAY and error message" when {
       "UnexpectedGetVatCustomerInformationFailure is returned from the VatKnownFactsRetrievalService" in {
         val responseBody = "error"
@@ -102,5 +128,4 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
       }
     }
   }
-
 }

@@ -53,10 +53,28 @@ class VatKnownFactsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomer
       await(res) shouldBe Left(InvalidVatKnownFacts)
     }
 
-    "return a failure if the connection to get vat customer details fails" in {
+    "return an InvalidVatNumber if the connection to get vat customer details returns an InvalidVatNumber" in {
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(connectors.InvalidVatNumber)))
       val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)
       await(res) shouldBe Left(InvalidVatNumber)
+    }
+
+    "return an VatNumberNotFound if the connection to get vat customer details returns a VatNumberNotFound" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(connectors.VatNumberNotFound)))
+      val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)
+      await(res) shouldBe Left(VatNumberNotFound)
+    }
+
+    "return a Forbidden if the connection to get vat customer details returns a Forbidden" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(connectors.Forbidden)))
+      val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)
+      await(res) shouldBe Left(Forbidden)
+    }
+
+    "return a Forbidden if the connection to get vat customer details returns a Migration" in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Left(connectors.Migration)))
+      val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)
+      await(res) shouldBe Left(Migration)
     }
 
   }
