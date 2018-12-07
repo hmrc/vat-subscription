@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
 
@@ -24,12 +25,8 @@ case class AgentOrCapacitor(agentReferenceNumber: String,
 
 object AgentOrCapacitor {
 
-  implicit val writes: Writes[AgentOrCapacitor] = Writes {
-    model => Json.obj(
-      "identification" -> Json.obj(
-        "ARN" -> model.agentReferenceNumber
-      ),
-      "commDetails" -> model.commDetails
-    )
-  }
+  implicit val writes: Writes[AgentOrCapacitor] = (
+    (JsPath \ "identification" \ "ARN").write[String] and
+    (JsPath \ "commDetails").writeNullable[ContactDetails]
+  )(unlift(AgentOrCapacitor.unapply))
 }
