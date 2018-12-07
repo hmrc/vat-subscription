@@ -21,7 +21,6 @@ import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionCon
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMaxPost
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdatePPOBService
@@ -86,7 +85,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {

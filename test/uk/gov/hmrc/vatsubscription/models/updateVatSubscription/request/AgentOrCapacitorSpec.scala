@@ -18,19 +18,33 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.models.ContactDetails
 
 class AgentOrCapacitorSpec extends UnitSpec {
 
   "AgentOrCapacitor Writes" should {
 
-    val model: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
+    val model: AgentOrCapacitor = AgentOrCapacitor(
+      "XAIT0000000000",
+      Some(ContactDetails(
+        None,
+        None,
+        None,
+        Some("test@example.com"),
+        None
+      ))
+    )
 
     "output a correctly formatted json object" in {
       val result = Json.obj(
         "identification" -> Json.obj(
           "ARN" -> "XAIT0000000000"
+        ),
+        "commDetails" -> Json.obj(
+          "emailAddress" -> "test@example.com"
         )
       )
+
       AgentOrCapacitor.writes.writes(model) shouldBe result
     }
   }

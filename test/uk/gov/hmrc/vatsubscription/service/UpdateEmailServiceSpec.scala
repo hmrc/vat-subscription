@@ -87,7 +87,7 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
         updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {

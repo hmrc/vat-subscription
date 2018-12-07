@@ -17,8 +17,10 @@
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.models.ContactDetails
 
-case class AgentOrCapacitor(agentReferenceNumber: String)
+case class AgentOrCapacitor(agentReferenceNumber: String,
+                            commDetails: Option[ContactDetails])
 
 object AgentOrCapacitor {
 
@@ -26,7 +28,8 @@ object AgentOrCapacitor {
     model => Json.obj(
       "identification" -> Json.obj(
         "ARN" -> model.agentReferenceNumber
-      )
+      ),
+      "commDetails" -> model.commDetails
     )
   }
 }

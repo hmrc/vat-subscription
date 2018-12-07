@@ -23,7 +23,7 @@ import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.U
 import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import uk.gov.hmrc.vatsubscription.services.{UpdatePPOBService, UpdateReturnPeriodService}
+import uk.gov.hmrc.vatsubscription.services.UpdateReturnPeriodService
 
 class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
@@ -103,7 +103,7 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
