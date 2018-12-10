@@ -16,29 +16,31 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.Logger
 import play.api.libs.json._
 
 sealed trait ReturnPeriod {
   def stdReturnPeriod: String
+  def transactorOrCapacitorEmail: Option[String]
 }
 
-case object MAReturnPeriod extends ReturnPeriod {
+case class MAReturnPeriod(agentOrTransEmail: Option[String]) extends ReturnPeriod {
   override val stdReturnPeriod: String = "MA"
+  override val transactorOrCapacitorEmail: Option[String] = agentOrTransEmail
 }
 
-case object MBReturnPeriod extends ReturnPeriod {
+case class MBReturnPeriod(agentOrTransEmail: Option[String]) extends ReturnPeriod {
   override val stdReturnPeriod: String = "MB"
+  override val transactorOrCapacitorEmail: Option[String] = agentOrTransEmail
 }
 
-
-case object MCReturnPeriod extends ReturnPeriod {
+case class MCReturnPeriod(agentOrTransEmail: Option[String]) extends ReturnPeriod {
   override val stdReturnPeriod: String = "MC"
+  override val transactorOrCapacitorEmail: Option[String] = agentOrTransEmail
 }
 
-
-case object MMReturnPeriod extends ReturnPeriod {
+case class MMReturnPeriod(agentOrTransEmail: Option[String]) extends ReturnPeriod {
   override val stdReturnPeriod: String = "MM"
+  override val transactorOrCapacitorEmail: Option[String] = agentOrTransEmail
 }
 
 object ReturnPeriod {
@@ -51,11 +53,19 @@ object ReturnPeriod {
 
   private def readReturnPeriod(attributeName: String): Reads[ReturnPeriod] = new Reads[ReturnPeriod] {
     override def reads(json: JsValue): JsResult[ReturnPeriod] = {
-      json.as[Option[String]]((__ \ attributeName).readNullable[String]) match {
-        case Some(MAReturnPeriod.stdReturnPeriod) => JsSuccess(MAReturnPeriod)
-        case Some(MBReturnPeriod.stdReturnPeriod) => JsSuccess(MBReturnPeriod)
-        case Some(MCReturnPeriod.stdReturnPeriod) => JsSuccess(MCReturnPeriod)
-        case Some(MMReturnPeriod.stdReturnPeriod) => JsSuccess(MMReturnPeriod)
+
+      val returnPeriod = json.as[Option[String]]((__ \ attributeName).readNullable[String])
+      val transactorOrCapacitorEmail = json.as[Option[String]]((__ \ "transactorOrCapacitorEmail").readNullable[String])
+
+      (returnPeriod, transactorOrCapacitorEmail) match {
+        case (Some("MA"), _) =>
+          JsSuccess(MAReturnPeriod(transactorOrCapacitorEmail))
+        case (Some("MB"), _) =>
+          JsSuccess(MBReturnPeriod(transactorOrCapacitorEmail))
+        case (Some("MC"), _) =>
+          JsSuccess(MCReturnPeriod(transactorOrCapacitorEmail))
+        case (Some("MM"), _) =>
+          JsSuccess(MMReturnPeriod(transactorOrCapacitorEmail))
         case _ => JsError("Invalid Return Period supplied")
       }
     }

@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
-import uk.gov.hmrc.vatsubscription.models.{ReturnPeriod, User}
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, ReturnPeriod, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,7 +41,12 @@ class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: Update
   def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod, welshIndicator: Boolean)
                                       (implicit user: User[_]): UpdateVatSubscription = {
 
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
+    val agentContactDetails: Option[ContactDetails] = Some(ContactDetails(None, None, None,
+      updatedReturnPeriod.transactorOrCapacitorEmail, None))
+
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
+
+   // val returnPeriodNoEmail = updatedReturnPeriod.getClasscopy(stdReturnPeriod)
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),

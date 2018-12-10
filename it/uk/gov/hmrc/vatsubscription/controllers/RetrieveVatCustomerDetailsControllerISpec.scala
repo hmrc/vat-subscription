@@ -196,7 +196,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(accNum),
             Some(accSort)
           )),
-          Some(MCReturnPeriod),
+          Some(MCReturnPeriod(None)),
           Some(Deregistration(
             Some(reason),
             Some(cancellationDate),
@@ -233,7 +233,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accNum),
               Some(accSort)
             )),
-            Some(MCReturnPeriod)
+            Some(MCReturnPeriod(None))
           ))
         )
 
@@ -374,7 +374,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(accNum),
             Some(accSort)
           )),
-          Some(MCReturnPeriod),
+          Some(MCReturnPeriod(None)),
           Some(Deregistration(
             Some(reason),
             Some(cancellationDate),
@@ -411,7 +411,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accNum),
               Some(accSort)
             )),
-            Some(MCReturnPeriod)
+            Some(MCReturnPeriod(None))
           ))
         )
 

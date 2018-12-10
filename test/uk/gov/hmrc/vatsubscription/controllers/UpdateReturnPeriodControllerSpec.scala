@@ -25,10 +25,9 @@ import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.connectors.VatNumberNotFound
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
-import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants.customerDetailsModelMax
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
+import uk.gov.hmrc.vatsubscription.models._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
-import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MBReturnPeriod, MCReturnPeriod, MMReturnPeriod}
 import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdateReturnPeriodService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
@@ -38,10 +37,10 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
   object TestUpdateReturnPeriodController
     extends UpdateReturnPeriodController(mockVatAuthorised, mockUpdateReturnPeriodService, mockVatCustomerDetailsRetrievalService)
 
-  val maRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MAReturnPeriod))
-  val mbRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MBReturnPeriod))
-  val mcRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MCReturnPeriod))
-  val mmRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MMReturnPeriod))
+  val maRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MAReturnPeriod(None)))
+  val mbRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MBReturnPeriod(None)))
+  val mcRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MCReturnPeriod(None)))
+  val mmRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MMReturnPeriod(None)))
 
   "the.updateVatReturnPeriod() method" when {
 
@@ -62,7 +61,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateReturnPeriod(MAReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateReturnPeriod(MAReturnPeriod(None))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(maRequest))
 
@@ -74,7 +73,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateReturnPeriod(MBReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateReturnPeriod(MBReturnPeriod(None))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mbRequest))
 
@@ -86,7 +85,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateReturnPeriod(MCReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateReturnPeriod(MCReturnPeriod(None))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mcRequest))
 
@@ -98,7 +97,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateReturnPeriod(MMReturnPeriod)(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateReturnPeriod(MMReturnPeriod(None))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mmRequest))
 
@@ -131,7 +130,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-            mockUpdateReturnPeriod(MAReturnPeriod)(Future.successful(Left(updateErrorResponse)))
+            mockUpdateReturnPeriod(MAReturnPeriod(None))(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 

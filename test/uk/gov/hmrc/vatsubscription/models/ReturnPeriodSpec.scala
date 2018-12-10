@@ -22,49 +22,76 @@ import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 
 class ReturnPeriodSpec extends UnitSpec {
 
-  "ReturnPeriod .currentReads" should {
+  "ReturnPeriod .currentReads" when {
+    "called with a transactorOrCapacitorEmail" should {
+      val json = Json.obj(
+        "stdReturnPeriod" -> "MA",
+        "transactorOrCapacitorEmail" -> "agent@email.com"
+      )
 
+      val model: ReturnPeriod = MAReturnPeriod(Some("agent@email.com"))
+
+      "output a correctly formatted UpdatedReturnPeriod json with an email address" in {
+        ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
+      }
+    }
+
+    "called without a transactorOrCapacitorEmail" should {
       val json = Json.obj(
         "stdReturnPeriod" -> "MA"
       )
 
-      val model: ReturnPeriod = MAReturnPeriod
+      val model: ReturnPeriod = MAReturnPeriod(None)
 
-      "output a correctly formatted UpdatedReturnPeriod json" in {
-          ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
+      "output a correctly formatted UpdatedReturnPeriod json with no email address" in {
+        ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
       }
+    }
   }
 
-  "ReturnPeriod .newReads" should {
+  "ReturnPeriod .newReads" when {
+    "called with a transactorOrCapacitorEmail" should {
+      val json = Json.obj(
+        "returnPeriod" -> "MA",
+        "transactorOrCapacitorEmail" -> "agent@email.com"
+      )
 
+      val model: ReturnPeriod = MAReturnPeriod(Some("agent@email.com"))
+
+      "output a correctly formatted UpdatedReturnPeriod json" in {
+        ReturnPeriod.newDesReads.reads(json).get shouldEqual model
+      }
+    }
+
+    "called without a transactorOrCapacitorEmail" should {
       val json = Json.obj(
         "returnPeriod" -> "MA"
       )
 
-      val model: ReturnPeriod = MAReturnPeriod
+      val model: ReturnPeriod = MAReturnPeriod(None)
 
       "output a correctly formatted UpdatedReturnPeriod json" in {
-          ReturnPeriod.newDesReads.reads(json).get shouldEqual model
+        ReturnPeriod.newDesReads.reads(json).get shouldEqual model
       }
+    }
   }
-
 
   "ReturnPeriod Writes" should {
 
     "output a fully populated MA ReturnPeriod object with all fields populated" in {
-      Json.toJson(MAReturnPeriod) shouldBe returnPeriodMAJson
+      Json.toJson(MAReturnPeriod(None)) shouldBe returnPeriodMAJson
     }
 
     "output a fully populated MB ReturnPeriod object with all fields populated" in {
-      Json.toJson(MBReturnPeriod) shouldBe returnPeriodMBJson
+      Json.toJson(MBReturnPeriod(None)) shouldBe returnPeriodMBJson
     }
 
     "output a fully populated MC ReturnPeriod object with all fields populated" in {
-      Json.toJson(MCReturnPeriod) shouldBe returnPeriodMCJson
+      Json.toJson(MCReturnPeriod(None)) shouldBe returnPeriodMCJson
     }
 
     "output a fully populated MM ReturnPeriod object with all fields populated" in {
-      Json.toJson(MMReturnPeriod) shouldBe returnPeriodMMJson
+      Json.toJson(MMReturnPeriod(None)) shouldBe returnPeriodMMJson
     }
   }
 }
