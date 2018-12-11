@@ -21,7 +21,7 @@ import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{AgentOr
 
 object DeclarationTestConstants {
 
-  val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000")
+  val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000", None)
 
   val declarationModelAgent: Declaration = Declaration(Some(agentOrCapacitor), Signing())
   val declarationModelNonAgent: Declaration = Declaration(None, Signing())

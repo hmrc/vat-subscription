@@ -40,7 +40,7 @@ class RequestDeregistrationService @Inject()(updateVatSubscriptionConnector: Upd
 
   def constructDeregistrationModel(deregistration: DeregistrationInfo, welshIndicator: Boolean)(implicit user: User[_]): UpdateVatSubscription = {
 
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),

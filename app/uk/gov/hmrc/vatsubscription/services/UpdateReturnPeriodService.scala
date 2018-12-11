@@ -41,7 +41,7 @@ class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: Update
   def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod, welshIndicator: Boolean)
                                       (implicit user: User[_]): UpdateVatSubscription = {
 
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_))
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
