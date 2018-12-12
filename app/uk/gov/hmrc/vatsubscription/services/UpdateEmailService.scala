@@ -44,7 +44,7 @@ class UpdateEmailService @Inject()(updateVatSubscriptionConnector: UpdateVatSubs
 
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
 
-    val updatedPPOB = PPOBPost(updatedEmail.address, Some(updatedEmail.contactDetails), updatedEmail.websiteAddress)
+    val updatedPPOB = PPOBPost(updatedEmail.address, Some(updatedEmail.contactDetails), updatedEmail.websiteAddress, None)
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),

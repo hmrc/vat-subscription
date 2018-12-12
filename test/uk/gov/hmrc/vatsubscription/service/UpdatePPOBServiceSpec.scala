@@ -19,8 +19,9 @@ package uk.gov.hmrc.vatsubscription.service
 import assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMaxPost
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobModelMaxPost, ppobModelMaxPostAgent}
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
+import uk.gov.hmrc.vatsubscription.models.ContactDetails
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdatePPOBService
@@ -77,15 +78,16 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
     "user is an Agent" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = false)(testAgentUser)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPostAgent, welshIndicator = false)(testAgentUser)
+      val agentContactDetails = Some(ContactDetails(None, None, None, Some("agent@emailaddress.com"), None))
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangePPOB,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPostAgent)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {

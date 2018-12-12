@@ -57,7 +57,8 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
   "Calling .constructPPOBUpdateModel" when {
 
     val service = new UpdateEmailService(mockUpdateVatSubscriptionConnector)
-    val updatedPPOB = PPOBPost(ppobModelEmailMaxPost.address, Some(ppobModelEmailMaxPost.contactDetails), ppobModelEmailMaxPost.websiteAddress)
+    val updatedPPOB = PPOBPost(ppobModelEmailMaxPost.address, Some(ppobModelEmailMaxPost.contactDetails),
+      ppobModelEmailMaxPost.websiteAddress, None)
 
     "user is not an Agent" should {
 
