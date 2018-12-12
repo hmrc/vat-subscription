@@ -31,7 +31,7 @@ class ReturnPeriodSpec extends UnitSpec {
 
       val model: ReturnPeriod = MAReturnPeriod(Some("agent@email.com"))
 
-      "output a correctly formatted UpdatedReturnPeriod json with an email address" in {
+      "output a correctly formatted ReturnPeriod json with an email address" in {
         ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
       }
     }
@@ -43,7 +43,7 @@ class ReturnPeriodSpec extends UnitSpec {
 
       val model: ReturnPeriod = MAReturnPeriod(None)
 
-      "output a correctly formatted UpdatedReturnPeriod json with no email address" in {
+      "output a correctly formatted ReturnPeriod json with no email address" in {
         ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
       }
     }
@@ -58,7 +58,7 @@ class ReturnPeriodSpec extends UnitSpec {
 
       val model: ReturnPeriod = MAReturnPeriod(Some("agent@email.com"))
 
-      "output a correctly formatted UpdatedReturnPeriod json" in {
+      "output a correctly formatted ReturnPeriod json" in {
         ReturnPeriod.newDesReads.reads(json).get shouldEqual model
       }
     }
@@ -70,7 +70,7 @@ class ReturnPeriodSpec extends UnitSpec {
 
       val model: ReturnPeriod = MAReturnPeriod(None)
 
-      "output a correctly formatted UpdatedReturnPeriod json" in {
+      "output a correctly formatted ReturnPeriod json" in {
         ReturnPeriod.newDesReads.reads(json).get shouldEqual model
       }
     }

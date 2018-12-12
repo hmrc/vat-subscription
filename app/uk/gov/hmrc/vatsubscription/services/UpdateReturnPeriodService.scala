@@ -41,12 +41,13 @@ class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: Update
   def constructReturnPeriodUpdateModel(updatedReturnPeriod: ReturnPeriod, welshIndicator: Boolean)
                                       (implicit user: User[_]): UpdateVatSubscription = {
 
-    val agentContactDetails: Option[ContactDetails] = Some(ContactDetails(None, None, None,
-      updatedReturnPeriod.transactorOrCapacitorEmail, None))
+    val agentContactDetails: Option[ContactDetails] =
+      if(updatedReturnPeriod.transactorOrCapacitorEmail.isDefined)
+        Some(ContactDetails(None, None, None, updatedReturnPeriod.transactorOrCapacitorEmail, None))
+      else
+        None
 
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
-
-   // val returnPeriodNoEmail = updatedReturnPeriod.getClasscopy(stdReturnPeriod)
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),

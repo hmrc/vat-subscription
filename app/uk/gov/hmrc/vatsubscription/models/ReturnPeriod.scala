@@ -18,29 +18,25 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
 
-sealed trait ReturnPeriod {
+abstract class ReturnPeriod(transOrCapEmail: Option[String]) {
   def stdReturnPeriod: String
-  def transactorOrCapacitorEmail: Option[String]
+  val transactorOrCapacitorEmail: Option[String] = transOrCapEmail
 }
 
-case class MAReturnPeriod(agentOrTransEmail: Option[String]) extends ReturnPeriod {
+case class MAReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
   override val stdReturnPeriod: String = "MA"
-  override val transactorOrCapacitorEmail: Option[String] = agentOrTransEmail
 }
 
-case class MBReturnPeriod(agentOrTransEmail: Option[String]) extends ReturnPeriod {
+case class MBReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
   override val stdReturnPeriod: String = "MB"
-  override val transactorOrCapacitorEmail: Option[String] = agentOrTransEmail
 }
 
-case class MCReturnPeriod(agentOrTransEmail: Option[String]) extends ReturnPeriod {
+case class MCReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
   override val stdReturnPeriod: String = "MC"
-  override val transactorOrCapacitorEmail: Option[String] = agentOrTransEmail
 }
 
-case class MMReturnPeriod(agentOrTransEmail: Option[String]) extends ReturnPeriod {
+case class MMReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
   override val stdReturnPeriod: String = "MM"
-  override val transactorOrCapacitorEmail: Option[String] = agentOrTransEmail
 }
 
 object ReturnPeriod {
@@ -55,16 +51,16 @@ object ReturnPeriod {
     override def reads(json: JsValue): JsResult[ReturnPeriod] = {
 
       val returnPeriod = json.as[Option[String]]((__ \ attributeName).readNullable[String])
-      val transactorOrCapacitorEmail = json.as[Option[String]]((__ \ "transactorOrCapacitorEmail").readNullable[String])
+      val transactorOrCapacitorEmail: Option[String] = json.as[Option[String]]((__ \ "transactorOrCapacitorEmail").readNullable[String])
 
-      (returnPeriod, transactorOrCapacitorEmail) match {
-        case (Some("MA"), _) =>
+      returnPeriod match {
+        case Some("MA") =>
           JsSuccess(MAReturnPeriod(transactorOrCapacitorEmail))
-        case (Some("MB"), _) =>
+        case Some("MB") =>
           JsSuccess(MBReturnPeriod(transactorOrCapacitorEmail))
-        case (Some("MC"), _) =>
+        case Some("MC") =>
           JsSuccess(MCReturnPeriod(transactorOrCapacitorEmail))
-        case (Some("MM"), _) =>
+        case Some("MM") =>
           JsSuccess(MMReturnPeriod(transactorOrCapacitorEmail))
         case _ => JsError("Invalid Return Period supplied")
       }

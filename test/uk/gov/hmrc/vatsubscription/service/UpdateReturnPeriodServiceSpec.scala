@@ -20,7 +20,7 @@ import assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.{ContactDetails, MAReturnPeriod, ReturnPeriod}
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, MAReturnPeriod}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateReturnPeriodService
