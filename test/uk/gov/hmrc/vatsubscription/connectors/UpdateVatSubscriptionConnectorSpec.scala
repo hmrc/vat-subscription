@@ -46,7 +46,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
       updatedPPOB = None,
       updatedReturnPeriod = Some(updatedReturnPeriod),
       updateDeregistrationInfo = None,
-      declaration = declarationModelNonAgent
+      declaration = declarationModelAgent
     )
 
     def setup(response: UpdateVatSubscriptionResponse): UpdateVatSubscriptionConnector = {

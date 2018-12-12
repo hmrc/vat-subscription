@@ -16,28 +16,26 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.Logger
 import play.api.libs.json._
 
-sealed trait ReturnPeriod {
+abstract class ReturnPeriod(transOrCapEmail: Option[String]) {
   def stdReturnPeriod: String
+  val transactorOrCapacitorEmail: Option[String] = transOrCapEmail
 }
 
-case object MAReturnPeriod extends ReturnPeriod {
+case class MAReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
   override val stdReturnPeriod: String = "MA"
 }
 
-case object MBReturnPeriod extends ReturnPeriod {
+case class MBReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
   override val stdReturnPeriod: String = "MB"
 }
 
-
-case object MCReturnPeriod extends ReturnPeriod {
+case class MCReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
   override val stdReturnPeriod: String = "MC"
 }
 
-
-case object MMReturnPeriod extends ReturnPeriod {
+case class MMReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
   override val stdReturnPeriod: String = "MM"
 }
 
@@ -51,11 +49,19 @@ object ReturnPeriod {
 
   private def readReturnPeriod(attributeName: String): Reads[ReturnPeriod] = new Reads[ReturnPeriod] {
     override def reads(json: JsValue): JsResult[ReturnPeriod] = {
-      json.as[Option[String]]((__ \ attributeName).readNullable[String]) match {
-        case Some(MAReturnPeriod.stdReturnPeriod) => JsSuccess(MAReturnPeriod)
-        case Some(MBReturnPeriod.stdReturnPeriod) => JsSuccess(MBReturnPeriod)
-        case Some(MCReturnPeriod.stdReturnPeriod) => JsSuccess(MCReturnPeriod)
-        case Some(MMReturnPeriod.stdReturnPeriod) => JsSuccess(MMReturnPeriod)
+
+      val returnPeriod = json.as[Option[String]]((__ \ attributeName).readNullable[String])
+      val transactorOrCapacitorEmail: Option[String] = json.as[Option[String]]((__ \ "transactorOrCapacitorEmail").readNullable[String])
+
+      returnPeriod match {
+        case Some("MA") =>
+          JsSuccess(MAReturnPeriod(transactorOrCapacitorEmail))
+        case Some("MB") =>
+          JsSuccess(MBReturnPeriod(transactorOrCapacitorEmail))
+        case Some("MC") =>
+          JsSuccess(MCReturnPeriod(transactorOrCapacitorEmail))
+        case Some("MM") =>
+          JsSuccess(MMReturnPeriod(transactorOrCapacitorEmail))
         case _ => JsError("Invalid Return Period supplied")
       }
     }

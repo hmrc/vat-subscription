@@ -20,7 +20,7 @@ import assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, MAReturnPeriod}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateReturnPeriodService
@@ -38,7 +38,7 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateReturnPeriod(MAReturnPeriod, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateReturnPeriod(MAReturnPeriod(None), welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -47,7 +47,7 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateReturnPeriod(MAReturnPeriod, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateReturnPeriod(MAReturnPeriod(None), welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -59,13 +59,13 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
     "user is not an Agent" should {
 
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod, welshIndicator = false)(testUser)
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(None), welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeReturnPeriod,
         updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
+        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None))),
         updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing())
       )
@@ -77,13 +77,13 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
     "user has a welshIndicator" should {
 
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod, welshIndicator = true)(testUser)
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(None), welshIndicator = true)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
         requestedChanges = ChangeReturnPeriod,
         updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
+        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None))),
         updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing())
       )
@@ -95,15 +95,17 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
     "user is an Agent" should {
 
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod, welshIndicator = false)(testAgentUser)
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(Some("agent@emailaddress.com")),
+        welshIndicator = false)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeReturnPeriod,
         updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod)),
+        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress.com")))),
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, Some(ContactDetails(None, None, None,
+          Some("agent@emailaddress.com"), None)))), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {

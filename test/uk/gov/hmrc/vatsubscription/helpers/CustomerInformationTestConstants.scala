@@ -652,7 +652,7 @@ object CustomerInformationTestConstants {
     Some(frsModelMax),
     ppobModelMax,
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod),
+    Some(MCReturnPeriod(None)),
     Some(deregModel),
     Some(ChangeIndicators(
       ppob = true,
@@ -663,7 +663,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod)
+      Some(MCReturnPeriod(None))
     ))
   )
 
@@ -673,7 +673,7 @@ object CustomerInformationTestConstants {
     None,
     ppobModelMax,
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod),
+    Some(MCReturnPeriod(None)),
     Some(deregModel),
     Some(ChangeIndicators(
       ppob = true,
@@ -684,7 +684,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod)
+      Some(MCReturnPeriod(None))
     ))
   )
 
@@ -694,7 +694,7 @@ object CustomerInformationTestConstants {
     None,
     ppobModelMax,
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod),
+    Some(MCReturnPeriod(None)),
     Some(deregModel),
     Some(ChangeIndicators(
       ppob = true,
@@ -705,7 +705,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod)
+      Some(MCReturnPeriod(None))
     )),
     Some("0")
   )

@@ -17,11 +17,14 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.vatsubscription.models.ContactDetails
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{AgentOrCapacitor, Declaration, Signing}
 
 object DeclarationTestConstants {
 
-  val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000", None)
+  val agentContactDetails: ContactDetails = ContactDetails(None, None, None, Some("agent@emailaddress.com"), None)
+
+  val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000", Some(agentContactDetails))
 
   val declarationModelAgent: Declaration = Declaration(Some(agentOrCapacitor), Signing())
   val declarationModelNonAgent: Declaration = Declaration(None, Signing())
