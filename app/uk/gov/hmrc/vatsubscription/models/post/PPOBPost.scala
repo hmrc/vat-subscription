@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models.post
 
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
 
@@ -26,13 +27,16 @@ case class PPOBPost(address: PPOBAddressPost,
 
 object PPOBPost {
 
+  private val addressPath = __ \ "PPOBAddress"
+  private val contactDetailsPath = __ \ "PPOBCommDetails"
+  private val websiteAddressPath = __ \ "websiteAddress"
+
   implicit val reads: Reads[PPOBPost] = Json.reads[PPOBPost]
 
-  implicit val writes: Writes[PPOBPost] = Writes {
-    model => Json.obj(
-      "PPOBAddress" -> model.address,
-      "PPOBCommDetails" -> model.contactDetails,
-      "websiteAddress" -> model.websiteAddress
-    )
-  }
+  implicit val writes: Writes[PPOBPost] = (
+    addressPath.write[PPOBAddressPost] and
+    contactDetailsPath.writeNullable[ContactDetails] and
+    websiteAddressPath.writeNullable[String] and
+    OWrites[Any](_ => Json.obj())
+  )(unlift(PPOBPost.unapply))
 }
