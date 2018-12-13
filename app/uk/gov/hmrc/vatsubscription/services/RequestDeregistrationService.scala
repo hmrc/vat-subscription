@@ -17,11 +17,12 @@
 package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.{Inject, Singleton}
+
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.User
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, User}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.DeregistrationInfo
 
@@ -38,9 +39,16 @@ class RequestDeregistrationService @Inject()(updateVatSubscriptionConnector: Upd
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructDeregistrationModel(deregistration: DeregistrationInfo, welshIndicator: Boolean)(implicit user: User[_]): UpdateVatSubscription = {
+  def constructDeregistrationModel(deregistration: DeregistrationInfo, welshIndicator: Boolean)
+                                  (implicit user: User[_]): UpdateVatSubscription = {
 
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
+    val agentContactDetails: Option[ContactDetails] =
+      if(deregistration.transactorOrCapacitorEmail.isDefined)
+        Some(ContactDetails(None, None, None, deregistration.transactorOrCapacitorEmail, None))
+      else
+        None
+
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),

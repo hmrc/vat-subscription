@@ -27,7 +27,7 @@ class DeregistrationInfoSpec extends UnitSpec {
 
     "calling the .validate method" should {
 
-      "Return 'unexpxected turnoverBelowThreshold object when journey is ceasedTrading'" in {
+      "Return 'unexpected turnoverBelowThreshold object when journey is ceasedTrading'" in {
         val invalid = DeregistrationInfo(
           deregReason = CeasedTrading,
           deregDate = Some(DeregistrationInfoTestConstants.deregDate),
@@ -39,10 +39,11 @@ class DeregistrationInfoSpec extends UnitSpec {
           cashAccountingScheme = false,
           optionToTaxValue = None,
           stocksValue = None,
-          capitalAssetsValue = None
+          capitalAssetsValue = None,
+          transactorOrCapacitorEmail = None
         )
 
-        invalid.validate shouldBe JsError("unexpxected turnoverBelowThreshold object when journey is ceasedTrading")
+        invalid.validate shouldBe JsError("unexpected turnoverBelowThreshold object when journey is ceasedTrading")
       }
 
       "Return 'deregDate is mandatory when journey is ceasedTrading'" in {
@@ -57,7 +58,8 @@ class DeregistrationInfoSpec extends UnitSpec {
           cashAccountingScheme = false,
           optionToTaxValue = None,
           stocksValue = None,
-          capitalAssetsValue = None
+          capitalAssetsValue = None,
+          transactorOrCapacitorEmail = None
         )
 
         invalid.validate shouldBe JsError("deregDate is mandatory when journey is ceasedTrading")
@@ -75,7 +77,8 @@ class DeregistrationInfoSpec extends UnitSpec {
           cashAccountingScheme = false,
           optionToTaxValue = None,
           stocksValue = None,
-          capitalAssetsValue = None
+          capitalAssetsValue = None,
+          transactorOrCapacitorEmail = None
         )
 
         invalid.validate shouldBe JsError("optionToTaxValue is mandatory when optionToTax is true")
@@ -93,7 +96,8 @@ class DeregistrationInfoSpec extends UnitSpec {
           cashAccountingScheme = false,
           optionToTaxValue = None,
           stocksValue = None,
-          capitalAssetsValue = None
+          capitalAssetsValue = None,
+          transactorOrCapacitorEmail = None
         )
 
         invalid.validate shouldBe JsError("capitalAssetsValue is mandatory when intendSellCapitalAssets is true")
@@ -111,7 +115,8 @@ class DeregistrationInfoSpec extends UnitSpec {
           cashAccountingScheme = false,
           optionToTaxValue = None,
           stocksValue = None,
-          capitalAssetsValue = None
+          capitalAssetsValue = None,
+          transactorOrCapacitorEmail = None
         )
 
         invalid.validate shouldBe JsError("turnoverBelowThreshold is mandatory when deregReason is belowThreshold")

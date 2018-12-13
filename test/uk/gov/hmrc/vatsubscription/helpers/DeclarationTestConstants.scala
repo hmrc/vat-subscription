@@ -17,12 +17,13 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.email
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{AgentOrCapacitor, Declaration, Signing}
 
 object DeclarationTestConstants {
 
-  val agentContactDetails: ContactDetails = ContactDetails(None, None, None, Some("agent@emailaddress.com"), None)
+  val agentContactDetails: ContactDetails = ContactDetails(None, None, None, Some(email), None)
 
   val agentOrCapacitor: AgentOrCapacitor = AgentOrCapacitor("XAIT0000000000", Some(agentContactDetails))
 
