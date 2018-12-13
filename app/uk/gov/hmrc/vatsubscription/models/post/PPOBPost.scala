@@ -22,7 +22,8 @@ import uk.gov.hmrc.vatsubscription.models.ContactDetails
 
 case class PPOBPost(address: PPOBAddressPost,
                     contactDetails: Option[ContactDetails],
-                    websiteAddress: Option[String])
+                    websiteAddress: Option[String],
+                    transactorOrCapacitorEmail: Option[String])
 
 object PPOBPost {
 
@@ -34,8 +35,8 @@ object PPOBPost {
 
   implicit val writes: Writes[PPOBPost] = (
     addressPath.write[PPOBAddressPost] and
-      contactDetailsPath.writeNullable[ContactDetails] and
-      websiteAddressPath.writeNullable[String]
-    )(unlift(PPOBPost.unapply))
-
+    contactDetailsPath.writeNullable[ContactDetails] and
+    websiteAddressPath.writeNullable[String] and
+    OWrites[Any](_ => Json.obj())
+  )(unlift(PPOBPost.unapply))
 }

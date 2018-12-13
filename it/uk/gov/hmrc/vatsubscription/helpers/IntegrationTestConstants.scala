@@ -74,6 +74,9 @@ object IntegrationTestConstants {
   val cancellationDate = "2018-10-01"
   val lastReturnDate = "2018-10-01"
 
+  //Agent Details
+  val agentEmail = "agent@email.com"
+
 
   val testSuccessCustomerDetailsDesResponse = Json.obj(
     "approvedInformation" -> Json.obj(
@@ -205,5 +208,5 @@ object IntegrationTestConstants {
 
   val ppobModelEmailMaxPost = EmailPost(ppobAddressModelMaxPost, contactDetailsModelMax, Some(website))
   val ppobModelMax = PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
-  val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website))
+  val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website), Some(agentEmail))
 }

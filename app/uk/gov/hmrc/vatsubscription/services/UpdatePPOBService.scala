@@ -21,7 +21,7 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.User
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, User}
 import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
@@ -42,7 +42,13 @@ class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubsc
                                welshIndicator: Boolean)
                               (implicit user: User[_]): UpdateVatSubscription = {
 
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
+    val agentContactDetails: Option[ContactDetails] =
+      if(updatedPPOB.transactorOrCapacitorEmail.isDefined)
+        Some(ContactDetails(None, None, None, updatedPPOB.transactorOrCapacitorEmail, None))
+      else
+        None
+
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),

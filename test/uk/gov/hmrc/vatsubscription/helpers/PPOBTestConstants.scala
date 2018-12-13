@@ -33,6 +33,7 @@ object PPOBTestConstants {
 
   val rlsIndicator = "0001"
   val website = "www.test.com"
+  val agentEmail = "agent@emailaddress.com"
 
   val phoneNumber = "01234 567890"
   val mobileNumber = "07700 123456"
@@ -73,7 +74,8 @@ object PPOBTestConstants {
   val ppobModelMin = PPOBGet(ppobAddressModelMax, None, None)
   val ppobModelMax = PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
 
-  val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website))
+  val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website), None)
+  val ppobModelMaxPostAgent = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website), Some(agentEmail))
 
   val ppobModelEmailMaxPost = EmailPost(ppobAddressModelMaxPost, contactDetailsModelMax, Some(website))
 
@@ -149,12 +151,13 @@ object PPOBTestConstants {
   val ppobPostExample = PPOBPost(
     ppobAddressPostValue,
     Some(contactDetailsModelMax),
-    Some("awesomeness@totallyrad.com")
+    Some(website),
+    None
   )
 
   val ppobPostExampleJson: JsValue = Json.obj(
     "address" -> ppobAddressPostJson,
     "contactDetails" -> Json.toJson(contactDetailsModelMax),
-    "websiteAddress" -> "awesomeness@totallyrad.com"
+    "websiteAddress" -> website
   )
 }
