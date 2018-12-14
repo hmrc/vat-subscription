@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.service
 import assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
+import uk.gov.hmrc.vatsubscription.helpers.DeclarationTestConstants.agentContactDetails
 import uk.gov.hmrc.vatsubscription.helpers.DeregistrationInfoTestConstants
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
@@ -85,7 +86,7 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, Some(agentContactDetails))), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {

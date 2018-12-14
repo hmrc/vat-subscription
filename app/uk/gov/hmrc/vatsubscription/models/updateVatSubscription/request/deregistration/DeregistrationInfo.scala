@@ -30,12 +30,13 @@ case class DeregistrationInfo(deregReason: DeregistrationReason,
                               cashAccountingScheme: Boolean,
                               optionToTaxValue: Option[BigDecimal],
                               stocksValue: Option[BigDecimal],
-                              capitalAssetsValue: Option[BigDecimal]) {
+                              capitalAssetsValue: Option[BigDecimal],
+                              transactorOrCapacitorEmail: Option[String]) {
 
   val ottStocksAssetsValue: BigDecimal = List(optionToTaxValue, stocksValue, capitalAssetsValue).flatten.sum
 
   private val validateCeasedTrading: JsResult[DeregistrationInfo] = (turnoverBelowThreshold, deregDate) match {
-    case (Some(_), _) => JsError("unexpxected turnoverBelowThreshold object when journey is ceasedTrading")
+    case (Some(_), _) => JsError("unexpected turnoverBelowThreshold object when journey is ceasedTrading")
     case (_, None) => JsError("deregDate is mandatory when journey is ceasedTrading")
     case _ => JsSuccess(this)
   }

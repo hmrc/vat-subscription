@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.helpers
 
 import java.time.LocalDate
 
+import PPOBTestConstants.email
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{CeasedTrading, DeregistrationInfo, ReducedTurnover}
 
@@ -41,7 +42,8 @@ object DeregistrationInfoTestConstants {
     "cashAccountingScheme" -> true,
     "optionToTaxValue" -> optionToTaxValue,
     "stocksValue" -> stocksValue,
-    "capitalAssetsValue" -> captialAssetsValue
+    "capitalAssetsValue" -> captialAssetsValue,
+    "transactorOrCapacitorEmail" -> email
   )
 
   val deregInfoCeasedTradingModel: DeregistrationInfo = DeregistrationInfo(
@@ -55,7 +57,8 @@ object DeregistrationInfoTestConstants {
     cashAccountingScheme = true,
     Some(optionToTaxValue),
     Some(stocksValue),
-    Some(captialAssetsValue)
+    Some(captialAssetsValue),
+    Some(email)
   )
 
   val deregInfoCeasedTradingDESJson: JsValue = Json.obj(
@@ -90,6 +93,7 @@ object DeregistrationInfoTestConstants {
     intendSellCapitalAssets = false,
     additionalTaxInvoices = false,
     cashAccountingScheme = true,
+    None,
     None,
     None,
     None
