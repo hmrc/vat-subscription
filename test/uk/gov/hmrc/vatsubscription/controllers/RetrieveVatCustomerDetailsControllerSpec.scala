@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,7 +150,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
-            status(res) shouldBe BAD_GATEWAY
+            status(res) shouldBe INTERNAL_SERVER_ERROR
             jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
           }
         }
@@ -255,7 +255,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 
-          status(res) shouldBe BAD_GATEWAY
+          status(res) shouldBe INTERNAL_SERVER_ERROR
           jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
         }
       }

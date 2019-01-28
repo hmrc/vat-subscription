@@ -131,7 +131,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         val res = await(get(s"/$testVatNumber/customer-details"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }
@@ -309,7 +309,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         val res = await(get(s"/$testVatNumber/full-information"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }
