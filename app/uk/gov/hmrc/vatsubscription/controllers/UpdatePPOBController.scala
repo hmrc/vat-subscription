@@ -16,10 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import cats.data.EitherT
-import cats.instances.future._
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
