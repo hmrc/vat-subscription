@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,9 +55,8 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
             PreconditionFailed
           case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
             Logger.debug(s"[MandationStatusController][getMandationStatus]: Unexpected Failure returned from MandationStatusService, status - $status")
-            BadGateway(Json.obj("status" -> status, "body" -> body))
+            Status(status)(Json.obj("status" -> status, "body" -> body))
         }
       }
   }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,12 +89,12 @@ class MandationStatusControllerSpec extends TestUtil
     "return the INTERNAL_SERVER_ERROR and the error when failed unexpectedly" in {
       mockAuthorise()(Future.successful(Unit))
 
-      mockGetMandationStatus(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(OK, "failure"))))
+      mockGetMandationStatus(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "failure"))))
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
-      status(res) shouldBe BAD_GATEWAY
+      status(res) shouldBe INTERNAL_SERVER_ERROR
 
-      jsonBodyOf(await(res)) shouldBe Json.obj("status" -> OK, "body" -> "failure")
+      jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> "failure")
     }
   }
 

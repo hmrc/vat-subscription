@@ -123,7 +123,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
         val res = await(get(s"/$testVatNumber/mandation-status"))
 
         res should have(
-          httpStatus(BAD_GATEWAY)
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }

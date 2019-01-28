@@ -74,7 +74,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
       "known facts are missing" should {
         "return BAD_GATEWAY with the status" in {
           stubAuth(OK, successfulAuthResponse())
-          stubGetInformation(testVatNumber)(OK, testMinDesResponse)
+          stubGetInformation(testVatNumber)(BAD_GATEWAY, testMinDesResponse)
 
           val res = await(get(s"/$testVatNumber/known-facts"))
 
@@ -134,14 +134,14 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
       }
     }
     "DES returned INTERNAL_SERVER_ERROR" should {
-      "return BAD_GATEWAY with the status" in {
+      "return INTERNAL_SERVER_ERROR with the status" in {
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
 
         val res = await(get(s"/$testVatNumber/known-facts"))
 
         res should have(
-          httpStatus(BAD_GATEWAY),
+          httpStatus(INTERNAL_SERVER_ERROR),
           jsonBodyAs(Json.obj(
             "status" -> INTERNAL_SERVER_ERROR,
             "body" -> "{}"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
           Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
-          BadGateway(Json.obj("status" -> status, "body" -> body))
+          Status(status)(Json.obj("status" -> status, "body" -> body))
       }
   }
 
@@ -80,7 +80,7 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
           Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
-          BadGateway(Json.obj("status" -> status, "body" -> body))
+          Status(status)(Json.obj("status" -> status, "body" -> body))
       }
   }
 

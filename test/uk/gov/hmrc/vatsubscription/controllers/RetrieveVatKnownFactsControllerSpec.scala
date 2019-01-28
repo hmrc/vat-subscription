@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
       }
     }
 
-    "return BAD_GATEWAY and error message" when {
+    "return the correct status and error message" when {
       "UnexpectedGetVatCustomerInformationFailure is returned from the VatKnownFactsRetrievalService" in {
         val responseBody = "error"
 
@@ -122,9 +122,8 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
         val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
 
-        status(res) shouldBe BAD_GATEWAY
+        status(res) shouldBe INTERNAL_SERVER_ERROR
         jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
-
       }
     }
   }
