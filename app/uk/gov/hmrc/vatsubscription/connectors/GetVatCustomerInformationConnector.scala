@@ -67,6 +67,8 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
             ) match {
               case JsSuccess(vatCustomerInformation, _) =>
                 Logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
+                if(vatCustomerInformation.changeIndicators.isEmpty)
+                  Logger.warn("[CustomerCircumstancesHttpParser][read]: No changeIndicators object returned from GetCustomerInformation")
                 Right(vatCustomerInformation)
               case _ =>
                 Logger.warn(s"[CustomerCircumstancesHttpParser][read]: Invalid Success Response Json")
