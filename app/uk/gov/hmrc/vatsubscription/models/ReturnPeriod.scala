@@ -39,6 +39,54 @@ case class MMReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(
   override val stdReturnPeriod: String = "MM"
 }
 
+case class YAReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YA"
+}
+
+case class YBReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YB"
+}
+
+case class YCReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YC"
+}
+
+case class YDReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YD"
+}
+
+case class YEReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YE"
+}
+
+case class YFReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YF"
+}
+
+case class YGReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YG"
+}
+
+case class YHReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YH"
+}
+
+case class YIReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YI"
+}
+
+case class YJReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YJ"
+}
+
+case class YKReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YK"
+}
+
+case class YLReturnPeriod(transOrCapEmail: Option[String]) extends ReturnPeriod(transOrCapEmail) {
+  override val stdReturnPeriod: String = "YL"
+}
+
 object ReturnPeriod {
 
   val frontendRds: Reads[ReturnPeriod] = readReturnPeriod("stdReturnPeriod")
@@ -47,6 +95,7 @@ object ReturnPeriod {
 
   val newDesReads: Reads[ReturnPeriod] = readReturnPeriod("returnPeriod")
 
+  //scalastyle:off
   private def readReturnPeriod(attributeName: String): Reads[ReturnPeriod] = new Reads[ReturnPeriod] {
     override def reads(json: JsValue): JsResult[ReturnPeriod] = {
 
@@ -62,10 +111,35 @@ object ReturnPeriod {
           JsSuccess(MCReturnPeriod(transactorOrCapacitorEmail))
         case Some("MM") =>
           JsSuccess(MMReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YA") =>
+          JsSuccess(YAReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YB") =>
+          JsSuccess(YBReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YC") =>
+          JsSuccess(YCReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YD") =>
+          JsSuccess(YDReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YE") =>
+          JsSuccess(YEReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YF") =>
+          JsSuccess(YFReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YG") =>
+          JsSuccess(YGReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YH") =>
+          JsSuccess(YHReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YI") =>
+          JsSuccess(YJReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YJ") =>
+          JsSuccess(YKReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YK") =>
+          JsSuccess(YLReturnPeriod(transactorOrCapacitorEmail))
+        case Some("YL") =>
+          JsSuccess(YAReturnPeriod(transactorOrCapacitorEmail))
         case _ => JsError("Invalid Return Period supplied")
       }
     }
   }
+  //scalastyle:on
 
   implicit val returnPeriodWriter: Writes[ReturnPeriod] = Writes {
     period => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
