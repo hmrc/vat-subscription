@@ -109,6 +109,16 @@ class VatCustomerInformationSpec extends TestUtil {
     }
   }
 
+  "release 8 reads" should {
+    "parse the json correctly when all optional fields are populated for release 8" in {
+      VatCustomerInformation.release8Reads.reads(customerInformationDESJsonMaxR8).get shouldBe customerInformationModelMaxR8
+    }
+
+    "parse the json correctly when no optional fields are returned for release 8" in {
+      VatCustomerInformation.release8Reads.reads(customerInformationDESJsonMinR8).get shouldBe customerInformationModelMin
+    }
+  }
+
   "Manage Account writes" should {
     "write the json correctly when all optional fields are populated" in {
       Json.toJson(customerInformationModelMax)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMax

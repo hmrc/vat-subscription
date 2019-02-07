@@ -52,6 +52,16 @@ object CustomerDetailsTestConstants {
     isPartialMigration = false
   )
 
+  val customerDetailsModelMaxR8 = CustomerDetails(
+    Some(firstName),
+    Some(lastName),
+    Some(orgName),
+    Some(tradingName),
+    Some(effectiveDate),
+    welshIndicator = Some(false),
+    isPartialMigration = false
+  )
+
   val customerDetailsModelMaxWithFRS = CustomerDetails(
     Some(firstName),
     Some(lastName),

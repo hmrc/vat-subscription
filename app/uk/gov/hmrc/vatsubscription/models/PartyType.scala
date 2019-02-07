@@ -243,8 +243,8 @@ object PartyType {
     }
   }
 
-  implicit val r7reads: Reads[PartyType] = __.read[String].map(apply(r7PartyTypes))
-  implicit val r8reads: Reads[PartyType] = __.read[String].map(apply(r8PartyTypes))
+  val r7reads: Reads[PartyType] = __.read[String].map(apply(r7PartyTypes))
+  val r8reads: Reads[PartyType] = __.read[String].map(apply(r8PartyTypes))
 
   implicit val writes: Writes[PartyType] = Writes { charge => JsString(charge.value) }
 
