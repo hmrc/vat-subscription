@@ -159,8 +159,6 @@ object PartyType {
 
   val logger = Logger(getClass.getSimpleName)
 
-  private val partyTypePath: JsPath = __ \ "partyType"
-
   val r7PartyTypes: Set[PartyType] = Set(
     IndividualType,
     SoleTraderType,
@@ -184,7 +182,7 @@ object PartyType {
     TrustIncomeTaxType,
     TrustType,
     OrdinaryPartnershipType,
-    LimitedLiaPartnershipType,
+    LimitedPartnershipType,
     CompanyType,
     CIOType,
     NonUkCharityType,
@@ -217,7 +215,7 @@ object PartyType {
     ScottishLimitedPartnershipType,
     TrustType,
     OrdinaryPartnershipType,
-    LimitedLiaPartnershipType,
+    LimitedPartnershipType,
     UnicorporatedAssociationType,
     AdminDivisionType,
     IndividualZ1Type,
