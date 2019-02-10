@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
+import uk.gov.hmrc.vatsubscription.models.ReturnPeriod.filterReturnPeriod
 import uk.gov.hmrc.vatsubscription.utils.{JsonObjectSugar, JsonReadUtil}
 
 case class VatCustomerInformation(mandationStatus: MandationStatus,
@@ -180,7 +181,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     flatRateScheme,
     ppob,
     bankDetails,
-    returnPeriod,
+    filterReturnPeriod(returnPeriod),
     deregistration,
     changeIndicators,
     pendingChanges,
@@ -199,5 +200,4 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "businessName" -> model.customerDetails.organisationName
       )
   }
-
 }

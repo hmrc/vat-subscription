@@ -48,7 +48,7 @@ class PartyTypeSpec extends UnitSpec {
         val exception = intercept[IllegalArgumentException] {
           PartyType.apply(PartyType.r7PartyTypes)("Bad Party Type")
         }
-        exception.getMessage shouldBe "Invalid Party Type"
+        exception.getMessage shouldBe "Invalid Party Type: Bad Party Type"
       }
     }
   }

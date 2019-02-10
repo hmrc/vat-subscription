@@ -142,4 +142,38 @@ class ReturnPeriodSpec extends UnitSpec {
       Json.toJson(YLReturnPeriod(None)) shouldBe returnPeriodYLJson
     }
   }
+
+  "ReturnPeriod .filterReturnPeriod" when {
+
+    "return period is in valid values" should {
+
+      val returnPeriodMA: Option[ReturnPeriod] = Some(MAReturnPeriod(None))
+      val returnPeriodMB: Option[ReturnPeriod] = Some(MBReturnPeriod(None))
+      val returnPeriodMC: Option[ReturnPeriod] = Some(MCReturnPeriod(None))
+      val returnPeriodMM: Option[ReturnPeriod] = Some(MMReturnPeriod(None))
+
+      "return the same return period back" in {
+        ReturnPeriod.filterReturnPeriod(returnPeriodMA) shouldBe returnPeriodMA
+        ReturnPeriod.filterReturnPeriod(returnPeriodMB) shouldBe returnPeriodMB
+        ReturnPeriod.filterReturnPeriod(returnPeriodMC) shouldBe returnPeriodMC
+        ReturnPeriod.filterReturnPeriod(returnPeriodMM) shouldBe returnPeriodMM
+      }
+    }
+
+    "return period is not in valid values" should {
+
+      val returnPeriodYA: Option[ReturnPeriod] = Some(YAReturnPeriod(None))
+
+      "return None" in {
+        ReturnPeriod.filterReturnPeriod(returnPeriodYA) shouldBe None
+      }
+    }
+
+    "not supplied with a return period" should {
+
+      "return None" in {
+        ReturnPeriod.filterReturnPeriod(None) shouldBe None
+      }
+    }
+  }
 }

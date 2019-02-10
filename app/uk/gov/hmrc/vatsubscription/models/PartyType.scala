@@ -139,7 +139,7 @@ case object LimitedPartnershipType extends PartyType {
   override val value: String = "62"
 }
 
-case object UnicorporatedAssociationType extends PartyType {
+case object UnincorporatedAssociationType extends PartyType {
   override val value: String = "63"
 }
 
@@ -196,7 +196,7 @@ object PartyType {
     PartnershipType,
     IncorpBodyType,
     UnicorpBodyType,
-    TrustType,
+    TrustIncomeTaxType,
     CompanyType,
     CIOType,
     NonUkCharityType,
@@ -216,7 +216,7 @@ object PartyType {
     TrustType,
     OrdinaryPartnershipType,
     LimitedPartnershipType,
-    UnicorporatedAssociationType,
+    UnincorporatedAssociationType,
     AdminDivisionType,
     IndividualZ1Type,
     VATGroupType
@@ -225,7 +225,7 @@ object PartyType {
   def apply(typeOfParty: Set[PartyType]): String => PartyType = input => {
     typeOfParty.find { partyType =>
       partyType.value.toUpperCase.equals(input.trim.toUpperCase)
-    }.getOrElse(throw new IllegalArgumentException("Invalid Party Type"))
+    }.getOrElse(throw new IllegalArgumentException(s"Invalid Party Type: $input"))
   }
 
   def unapply(arg: PartyType): String = arg.value

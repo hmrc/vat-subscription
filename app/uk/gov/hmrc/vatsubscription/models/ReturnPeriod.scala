@@ -128,13 +128,13 @@ object ReturnPeriod {
         case Some("YH") =>
           JsSuccess(YHReturnPeriod(transactorOrCapacitorEmail))
         case Some("YI") =>
-          JsSuccess(YJReturnPeriod(transactorOrCapacitorEmail))
+          JsSuccess(YIReturnPeriod(transactorOrCapacitorEmail))
         case Some("YJ") =>
-          JsSuccess(YKReturnPeriod(transactorOrCapacitorEmail))
+          JsSuccess(YJReturnPeriod(transactorOrCapacitorEmail))
         case Some("YK") =>
-          JsSuccess(YLReturnPeriod(transactorOrCapacitorEmail))
+          JsSuccess(YKReturnPeriod(transactorOrCapacitorEmail))
         case Some("YL") =>
-          JsSuccess(YAReturnPeriod(transactorOrCapacitorEmail))
+          JsSuccess(YLReturnPeriod(transactorOrCapacitorEmail))
         case _ => JsError("Invalid Return Period supplied")
       }
     }
@@ -143,5 +143,14 @@ object ReturnPeriod {
 
   implicit val returnPeriodWriter: Writes[ReturnPeriod] = Writes {
     period => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
+  }
+
+  def filterReturnPeriod(returnPeriod: Option[ReturnPeriod]): Option[ReturnPeriod] = {
+    returnPeriod.filter(period =>
+      period.isInstanceOf[MAReturnPeriod] ||
+      period.isInstanceOf[MBReturnPeriod] ||
+      period.isInstanceOf[MCReturnPeriod] ||
+      period.isInstanceOf[MMReturnPeriod]
+    )
   }
 }
