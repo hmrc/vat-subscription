@@ -24,15 +24,53 @@ object ReturnPeriodTestConstants {
   val mbReturnPeriod = "MB"
   val mcReturnPeriod = "MC"
   val mmReturnPeriod = "MM"
+  val yaReturnPeriod = "YA"
+  val ybReturnPeriod = "YB"
+  val ycReturnPeriod = "YC"
+  val ydReturnPeriod = "YD"
+  val yeReturnPeriod = "YE"
+  val yfReturnPeriod = "YF"
+  val ygReturnPeriod = "YG"
+  val yhReturnPeriod = "YH"
+  val yiReturnPeriod = "YI"
+  val yjReturnPeriod = "YJ"
+  val ykReturnPeriod = "YK"
+  val ylReturnPeriod = "YL"
 
   val returnPeriodMAJson: JsValue = Json.obj("stdReturnPeriod" -> maReturnPeriod)
   val returnPeriodMBJson: JsValue = Json.obj("stdReturnPeriod" -> mbReturnPeriod)
   val returnPeriodMCJson: JsValue = Json.obj("stdReturnPeriod" -> mcReturnPeriod)
   val returnPeriodMMJson: JsValue = Json.obj("stdReturnPeriod" -> mmReturnPeriod)
+  val returnPeriodYAJson: JsValue = Json.obj("stdReturnPeriod" -> yaReturnPeriod)
+  val returnPeriodYBJson: JsValue = Json.obj("stdReturnPeriod" -> ybReturnPeriod)
+  val returnPeriodYCJson: JsValue = Json.obj("stdReturnPeriod" -> ycReturnPeriod)
+  val returnPeriodYDJson: JsValue = Json.obj("stdReturnPeriod" -> ydReturnPeriod)
+  val returnPeriodYEJson: JsValue = Json.obj("stdReturnPeriod" -> yeReturnPeriod)
+  val returnPeriodYFJson: JsValue = Json.obj("stdReturnPeriod" -> yfReturnPeriod)
+  val returnPeriodYGJson: JsValue = Json.obj("stdReturnPeriod" -> ygReturnPeriod)
+  val returnPeriodYHJson: JsValue = Json.obj("stdReturnPeriod" -> yhReturnPeriod)
+  val returnPeriodYIJson: JsValue = Json.obj("stdReturnPeriod" -> yiReturnPeriod)
+  val returnPeriodYJJson: JsValue = Json.obj("stdReturnPeriod" -> yjReturnPeriod)
+  val returnPeriodYKJson: JsValue = Json.obj("stdReturnPeriod" -> ykReturnPeriod)
+  val returnPeriodYLJson: JsValue = Json.obj("stdReturnPeriod" -> ylReturnPeriod)
+
+  val inflightReturnPeriodMCRelease6Json: JsValue = Json.obj("stdReturnPeriod" -> mcReturnPeriod)
 
   val inflightReturnPeriodMAJson: JsValue = Json.obj("returnPeriod" -> maReturnPeriod)
   val inflightReturnPeriodMBJson: JsValue = Json.obj("returnPeriod" -> mbReturnPeriod)
   val inflightReturnPeriodMCJson: JsValue = Json.obj("returnPeriod" -> mcReturnPeriod)
   val inflightReturnPeriodMMJson: JsValue = Json.obj("returnPeriod" -> mmReturnPeriod)
+  val inflightReturnPeriodYAJson: JsValue = Json.obj("returnPeriod" -> yaReturnPeriod)
+  val inflightReturnPeriodYBJson: JsValue = Json.obj("returnPeriod" -> ybReturnPeriod)
+  val inflightReturnPeriodYCJson: JsValue = Json.obj("returnPeriod" -> ycReturnPeriod)
+  val inflightReturnPeriodYDJson: JsValue = Json.obj("returnPeriod" -> ydReturnPeriod)
+  val inflightReturnPeriodYEJson: JsValue = Json.obj("returnPeriod" -> yeReturnPeriod)
+  val inflightReturnPeriodYFJson: JsValue = Json.obj("returnPeriod" -> yfReturnPeriod)
+  val inflightReturnPeriodYGJson: JsValue = Json.obj("returnPeriod" -> ygReturnPeriod)
+  val inflightReturnPeriodYHJson: JsValue = Json.obj("returnPeriod" -> yhReturnPeriod)
+  val inflightReturnPeriodYIJson: JsValue = Json.obj("returnPeriod" -> yiReturnPeriod)
+  val inflightReturnPeriodYJJson: JsValue = Json.obj("returnPeriod" -> yjReturnPeriod)
+  val inflightReturnPeriodYKJson: JsValue = Json.obj("returnPeriod" -> ykReturnPeriod)
+  val inflightReturnPeriodYLJson: JsValue = Json.obj("returnPeriod" -> ylReturnPeriod)
 
 }

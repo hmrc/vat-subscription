@@ -17,12 +17,12 @@
 package uk.gov.hmrc.vatsubscription.connectors
 
 import assets.TestUtil
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, FORBIDDEN}
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants.{customerInformationDESJsonMaxWithFRS,
-  customerInformationModelMaxWithFRS, migrationDESJson}
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363R6, Api1363R7, Api1363R8}
+import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 
 class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
@@ -32,11 +32,41 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
   "GetVatCustomerInformationConnector GetVatCustomerInformationHttpReads" should {
 
     val httpClient = mock[HttpClient]
-    val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
     "read" should {
 
-      "parse an OK response with a valid json as a VatCustomerInformation" in {
+      "parse an OK response with a valid json as a VatCustomerInformation Release 6" in {
+
+        mockAppConfig.features.api1363Version(Api1363R6)
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
+        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRSRelease6))
+
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Right(customerInformationModelMaxWithFRS)
+      }
+
+      "parse an OK response with a valid json as a VatCustomerInformation Release 7" in {
+
+        mockAppConfig.features.api1363Version(Api1363R7)
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
+        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRS))
+
+        val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Right(customerInformationModelMaxWithFRS)
+      }
+
+      "parse an OK response with a valid json as a VatCustomerInformation Release 8" in {
+
+        mockAppConfig.features.api1363Version(Api1363R8)
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
         val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRS))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
@@ -45,6 +75,9 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
       }
 
       "parse an OK response with an invalid json as a UnexpectedGetVatCustomerInformationFailure" in {
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
         val httpResponse = HttpResponse(OK, responseJson = Some(Json.obj()))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
@@ -53,6 +86,9 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
       }
 
       "parse a BAD_REQUEST response as a InvalidVatNumber" in {
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
         val httpResponse = HttpResponse(BAD_REQUEST)
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
@@ -61,6 +97,9 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
       }
 
       "parse a NOT_FOUND response as a VatNumberNotFound" in {
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
         val httpResponse = HttpResponse(NOT_FOUND)
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
@@ -69,6 +108,9 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
       }
 
       "parse a FORBIDDEN response with code MIGRATION as a Migration" in {
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
         val httpResponse = HttpResponse(FORBIDDEN, Some(migrationDESJson))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
@@ -77,6 +119,9 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
       }
 
       "parse a FORBIDDEN response without code MIGRATION as a Forbidden" in {
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
         val httpResponse = HttpResponse(FORBIDDEN, responseJson = Some(Json.obj()))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
@@ -85,6 +130,9 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
       }
 
       "parse any other response as a UnexpectedGetVatCustomerInformationFailure" in {
+
+        val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
+
         val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, responseJson = Some(Json.obj()))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)

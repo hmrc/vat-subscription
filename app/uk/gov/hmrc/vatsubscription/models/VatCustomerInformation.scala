@@ -18,6 +18,7 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
+import uk.gov.hmrc.vatsubscription.models.ReturnPeriod.filterReturnPeriod
 import uk.gov.hmrc.vatsubscription.utils.{JsonObjectSugar, JsonReadUtil}
 
 case class VatCustomerInformation(mandationStatus: MandationStatus,
@@ -29,7 +30,7 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   deregistration: Option[Deregistration],
                                   changeIndicators: Option[ChangeIndicators],
                                   pendingChanges: Option[PendingChanges],
-                                  partyType: Option[String] = None) {
+                                  partyType: Option[PartyType] = None) {
 
   val pendingPPOBAddress: Option[PPOBAddressGet] = pendingChanges.flatMap(_.ppob.map(_.address))
   val pendingBankDetails: Option[BankDetails] = pendingChanges.flatMap(_.bankDetails)
@@ -125,7 +126,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
-    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[String]
+    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r7reads)
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(
@@ -148,16 +149,55 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     partyType
   )
 
+  val release8Reads: Reads[VatCustomerInformation] = for {
+    firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
+    lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
+    organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
+    tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
+    vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
+    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
+    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
+    flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
+    ppob <- ppobPath.read[PPOBGet]
+    bankDetails <- bankDetailsPath.readOpt[BankDetails]
+    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
+    deregistration <- deregistrationPath.readOpt[Deregistration]
+    changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
+    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
+  } yield VatCustomerInformation(
+    mandationStatus,
+    CustomerDetails(
+      firstName = firstName,
+      lastName = lastName,
+      organisationName = organisationName,
+      tradingName = tradingName,
+      vatRegistrationDate,
+      flatRateScheme.isDefined,
+      welshIndicator,
+      isPartialMigration.contains(true)
+    ),
+    flatRateScheme,
+    ppob,
+    bankDetails,
+    filterReturnPeriod(returnPeriod),
+    deregistration,
+    changeIndicators,
+    pendingChanges,
+    partyType
+  )
+
   implicit val writes: Writes[VatCustomerInformation] = Json.writes[VatCustomerInformation]
 
-  val manageAccountWrites: Writes[VatCustomerInformation] = Writes { model =>
-    jsonObjNoNulls(
-      "mandationStatus" -> model.mandationStatus,
-      "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
-      "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
-      "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),
-      "businessName" -> model.customerDetails.organisationName
-    )
+  val manageAccountWrites: Writes[VatCustomerInformation] = Writes {
+    model =>
+      jsonObjNoNulls(
+        "mandationStatus" -> model.mandationStatus,
+        "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
+        "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
+        "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),
+        "businessName" -> model.customerDetails.organisationName
+      )
   }
-
 }

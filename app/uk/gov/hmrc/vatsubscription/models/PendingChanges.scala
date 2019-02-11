@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, Writes, __}
-import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.models.ReturnPeriod.filterReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
 
 case class PendingChanges(ppob: Option[PPOBGet],
@@ -37,11 +37,15 @@ object PendingChanges {
       returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.currentDesReads)
     )(PendingChanges.apply _)
 
-  val newReads: Reads[PendingChanges] = (
-    ppobPath.readNullable[PPOBGet] and
-      bankDetailsPath.readNullable[BankDetails] and
-      returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.newDesReads)
-    )(PendingChanges.apply _)
+  val newReads: Reads[PendingChanges] = for {
+    ppob <- ppobPath.readNullable[PPOBGet]
+    bankDetails <- bankDetailsPath.readNullable[BankDetails]
+    returnPeriod <- returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.newDesReads)
+  } yield PendingChanges(
+    ppob,
+    bankDetails,
+    filterReturnPeriod(returnPeriod)
+  )
 
   implicit val writes: Writes[PendingChanges] = (
     ppobPath.writeNullable[PPOBGet] and

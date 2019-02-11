@@ -93,5 +93,87 @@ class ReturnPeriodSpec extends UnitSpec {
     "output a fully populated MM ReturnPeriod object with all fields populated" in {
       Json.toJson(MMReturnPeriod(None)) shouldBe returnPeriodMMJson
     }
+
+    "output a fully populated YA ReturnPeriod object with all fields populated" in {
+      Json.toJson(YAReturnPeriod(None)) shouldBe returnPeriodYAJson
+    }
+
+    "output a fully populated YB ReturnPeriod object with all fields populated" in {
+      Json.toJson(YBReturnPeriod(None)) shouldBe returnPeriodYBJson
+    }
+
+    "output a fully populated YC ReturnPeriod object with all fields populated" in {
+      Json.toJson(YCReturnPeriod(None)) shouldBe returnPeriodYCJson
+    }
+
+    "output a fully populated YD ReturnPeriod object with all fields populated" in {
+      Json.toJson(YDReturnPeriod(None)) shouldBe returnPeriodYDJson
+    }
+
+    "output a fully populated YE ReturnPeriod object with all fields populated" in {
+      Json.toJson(YEReturnPeriod(None)) shouldBe returnPeriodYEJson
+    }
+
+    "output a fully populated YF ReturnPeriod object with all fields populated" in {
+      Json.toJson(YFReturnPeriod(None)) shouldBe returnPeriodYFJson
+    }
+
+    "output a fully populated YG ReturnPeriod object with all fields populated" in {
+      Json.toJson(YGReturnPeriod(None)) shouldBe returnPeriodYGJson
+    }
+
+    "output a fully populated YH ReturnPeriod object with all fields populated" in {
+      Json.toJson(YHReturnPeriod(None)) shouldBe returnPeriodYHJson
+    }
+
+    "output a fully populated YI ReturnPeriod object with all fields populated" in {
+      Json.toJson(YIReturnPeriod(None)) shouldBe returnPeriodYIJson
+    }
+
+    "output a fully populated YJ ReturnPeriod object with all fields populated" in {
+      Json.toJson(YJReturnPeriod(None)) shouldBe returnPeriodYJJson
+    }
+
+    "output a fully populated YK ReturnPeriod object with all fields populated" in {
+      Json.toJson(YKReturnPeriod(None)) shouldBe returnPeriodYKJson
+    }
+
+    "output a fully populated YL ReturnPeriod object with all fields populated" in {
+      Json.toJson(YLReturnPeriod(None)) shouldBe returnPeriodYLJson
+    }
+  }
+
+  "ReturnPeriod .filterReturnPeriod" when {
+
+    "return period is in valid values" should {
+
+      val returnPeriodMA: Option[ReturnPeriod] = Some(MAReturnPeriod(None))
+      val returnPeriodMB: Option[ReturnPeriod] = Some(MBReturnPeriod(None))
+      val returnPeriodMC: Option[ReturnPeriod] = Some(MCReturnPeriod(None))
+      val returnPeriodMM: Option[ReturnPeriod] = Some(MMReturnPeriod(None))
+
+      "return the same return period back" in {
+        ReturnPeriod.filterReturnPeriod(returnPeriodMA) shouldBe returnPeriodMA
+        ReturnPeriod.filterReturnPeriod(returnPeriodMB) shouldBe returnPeriodMB
+        ReturnPeriod.filterReturnPeriod(returnPeriodMC) shouldBe returnPeriodMC
+        ReturnPeriod.filterReturnPeriod(returnPeriodMM) shouldBe returnPeriodMM
+      }
+    }
+
+    "return period is not in valid values" should {
+
+      val returnPeriodYA: Option[ReturnPeriod] = Some(YAReturnPeriod(None))
+
+      "return None" in {
+        ReturnPeriod.filterReturnPeriod(returnPeriodYA) shouldBe None
+      }
+    }
+
+    "not supplied with a return period" should {
+
+      "return None" in {
+        ReturnPeriod.filterReturnPeriod(None) shouldBe None
+      }
+    }
   }
 }
