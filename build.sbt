@@ -1,3 +1,4 @@
+import play.core.PlayVersion
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
@@ -32,13 +33,31 @@ lazy val coverageSettings: Seq[Setting[_]] = {
   )
 }
 
+lazy val appDependencies: Seq[ModuleID] = compile ++ test()
+
+val compile = Seq(
+  ws,
+  "uk.gov.hmrc" %% "bootstrap-play-25" % "4.9.0",
+  "org.typelevel" %% "cats-core" % "1.6.0"
+)
+
+def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
+  "uk.gov.hmrc" %% "hmrctest" % "3.5.0-play-25" % scope,
+  "org.scalatest" %% "scalatest" % "3.0.5" % scope,
+  "org.pegdown" % "pegdown" % "1.6.0" % scope,
+  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope,
+  "com.github.tomakehurst" % "wiremock" % "2.21.0" % scope,
+  "org.mockito" % "mockito-core" % "2.24.0" % scope
+)
+
 coverageSettings
 scalaSettings
 publishingSettings
 defaultSettings()
 majorVersion := 0
 
-libraryDependencies ++= AppDependencies.appDependencies
+libraryDependencies ++= appDependencies
 retrieveManaged := true
 evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
 
