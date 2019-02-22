@@ -28,7 +28,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
     ScoverageKeys.coverageMinimum := 95,
-    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
 }
@@ -72,6 +72,7 @@ unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTe
 javaOptions in IntegrationTest += "-Dlogger.resource=logback-test.xml"
 addTestReportOption(IntegrationTest, "int-test-reports")
 parallelExecution in IntegrationTest := false
+PlayKeys.playDefaultPort := 9567
 
 resolvers ++= Seq(
   Resolver.bintrayRepo("hmrc", "releases"),
