@@ -234,7 +234,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accSort)
             )),
             Some(MCReturnPeriod(None))
-          ))
+          )),
+          Some(UKCompanyType)
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
@@ -412,7 +413,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accSort)
             )),
             Some(MCReturnPeriod(None))
-          ))
+          )),
+          partyType = Some(UKCompanyType)
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
