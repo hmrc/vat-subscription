@@ -197,7 +197,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
         "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
         "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),
-        "businessName" -> model.customerDetails.organisationName
+        "businessName" -> model.customerDetails.organisationName,
+        "partyType" -> model.partyType
       )
   }
 }

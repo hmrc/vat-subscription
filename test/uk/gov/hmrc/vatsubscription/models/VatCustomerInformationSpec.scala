@@ -136,7 +136,7 @@ class VatCustomerInformationSpec extends TestUtil {
 
   "Manage Account writes" should {
     "write the json correctly when all optional fields are populated" in {
-      Json.toJson(customerInformationModelMax)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMax
+      Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMax
     }
 
     "write the json correctly when no optional fields are populated" in {

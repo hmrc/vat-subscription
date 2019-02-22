@@ -915,7 +915,8 @@ object CustomerInformationTestConstants {
       "accountHolderName" -> accName,
       "bankAccountNumber" -> accNum,
       "sortCode" -> accSort
-    )
+    ),
+    "partyType" -> "50"
   )
 
   val manageAccountSummaryOutputJsonMin: JsValue = Json.obj(
@@ -975,6 +976,28 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None))
     ))
+  )
+
+  val manageAccountModelMax: VatCustomerInformation = VatCustomerInformation(
+    MTDfBMandated,
+    customerDetailsModelMax,
+    None,
+    ppobModelMax,
+    Some(bankDetailsModelMax),
+    Some(MCReturnPeriod(None)),
+    Some(deregModel),
+    Some(ChangeIndicators(
+      ppob = true,
+      bankDetails = true,
+      returnPeriod = true,
+      deregister= true
+    )),
+    Some(PendingChanges(
+      Some(ppobModelMax),
+      Some(bankDetailsModelMax),
+      Some(MCReturnPeriod(None))
+    )),
+    Some(UKCompanyType)
   )
 
   val customerInformationModelMaxR7: VatCustomerInformation = VatCustomerInformation(

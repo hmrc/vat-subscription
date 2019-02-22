@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.helpers
 
 import java.util.UUID
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
 import uk.gov.hmrc.vatsubscription.models.post.{EmailPost, PPOBAddressPost, PPOBPost}
@@ -78,7 +78,7 @@ object IntegrationTestConstants {
   val agentEmail = "agent@email.com"
 
 
-  val testSuccessCustomerDetailsDesResponse = Json.obj(
+  val testSuccessCustomerDetailsDesResponse: JsObject = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "organisationName" -> orgName,
@@ -94,7 +94,8 @@ object IntegrationTestConstants {
         "effectiveRegistrationDate" -> effectiveDate,
         "businessStartDate" -> startDate,
         "welshIndicator" -> true,
-        "isPartialMigration" -> true
+        "isPartialMigration" -> true,
+        "partyType" -> "50"
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
