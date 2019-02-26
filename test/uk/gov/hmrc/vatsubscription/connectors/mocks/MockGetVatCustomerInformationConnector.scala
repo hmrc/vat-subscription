@@ -23,7 +23,7 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockGetVatCustomerInformationConnector extends MockitoSugar with BeforeAndAfterEach {
   this: Suite =>
@@ -39,6 +39,7 @@ trait MockGetVatCustomerInformationConnector extends MockitoSugar with BeforeAnd
   : Unit = {
     when(mockConnector.getInformation(
       ArgumentMatchers.eq(vatNumber)
-    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+    )(ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[ExecutionContext])) thenReturn response
   }
 }
