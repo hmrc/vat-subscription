@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.connectors
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED}
-import play.api.libs.json.{JsSuccess, Json, Writes}
+import play.api.libs.json.{JsSuccess, JsValue, Json, Writes}
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -53,7 +53,6 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
     )
   }
 
-  //scalastyle:off
   object GetVatCustomerInformationHttpParser {
     type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
 
@@ -73,34 +72,45 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
             ) match {
               case JsSuccess(vatCustomerInformation, _) =>
                 Logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
-                if(vatCustomerInformation.changeIndicators.isEmpty)
-                  Logger.warn("[CustomerCircumstancesHttpParser][read]: No changeIndicators object returned from GetCustomerInformation")
                 Right(vatCustomerInformation)
               case _ =>
-                Logger.warn(s"[CustomerCircumstancesHttpParser][read]: Invalid Success Response Json")
+                logUnexpectedResponse(response, "Invalid Success Response Json")
                 Left(UnexpectedGetVatCustomerInformationFailure(OK, response.body))
             }
-          case BAD_REQUEST =>
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status BAD REQUEST returned")
-            Left(InvalidVatNumber)
-          case NOT_FOUND =>
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status NOT FOUND returned")
-            Left(VatNumberNotFound)
-          case FORBIDDEN if response.body.contains("MIGRATION") =>
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, " +
-              "status FORBIDDEN returned with MIGRATION")
-            Left(Migration)
-          case FORBIDDEN =>
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status FORBIDDEN returned")
-            Left(Forbidden)
-          case status =>
-            Logger.warn(s"[CustomerCircumstancesHttpParser][read]: Unexpected response, status $status returned")
-            Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
+          case _ => handleErrorResponse(response)
         }
     }
   }
+
+  private def handleErrorResponse(response: HttpResponse): Left[GetVatCustomerInformationFailure, VatCustomerInformation] = {
+    response.status match {
+      case BAD_REQUEST =>
+        logUnexpectedResponse(response, logBody = true)
+        Left(InvalidVatNumber)
+      case NOT_FOUND =>
+        logUnexpectedResponse(response, "NOT FOUND returned - Subscription not found")
+        Left(VatNumberNotFound)
+      case FORBIDDEN if response.body.contains("MIGRATION") =>
+        logUnexpectedResponse(response, "FORBIDDEN returned with MIGRATION - Migration in progress")
+        Left(Migration)
+      case FORBIDDEN =>
+        logUnexpectedResponse(response, logBody = true)
+        Left(Forbidden)
+      case status =>
+        logUnexpectedResponse(response, logBody = true)
+        Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
+    }
+  }
+
+  private def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response", logBody: Boolean = false): Unit = {
+    Logger.warn(
+      s"[CustomerCircumstancesHttpParser][read]: $message. " +
+      s"Status: ${response.status}. " +
+      s"${ if(logBody) s"Body: ${response.body} " else "" } " +
+      s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}"
+    )
+  }
 }
-//scalastyle:on
 
 sealed trait GetVatCustomerInformationFailure {
   val status: Int = INTERNAL_SERVER_ERROR

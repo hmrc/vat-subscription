@@ -62,7 +62,10 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
   def retrieveVatInformation(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
     implicit user =>
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
-        case Right(vatInformation) => Ok(Json.toJson(vatInformation))
+        case Right(vatInformation) =>
+          if(vatInformation.changeIndicators.isEmpty)
+            Logger.warn("[CustomerCircumstancesHttpParser][read]: No changeIndicators object returned from GetCustomerInformation")
+          Ok(Json.toJson(vatInformation))
         case Left(InvalidVatNumber) =>
           Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest
