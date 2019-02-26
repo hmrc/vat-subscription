@@ -33,14 +33,14 @@ object UpdateVatSubscriptionHttpParser {
         case OK =>
           Logger.debug("[UpdateVatSubscriptionHttpParser][read]: Status OK")
           response.json.validate[SuccessModel].fold(
-            invalid => {
-              Logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Success Response Json - $invalid")
+            _ => {
+              Logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Success Response Json")
               Left(ErrorModel("INTERNAL_SERVER_ERROR", "Invalid Json returned in Success response."))
             },
             valid => Right(valid)
           )
         case status =>
-          Logger.warn(s"[UpdateVatSubscriptionReads][read]: Unexpected response, status $status returned")
+          Logger.warn(s"[UpdateVatSubscriptionReads][read]: Unexpected response, status $status returned. Body: ${response.body}")
           response.json.validate[ErrorModel].fold(
             invalid => {
               Logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Error Response Json - $invalid")

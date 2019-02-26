@@ -23,7 +23,6 @@ import play.api.libs.json.{JsSuccess, Json, Writes}
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363R6, Api1363R7, Api1363R8}
 import uk.gov.hmrc.vatsubscription.models.VatCustomerInformation
@@ -36,7 +35,9 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
 
   private def url(vatNumber: String) = s"${applicationConfig.desUrl}/vat/customer/vrn/$vatNumber/information"
 
-  def getInformation(vatNumber: String)(implicit hc: HeaderCarrier): Future[GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpParserResponse] = {
+  def getInformation(vatNumber: String)
+                    (implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpParserResponse] = {
     val headerCarrier = hc
       .withExtraHeaders(applicationConfig.desEnvironmentHeader)
       .copy(authorization = Some(Authorization(applicationConfig.desAuthorisationToken)))
@@ -53,7 +54,6 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
     )
   }
 
-  //scalastyle:off
   object GetVatCustomerInformationHttpParser {
     type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
 
@@ -73,34 +73,45 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
             ) match {
               case JsSuccess(vatCustomerInformation, _) =>
                 Logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
-                if(vatCustomerInformation.changeIndicators.isEmpty)
-                  Logger.warn("[CustomerCircumstancesHttpParser][read]: No changeIndicators object returned from GetCustomerInformation")
                 Right(vatCustomerInformation)
               case _ =>
-                Logger.warn(s"[CustomerCircumstancesHttpParser][read]: Invalid Success Response Json")
+                logUnexpectedResponse(response, "Invalid Success Response Json")
                 Left(UnexpectedGetVatCustomerInformationFailure(OK, response.body))
             }
-          case BAD_REQUEST =>
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status BAD REQUEST returned")
-            Left(InvalidVatNumber)
-          case NOT_FOUND =>
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status NOT FOUND returned")
-            Left(VatNumberNotFound)
-          case FORBIDDEN if response.body.contains("MIGRATION") =>
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, " +
-              "status FORBIDDEN returned with MIGRATION")
-            Left(Migration)
-          case FORBIDDEN =>
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: Unexpected response, status FORBIDDEN returned")
-            Left(Forbidden)
-          case status =>
-            Logger.warn(s"[CustomerCircumstancesHttpParser][read]: Unexpected response, status $status returned")
-            Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
+          case _ => handleErrorResponse(response)
         }
     }
   }
+
+  private def handleErrorResponse(response: HttpResponse): Left[GetVatCustomerInformationFailure, VatCustomerInformation] = {
+    response.status match {
+      case BAD_REQUEST =>
+        logUnexpectedResponse(response, logBody = true)
+        Left(InvalidVatNumber)
+      case NOT_FOUND =>
+        logUnexpectedResponse(response, "NOT FOUND returned - Subscription not found")
+        Left(VatNumberNotFound)
+      case FORBIDDEN if response.body.contains("MIGRATION") =>
+        logUnexpectedResponse(response, "FORBIDDEN returned with MIGRATION - Migration in progress")
+        Left(Migration)
+      case FORBIDDEN =>
+        logUnexpectedResponse(response, logBody = true)
+        Left(Forbidden)
+      case status =>
+        logUnexpectedResponse(response, logBody = true)
+        Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
+    }
+  }
+
+  private def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response", logBody: Boolean = false): Unit = {
+    Logger.warn(
+      s"[CustomerCircumstancesHttpParser][read]: $message. " +
+      s"Status: ${response.status}. " +
+      s"${ if(logBody) s"Body: ${response.body} " else "" } " +
+      s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}"
+    )
+  }
 }
-//scalastyle:on
 
 sealed trait GetVatCustomerInformationFailure {
   val status: Int = INTERNAL_SERVER_ERROR

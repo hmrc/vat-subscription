@@ -27,11 +27,10 @@ trait MicroserviceBaseController extends BaseController {
 
   def parseJsonBody[T](implicit user: User[_], rds: Reads[T]): Either[ErrorModel, T] = user.body match {
     case body: AnyContentAsJson => body.json.validate[T] match {
-      case e: JsError => {
+      case e: JsError =>
         Logger.debug(s"[MicroserviceBaseController][parseJsonBody] Json received, but did not validate. Errors: $e")
         Logger.warn("[MicroserviceBaseController][parseJsonBody] Json received, but did not validate")
         Left(ErrorModel("INVALID_JSON", s"Json received, but did not validate"))
-      }
       case s: JsSuccess[T] => Right(s.value)
     }
     case _ =>

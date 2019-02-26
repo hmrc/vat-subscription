@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import cats.data.EitherT
-import cats.instances.future._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
@@ -38,12 +36,11 @@ class UpdateReturnPeriodController @Inject()(VatAuthorised: VatAuthorised,
       parseJsonBody[ReturnPeriod](user, ReturnPeriod.frontendRds) match {
         case Right(period) =>
           vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
-            case Right(welshIndicator) => {
+            case Right(welshIndicator) =>
               updateReturnPeriodService.updateReturnPeriod(period, welshIndicator).map {
                 case Right(success) => Ok(Json.toJson(success))
                 case Left(error) => InternalServerError(Json.toJson(error))
               }
-            }
             case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
           }
           case Left(error) =>

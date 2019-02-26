@@ -19,9 +19,9 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Reads, Writes}
 
-case class BankDetails(accountHolderName:Option[String],
-                       bankAccountNumber:Option[String],
-                       sortCode:Option[String])
+case class BankDetails(accountHolderName: Option[String],
+                       bankAccountNumber: Option[String],
+                       sortCode: Option[String])
 
 object BankDetails {
 
