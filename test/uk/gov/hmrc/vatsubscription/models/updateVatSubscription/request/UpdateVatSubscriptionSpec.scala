@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
+import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
 
 class UpdateVatSubscriptionSpec extends UnitSpec {
 
@@ -47,5 +49,25 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
         }
       }
     }
+  }
+
+  "Control Information" when {
+
+    "serializing to JSON" should {
+
+      "Output the correct JSON for the full model" in {
+        Json.toJson(ControlInformation(welshIndicator = true, mandationStatus = Some(MTDfBMandated))) shouldBe controlInformationJsonMax
+      }
+    }
+
+    "reading from JSON" should {
+
+      "Output the correct model from the provided JSON" in {
+        ControlInformation.reads.reads(controlInformationJsonMax).get shouldBe ControlInformation(welshIndicator = true, mandationStatus = Some(MTDfBMandated))
+      }
+
+    }
+
+
   }
 }

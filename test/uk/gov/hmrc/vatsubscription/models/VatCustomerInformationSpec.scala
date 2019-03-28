@@ -134,6 +134,16 @@ class VatCustomerInformationSpec extends TestUtil {
     }
   }
 
+  "Writes" should {
+    "write the json correctly when all optional fields are populated" in {
+      Json.toJson(customerInformationModelMaxWithFRS)(VatCustomerInformation.writes) shouldBe customerInformationOutputJsonMaxWithFRS
+    }
+
+    "write the json correctly when no optional fields are populated" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.writes) shouldBe customerInformationOutputJsonMin
+    }
+  }
+
   "Manage Account writes" should {
     "write the json correctly when all optional fields are populated" in {
       Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMax

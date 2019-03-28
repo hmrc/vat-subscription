@@ -55,7 +55,11 @@ object MandationStatus {
     case NonDigital.`desValue` => NonDigital
   }
 
-  implicit val writer: Writes[MandationStatus] = Writes(
+  val writer: Writes[MandationStatus] = Writes(
     status => JsString(status.value)
+  )
+
+  val desWriter: Writes[MandationStatus] = Writes(
+    status => JsString(status.desValue)
   )
 }

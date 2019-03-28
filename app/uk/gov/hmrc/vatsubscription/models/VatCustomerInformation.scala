@@ -188,12 +188,25 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     partyType
   )
 
-  implicit val writes: Writes[VatCustomerInformation] = Json.writes[VatCustomerInformation]
+  implicit val writes: Writes[VatCustomerInformation] = Writes {
+    model =>
+      jsonObjNoNulls(
+        "mandationStatus" -> model.mandationStatus.value,
+        "customerDetails" -> model.customerDetails,
+        "flatRateScheme" -> model.flatRateScheme,
+        "ppob" -> model.ppob,
+        "bankDetails" -> model.bankDetails,
+        "returnPeriod" -> model.returnPeriod,
+        "deregistration" -> model.deregistration,
+        "changeIndicators" -> model.changeIndicators,
+        "pendingChanges" -> model.pendingChanges
+      )
+  }
 
   val manageAccountWrites: Writes[VatCustomerInformation] = Writes {
     model =>
       jsonObjNoNulls(
-        "mandationStatus" -> model.mandationStatus,
+        "mandationStatus" -> model.mandationStatus.value,
         "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
         "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
         "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),

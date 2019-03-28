@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.MAReturnPeriod
+import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MTDfBMandated}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 
@@ -34,7 +34,7 @@ object UpdateVatSubscriptionTestConstants {
   val updateErrorResponse: ErrorModel = ErrorModel("TEST","ERROR")
 
   val updateVatSubscriptionModelMax: UpdateVatSubscription = UpdateVatSubscription(
-    controlInformation = ControlInformation(welshIndicator = false),
+    controlInformation = ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
     requestedChanges = changeAll,
     updatedPPOB = Some(updatedPPOB),
     updatedReturnPeriod = Some(updatedReturnPeriod),
@@ -44,7 +44,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val updateVatSubscriptionLatestDESApi1365JsonMax: JsValue = Json.obj(
     "messageType" -> messageType,
-    "controlInformation" -> ControlInformation(welshIndicator = false),
+    "controlInformation" -> ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
     "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365WritesR6),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
@@ -54,7 +54,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val updateVatSubscriptionCurrentDESApi1365JsonMax: JsValue = Json.obj(
     "messageType" -> messageType,
-    "controlInformation" -> ControlInformation(welshIndicator = false),
+    "controlInformation" -> ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
     "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365WritesR5),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
@@ -86,5 +86,11 @@ object UpdateVatSubscriptionTestConstants {
     "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.DESApi1365WritesR5),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
+  )
+
+  val controlInformationJsonMax: JsValue = Json.obj(
+    "welshIndicator" -> true,
+    "source" -> "100",
+    "mandationStatus" -> "1"
   )
 }

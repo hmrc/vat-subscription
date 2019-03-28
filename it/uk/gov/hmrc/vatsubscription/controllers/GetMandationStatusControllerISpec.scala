@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
@@ -27,7 +27,7 @@ import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
 
 class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
-  val testSuccessResponse = Json.obj(
+  val testSuccessResponse: JsObject = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj("mandationStatus" -> "1"),
       "PPOB" -> Json.obj(
@@ -44,7 +44,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
     )
   )
 
-  val testMigrationResponse = Json.obj(
+  val testMigrationResponse: JsObject = Json.obj(
     "code" -> "MIGRATION"
   )
 
@@ -58,7 +58,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
 
         res should have(
           httpStatus(OK),
-          jsonBodyAs(Json.obj("mandationStatus" -> MTDfBMandated))
+          jsonBodyAs(Json.obj("mandationStatus" -> MTDfBMandated.value))
         )
       }
     }
