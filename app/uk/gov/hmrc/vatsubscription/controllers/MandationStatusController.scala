@@ -40,7 +40,7 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
     implicit request =>
       authorised() {
         mandationStatusService.getMandationStatus(vatNumber) map {
-          case Right(status) => Ok(Json.obj(mandationStatusKey -> status))
+          case Right(status) => Ok(Json.obj(mandationStatusKey -> status.value))
           case Left(InvalidVatNumber) =>
             Logger.debug(s"[MandationStatusController][getMandationStatus]: InvalidVatNumber returned from MandationStatusService")
             BadRequest

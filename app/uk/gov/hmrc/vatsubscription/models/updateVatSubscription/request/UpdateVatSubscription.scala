@@ -18,7 +18,9 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.models.MandationStatus
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.DeregistrationInfo
+import uk.gov.hmrc.vatsubscription.models.MandationStatus.desWriter
 
 case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
                                  controlInformation: ControlInformation,
@@ -44,14 +46,28 @@ object UpdateVatSubscription {
       (__ \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
       (__ \ "deregistrationInfo").writeNullable[DeregistrationInfo] and
       (__ \ "declaration").write[Declaration]
-    )(unlift(UpdateVatSubscription.unapply))
+    ) (unlift(UpdateVatSubscription.unapply))
 
 }
 
 case class ControlInformation(welshIndicator: Boolean,
                               source: String = "100",
-                              mandationStatus: String = "1")
+                              mandationStatus: Option[MandationStatus] = None)
 
 object ControlInformation {
-  implicit val writes: Writes[ControlInformation] = Json.writes[ControlInformation]
+  private val welshIndicatorPath = JsPath \ "welshIndicator"
+  private val sourcePath = JsPath \ "source"
+  private val mandationStatusPath = JsPath \ "mandationStatus"
+
+  implicit val reads: Reads[ControlInformation] = for {
+    welshIndicator <- welshIndicatorPath.read[Boolean]
+    source <- sourcePath.read[String]
+    mandationStatus <- mandationStatusPath.readNullable[MandationStatus]
+  } yield ControlInformation(welshIndicator, source, mandationStatus)
+
+  implicit val writes: Writes[ControlInformation] = (
+    welshIndicatorPath.write[Boolean] and
+      sourcePath.write[String] and
+      mandationStatusPath.writeNullable[MandationStatus](desWriter)
+    ) (unlift(ControlInformation.unapply))
 }

@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
+import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
 
 class UpdateVatSubscriptionSpec extends UnitSpec {
 
@@ -45,6 +47,31 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
         "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
           UpdateVatSubscription.DESApi1365WritesR6.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionLatestDESApi1365JsonMin
         }
+      }
+    }
+  }
+
+  "Control Information" when {
+
+    "serializing to JSON" should {
+
+      "Output the correct JSON for the full model" in {
+        Json.toJson(ControlInformation(welshIndicator = true, mandationStatus = Some(MTDfBMandated))) shouldBe controlInformationJsonMax
+      }
+
+      "Output the correct JSON for the model without the optional fields" in {
+        Json.toJson(ControlInformation(welshIndicator = true)) shouldBe controlInformationJsonMin
+      }
+    }
+
+    "reading from JSON" should {
+
+      "Output the correct model with all optional values from the provided JSON" in {
+        ControlInformation.reads.reads(controlInformationJsonMax).get shouldBe ControlInformation(welshIndicator = true, mandationStatus = Some(MTDfBMandated))
+      }
+
+      "Output the correct model with no optional values from the provided JSON" in {
+        ControlInformation.reads.reads(controlInformationJsonMin).get shouldBe ControlInformation(welshIndicator = true)
       }
     }
   }
