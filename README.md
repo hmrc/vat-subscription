@@ -128,7 +128,8 @@ Where:
     "returnPeriod": "MA",
     "pendingChanges": {
         "returnPeriod": "MB"
-    }
+    },
+    "partyType": "50"
 }
 ```
 Where:
