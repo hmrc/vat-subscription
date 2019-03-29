@@ -41,6 +41,8 @@ object PPOBTestConstants {
   val email = "test@test.com"
   val emailVerified = true
 
+  val partyType = "50"
+
   val ppobAddressModelMax = PPOBAddressGet(
     addLine1,
     Some(addLine2),

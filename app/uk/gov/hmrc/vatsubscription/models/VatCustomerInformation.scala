@@ -199,7 +199,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "returnPeriod" -> model.returnPeriod,
         "deregistration" -> model.deregistration,
         "changeIndicators" -> model.changeIndicators,
-        "pendingChanges" -> model.pendingChanges
+        "pendingChanges" -> model.pendingChanges,
+        "partyType" -> model.partyType
       )
   }
 

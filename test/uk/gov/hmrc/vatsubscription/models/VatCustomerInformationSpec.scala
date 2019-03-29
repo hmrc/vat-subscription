@@ -99,16 +99,6 @@ class VatCustomerInformationSpec extends TestUtil {
     }
   }
 
-  it should {
-    "parse the json correctly when all optional fields are populated for release 7" in {
-      VatCustomerInformation.newReads.reads(customerInformationDESJsonMaxR7).get shouldBe customerInformationModelMaxR7
-    }
-
-    "parse the json correctly when no optional fields are returned for release 7" in {
-      VatCustomerInformation.newReads.reads(customerInformationDESJsonMinR7).get shouldBe customerInformationModelMin
-    }
-  }
-
   "release 8 reads" when {
 
     "all optional fields are populated for release 8" should {
