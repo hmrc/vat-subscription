@@ -93,4 +93,9 @@ object UpdateVatSubscriptionTestConstants {
     "source" -> "100",
     "mandationStatus" -> "1"
   )
+
+  val controlInformationJsonMin: JsValue = Json.obj(
+    "welshIndicator" -> true,
+    "source" -> "100"
+  )
 }
