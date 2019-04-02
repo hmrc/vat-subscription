@@ -29,7 +29,8 @@ object CustomerDetailsTestConstants {
     None,
     None,
     welshIndicator = None,
-    isPartialMigration = false
+    isPartialMigration = false,
+    customerMigratedToETMPDate = None
   )
 
   val customerDetailsModelMax = CustomerDetails(
@@ -39,17 +40,8 @@ object CustomerDetailsTestConstants {
     Some(tradingName),
     Some(effectiveDate),
     welshIndicator = Some(false),
-    isPartialMigration = false
-  )
-
-  val customerDetailsModelMaxR7 = CustomerDetails(
-    Some(firstName),
-    Some(lastName),
-    Some(orgName),
-    Some(tradingName),
-    Some(effectiveDate),
-    welshIndicator = Some(false),
-    isPartialMigration = false
+    isPartialMigration = false,
+    customerMigratedToETMPDate = Some("2019-01-01")
   )
 
   val customerDetailsModelMaxR8 = CustomerDetails(
@@ -59,7 +51,8 @@ object CustomerDetailsTestConstants {
     Some(tradingName),
     Some(effectiveDate),
     welshIndicator = Some(false),
-    isPartialMigration = false
+    isPartialMigration = false,
+    customerMigratedToETMPDate = Some("2019-01-01")
   )
 
   val customerDetailsModelMaxWithFRS = CustomerDetails(
@@ -70,7 +63,8 @@ object CustomerDetailsTestConstants {
     Some(effectiveDate),
     hasFlatRateScheme = true,
     welshIndicator = Some(true),
-    isPartialMigration = false
+    isPartialMigration = false,
+    customerMigratedToETMPDate = Some("2019-01-01")
   )
 
   val customerDetailsModelNoWelshIndicator = CustomerDetails(
@@ -81,7 +75,8 @@ object CustomerDetailsTestConstants {
     Some(effectiveDate),
     hasFlatRateScheme = true,
     welshIndicator = None,
-    isPartialMigration = false
+    isPartialMigration = false,
+    customerMigratedToETMPDate = None
   )
 
   val customerDetailsJsonMaxWithFRS: JsValue = Json.obj(
@@ -92,7 +87,8 @@ object CustomerDetailsTestConstants {
     "vatRegistrationDate" -> effectiveDate,
     "hasFlatRateScheme" -> true,
     "welshIndicator" -> true,
-    "isPartialMigration" -> false
+    "isPartialMigration" -> false,
+    "customerMigratedToETMPDate" -> customerMigratedToETMPDate
   )
 
   val customerDetailsJsonNoWelshIndicator: JsValue = Json.obj(
@@ -102,7 +98,8 @@ object CustomerDetailsTestConstants {
     "tradingName" -> tradingName,
     "vatRegistrationDate" -> effectiveDate,
     "hasFlatRateScheme" -> true,
-    "isPartialMigration" -> false
+    "isPartialMigration" -> false,
+  "customerMigratedToETMPDate" -> customerMigratedToETMPDate
   )
 
   val customerDetailsJsonMax: JsValue = Json.obj(
@@ -113,7 +110,8 @@ object CustomerDetailsTestConstants {
     "vatRegistrationDate" -> effectiveDate,
     "hasFlatRateScheme" -> false,
     "welshIndicator" -> false,
-    "isPartialMigration" -> false
+    "isPartialMigration" -> false,
+    "customerMigratedToETMPDate" -> customerMigratedToETMPDate
   )
 
   val customerDetailsJsonMin: JsObject = Json.obj(

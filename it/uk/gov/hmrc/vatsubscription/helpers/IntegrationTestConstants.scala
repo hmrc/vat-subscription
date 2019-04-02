@@ -36,6 +36,7 @@ object IntegrationTestConstants {
   val regReason = "0001"
   val effectiveDate = "1967-08-13"
   val startDate = "1967-08-13"
+  val customerMigratedToETMPDate = "2019-01-01"
 
   //PPOB
   val addLine1 = "Add Line 1"
@@ -86,7 +87,8 @@ object IntegrationTestConstants {
           "title" -> title,
           "firstName" -> firstName,
           "middleName" -> middleName,
-          "lastName" -> lastName
+          "lastName" -> lastName,
+          "customerMigratedToETMPDate" -> customerMigratedToETMPDate
         ),
         "tradingName" -> tradingName,
         "mandationStatus" -> mandationStatus,
@@ -95,6 +97,7 @@ object IntegrationTestConstants {
         "businessStartDate" -> startDate,
         "welshIndicator" -> true,
         "isPartialMigration" -> true,
+        "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
         "partyType" -> "50"
       ),
       "PPOB" -> Json.obj(
