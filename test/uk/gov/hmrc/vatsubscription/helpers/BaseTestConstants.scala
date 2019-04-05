@@ -46,5 +46,6 @@ object BaseTestConstants extends TestUtil {
   val lastName = "Flintstone"
   val middleName = "M"
   val effectiveDate = "1967-08-13"
+  val customerMigratedToETMPDate = "2019-01-01"
 
 }

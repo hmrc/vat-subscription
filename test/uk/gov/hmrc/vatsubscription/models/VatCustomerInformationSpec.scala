@@ -22,7 +22,6 @@ import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants.bankDetailsM
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{email, ppobModelMax}
 
-
 class VatCustomerInformationSpec extends TestUtil {
 
   ".pendingBankDetails method" when {
@@ -59,7 +58,6 @@ class VatCustomerInformationSpec extends TestUtil {
     }
   }
 
-
   ".pendingEmailAddress method" when {
 
     "there is a pending Email Address change" should {
@@ -74,28 +72,6 @@ class VatCustomerInformationSpec extends TestUtil {
       "return None" in {
         customerInformationModelMin.pendingContactEmail shouldBe None
       }
-    }
-  }
-
-
-  "currentReads" should {
-
-    "parse the json correctly when all optional fields are populated" in {
-      VatCustomerInformation.currentReads.reads(customerInformationDESJsonMaxV3_2_1).get shouldBe customerInformationModelMax
-    }
-
-    "parse the json correctly when no optional fields are returned" in {
-      VatCustomerInformation.currentReads.reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
-    }
-  }
-
-  "newReads" should {
-    "parse the json correctly when all optional fields are populated" in {
-      VatCustomerInformation.newReads.reads(customerInformationDESJsonMaxV3_3).get shouldBe customerInformationModelMax
-    }
-
-    "parse the json correctly when no optional fields are returned" in {
-      VatCustomerInformation.newReads.reads(customerInformationDESJsonMin).get shouldBe customerInformationModelMin
     }
   }
 

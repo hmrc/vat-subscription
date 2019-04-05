@@ -82,7 +82,8 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
               tradingName = None,
               vatRegistrationDate = None,
               welshIndicator = None,
-              isPartialMigration = false
+              isPartialMigration = false,
+              customerMigratedToETMPDate = None
             )
           )))
 

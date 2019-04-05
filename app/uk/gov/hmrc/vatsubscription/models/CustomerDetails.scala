@@ -24,6 +24,7 @@ case class CustomerDetails(firstName: Option[String],
                            organisationName: Option[String],
                            tradingName: Option[String],
                            vatRegistrationDate: Option[String],
+                           customerMigratedToETMPDate: Option[String],
                            hasFlatRateScheme: Boolean = false,
                            welshIndicator: Option[Boolean],
                            isPartialMigration: Boolean)
@@ -35,6 +36,7 @@ object CustomerDetails {
   private val organisationNamePath = JsPath \ "organisationName"
   private val tradingNamePath = JsPath \ "tradingName"
   private val vatRegistrationDatePath = JsPath \ "vatRegistrationDate"
+  private val customerMigratedToETMPDatePath = JsPath \ "customerMigratedToETMPDate"
   private val hasFlatRateSchemePath = JsPath \ "hasFlatRateScheme"
   private val welshIndicatorPath = JsPath \ "welshIndicator"
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
@@ -45,6 +47,7 @@ object CustomerDetails {
     organisationName <- organisationNamePath.readNullable[String]
     tradingName <- tradingNamePath.readNullable[String]
     vatRegistrationDate <- vatRegistrationDatePath.readNullable[String]
+    customerMigratedToETMPDate <- customerMigratedToETMPDatePath.readNullable[String]
     hasFlatRateScheme <- hasFlatRateSchemePath.read[Boolean]
     welshIndicator <- welshIndicatorPath.readNullable[Boolean]
     isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
@@ -54,6 +57,7 @@ object CustomerDetails {
     organisationName,
     tradingName,
     vatRegistrationDate,
+    customerMigratedToETMPDate,
     hasFlatRateScheme,
     welshIndicator,
     isPartialMigration.contains(true)
@@ -65,6 +69,7 @@ object CustomerDetails {
       organisationNamePath.writeNullable[String] and
       tradingNamePath.writeNullable[String] and
       vatRegistrationDatePath.writeNullable[String] and
+      customerMigratedToETMPDatePath.writeNullable[String] and
       hasFlatRateSchemePath.write[Boolean] and
       welshIndicatorPath.writeNullable[Boolean] and
       isPartialMigrationPath.write[Boolean]
