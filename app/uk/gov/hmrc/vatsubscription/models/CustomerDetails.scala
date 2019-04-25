@@ -27,7 +27,8 @@ case class CustomerDetails(firstName: Option[String],
                            customerMigratedToETMPDate: Option[String],
                            hasFlatRateScheme: Boolean = false,
                            welshIndicator: Option[Boolean],
-                           isPartialMigration: Boolean)
+                           isPartialMigration: Boolean,
+                           overseasIndicator: Boolean)
 
 object CustomerDetails {
 
@@ -40,6 +41,7 @@ object CustomerDetails {
   private val hasFlatRateSchemePath = JsPath \ "hasFlatRateScheme"
   private val welshIndicatorPath = JsPath \ "welshIndicator"
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
+  private val overseasIndicatorPath = JsPath \ "overseasIndicator"
 
   implicit val cdReader: Reads[CustomerDetails] = for {
     firstName <- firstNamePath.readNullable[String]
@@ -51,6 +53,7 @@ object CustomerDetails {
     hasFlatRateScheme <- hasFlatRateSchemePath.read[Boolean]
     welshIndicator <- welshIndicatorPath.readNullable[Boolean]
     isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
+    overseasIndicator <- overseasIndicatorPath.read[Boolean]
   } yield CustomerDetails(
     firstName,
     lastName,
@@ -60,7 +63,8 @@ object CustomerDetails {
     customerMigratedToETMPDate,
     hasFlatRateScheme,
     welshIndicator,
-    isPartialMigration.contains(true)
+    isPartialMigration.contains(true),
+    overseasIndicator
   )
 
   implicit val cdWriter: Writes[CustomerDetails] = (
@@ -72,7 +76,8 @@ object CustomerDetails {
       customerMigratedToETMPDatePath.writeNullable[String] and
       hasFlatRateSchemePath.write[Boolean] and
       welshIndicatorPath.writeNullable[Boolean] and
-      isPartialMigrationPath.write[Boolean]
+      isPartialMigrationPath.write[Boolean] and
+      overseasIndicatorPath.write[Boolean]
     )(unlift(CustomerDetails.unapply))
 }
 

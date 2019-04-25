@@ -46,7 +46,9 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
           hasFlatRateScheme = vatCustomerInformation.flatRateScheme.isDefined,
           welshIndicator = vatCustomerInformation.customerDetails.welshIndicator,
           isPartialMigration = vatCustomerInformation.customerDetails.isPartialMigration,
-          customerMigratedToETMPDate = vatCustomerInformation.customerDetails.customerMigratedToETMPDate)
+          customerMigratedToETMPDate = vatCustomerInformation.customerDetails.customerMigratedToETMPDate,
+          overseasIndicator = vatCustomerInformation.customerDetails.overseasIndicator
+        )
     }).value
   }
 

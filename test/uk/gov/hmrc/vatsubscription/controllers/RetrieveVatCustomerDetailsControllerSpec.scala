@@ -83,7 +83,8 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
               vatRegistrationDate = None,
               welshIndicator = None,
               isPartialMigration = false,
-              customerMigratedToETMPDate = None
+              customerMigratedToETMPDate = None,
+              overseasIndicator = false
             )
           )))
 
@@ -181,6 +182,15 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
 
             status(res) shouldBe OK
             jsonBodyOf(res) shouldBe customerInformationOutputJsonMax
+          }
+          "the customer details are populated, with true overseas indicator" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithTrueOverseas)))
+
+            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+
+            status(res) shouldBe OK
+            jsonBodyOf(res) shouldBe customerInformationOutputJsonMaxWithTrueOverseas
           }
 
           "the customer details and flat rate scheme are populated" in {

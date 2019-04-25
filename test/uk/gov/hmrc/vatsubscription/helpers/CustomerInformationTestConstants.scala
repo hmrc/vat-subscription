@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.helpers
 
+import play.api.libs.json
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants._
@@ -53,7 +54,8 @@ object CustomerInformationTestConstants {
         "welshIndicator" -> true,
         "isPartialMigration" -> false,
         "partyType" -> partyType,
-        "customerMigratedToETMPDate" -> customerMigratedToETMPDate
+        "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+        "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -148,7 +150,8 @@ object CustomerInformationTestConstants {
         "welshIndicator" -> false,
         "isPartialMigration" -> false,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
-        "partyType" -> "Z1"
+        "partyType" -> "Z1",
+        "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -223,7 +226,8 @@ object CustomerInformationTestConstants {
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "mandationStatus" -> mandationStatusCode,
-        "isPartialMigration" -> false
+        "isPartialMigration" -> false,
+        "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -256,7 +260,8 @@ object CustomerInformationTestConstants {
         "businessStartDate" -> startDate,
         "welshIndicator" -> false,
         "isPartialMigration" -> false,
-        "partyType" -> "Z1"
+        "partyType" -> "Z1",
+        "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -342,7 +347,8 @@ object CustomerInformationTestConstants {
       "vatRegistrationDate" -> effectiveDate,
       "welshIndicator" -> true,
       "isPartialMigration" -> false,
-      "customerMigratedToETMPDate" -> customerMigratedToETMPDate
+      "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+      "overseasIndicator" -> false
     ),
     "flatRateScheme" -> Json.obj(
       "FRSCategory" -> frsCategory,
@@ -423,8 +429,87 @@ object CustomerInformationTestConstants {
       "vatRegistrationDate" -> effectiveDate,
       "welshIndicator" -> false,
       "isPartialMigration" -> false,
-      "customerMigratedToETMPDate" -> customerMigratedToETMPDate
+      "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+      "overseasIndicator" -> false
+    ),
+    "ppob" -> Json.obj(
+      "address" -> Json.obj(
+        "line1" -> addLine1,
+        "line2" -> addLine2,
+        "line3" -> addLine3,
+        "line4" -> addLine4,
+        "line5" -> addLine5,
+        "postCode" -> postcode,
+        "countryCode" -> countryCode
+      ),
+      "contactDetails" -> Json.obj(
+        "primaryPhoneNumber" -> phoneNumber,
+        "mobileNumber" -> mobileNumber,
+        "faxNumber" -> faxNumber,
+        "emailAddress" -> email,
+        "emailVerified" -> emailVerified
+      ),
+      "websiteAddress" -> website
+    ),
+    "bankDetails" -> Json.obj(
+      "accountHolderName" -> accName,
+      "bankAccountNumber" -> accNum,
+      "sortCode" -> accSort
+    ),
+    "returnPeriod" -> returnPeriodMCJson,
+    "deregistration" -> Json.obj(
+      "deregistrationReason" -> reason,
+      "effectDateOfCancellation" -> cancellationDate,
+      "lastReturnDueDate" -> lastReturnDate
+    ),
+    "changeIndicators" -> Json.obj(
+      "PPOBDetails" -> true,
+      "bankDetails" -> true,
+      "returnPeriod" -> true,
+      "deregister" -> true
+    ),
+    "pendingChanges" -> Json.obj(
+      "PPOBDetails" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        ),
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
+      ),
+      "bankDetails" -> Json.obj(
+        "accountHolderName" -> accName,
+        "bankAccountNumber" -> accNum,
+        "sortCode" -> accSort
+      ),
+      "returnPeriod" -> returnPeriodMCJson
+    )
+  )
 
+  val customerInformationOutputJsonMaxWithTrueOverseas: JsValue = Json.obj(
+    "mandationStatus" -> mandationStatus,
+    "customerDetails" -> Json.obj(
+      "firstName" -> firstName,
+      "hasFlatRateScheme" -> false,
+      "lastName" -> lastName,
+      "organisationName" -> orgName,
+      "tradingName" -> tradingName,
+      "vatRegistrationDate" -> effectiveDate,
+      "welshIndicator" -> false,
+      "isPartialMigration" -> false,
+      "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+      "overseasIndicator" -> true
     ),
     "ppob" -> Json.obj(
       "address" -> Json.obj(
@@ -525,7 +610,8 @@ object CustomerInformationTestConstants {
       "bankAccountNumber" -> accNum,
       "sortCode" -> accSort
     ),
-    "partyType" -> "50"
+    "partyType" -> "50",
+    "overseasIndicator" -> false
   )
 
   val manageAccountSummaryOutputJsonMin: JsValue = Json.obj(
@@ -538,7 +624,8 @@ object CustomerInformationTestConstants {
       "line5" -> addLine5,
       "postCode" -> postcode,
       "countryCode" -> countryCode
-    )
+    ),
+    "overseasIndicator" -> false
   )
 
   val migrationDESJson: JsValue = Json.obj(
@@ -579,7 +666,28 @@ object CustomerInformationTestConstants {
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
-      deregister= true
+      deregister = true
+    )),
+    Some(PendingChanges(
+      Some(ppobModelMax),
+      Some(bankDetailsModelMax),
+      Some(MCReturnPeriod(None))
+    ))
+  )
+
+  val customerInformationModelMaxWithTrueOverseas: VatCustomerInformation = VatCustomerInformation(
+    MTDfBMandated,
+    customerDetailsModelMaxWithTrueOverseas,
+    None,
+    ppobModelMax,
+    Some(bankDetailsModelMax),
+    Some(MCReturnPeriod(None)),
+    Some(deregModel),
+    Some(ChangeIndicators(
+      ppob = true,
+      bankDetails = true,
+      returnPeriod = true,
+      deregister = true
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
@@ -600,7 +708,7 @@ object CustomerInformationTestConstants {
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
-      deregister= true
+      deregister = true
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
@@ -622,7 +730,7 @@ object CustomerInformationTestConstants {
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
-      deregister= true
+      deregister = true
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
@@ -654,7 +762,8 @@ object CustomerInformationTestConstants {
       vatRegistrationDate = None,
       welshIndicator = None,
       isPartialMigration = false,
-      customerMigratedToETMPDate = None),
+      customerMigratedToETMPDate = None,
+      overseasIndicator = false),
     flatRateScheme = None,
     ppob = ppobModelMin,
     bankDetails = None,

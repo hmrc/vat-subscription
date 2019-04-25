@@ -55,6 +55,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   val welshIndicatorKey = "welshIndicator"
   val isPartialMigrationKey = "isPartialMigration"
   val flatRateSchemeKey = "flatRateScheme"
+  val overseasIndicatorKey = "overseasIndicator"
   val ppobKey = "PPOB"
   val bankDetailsKey = "bankDetails"
   val returnPeriodKey = "returnPeriod"
@@ -66,6 +67,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val path = __ \ approvedInformationKey
   private val customerDetailsPath = path \ customerDetailsKey
   private val flatRateSchemePath = path \ flatRateSchemeKey
+  private val overseasIndicatorPath = path \ customerDetailsKey \ overseasIndicatorKey
   private val ppobPath = path \ ppobKey
   private val bankDetailsPath = path \ bankDetailsKey
   private val returnPeriodPath = path \ returnPeriodKey
@@ -85,6 +87,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
+    overseasIndicator <- overseasIndicatorPath.read[Boolean]
     ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
@@ -103,7 +106,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
       customerMigratedToETMPDate,
       flatRateScheme.isDefined,
       welshIndicator,
-      isPartialMigration.contains(true)
+      isPartialMigration.contains(true),
+      overseasIndicator
     ),
     flatRateScheme,
     ppob,
@@ -135,6 +139,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     model =>
       jsonObjNoNulls(
         "mandationStatus" -> model.mandationStatus.value,
+        "overseasIndicator" -> model.customerDetails.overseasIndicator,
         "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
         "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
         "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),

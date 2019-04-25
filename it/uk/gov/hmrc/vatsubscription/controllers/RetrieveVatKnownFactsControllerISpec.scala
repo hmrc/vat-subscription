@@ -41,7 +41,8 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "mandationStatus" -> "1",
-        "effectiveRegistrationDate" -> effectiveDate
+        "effectiveRegistrationDate" -> effectiveDate,
+        "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -54,6 +55,10 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
   )
 
   "GET /:vatNumber/known-facts" when {
+
+
+
+
     "calls to DES is successful" when {
       "both vat registration date and post code are present" should {
         "return OK with the status" in {
