@@ -55,10 +55,6 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
   )
 
   "GET /:vatNumber/known-facts" when {
-
-
-
-
     "calls to DES is successful" when {
       "both vat registration date and post code are present" should {
         "return OK with the status" in {

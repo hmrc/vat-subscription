@@ -66,7 +66,8 @@ Where:
    "organisationName": "Grimey Org",
    "tradingName": "Grimey Ltd",
    "hasFlatRateScheme": true,
-   "isPartialMigration": false
+   "isPartialMigration": false,
+   "overseasIndicator": false
 }
 ```
 
@@ -101,7 +102,8 @@ Where:
         "organisationName": "Grimey Org",
         "tradingName": "Grimey Ltd",
         "hasFlatRateScheme": true,
-        "isPartialMigration": false
+        "isPartialMigration": false,
+        "overseasIndicator": false
     },
     "flatRateScheme": {
         "FRSCategory": "001",
@@ -152,7 +154,7 @@ Where:
 ##### UNEXPECTED_GET_VAT_CUSTOMER_INFORMATION_FAILURE
 * **Status**: (any)
 
-### GET /vat-subscription/:vatNumber/manage-account-summary
+### GET /vat-subscri ption/:vatNumber/manage-account-summary
 
 Where:
 
@@ -168,6 +170,7 @@ Provides a summary view of the Customers VAT Subscription for the Manage Account
 ```
 {   
     "mandationStatus": "MTDfB Mandated",
+    "overseasIndicator": false,
     "ppobAddress": {
       "line1": "addLine1",
       "line2": "addLine2",
