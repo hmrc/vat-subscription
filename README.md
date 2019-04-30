@@ -154,7 +154,7 @@ Where:
 ##### UNEXPECTED_GET_VAT_CUSTOMER_INFORMATION_FAILURE
 * **Status**: (any)
 
-### GET /vat-subscri ption/:vatNumber/manage-account-summary
+### GET /vat-subscription/:vatNumber/manage-account-summary
 
 Where:
 
