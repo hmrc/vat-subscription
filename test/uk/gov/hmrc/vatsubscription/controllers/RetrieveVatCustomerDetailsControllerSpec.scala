@@ -22,12 +22,12 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363R10, Api1363R8}
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.Api1363R8
+import uk.gov.hmrc.vatsubscription.connectors._
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
-import uk.gov.hmrc.vatsubscription.connectors._
 import uk.gov.hmrc.vatsubscription.models.CustomerDetails
 import uk.gov.hmrc.vatsubscription.service.mocks.MockVatCustomerDetailsRetrievalService
 

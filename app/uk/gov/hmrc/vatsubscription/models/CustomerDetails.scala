@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.utils.JsonObjectSugar
 

@@ -45,14 +45,13 @@ class FeatureSwitchControllerSpec extends TestUtil {
 
     "return feature switch configuration" in {
       await(jsonBodyOf(result)) shouldEqual Json.toJson(
-        FeatureSwitchModel(latestApi1363Version = true, stubDes = false, Api1365Version = Api1365R7, Api1363Version = Api1363R10))
+        FeatureSwitchModel(stubDes = false, Api1365Version = Api1365R7, Api1363Version = Api1363R10))
     }
   }
 
   "Calling the .update action" should {
 
     val body = Json.toJson(FeatureSwitchModel(
-      latestApi1363Version = true,
       Api1365Version = Api1365R6,
       stubDes = true,
       Api1363Version = Api1363R8)
