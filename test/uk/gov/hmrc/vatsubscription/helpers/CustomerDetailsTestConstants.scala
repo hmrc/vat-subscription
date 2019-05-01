@@ -58,18 +58,6 @@ object CustomerDetailsTestConstants {
     overseasIndicator = true
   )
 
-  val customerDetailsModelMaxR8 = CustomerDetails(
-    Some(firstName),
-    Some(lastName),
-    Some(orgName),
-    Some(tradingName),
-    Some(effectiveDate),
-    welshIndicator = Some(false),
-    isPartialMigration = false,
-    customerMigratedToETMPDate = Some("2019-01-01"),
-    overseasIndicator = false
-  )
-
   val customerDetailsModelMaxWithFRS = CustomerDetails(
     Some(firstName),
     Some(lastName),
@@ -135,6 +123,55 @@ object CustomerDetailsTestConstants {
   )
 
   val customerDetailsJsonMin: JsObject = Json.obj(
+    "hasFlatRateScheme" -> false,
+    "isPartialMigration" -> false,
+    "overseasIndicator" -> false
+  )
+
+  ////////////////////////////Release 8 data -- Separated for easy removal
+
+  val customerDetailsModelMinR8 = CustomerDetails(
+    None,
+    None,
+    None,
+    None,
+    None,
+    welshIndicator = None,
+    isPartialMigration = false,
+    customerMigratedToETMPDate = None,
+    overseasIndicator = false
+  )
+
+  val customerDetailsModelMaxR8 = CustomerDetails(
+    Some(firstName),
+    Some(lastName),
+    Some(orgName),
+    Some(tradingName),
+    Some(effectiveDate),
+    welshIndicator = Some(false),
+    isPartialMigration = false,
+    customerMigratedToETMPDate = Some("2019-01-01"),
+    overseasIndicator = false
+  )
+
+  val customerDetailsJsonMaxR8: JsValue = Json.obj(
+    "firstName" -> firstName,
+    "lastName" -> lastName,
+    "organisationName" -> orgName,
+    "tradingName" -> tradingName,
+    "vatRegistrationDate" -> effectiveDate,
+    "hasFlatRateScheme" -> false,
+    "welshIndicator" -> false,
+    "isPartialMigration" -> false,
+    "customerMigratedToETMPDate" -> customerMigratedToETMPDate
+  )
+
+  val customerDetailsJsonMinR8: JsObject = Json.obj(
+    "hasFlatRateScheme" -> false,
+    "isPartialMigration" -> false
+  )
+
+  val customerDetailsJsonMinWithTrueOverseas: JsObject = Json.obj(
     "hasFlatRateScheme" -> false,
     "isPartialMigration" -> false,
     "overseasIndicator" -> false

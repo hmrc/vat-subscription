@@ -101,22 +101,37 @@ class VatCustomerInformationSpec extends TestUtil {
   }
 
   "Writes" should {
-    "write the json correctly when all optional fields are populated" in {
-      Json.toJson(customerInformationModelMaxWithFRS)(VatCustomerInformation.writes) shouldBe customerInformationOutputJsonMaxWithFRS
+    "write the json correctly when all optional fields are populated for release 10" in {
+      Json.toJson(customerInformationModelMaxWithFRS)(VatCustomerInformation.writes(true)) shouldBe customerInformationOutputJsonMaxWithFRS
     }
 
-    "write the json correctly when no optional fields are populated" in {
-      Json.toJson(customerInformationModelMin)(VatCustomerInformation.writes) shouldBe customerInformationOutputJsonMin
+    "write the json correctly when all optional fields are populated for release 8 (no overseas indicator in written Json)" in {
+      Json.toJson(customerInformationModelMaxWithFRS)(VatCustomerInformation.writes(false)) shouldBe customerInformationOutputJsonMaxWithFRSR8
+    }
+
+    "write the json correctly when no optional fields are populated for release 10" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.writes(true)) shouldBe customerInformationOutputJsonMin
+    }
+
+    "write the json correctly when no optional fields are populated for release  for release 8 (no overseas indicator in written Json)" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.writes(false)) shouldBe customerInformationOutputJsonMinR8
     }
   }
 
   "Manage Account writes" should {
-    "write the json correctly when all optional fields are populated" in {
-      Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMax
+    "write the json correctly when all optional fields are populated for release 10" in {
+      Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites(true)) shouldBe manageAccountSummaryOutputJsonMax
+    }
+    "write the json correctly when all optional fields are populated for release for release 8 (no overseas indicator in written Json)" in {
+      Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites(false)) shouldBe manageAccountSummaryOutputJsonMaxR8
     }
 
-    "write the json correctly when no optional fields are populated" in {
-      Json.toJson(customerInformationModelMin)(VatCustomerInformation.manageAccountWrites) shouldBe manageAccountSummaryOutputJsonMin
+    "write the json correctly when no optional fields are populated for release 10" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.manageAccountWrites(true)) shouldBe manageAccountSummaryOutputJsonMin
+    }
+
+    "write the json correctly when no optional fields are populated for release for release 8 (no overseas indicator in written Json)" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.manageAccountWrites(false)) shouldBe manageAccountSummaryOutputJsonMinR8
     }
   }
 }

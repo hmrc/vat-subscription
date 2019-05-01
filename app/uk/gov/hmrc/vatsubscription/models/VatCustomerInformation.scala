@@ -87,6 +87,48 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
+    ppob <- ppobPath.read[PPOBGet]
+    bankDetails <- bankDetailsPath.readOpt[BankDetails]
+    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
+    deregistration <- deregistrationPath.readOpt[Deregistration]
+    changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
+    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
+  } yield VatCustomerInformation(
+    mandationStatus,
+    CustomerDetails(
+      firstName = firstName,
+      lastName = lastName,
+      organisationName = organisationName,
+      tradingName = tradingName,
+      vatRegistrationDate,
+      customerMigratedToETMPDate,
+      flatRateScheme.isDefined,
+      welshIndicator,
+      isPartialMigration.contains(true),
+      overseasIndicator = false
+    ),
+    flatRateScheme,
+    ppob,
+    bankDetails,
+    filterReturnPeriod(returnPeriod),
+    deregistration,
+    changeIndicators,
+    pendingChanges,
+    partyType
+  )
+
+  val release10Reads: Reads[VatCustomerInformation] = for {
+    firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
+    lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
+    organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
+    tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
+    vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
+    customerMigratedToETMPDate <- (customerDetailsPath \ customerMigratedToETMPDateKey).readOpt[String]
+    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
+    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
+    flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     overseasIndicator <- overseasIndicatorPath.read[Boolean]
     ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
@@ -119,11 +161,11 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     partyType
   )
 
-  implicit val writes: Writes[VatCustomerInformation] = Writes {
+  implicit val writes: Boolean => Writes[VatCustomerInformation] = isRelease10 => Writes {
     model =>
       jsonObjNoNulls(
         "mandationStatus" -> model.mandationStatus.value,
-        "customerDetails" -> model.customerDetails,
+        "customerDetails" -> Json.toJson(model.customerDetails)(CustomerDetails.cdWriter(isRelease10)),
         "flatRateScheme" -> model.flatRateScheme,
         "ppob" -> model.ppob,
         "bankDetails" -> model.bankDetails,
@@ -135,16 +177,17 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
       )
   }
 
-  val manageAccountWrites: Writes[VatCustomerInformation] = Writes {
+  val manageAccountWrites: Boolean => Writes[VatCustomerInformation] = release10 => Writes {
     model =>
       jsonObjNoNulls(
         "mandationStatus" -> model.mandationStatus.value,
-        "overseasIndicator" -> model.customerDetails.overseasIndicator,
         "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
         "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
         "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),
         "businessName" -> model.customerDetails.organisationName,
         "partyType" -> model.partyType
-      )
+      ) ++ (if (release10) {
+        Json.obj("overseasIndicator" -> model.customerDetails.overseasIndicator)
+      } else Json.obj())
   }
 }

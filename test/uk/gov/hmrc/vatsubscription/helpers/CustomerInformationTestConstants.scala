@@ -810,4 +810,141 @@ object CustomerInformationTestConstants {
     ),
     "returnPeriod" -> inflightReturnPeriodYAJson
   )
+
+  //Release 8 data -- Separated for ease of deletion
+
+  val customerInformationOutputJsonMaxWithFRSR8: JsValue = Json.obj(
+    "bankDetails" -> Json.obj(
+      "accountHolderName" -> accName,
+      "bankAccountNumber" -> accNum,
+      "sortCode" -> accSort
+    ),
+    "customerDetails" -> Json.obj(
+      "firstName" -> firstName,
+      "hasFlatRateScheme" -> true,
+      "lastName" -> lastName,
+      "organisationName" -> orgName,
+      "tradingName" -> tradingName,
+      "vatRegistrationDate" -> effectiveDate,
+      "welshIndicator" -> true,
+      "isPartialMigration" -> false,
+      "customerMigratedToETMPDate" -> customerMigratedToETMPDate
+    ),
+    "flatRateScheme" -> Json.obj(
+      "FRSCategory" -> frsCategory,
+      "FRSPercentage" -> frsPercentage,
+      "limitedCostTrader" -> frsLimitedCostTrader,
+      "startDate" -> frsStartDate
+    ),
+    "deregistration" -> Json.obj(
+      "deregistrationReason" -> reason,
+      "effectDateOfCancellation" -> cancellationDate,
+      "lastReturnDueDate" -> lastReturnDate
+    ),
+    "mandationStatus" -> mandationStatus,
+    "ppob" -> Json.obj(
+      "address" -> Json.obj(
+        "line1" -> addLine1,
+        "line2" -> addLine2,
+        "line3" -> addLine3,
+        "line4" -> addLine4,
+        "line5" -> addLine5,
+        "postCode" -> postcode,
+        "countryCode" -> countryCode
+      ),
+      "contactDetails" -> Json.obj(
+        "primaryPhoneNumber" -> phoneNumber,
+        "mobileNumber" -> mobileNumber,
+        "faxNumber" -> faxNumber,
+        "emailAddress" -> email,
+        "emailVerified" -> emailVerified
+      ),
+      "websiteAddress" -> website
+    ),
+    "returnPeriod" -> returnPeriodMCJson,
+    "changeIndicators" -> Json.obj(
+      "PPOBDetails" -> true,
+      "bankDetails" -> true,
+      "returnPeriod" -> true,
+      "deregister" -> true
+    ),
+    "pendingChanges" -> Json.obj(
+      "PPOBDetails" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "line2" -> addLine2,
+          "line3" -> addLine3,
+          "line4" -> addLine4,
+          "line5" -> addLine5,
+          "postCode" -> postcode,
+          "countryCode" -> countryCode
+        ),
+        "contactDetails" -> Json.obj(
+          "primaryPhoneNumber" -> phoneNumber,
+          "mobileNumber" -> mobileNumber,
+          "faxNumber" -> faxNumber,
+          "emailAddress" -> email,
+          "emailVerified" -> emailVerified
+        ),
+        "websiteAddress" -> website
+      ),
+      "bankDetails" -> Json.obj(
+        "accountHolderName" -> accName,
+        "bankAccountNumber" -> accNum,
+        "sortCode" -> accSort
+      ),
+      "returnPeriod" -> returnPeriodMCJson
+    ),
+    "partyType" -> partyType
+  )
+
+  val customerInformationOutputJsonMinR8: JsValue = Json.obj(
+    "customerDetails" -> customerDetailsJsonMinR8,
+    "mandationStatus" -> "MTDfB Mandated",
+    "ppob" -> Json.obj(
+      "address" -> Json.obj(
+        "line1" -> addLine1,
+        "line2" -> addLine2,
+        "line3" -> addLine3,
+        "line4" -> addLine4,
+        "line5" -> addLine5,
+        "postCode" -> postcode,
+        "countryCode" -> countryCode
+      )
+    )
+  )
+
+  val manageAccountSummaryOutputJsonMaxR8: JsValue = Json.obj(
+    "mandationStatus" -> mandationStatus,
+    "ppobAddress" -> Json.obj(
+      "line1" -> addLine1,
+      "line2" -> addLine2,
+      "line3" -> addLine3,
+      "line4" -> addLine4,
+      "line5" -> addLine5,
+      "postCode" -> postcode,
+      "countryCode" -> countryCode
+    ),
+    "contactEmail" -> email,
+    "businessName" -> orgName,
+    "repaymentBankDetails" -> Json.obj(
+      "accountHolderName" -> accName,
+      "bankAccountNumber" -> accNum,
+      "sortCode" -> accSort
+    ),
+    "partyType" -> "50"
+  )
+
+  val manageAccountSummaryOutputJsonMinR8: JsValue = Json.obj(
+    "mandationStatus" -> mandationStatus,
+    "ppobAddress" -> Json.obj(
+      "line1" -> addLine1,
+      "line2" -> addLine2,
+      "line3" -> addLine3,
+      "line4" -> addLine4,
+      "line5" -> addLine5,
+      "postCode" -> postcode,
+      "countryCode" -> countryCode
+    )
+  )
 }

@@ -22,6 +22,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363R10, Api1363R8}
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthorised with MockVatCustomerDetailsRetrievalService {
 
   object TestRetrieveVatCustomerDetailsController
-    extends RetrieveVatCustomerDetailsController(mockVatAuthorised, mockVatCustomerDetailsRetrievalService)
+    extends RetrieveVatCustomerDetailsController(mockVatAuthorised, mockVatCustomerDetailsRetrievalService, mockAppConfig)
 
   "the retrieveVatCustomerDetails method" when {
 
@@ -210,6 +211,17 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
 
             status(res) shouldBe OK
             jsonBodyOf(res) shouldBe customerInformationOutputJsonMin
+          }
+          "the customer are received in release 8, overseas indicator should not be written to json" in {
+            mockAppConfig.features.api1363Version.apply(Api1363R8)
+
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMin)))
+
+            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+
+            status(res) shouldBe OK
+            jsonBodyOf(res) shouldBe customerInformationOutputJsonMinR8
           }
         }
       }

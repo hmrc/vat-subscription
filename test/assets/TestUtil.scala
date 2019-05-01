@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363R8, Api1365R7}
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363R10, Api1365R7}
 
 import scala.concurrent.ExecutionContext
 
@@ -39,7 +39,7 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
     mockAppConfig.features.stubDes(false)
     mockAppConfig.features.latestApi1363Version(true)
     mockAppConfig.features.api1365Version(Api1365R7)
-    mockAppConfig.features.api1363Version(Api1363R8)
+    mockAppConfig.features.api1363Version(Api1363R10)
   }
 
   override def afterEach(): Unit = {
@@ -47,7 +47,7 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
     mockAppConfig.features.stubDes(false)
     mockAppConfig.features.latestApi1363Version(true)
     mockAppConfig.features.api1365Version(Api1365R7)
-    mockAppConfig.features.api1363Version(Api1363R8)
+    mockAppConfig.features.api1363Version(Api1363R10)
   }
 
   lazy val injector: Injector = app.injector

@@ -41,6 +41,7 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
     case Api1365R5 => DESApi1365WritesR5
     case Api1365R6 => DESApi1365WritesR6
     case Api1365R7 => DESApi1365WritesR7
+
   }
 
   def updateVatSubscription(user: User[_], vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
