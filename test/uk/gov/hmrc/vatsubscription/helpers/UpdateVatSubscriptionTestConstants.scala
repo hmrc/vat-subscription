@@ -32,6 +32,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val updateSuccessResponse: SuccessModel = SuccessModel("XAVV0000000123456")
   val updateErrorResponse: ErrorModel = ErrorModel("TEST","ERROR")
+  val updateConflictResponse: ErrorModel = ErrorModel("CONFLICT","ERROR")
 
   val updateVatSubscriptionModelMax: UpdateVatSubscription = UpdateVatSubscription(
     controlInformation = ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),

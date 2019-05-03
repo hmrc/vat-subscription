@@ -26,7 +26,7 @@ import uk.gov.hmrc.vatsubscription.connectors.VatNumberNotFound
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobModelMax, ppobModelEmailMaxPost}
-import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
+import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse, updateConflictResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdateEmailService, MockVatCustomerDetailsRetrievalService}
 
@@ -85,7 +85,23 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
           }
         }
 
-        "a valid EmailPost is supplied but an error is returned from the UpdateVatSubscription Service" should {
+        "a valid EmailPost is supplied but a Conflict error is returned from the UpdateVatSubscription Service" should {
+
+          lazy val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
+
+          "return status CONFLICT (409)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
+            mockUpdateEmail(ppobModelEmailMaxPost)(Future.successful(Left(updateConflictResponse)))
+            status(res) shouldBe CONFLICT
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(updateConflictResponse)
+          }
+        }
+
+        "a valid EmailPost is supplied but an unexpected error is returned from the UpdateVatSubscription Service" should {
 
           lazy val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
 
@@ -100,6 +116,7 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
             jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
           }
         }
+
 
         "a valid EmailPost is supplied but an error is returned instead of a welsh indicator" should {
 
