@@ -98,7 +98,8 @@ object IntegrationTestConstants {
         "welshIndicator" -> true,
         "isPartialMigration" -> true,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
-        "partyType" -> "50"
+        "partyType" -> "50",
+        "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(

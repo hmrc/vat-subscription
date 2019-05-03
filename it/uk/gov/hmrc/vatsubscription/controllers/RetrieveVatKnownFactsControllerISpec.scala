@@ -41,7 +41,8 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "mandationStatus" -> "1",
-        "effectiveRegistrationDate" -> effectiveDate
+        "effectiveRegistrationDate" -> effectiveDate,
+        "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(

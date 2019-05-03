@@ -29,7 +29,10 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
 
   val testSuccessResponse: JsObject = Json.obj(
     "approvedInformation" -> Json.obj(
-      "customerDetails" -> Json.obj("mandationStatus" -> "1"),
+      "customerDetails" -> Json.obj(
+        "mandationStatus" -> "1",
+        "overseasIndicator" -> false
+      ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
           "line1" -> addLine1,

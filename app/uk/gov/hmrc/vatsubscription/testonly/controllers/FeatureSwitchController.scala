@@ -28,7 +28,6 @@ class FeatureSwitchController @Inject()(appConfig: AppConfig) extends BaseContro
   val get: Action[AnyContent] = Action { implicit request => result }
 
   lazy val update: Action[FeatureSwitchModel] = Action(parse.json[FeatureSwitchModel]) { req =>
-    appConfig.features.latestApi1363Version(req.body.latestApi1363Version)
     appConfig.features.api1365Version(req.body.Api1365Version)
     appConfig.features.stubDes(req.body.stubDes)
     appConfig.features.api1363Version(req.body.Api1363Version)
@@ -37,7 +36,6 @@ class FeatureSwitchController @Inject()(appConfig: AppConfig) extends BaseContro
 
   def result: Result = {
     Ok(Json.toJson(FeatureSwitchModel(
-      latestApi1363Version = appConfig.features.latestApi1363Version(),
       Api1365Version = appConfig.features.api1365Version(),
       stubDes = appConfig.features.stubDes(),
       Api1363Version = appConfig.features.api1363Version()

@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.Api1363R8
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363R10, Api1363R8}
 import uk.gov.hmrc.vatsubscription.models.VatCustomerInformation
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -66,6 +66,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
 
              applicationConfig.features.api1363Version() match {
                case Api1363R8 => VatCustomerInformation.release8Reads
+               case Api1363R10 => VatCustomerInformation.release10Reads
              }
 
             ) match {
