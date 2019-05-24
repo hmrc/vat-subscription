@@ -139,6 +139,10 @@ object IntegrationTestConstants {
       ),
       "returnPeriod" -> Json.obj(
         "stdReturnPeriod" -> returnPeriod
+      ),
+      "businessActivities" -> Json.obj(
+        "primaryMainCode" -> "00001",
+        "mainCode2" -> "00002"
       )
     ),
     "inFlightInformation" -> Json.obj(

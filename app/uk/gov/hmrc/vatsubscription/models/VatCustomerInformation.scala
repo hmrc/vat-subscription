@@ -30,7 +30,9 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   deregistration: Option[Deregistration],
                                   changeIndicators: Option[ChangeIndicators],
                                   pendingChanges: Option[PendingChanges],
-                                  partyType: Option[PartyType] = None) {
+                                  partyType: Option[PartyType] = None,
+                                  primaryMainCode: String
+                                 ) {
 
   val pendingPPOBAddress: Option[PPOBAddressGet] = pendingChanges.flatMap(_.ppob.map(_.address))
   val pendingBankDetails: Option[BankDetails] = pendingChanges.flatMap(_.bankDetails)
@@ -64,6 +66,9 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   val deregistrationKey = "deregistration"
   val partyTypeKey = "partyType"
 
+  val businessActivitiesKey = "businessActivities"
+  val primaryMainCodeKey = "primaryMainCode"
+
   private val path = __ \ approvedInformationKey
   private val customerDetailsPath = path \ customerDetailsKey
   private val flatRateSchemePath = path \ flatRateSchemeKey
@@ -72,6 +77,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val bankDetailsPath = path \ bankDetailsKey
   private val returnPeriodPath = path \ returnPeriodKey
   private val deregistrationPath = path \ deregistrationKey
+  private val primaryMainCodePath = path \ businessActivitiesKey \ primaryMainCodeKey
 
   private val changeIndicatorsPath = __ \ pendingChangesKey \ changeIndicators
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
@@ -94,6 +100,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
+    primaryMainCode <- primaryMainCodePath.read[String]
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(
@@ -115,7 +122,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     deregistration,
     changeIndicators,
     pendingChanges,
-    partyType
+    partyType,
+    primaryMainCode
   )
 
   val release10Reads: Reads[VatCustomerInformation] = for {
@@ -137,6 +145,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
+    primaryMainCode <- primaryMainCodePath.read[String]
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(
@@ -158,7 +167,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     deregistration,
     changeIndicators,
     pendingChanges,
-    partyType
+    partyType,
+    primaryMainCode
   )
 
   implicit val writes: Boolean => Writes[VatCustomerInformation] = isRelease10 => Writes {
@@ -173,7 +183,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "deregistration" -> model.deregistration,
         "changeIndicators" -> model.changeIndicators,
         "pendingChanges" -> model.pendingChanges,
-        "partyType" -> model.partyType
+        "partyType" -> model.partyType,
+        "primaryMainCode" -> model.primaryMainCode
       )
   }
 
