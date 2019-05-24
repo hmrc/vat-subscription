@@ -239,7 +239,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             )),
             Some(MCReturnPeriod(None))
           )),
-          Some(UKCompanyType)
+          Some(UKCompanyType),
+          primaryMainCode = "00001"
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
@@ -420,7 +421,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             )),
             Some(MCReturnPeriod(None))
           )),
-          partyType = Some(UKCompanyType)
+          partyType = Some(UKCompanyType),
+          primaryMainCode = "00003"
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))

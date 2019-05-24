@@ -93,7 +93,11 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMCJson
+      "returnPeriod" -> returnPeriodMCJson,
+      "businessActivities" -> Json.obj(
+        "primaryMainCode" -> "00004",
+        "mainCode2" -> "00005"
+      )
     ),
     "inFlightInformation" -> Json.obj(
       "changeIndicators" -> Json.obj(
@@ -183,7 +187,12 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMCJson
+      "returnPeriod" -> returnPeriodMCJson,
+      "businessActivities" -> Json.obj(
+        "primaryMainCode" -> "00001",
+        "mainCode2" -> "00002",
+        "mainCode2" -> "00003"
+      )
     ),
     "inFlightInformation" -> Json.obj(
       "changeIndicators" -> Json.obj(
@@ -239,6 +248,9 @@ object CustomerInformationTestConstants {
           "postCode" -> postcode,
           "countryCode" -> countryCode
         )
+      ),
+      "businessActivities" -> Json.obj(
+        "primaryMainCode" -> "00010"
       )
     )
   )
@@ -293,7 +305,10 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodYAJson
+      "returnPeriod" -> returnPeriodYAJson,
+      "businessActivities" -> Json.obj(
+        "primaryMainCode" -> "00002"
+      )
     ),
     "inFlightInformation" -> Json.obj(
       "changeIndicators" -> Json.obj(
@@ -415,7 +430,8 @@ object CustomerInformationTestConstants {
       ),
       "returnPeriod" -> returnPeriodMCJson
     ),
-    "partyType" -> partyType
+    "partyType" -> partyType,
+    "primaryMainCode" -> "00004"
   )
 
   val customerInformationOutputJsonMax: JsValue = Json.obj(
@@ -494,7 +510,8 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson
-    )
+    ),
+    "primaryMainCode" -> "00005"
   )
 
   val customerInformationOutputJsonMaxWithTrueOverseas: JsValue = Json.obj(
@@ -573,7 +590,8 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson
-    )
+    ),
+    "primaryMainCode" -> "00006"
   )
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
@@ -589,7 +607,8 @@ object CustomerInformationTestConstants {
         "postCode" -> postcode,
         "countryCode" -> countryCode
       )
-    )
+    ),
+    "primaryMainCode" -> "00010"
   )
 
   val manageAccountSummaryOutputJsonMax: JsValue = Json.obj(
@@ -651,7 +670,8 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None))
     )),
-    Some(UKCompanyType)
+    Some(UKCompanyType),
+    "00004"
   )
 
   val customerInformationModelMax: VatCustomerInformation = VatCustomerInformation(
@@ -672,7 +692,9 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None))
-    ))
+    )),
+    None,
+    "00005"
   )
 
   val customerInformationModelMaxWithTrueOverseas: VatCustomerInformation = VatCustomerInformation(
@@ -693,7 +715,9 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None))
-    ))
+    )),
+    None,
+    "00006"
   )
 
   val manageAccountModelMax: VatCustomerInformation = VatCustomerInformation(
@@ -715,7 +739,8 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None))
     )),
-    Some(UKCompanyType)
+    Some(UKCompanyType),
+    "00007"
   )
 
   val customerInformationModelMaxR8: VatCustomerInformation = VatCustomerInformation(
@@ -737,7 +762,8 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MMReturnPeriod(None))
     )),
-    Some(IndividualZ1Type)
+    Some(IndividualZ1Type),
+    "00001"
   )
 
   val customerInformationModelNoWelshIndicator: VatCustomerInformation = VatCustomerInformation(
@@ -749,7 +775,8 @@ object CustomerInformationTestConstants {
     returnPeriod = None,
     deregistration = None,
     changeIndicators = None,
-    pendingChanges = None
+    pendingChanges = None,
+    primaryMainCode = "00009"
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
@@ -770,7 +797,8 @@ object CustomerInformationTestConstants {
     returnPeriod = None,
     deregistration = None,
     changeIndicators = None,
-    pendingChanges = None
+    pendingChanges = None,
+    primaryMainCode = "00010"
   )
 
   val inFlightChanges: JsObject = Json.obj(
@@ -895,7 +923,8 @@ object CustomerInformationTestConstants {
       ),
       "returnPeriod" -> returnPeriodMCJson
     ),
-    "partyType" -> partyType
+    "partyType" -> partyType,
+    "primaryMainCode" -> "00004"
   )
 
   val customerInformationOutputJsonMinR8: JsValue = Json.obj(
@@ -911,7 +940,8 @@ object CustomerInformationTestConstants {
         "postCode" -> postcode,
         "countryCode" -> countryCode
       )
-    )
+    ),
+    "primaryMainCode" -> "00010"
   )
 
   val manageAccountSummaryOutputJsonMaxR8: JsValue = Json.obj(

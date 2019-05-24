@@ -43,6 +43,10 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
           "postCode" -> postcode,
           "countryCode" -> countryCode
         )
+      ),
+      "businessActivities" -> Json.obj(
+        "primaryMainCode" -> "00001",
+        "mainCode2" -> "00002"
       )
     )
   )

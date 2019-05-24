@@ -50,6 +50,10 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
           "postCode" -> postcode,
           "countryCode" -> countryCode
         )
+      ),
+      "businessActivities" -> Json.obj(
+        "primaryMainCode" -> "00001",
+        "mainCode2" -> "00002"
       )
     )
   )
