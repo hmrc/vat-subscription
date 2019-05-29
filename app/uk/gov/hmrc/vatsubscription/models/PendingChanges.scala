@@ -23,33 +23,40 @@ import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
 
 case class PendingChanges(ppob: Option[PPOBGet],
                           bankDetails: Option[BankDetails],
-                          returnPeriod: Option[ReturnPeriod])
+                          returnPeriod: Option[ReturnPeriod],
+                          mandationStatus: Option[MandationStatus])
 
 object PendingChanges {
 
   private val ppobPath = __ \ "PPOBDetails"
   private val bankDetailsPath =  __ \ "bankDetails"
   private val returnPeriodPath = __ \ "returnPeriod"
+  private val mandationStatusDesPath = __ \ "mandationStatus" \ "mandationStatus"
+  private val mandationStatusWritesPath = __ \ "mandationStatus"
 
   val currentReads: Reads[PendingChanges] = (
     ppobPath.readNullable[PPOBGet] and
-      bankDetailsPath.readNullable[BankDetails] and
-      returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.currentDesReads)
-    )(PendingChanges.apply _)
+    bankDetailsPath.readNullable[BankDetails] and
+    returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.currentDesReads) and
+    mandationStatusDesPath.readNullable[MandationStatus].orElse(Reads.pure(None))
+  )(PendingChanges.apply _)
 
   val newReads: Reads[PendingChanges] = for {
     ppob <- ppobPath.readNullable[PPOBGet]
     bankDetails <- bankDetailsPath.readNullable[BankDetails]
     returnPeriod <- returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.newDesReads)
+    mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus].orElse(Reads.pure(None))
   } yield PendingChanges(
     ppob,
     bankDetails,
-    filterReturnPeriod(returnPeriod)
+    filterReturnPeriod(returnPeriod),
+    mandationStatus
   )
 
   implicit val writes: Writes[PendingChanges] = (
     ppobPath.writeNullable[PPOBGet] and
-      bankDetailsPath.writeNullable[BankDetails] and
-      returnPeriodPath.writeNullable[ReturnPeriod]
-    )(unlift(PendingChanges.unapply))
+    bankDetailsPath.writeNullable[BankDetails] and
+    returnPeriodPath.writeNullable[ReturnPeriod] and
+    mandationStatusWritesPath.writeNullable[MandationStatus](MandationStatus.writer)
+  )(unlift(PendingChanges.unapply))
 }

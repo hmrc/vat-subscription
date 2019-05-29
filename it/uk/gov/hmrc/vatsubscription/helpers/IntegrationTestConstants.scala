@@ -179,6 +179,9 @@ object IntegrationTestConstants {
         ),
         "returnPeriod" -> Json.obj(
           "returnPeriod" -> returnPeriod
+        ),
+        "mandationStatus" -> Json.obj(
+          "mandationStatus" -> mandationStatus
         )
       )
     )

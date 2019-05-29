@@ -131,7 +131,10 @@ object CustomerInformationTestConstants {
           "bankAccountNumber" -> accNum,
           "sortCode" -> accSort
         ),
-        "returnPeriod" -> inflightReturnPeriodMCJson
+        "returnPeriod" -> inflightReturnPeriodMCJson,
+        "mandationStatus" -> Json.obj(
+          "mandationStatus" -> mandationStatusCode
+        )
       )
     )
   )
@@ -342,7 +345,10 @@ object CustomerInformationTestConstants {
           "bankAccountNumber" -> accNum,
           "sortCode" -> accSort
         ),
-        "returnPeriod" -> inflightReturnPeriodYAJson
+        "returnPeriod" -> inflightReturnPeriodYAJson,
+        "mandationStatus" -> Json.obj(
+          "mandationStatus" -> mandationStatusCode
+        )
       )
     )
   )
@@ -428,7 +434,8 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMCJson
+      "returnPeriod" -> returnPeriodMCJson,
+      "mandationStatus" -> mandationStatus
     ),
     "partyType" -> partyType,
     "primaryMainCode" -> "00004"
@@ -509,7 +516,8 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMCJson
+      "returnPeriod" -> returnPeriodMCJson,
+      "mandationStatus" -> mandationStatus
     ),
     "primaryMainCode" -> "00005"
   )
@@ -589,7 +597,8 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMCJson
+      "returnPeriod" -> returnPeriodMCJson,
+      "mandationStatus" -> mandationStatus
     ),
     "primaryMainCode" -> "00006"
   )
@@ -668,7 +677,8 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None))
+      Some(MCReturnPeriod(None)),
+      Some(MTDfBMandated)
     )),
     Some(UKCompanyType),
     "00004"
@@ -691,7 +701,8 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None))
+      Some(MCReturnPeriod(None)),
+      Some(MTDfBMandated)
     )),
     None,
     "00005"
@@ -714,7 +725,8 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None))
+      Some(MCReturnPeriod(None)),
+      Some(MTDfBMandated)
     )),
     None,
     "00006"
@@ -737,7 +749,8 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None))
+      Some(MCReturnPeriod(None)),
+      Some(MTDfBMandated)
     )),
     Some(UKCompanyType),
     "00007"
@@ -760,7 +773,8 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MMReturnPeriod(None))
+      Some(MMReturnPeriod(None)),
+      None
     )),
     Some(IndividualZ1Type),
     "00001"
@@ -826,7 +840,10 @@ object CustomerInformationTestConstants {
       "bankAccountNumber" -> accNum,
       "sortCode" -> accSort
     ),
-    "returnPeriod" -> inflightReturnPeriodMAJson
+    "returnPeriod" -> inflightReturnPeriodMAJson,
+    "mandationStatus" -> Json.obj(
+      "mandationStatus" -> mandationStatusCode
+    )
   )
 
   val inFlightChangesInvalidReturnPeriod: JsObject = Json.obj(
@@ -921,7 +938,8 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMCJson
+      "returnPeriod" -> returnPeriodMCJson,
+      "mandationStatus" -> mandationStatus
     ),
     "partyType" -> partyType,
     "primaryMainCode" -> "00004"

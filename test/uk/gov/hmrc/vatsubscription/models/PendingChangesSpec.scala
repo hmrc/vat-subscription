@@ -31,7 +31,8 @@ class PendingChangesSpec extends TestUtil {
       val model = PendingChanges(
         Some(ppobModelMax),
         Some(bankDetailsModelMax),
-        Some(MAReturnPeriod(None))
+        Some(MAReturnPeriod(None)),
+        Some(MTDfBMandated)
       )
 
       "parse the json correctly" in {
@@ -39,10 +40,10 @@ class PendingChangesSpec extends TestUtil {
       }
     }
 
-    "no optional fields are populated for release 8" should {
+    "no optional fields are populated" should {
 
       "parse the json correctly" in {
-        PendingChanges.newReads.reads(Json.obj()).get shouldEqual PendingChanges(None, None, None)
+        PendingChanges.newReads.reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None)
       }
     }
 

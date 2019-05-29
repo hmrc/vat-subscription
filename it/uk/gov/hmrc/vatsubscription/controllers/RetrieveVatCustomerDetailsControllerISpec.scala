@@ -237,7 +237,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accNum),
               Some(accSort)
             )),
-            Some(MCReturnPeriod(None))
+            Some(MCReturnPeriod(None)),
+            Some(MTDfBMandated)
           )),
           Some(UKCompanyType),
           primaryMainCode = "00001"
@@ -419,7 +420,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accNum),
               Some(accSort)
             )),
-            Some(MCReturnPeriod(None))
+            Some(MCReturnPeriod(None)),
+            Some(MTDfBMandated)
           )),
           partyType = Some(UKCompanyType),
           primaryMainCode = "00003"
