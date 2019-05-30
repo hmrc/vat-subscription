@@ -98,7 +98,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads)
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
     primaryMainCode <- primaryMainCodePath.read[String]
   } yield VatCustomerInformation(
@@ -143,7 +143,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.newReads)
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads)
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
     primaryMainCode <- primaryMainCodePath.read[String]
   } yield VatCustomerInformation(

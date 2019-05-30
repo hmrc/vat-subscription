@@ -36,21 +36,21 @@ class PendingChangesSpec extends TestUtil {
       )
 
       "parse the json correctly" in {
-        PendingChanges.newReads.reads(inFlightChanges).get shouldEqual model
+        PendingChanges.reads.reads(inFlightChanges).get shouldEqual model
       }
     }
 
     "no optional fields are populated" should {
 
       "parse the json correctly" in {
-        PendingChanges.newReads.reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None)
+        PendingChanges.reads.reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None)
       }
     }
 
     "return period is populated but not valid" should {
 
       "return 'return period' as None" in {
-        PendingChanges.newReads.reads(inFlightChangesInvalidReturnPeriod).get.returnPeriod shouldEqual None
+        PendingChanges.reads.reads(inFlightChangesInvalidReturnPeriod).get.returnPeriod shouldEqual None
       }
     }
   }

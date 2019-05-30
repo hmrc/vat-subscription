@@ -34,14 +34,7 @@ object PendingChanges {
   private val mandationStatusDesPath = __ \ "mandationStatus" \ "mandationStatus"
   private val mandationStatusWritesPath = __ \ "mandationStatus"
 
-  val currentReads: Reads[PendingChanges] = (
-    ppobPath.readNullable[PPOBGet] and
-    bankDetailsPath.readNullable[BankDetails] and
-    returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.currentDesReads) and
-    mandationStatusDesPath.readNullable[MandationStatus].orElse(Reads.pure(None))
-  )(PendingChanges.apply _)
-
-  val newReads: Reads[PendingChanges] = for {
+  val reads: Reads[PendingChanges] = for {
     ppob <- ppobPath.readNullable[PPOBGet]
     bankDetails <- bankDetailsPath.readNullable[BankDetails]
     returnPeriod <- returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.newDesReads)
