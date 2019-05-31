@@ -21,6 +21,7 @@ import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionCon
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import uk.gov.hmrc.vatsubscription.models.NonMTDfB
+import uk.gov.hmrc.vatsubscription.models.post.MandationStatusPost
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateMandationStatusService
@@ -32,13 +33,15 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
     new UpdateMandationStatusService(mockUpdateVatSubscriptionConnector)
   }
 
+  val updatedMandationStatus = MandationStatusPost(NonMTDfB)
+
   "Calling .updateMandationStatus" when {
 
     "connector call is successful" should {
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateMandationStatus(NonMTDfB, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateMandationStatus(updatedMandationStatus, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -47,7 +50,7 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateMandationStatus(NonMTDfB, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateMandationStatus(updatedMandationStatus, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -56,14 +59,14 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
   "Calling .constructMandationStatusUpdateModel" when {
 
     val service = new UpdateMandationStatusService(mockUpdateVatSubscriptionConnector)
-    val updatedMandationStatus = NonMTDfB
 
     "user is not an Agent" should {
 
       val result = service.constructMandationStatusUpdateModel(updatedMandationStatus, welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(mandationStatus = Some(updatedMandationStatus), welshIndicator = false),
+        controlInformation =
+          ControlInformation(mandationStatus = Some(updatedMandationStatus.mandationStatus), welshIndicator = false),
         requestedChanges = ChangeMandationStatus,
         updatedPPOB = None,
         updatedReturnPeriod = None,
@@ -81,7 +84,8 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
       val result = service.constructMandationStatusUpdateModel(updatedMandationStatus, welshIndicator = false)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(mandationStatus = Some(updatedMandationStatus), welshIndicator = false),
+        controlInformation =
+          ControlInformation(mandationStatus = Some(updatedMandationStatus.mandationStatus), welshIndicator = false),
         requestedChanges = ChangeMandationStatus,
         updatedPPOB = None,
         updatedReturnPeriod = None,
@@ -99,7 +103,8 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
       val result = service.constructMandationStatusUpdateModel(updatedMandationStatus, welshIndicator = true)(testUser)
 
       val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(mandationStatus = Some(updatedMandationStatus), welshIndicator = true),
+        controlInformation =
+          ControlInformation(mandationStatus = Some(updatedMandationStatus.mandationStatus), welshIndicator = true),
         requestedChanges = ChangeMandationStatus,
         updatedPPOB = None,
         updatedReturnPeriod = None,

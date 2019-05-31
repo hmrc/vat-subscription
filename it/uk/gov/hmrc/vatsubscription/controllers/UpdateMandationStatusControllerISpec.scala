@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants.{testSuccessCustomerDetailsDesResponse, testVatNumber}
@@ -25,9 +24,9 @@ import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformatio
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.UpdateVatCustomerSubscriptionStub.stubUpdateSubscription
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 
-class UpdateMandationStatusControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
+class UpdateMandationStatusControllerISpec extends ComponentSpecBase with CustomMatchers {
 
-  val validMandationStatusPost: JsValue = Json.obj("mandationStatus" -> "Non MTDfB")
+  val validMandationStatusPost: JsValue = Json.obj("mandationStatus" -> "3")
 
   val testSuccessDesResponse: JsValue = Json.obj("formBundle" -> "XAIT000000123456")
   val testErrorDesResponse: JsValue = Json.obj("code" -> "TEST", "reason" -> "ERROR")
@@ -48,9 +47,9 @@ class UpdateMandationStatusControllerISpec extends ComponentSpecBase with Before
       }
     }
 
-    "the user is authorised" should {
+    "the user is authorised" when {
 
-      "calls to DES is successful" should {
+      "the call to DES is successful" should {
 
         "return OK with the status" in {
 
@@ -67,7 +66,7 @@ class UpdateMandationStatusControllerISpec extends ComponentSpecBase with Before
         }
       }
 
-      "calls to DES return an error" should {
+      "the call to DES returns an error" should {
 
         "return ISE with the error response" in {
 

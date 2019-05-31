@@ -22,7 +22,8 @@ import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.{MandationStatus, User}
+import uk.gov.hmrc.vatsubscription.models.post.MandationStatusPost
+import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +33,7 @@ trait MockUpdateMandationStatusService extends MockitoSugar {
 
   val mockUpdateMandationStatusService: UpdateMandationStatusService = mock[UpdateMandationStatusService]
 
-  def mockUpdateMandationStatus(newMandationStatus: MandationStatus)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+  def mockUpdateMandationStatus(newMandationStatus: MandationStatusPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdateMandationStatusService
       .updateMandationStatus(ArgumentMatchers.eq(newMandationStatus), ArgumentMatchers.any[Boolean])(
         ArgumentMatchers.any[User[_]],

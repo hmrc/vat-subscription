@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
-import uk.gov.hmrc.vatsubscription.models.MandationStatus
+import uk.gov.hmrc.vatsubscription.models.post.MandationStatusPost
 import uk.gov.hmrc.vatsubscription.services.{UpdateMandationStatusService, VatCustomerDetailsRetrievalService}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +33,7 @@ class UpdateMandationStatusController @Inject()(VatAuthorised: VatAuthorised,
 
   def updateMandationStatus(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
-      parseJsonBody[MandationStatus] match {
+      parseJsonBody[MandationStatusPost] match {
         case Right(updatedMandationStatus) =>
           vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
             case Right(welshIndicator) =>

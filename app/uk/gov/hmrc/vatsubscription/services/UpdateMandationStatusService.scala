@@ -21,7 +21,8 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.{MandationStatus, User}
+import uk.gov.hmrc.vatsubscription.models.post.MandationStatusPost
+import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateMandationStatusService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def updateMandationStatus(updatedMandationStatus: MandationStatus, welshIndicator: Boolean)
+  def updateMandationStatus(updatedMandationStatus: MandationStatusPost, welshIndicator: Boolean)
                  (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructMandationStatusUpdateModel(updatedMandationStatus, welshIndicator)
@@ -37,14 +38,14 @@ class UpdateMandationStatusService @Inject()(updateVatSubscriptionConnector: Upd
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructMandationStatusUpdateModel(updatedMandationStatus: MandationStatus,
-                               welshIndicator: Boolean)
-                              (implicit user: User[_]): UpdateVatSubscription = {
+  def constructMandationStatusUpdateModel(mandationStatusPost: MandationStatusPost,
+                                          welshIndicator: Boolean)
+                                         (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
 
     UpdateVatSubscription(
-      controlInformation = ControlInformation(mandationStatus = Some(updatedMandationStatus), welshIndicator = welshIndicator),
+      controlInformation = ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = welshIndicator),
       requestedChanges = ChangeMandationStatus,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
