@@ -17,3 +17,5 @@ PUT         /:vatNumber/ppob                                                    
 PUT         /:vatNumber/deregister                                                   @uk.gov.hmrc.vatsubscription.controllers.RequestDeregistrationController.deregister(vatNumber: String)
 
 PUT         /:vatNumber/email-address                                                @uk.gov.hmrc.vatsubscription.controllers.UpdateEmailAddressController.updateEmail(vatNumber: String)
+
+PUT         /:vatNumber/mandation-status                                             @uk.gov.hmrc.vatsubscription.controllers.UpdateMandationStatusController.updateMandationStatus(vatNumber: String)

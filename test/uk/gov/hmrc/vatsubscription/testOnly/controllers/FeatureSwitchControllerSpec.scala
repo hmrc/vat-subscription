@@ -52,7 +52,7 @@ class FeatureSwitchControllerSpec extends TestUtil {
   "Calling the .update action" should {
 
     val body = Json.toJson(FeatureSwitchModel(
-      Api1365Version = Api1365R6,
+      Api1365Version = Api1365R7,
       stubDes = true,
       Api1363Version = Api1363R8)
     )

@@ -24,28 +24,28 @@ class MandationStatusSpec extends UnitSpec {
 
     "writer" when {
 
-      "a MTDfBMandated value is passed through" should {
+      "a MTDfB Mandated value is passed through" should {
 
         "return the correct value" in {
           MandationStatus.writer.writes(MTDfBMandated).validate[String].get shouldBe "MTDfB Mandated"
         }
       }
 
-      "a MTDfBVoluntary value is passed through" should {
+      "a MTDfB Voluntary value is passed through" should {
 
         "return the correct value" in {
           MandationStatus.writer.writes(MTDfBVoluntary).validate[String].get shouldBe "MTDfB Voluntary"
         }
       }
 
-      "a NonMTDfB value is passed through" should {
+      "a Non MTDfB value is passed through" should {
 
         "return the correct value" in {
           MandationStatus.writer.writes(NonMTDfB).validate[String].get shouldBe "Non MTDfB"
         }
       }
 
-      "a NonDigital value is passed through" should {
+      "a Non Digital value is passed through" should {
 
         "return the correct value" in {
           MandationStatus.writer.writes(NonDigital).validate[String].get shouldBe "Non Digital"
@@ -55,28 +55,28 @@ class MandationStatusSpec extends UnitSpec {
 
     "desWriter" when {
 
-      "a MTDfBMandated value is passed through" should {
+      "a MTDfB Mandated value is passed through" should {
 
         "return the correct value" in {
           MandationStatus.desWriter.writes(MTDfBMandated).validate[String].get shouldBe "1"
         }
       }
 
-      "a MTDfBVoluntary value is passed through" should {
+      "a MTDfB Voluntary value is passed through" should {
 
         "return the correct value" in {
           MandationStatus.desWriter.writes(MTDfBVoluntary).validate[String].get shouldBe "2"
         }
       }
 
-      "a NonMTDfB value is passed through" should {
+      "a Non MTDfB value is passed through" should {
 
         "return the correct value" in {
           MandationStatus.desWriter.writes(NonMTDfB).validate[String].get shouldBe "3"
         }
       }
 
-      "a NonDigital value is passed through" should {
+      "a Non Digital value is passed through" should {
 
         "return the correct value" in {
           MandationStatus.desWriter.writes(NonDigital).validate[String].get shouldBe "4"

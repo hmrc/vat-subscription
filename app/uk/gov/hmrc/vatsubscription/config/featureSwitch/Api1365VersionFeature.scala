@@ -31,14 +31,11 @@ class Api1365VersionFeature(key: String)(implicit config: Configuration) extends
 sealed trait Api1365Version {
   val id: String
 }
-object Api1365R5 extends Api1365Version {
-  override val id: String = "R5"
-}
-object Api1365R6 extends Api1365Version {
-  override val id: String = "R6"
-}
 object Api1365R7 extends Api1365Version {
   override val id: String = "R7"
+}
+object Api1365R11 extends Api1365Version {
+  override val id: String = "R11"
 }
 
 object Api1365Version {
@@ -50,9 +47,8 @@ object Api1365Version {
   }
 
   def apply(id: String): Api1365Version = id match {
-    case Api1365R5.id => Api1365R5
-    case Api1365R6.id => Api1365R6
     case Api1365R7.id => Api1365R7
+    case Api1365R11.id => Api1365R11
     case _ => throw new RuntimeException(s"Invalid API 1365 Version. Version supplied: $id")
   }
 
