@@ -34,6 +34,10 @@ class RoutesSpec extends TestUtil {
     MandationStatusController.getMandationStatus(testVatNumber).url shouldBe s"/vat-subscription/$testVatNumber/mandation-status"
   }
 
+  s"The UpdateMandationStatusController.updateMandationStatus reverse route should be '/vat-subscription/$testVatNumber/mandation-status'" in {
+    UpdateMandationStatusController.updateMandationStatus(testVatNumber).url shouldBe s"/vat-subscription/$testVatNumber/mandation-status"
+  }
+
   s"The UpdateReturnPeriodController.updateVatReturnPeriod reverse route should be '/vat-subscription/$testVatNumber/return-period'" in {
     UpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber).url shouldBe s"/vat-subscription/$testVatNumber/return-period"
   }

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MTDfBMandated}
+import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MTDfBMandated, MandationStatus, NonMTDfB}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 
@@ -29,6 +29,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress")))
   val updatedPPOB: UpdatedPPOB = UpdatedPPOB(PPOBTestConstants.ppobModelMaxPost)
+  val updatedMandationStatus: MandationStatus = NonMTDfB
 
   val updateSuccessResponse: SuccessModel = SuccessModel("XAVV0000000123456")
   val updateErrorResponse: ErrorModel = ErrorModel("TEST","ERROR")
@@ -46,7 +47,7 @@ object UpdateVatSubscriptionTestConstants {
   val updateVatSubscriptionLatestDESApi1365JsonMax: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
-    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365WritesR6),
+    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365WritesR11),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
@@ -56,13 +57,12 @@ object UpdateVatSubscriptionTestConstants {
   val updateVatSubscriptionCurrentDESApi1365JsonMax: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
-    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365WritesR5),
+    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365WritesR7),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
     "declaration" -> DeclarationTestConstants.declarationDESJsonAgent
   )
-
 
   val updateVatSubscriptionModelMin: UpdateVatSubscription = UpdateVatSubscription(
     controlInformation = ControlInformation(welshIndicator = false),
@@ -76,7 +76,7 @@ object UpdateVatSubscriptionTestConstants {
   val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(welshIndicator = false),
-    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.DESApi1365WritesR6),
+    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.DESApi1365WritesR11),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
   )
@@ -84,7 +84,7 @@ object UpdateVatSubscriptionTestConstants {
   val updateVatSubscriptionCurrentDESApi1365JsonMin: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(welshIndicator = false),
-    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.DESApi1365WritesR5),
+    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.DESApi1365WritesR7),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
   )

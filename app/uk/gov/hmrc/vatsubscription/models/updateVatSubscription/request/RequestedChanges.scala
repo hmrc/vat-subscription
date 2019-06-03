@@ -25,33 +25,15 @@ case class RequestedChanges(ppobDetails: Boolean = false,
                             businessActivities: Boolean = false,
                             flatRateScheme: Boolean = false,
                             organisationDetails: Boolean = false,
-                            correspDetails: Boolean = false)
+                            correspDetails: Boolean = false,
+                            mandationStatus: Boolean = false)
 
 object ChangePPOB extends RequestedChanges(ppobDetails = true)
 object ChangeReturnPeriod extends RequestedChanges(returnPeriod = true)
 object DeregistrationRequest extends RequestedChanges(deregInfo = true)
+object ChangeMandationStatus extends RequestedChanges(mandationStatus = true)
 
 object RequestedChanges {
-
-  val DESApi1365WritesR5: Writes[RequestedChanges] = Writes { model =>
-    Json.obj(
-      "PPOBDetails" -> model.ppobDetails,
-      "returnPeriod" -> model.returnPeriod,
-      "repaymentBankDetails" -> model.repaymentBankDetails
-    )
-  }
-
-  val DESApi1365WritesR6: Writes[RequestedChanges] = Writes { model =>
-    Json.obj(
-      "PPOBDetails" -> model.ppobDetails,
-    "returnPeriod" -> model.returnPeriod,
-    "deregInfo" -> model.deregInfo,
-    "repaymentBankDetails" -> model.repaymentBankDetails,
-    "businessActivities" -> model.businessActivities,
-    "flatRateScheme" -> model.flatRateScheme,
-    "correspDetails" -> model.correspDetails
-    )
-  }
 
   val DESApi1365WritesR7: Writes[RequestedChanges] = Writes { model =>
     Json.obj(
@@ -63,6 +45,20 @@ object RequestedChanges {
       "flatRateScheme" -> model.flatRateScheme,
       "correspDetails" -> model.correspDetails,
       "organisationDetails" -> model.organisationDetails
+    )
+  }
+
+  val DESApi1365WritesR11: Writes[RequestedChanges] = Writes { model =>
+    Json.obj(
+      "PPOBDetails" -> model.ppobDetails,
+      "returnPeriod" -> model.returnPeriod,
+      "deregInfo" -> model.deregInfo,
+      "repaymentBankDetails" -> model.repaymentBankDetails,
+      "businessActivities" -> model.businessActivities,
+      "flatRateScheme" -> model.flatRateScheme,
+      "correspDetails" -> model.correspDetails,
+      "organisationDetails" -> model.organisationDetails,
+      "mandationStatus" -> model.mandationStatus
     )
   }
 }
