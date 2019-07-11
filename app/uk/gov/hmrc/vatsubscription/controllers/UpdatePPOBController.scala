@@ -39,6 +39,7 @@ class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
               case Right(welshIndicator) => {
                 updatePPOBService.updatePPOB(updatedPPOB, welshIndicator).map {
                   case Right(success) => Ok(Json.toJson(success))
+                  case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
                   case Left(error) => InternalServerError(Json.toJson(error))
                 }
               }

@@ -26,7 +26,7 @@ import uk.gov.hmrc.vatsubscription.connectors.VatNumberNotFound
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobModelMax, ppobModelMaxPost}
-import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
+import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdatePPOBService, MockVatCustomerDetailsRetrievalService}
 
@@ -82,6 +82,22 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised with Mock
 
           "return the expected error model" in {
             jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyPPOBRequest.body}"))
+          }
+        }
+
+        "a valid PPOB is supplied but a Conflict error is returned from the UpdateVatSubscription Service" should {
+
+          lazy val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+
+          "return status CONFLICT (409)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
+            mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Left(updateConflictResponse)))
+            status(res) shouldBe CONFLICT
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(updateConflictResponse)
           }
         }
 
