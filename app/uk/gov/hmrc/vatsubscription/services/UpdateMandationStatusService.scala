@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import uk.gov.hmrc.vatsubscription.models.post.MandationStatusPost
-import uk.gov.hmrc.vatsubscription.models.User
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, User}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,13 @@ class UpdateMandationStatusService @Inject()(updateVatSubscriptionConnector: Upd
                                           welshIndicator: Boolean)
                                          (implicit user: User[_]): UpdateVatSubscription = {
 
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
+    val agentContactDetails: Option[ContactDetails] =
+      if(mandationStatusPost.transactorOrCapacitorEmail.isDefined)
+        Some(ContactDetails(None, None, None, mandationStatusPost.transactorOrCapacitorEmail, None))
+      else
+        None
+
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = welshIndicator),
