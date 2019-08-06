@@ -19,9 +19,9 @@ package uk.gov.hmrc.vatsubscription.service
 import assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
+import uk.gov.hmrc.vatsubscription.helpers.MandationStatusTestConstants._
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.NonMTDfB
-import uk.gov.hmrc.vatsubscription.models.post.MandationStatusPost
+import uk.gov.hmrc.vatsubscription.models.ContactDetails
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateMandationStatusService
@@ -33,15 +33,13 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
     new UpdateMandationStatusService(mockUpdateVatSubscriptionConnector)
   }
 
-  val updatedMandationStatus = MandationStatusPost(NonMTDfB)
-
   "Calling .updateMandationStatus" when {
 
     "connector call is successful" should {
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateMandationStatus(updatedMandationStatus, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateMandationStatus(mandationStatusPost, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -50,7 +48,7 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateMandationStatus(updatedMandationStatus, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateMandationStatus(mandationStatusPost, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -62,11 +60,11 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is not an Agent" should {
 
-      val result = service.constructMandationStatusUpdateModel(updatedMandationStatus, welshIndicator = false)(testUser)
+      val result = service.constructMandationStatusUpdateModel(mandationStatusPost, welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation =
-          ControlInformation(mandationStatus = Some(updatedMandationStatus.mandationStatus), welshIndicator = false),
+          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = false),
         requestedChanges = ChangeMandationStatus,
         updatedPPOB = None,
         updatedReturnPeriod = None,
@@ -81,16 +79,17 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      val result = service.constructMandationStatusUpdateModel(updatedMandationStatus, welshIndicator = false)(testAgentUser)
+      val result = service.constructMandationStatusUpdateModel(mandationStatusPostAgent, welshIndicator = false)(testAgentUser)
+      val agentContactDetails = Some(ContactDetails(None, None, None, Some("test@test.com"), None))
 
       val expectedResult = UpdateVatSubscription(
         controlInformation =
-          ControlInformation(mandationStatus = Some(updatedMandationStatus.mandationStatus), welshIndicator = false),
+          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = false),
         requestedChanges = ChangeMandationStatus,
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing())
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
@@ -100,11 +99,11 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user has a welshIndicator" should {
 
-      val result = service.constructMandationStatusUpdateModel(updatedMandationStatus, welshIndicator = true)(testUser)
+      val result = service.constructMandationStatusUpdateModel(mandationStatusPost, welshIndicator = true)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation =
-          ControlInformation(mandationStatus = Some(updatedMandationStatus.mandationStatus), welshIndicator = true),
+          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = true),
         requestedChanges = ChangeMandationStatus,
         updatedPPOB = None,
         updatedReturnPeriod = None,

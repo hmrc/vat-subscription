@@ -16,13 +16,20 @@
 
 package uk.gov.hmrc.vatsubscription.models.post
 
-import play.api.libs.json.{Json, Reads}
-import uk.gov.hmrc.vatsubscription.models.MandationStatus
+import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.helpers.MandationStatusTestConstants._
 
-case class MandationStatusPost(mandationStatus: MandationStatus,
-                               transactorOrCapacitorEmail: Option[String])
+class MandationStatusPostSpec extends UnitSpec {
 
-object MandationStatusPost {
+  "MandationStatusPost reads" should {
 
-  implicit val reads: Reads[MandationStatusPost] = Json.reads[MandationStatusPost]
+    "read a mandation status with an agent email address" in {
+      mandationStatusPostAgentJson.as[MandationStatusPost] shouldBe mandationStatusPostAgent
+    }
+
+    "read a mandation status without an agent email address" in {
+      mandationStatusPostJson.as[MandationStatusPost] shouldBe mandationStatusPost
+    }
+  }
+
 }
