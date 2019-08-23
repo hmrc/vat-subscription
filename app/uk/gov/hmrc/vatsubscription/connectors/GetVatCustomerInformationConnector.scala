@@ -88,7 +88,8 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
         logUnexpectedResponse(response, logBody = true)
         Left(InvalidVatNumber)
       case NOT_FOUND =>
-        logUnexpectedResponse(response, "NOT FOUND returned - Subscription not found")
+        Logger.debug("[CustomerCircumstancesHttpParser][read] - " +
+          s"NOT FOUND returned - Subscription not found. Status: $NOT_FOUND. Body: ${response.body}")
         Left(VatNumberNotFound)
       case FORBIDDEN if response.body.contains("MIGRATION") =>
         logUnexpectedResponse(response, "FORBIDDEN returned with MIGRATION - Migration in progress")
