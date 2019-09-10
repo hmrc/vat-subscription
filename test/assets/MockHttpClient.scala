@@ -21,7 +21,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Writes
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -38,7 +38,7 @@ trait MockHttpClient extends UnitSpec with MockitoSugar with BeforeAndAfterEach 
 
   def mockHttpPut[I, O](response: O): Unit = {
     when(mockHttpClient.PUT[I, O]
-    (any[String](), any[I]())
+    (any[String](), any[I](), any[Seq[(String, String)]]())
     (any[Writes[I]](), any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
       .thenReturn(Future.successful(response))
   }
