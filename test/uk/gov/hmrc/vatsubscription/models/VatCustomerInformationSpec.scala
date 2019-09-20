@@ -92,10 +92,11 @@ class VatCustomerInformationSpec extends TestUtil {
     }
 
     "current and in-flight return periods are not valid" should {
+      val expectedResult = Some(YAReturnPeriod(None))
 
-      "exclude these return periods from response" in {
-        VatCustomerInformation.release8Reads.reads(customerInformationDESJsonInvalidReturnPeriod).get.returnPeriod shouldBe None
-        VatCustomerInformation.release8Reads.reads(customerInformationDESJsonInvalidReturnPeriod).get.pendingChanges.get.returnPeriod shouldBe None
+      "include these return periods in response" in {
+        VatCustomerInformation.release8Reads.reads(customerInformationDESJsonInvalidReturnPeriod).get.returnPeriod shouldBe expectedResult
+        VatCustomerInformation.release8Reads.reads(customerInformationDESJsonInvalidReturnPeriod).get.pendingChanges.get.returnPeriod shouldBe expectedResult
       }
     }
   }
