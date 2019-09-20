@@ -853,7 +853,7 @@ object CustomerInformationTestConstants {
         "countryCode" -> countryCode
       )
     ),
-    "returnPeriod" -> inflightReturnPeriodYAJson
+    "returnPeriod" -> "invalid"
   )
 
   //Release 8 data -- Separated for ease of deletion

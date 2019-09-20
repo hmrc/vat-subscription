@@ -18,7 +18,6 @@ package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, Writes, __}
-import uk.gov.hmrc.vatsubscription.models.ReturnPeriod.filterReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
 
 case class PendingChanges(ppob: Option[PPOBGet],
@@ -42,7 +41,7 @@ object PendingChanges {
   } yield PendingChanges(
     ppob,
     bankDetails,
-    filterReturnPeriod(returnPeriod),
+    returnPeriod,
     mandationStatus
   )
 
