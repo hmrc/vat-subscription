@@ -106,6 +106,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
           status(res) shouldBe BAD_REQUEST
+          jsonBodyOf(res) shouldBe Json.toJson(InvalidVatNumber)
         }
       }
 
@@ -117,6 +118,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
           status(res) shouldBe NOT_FOUND
+          jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
         }
       }
 
@@ -128,6 +130,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
           status(res) shouldBe FORBIDDEN
+          jsonBodyOf(res) shouldBe Json.toJson(Forbidden)
         }
       }
 
@@ -137,7 +140,9 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(Migration)))
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+
           status(res) shouldBe PRECONDITION_FAILED
+          jsonBodyOf(res) shouldBe Json.toJson(Migration)
         }
 
 
@@ -154,7 +159,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 
             status(res) shouldBe INTERNAL_SERVER_ERROR
-            jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
+            jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR.toString, "body" -> responseBody)
           }
         }
       }
@@ -234,6 +239,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
             status(res) shouldBe BAD_REQUEST
+            jsonBodyOf(res) shouldBe Json.toJson(InvalidVatNumber)
           }
         }
       }
@@ -245,6 +251,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
           status(res) shouldBe NOT_FOUND
+          jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
         }
       }
 
@@ -255,6 +262,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
           status(res) shouldBe FORBIDDEN
+          jsonBodyOf(res) shouldBe Json.toJson(Forbidden)
         }
       }
 
@@ -265,6 +273,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
           status(res) shouldBe PRECONDITION_FAILED
+          jsonBodyOf(res) shouldBe Json.toJson(Migration)
         }
       }
 
@@ -279,7 +288,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 
           status(res) shouldBe INTERNAL_SERVER_ERROR
-          jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
+          jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR.toString, "body" -> responseBody)
         }
       }
     }

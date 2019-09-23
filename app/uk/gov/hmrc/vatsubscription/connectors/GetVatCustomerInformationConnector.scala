@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED}
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, NOT_FOUND, OK, PRECONDITION_FAILED}
 import play.api.libs.json.{JsSuccess, Json, Writes}
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
@@ -114,27 +114,29 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
 }
 
 sealed trait GetVatCustomerInformationFailure {
-  val status: Int = INTERNAL_SERVER_ERROR
+  val status: Int
   val body: String
 }
 
 object GetVatCustomerInformationFailure {
   implicit val writes: Writes[GetVatCustomerInformationFailure] = Writes {
-    error => Json.obj("status" -> error.status, "body" -> error.body)
+    error => Json.obj("status" -> error.status.toString, "body" -> error.body)
   }
 }
 
 case object InvalidVatNumber extends GetVatCustomerInformationFailure {
-  override val body = "Invalid vat number"
+  override val status: Int = BAD_REQUEST
+  override val body = "Bad request"
 }
 
 case object VatNumberNotFound extends GetVatCustomerInformationFailure {
-  override val body = "Vat number not found"
+  override val status: Int = NOT_FOUND
+  override val body = "Not found"
 }
 
 case object Forbidden extends GetVatCustomerInformationFailure {
   override val status: Int = FORBIDDEN
-  override val body: String = ""
+  override val body: String = "Forbidden"
 }
 
 case object Migration extends GetVatCustomerInformationFailure {
