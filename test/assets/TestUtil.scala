@@ -40,6 +40,7 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
     mockAppConfig.features.latestApi1363Version(true)
     mockAppConfig.features.api1365Version(Api1365R7)
     mockAppConfig.features.api1363Version(Api1363R10)
+    mockAppConfig.features.enableAnnualAccounting(true)
   }
 
   override def afterEach(): Unit = {
@@ -48,6 +49,7 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
     mockAppConfig.features.latestApi1363Version(true)
     mockAppConfig.features.api1365Version(Api1365R7)
     mockAppConfig.features.api1363Version(Api1363R10)
+    mockAppConfig.features.enableAnnualAccounting(true)
   }
 
   lazy val injector: Injector = app.injector

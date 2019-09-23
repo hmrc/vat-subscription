@@ -17,7 +17,9 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
+import uk.gov.hmrc.vatsubscription.models.ReturnPeriod.filterReturnPeriod
 import uk.gov.hmrc.vatsubscription.utils.{JsonObjectSugar, JsonReadUtil}
 
 case class VatCustomerInformation(mandationStatus: MandationStatus,
@@ -81,7 +83,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val changeIndicatorsPath = __ \ pendingChangesKey \ changeIndicators
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
 
-  val release8Reads: Reads[VatCustomerInformation] = for {
+  val release8Reads: AppConfig => Reads[VatCustomerInformation] = conf => for {
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
@@ -97,7 +99,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads)
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(conf))
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
     primaryMainCode <- primaryMainCodePath.read[String]
   } yield VatCustomerInformation(
@@ -117,7 +119,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     flatRateScheme,
     ppob,
     bankDetails,
-    returnPeriod,
+    filterReturnPeriod(returnPeriod, conf),
     deregistration,
     changeIndicators,
     pendingChanges,
@@ -125,7 +127,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     primaryMainCode
   )
 
-  val release10Reads: Reads[VatCustomerInformation] = for {
+  val release10Reads: AppConfig => Reads[VatCustomerInformation] = conf => for {
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
@@ -142,7 +144,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads)
+    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(conf))
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
     primaryMainCode <- primaryMainCodePath.read[String]
   } yield VatCustomerInformation(
@@ -162,7 +164,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     flatRateScheme,
     ppob,
     bankDetails,
-    returnPeriod,
+    filterReturnPeriod(returnPeriod, conf),
     deregistration,
     changeIndicators,
     pendingChanges,

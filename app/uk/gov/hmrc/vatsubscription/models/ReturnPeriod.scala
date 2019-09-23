@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 
 abstract class ReturnPeriod(transOrCapEmail: Option[String]) {
   def stdReturnPeriod: String
@@ -145,12 +146,14 @@ object ReturnPeriod {
     period => Json.obj("stdReturnPeriod" -> period.stdReturnPeriod)
   }
 
-  def filterReturnPeriod(returnPeriod: Option[ReturnPeriod]): Option[ReturnPeriod] = {
-    returnPeriod.filter(period =>
-      period.isInstanceOf[MAReturnPeriod] ||
-      period.isInstanceOf[MBReturnPeriod] ||
-      period.isInstanceOf[MCReturnPeriod] ||
-      period.isInstanceOf[MMReturnPeriod]
-    )
+  def filterReturnPeriod(returnPeriod: Option[ReturnPeriod], appConf: AppConfig): Option[ReturnPeriod] = {
+    if(!appConf.features.enableAnnualAccounting()){
+      returnPeriod.filter(period =>
+        period.isInstanceOf[MAReturnPeriod] ||
+          period.isInstanceOf[MBReturnPeriod] ||
+          period.isInstanceOf[MCReturnPeriod] ||
+          period.isInstanceOf[MMReturnPeriod]
+      )
+    } else returnPeriod
   }
 }

@@ -308,7 +308,7 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodYAJson,
+      "returnPeriod" -> invalidReturnPeriod,
       "businessActivities" -> Json.obj(
         "primaryMainCode" -> "00002"
       )
@@ -345,7 +345,7 @@ object CustomerInformationTestConstants {
           "bankAccountNumber" -> accNum,
           "sortCode" -> accSort
         ),
-        "returnPeriod" -> inflightReturnPeriodYAJson,
+        "returnPeriod" -> invalidInflightReturnPeriod,
         "mandationStatus" -> Json.obj(
           "mandationStatus" -> mandationStatusCode
         )
@@ -853,7 +853,7 @@ object CustomerInformationTestConstants {
         "countryCode" -> countryCode
       )
     ),
-    "returnPeriod" -> "invalid"
+    "returnPeriod" -> invalidInflightReturnPeriod
   )
 
   //Release 8 data -- Separated for ease of deletion

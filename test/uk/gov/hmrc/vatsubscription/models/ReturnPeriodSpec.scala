@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
+import assets.TestUtil
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 
-class ReturnPeriodSpec extends UnitSpec {
+class ReturnPeriodSpec extends TestUtil {
 
   "ReturnPeriod .currentReads" when {
     "called with a transactorOrCapacitorEmail" should {
@@ -145,34 +146,79 @@ class ReturnPeriodSpec extends UnitSpec {
 
   "ReturnPeriod .filterReturnPeriod" when {
 
-    "return period is in valid values" should {
+    "the enableAnnualAccounting feature switch is enabled" should {
 
       val returnPeriodMA: Option[ReturnPeriod] = Some(MAReturnPeriod(None))
       val returnPeriodMB: Option[ReturnPeriod] = Some(MBReturnPeriod(None))
       val returnPeriodMC: Option[ReturnPeriod] = Some(MCReturnPeriod(None))
       val returnPeriodMM: Option[ReturnPeriod] = Some(MMReturnPeriod(None))
+      val returnPeriodYA: Option[ReturnPeriod] = Some(YAReturnPeriod(None))
+      val returnPeriodYB: Option[ReturnPeriod] = Some(YBReturnPeriod(None))
+      val returnPeriodYC: Option[ReturnPeriod] = Some(YCReturnPeriod(None))
+      val returnPeriodYD: Option[ReturnPeriod] = Some(YDReturnPeriod(None))
+      val returnPeriodYE: Option[ReturnPeriod] = Some(YEReturnPeriod(None))
+      val returnPeriodYF: Option[ReturnPeriod] = Some(YFReturnPeriod(None))
+      val returnPeriodYG: Option[ReturnPeriod] = Some(YGReturnPeriod(None))
+      val returnPeriodYH: Option[ReturnPeriod] = Some(YHReturnPeriod(None))
+      val returnPeriodYI: Option[ReturnPeriod] = Some(YIReturnPeriod(None))
+      val returnPeriodYJ: Option[ReturnPeriod] = Some(YJReturnPeriod(None))
+      val returnPeriodYK: Option[ReturnPeriod] = Some(YKReturnPeriod(None))
+      val returnPeriodYL: Option[ReturnPeriod] = Some(YLReturnPeriod(None))
 
-      "return the same return period back" in {
-        ReturnPeriod.filterReturnPeriod(returnPeriodMA) shouldBe returnPeriodMA
-        ReturnPeriod.filterReturnPeriod(returnPeriodMB) shouldBe returnPeriodMB
-        ReturnPeriod.filterReturnPeriod(returnPeriodMC) shouldBe returnPeriodMC
-        ReturnPeriod.filterReturnPeriod(returnPeriodMM) shouldBe returnPeriodMM
+      "return the same return periods back for all returnPeriods" in {
+        ReturnPeriod.filterReturnPeriod(returnPeriodMA, mockAppConfig) shouldBe returnPeriodMA
+        ReturnPeriod.filterReturnPeriod(returnPeriodMB, mockAppConfig) shouldBe returnPeriodMB
+        ReturnPeriod.filterReturnPeriod(returnPeriodMC, mockAppConfig) shouldBe returnPeriodMC
+        ReturnPeriod.filterReturnPeriod(returnPeriodMM, mockAppConfig) shouldBe returnPeriodMM
+        ReturnPeriod.filterReturnPeriod(returnPeriodYA, mockAppConfig) shouldBe returnPeriodYA
+        ReturnPeriod.filterReturnPeriod(returnPeriodYB, mockAppConfig) shouldBe returnPeriodYB
+        ReturnPeriod.filterReturnPeriod(returnPeriodYC, mockAppConfig) shouldBe returnPeriodYC
+        ReturnPeriod.filterReturnPeriod(returnPeriodYD, mockAppConfig) shouldBe returnPeriodYD
+        ReturnPeriod.filterReturnPeriod(returnPeriodYE, mockAppConfig) shouldBe returnPeriodYE
+        ReturnPeriod.filterReturnPeriod(returnPeriodYF, mockAppConfig) shouldBe returnPeriodYF
+        ReturnPeriod.filterReturnPeriod(returnPeriodYG, mockAppConfig) shouldBe returnPeriodYG
+        ReturnPeriod.filterReturnPeriod(returnPeriodYH, mockAppConfig) shouldBe returnPeriodYH
+        ReturnPeriod.filterReturnPeriod(returnPeriodYI, mockAppConfig) shouldBe returnPeriodYI
+        ReturnPeriod.filterReturnPeriod(returnPeriodYJ, mockAppConfig) shouldBe returnPeriodYJ
+        ReturnPeriod.filterReturnPeriod(returnPeriodYK, mockAppConfig) shouldBe returnPeriodYK
+        ReturnPeriod.filterReturnPeriod(returnPeriodYL, mockAppConfig) shouldBe returnPeriodYL
       }
     }
 
-    "return period is not in valid values" should {
+    "the enableAnnualAccounting feature switch is disabled" when {
 
-      val returnPeriodYA: Option[ReturnPeriod] = Some(YAReturnPeriod(None))
+      "return period is in valid values" should {
 
-      "return None" in {
-        ReturnPeriod.filterReturnPeriod(returnPeriodYA) shouldBe None
+        val returnPeriodMA: Option[ReturnPeriod] = Some(MAReturnPeriod(None))
+        val returnPeriodMB: Option[ReturnPeriod] = Some(MBReturnPeriod(None))
+        val returnPeriodMC: Option[ReturnPeriod] = Some(MCReturnPeriod(None))
+        val returnPeriodMM: Option[ReturnPeriod] = Some(MMReturnPeriod(None))
+
+        "return the same return period back" in {
+          mockAppConfig.features.enableAnnualAccounting(false)
+
+          ReturnPeriod.filterReturnPeriod(returnPeriodMA, mockAppConfig) shouldBe returnPeriodMA
+          ReturnPeriod.filterReturnPeriod(returnPeriodMB, mockAppConfig) shouldBe returnPeriodMB
+          ReturnPeriod.filterReturnPeriod(returnPeriodMC, mockAppConfig) shouldBe returnPeriodMC
+          ReturnPeriod.filterReturnPeriod(returnPeriodMM, mockAppConfig) shouldBe returnPeriodMM
+        }
+      }
+
+      "return period is not in valid values" should {
+
+        val returnPeriodYA: Option[ReturnPeriod] = Some(YAReturnPeriod(None))
+
+        "return None" in {
+          mockAppConfig.features.enableAnnualAccounting(false)
+          ReturnPeriod.filterReturnPeriod(returnPeriodYA, mockAppConfig) shouldBe None
+        }
       }
     }
 
     "not supplied with a return period" should {
 
       "return None" in {
-        ReturnPeriod.filterReturnPeriod(None) shouldBe None
+        ReturnPeriod.filterReturnPeriod(None, mockAppConfig) shouldBe None
       }
     }
   }

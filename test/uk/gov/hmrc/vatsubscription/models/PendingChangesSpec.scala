@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import assets.TestUtil
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, Json}
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants.bankDetailsModelMax
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
@@ -36,21 +36,21 @@ class PendingChangesSpec extends TestUtil {
       )
 
       "parse the json correctly" in {
-        PendingChanges.reads.reads(inFlightChanges).get shouldEqual model
+        PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldEqual model
       }
     }
 
     "no optional fields are populated" should {
 
       "parse the json correctly" in {
-        PendingChanges.reads.reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None)
+        PendingChanges.reads(mockAppConfig).reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None)
       }
     }
 
     "return period is populated but not valid" should {
 
-      "return 'return period' as None" in {
-        PendingChanges.reads.reads(inFlightChangesInvalidReturnPeriod).get.returnPeriod shouldEqual None
+      "return a JsError" in {
+        PendingChanges.reads(mockAppConfig).reads(inFlightChangesInvalidReturnPeriod) shouldBe a[JsError]
       }
     }
   }
