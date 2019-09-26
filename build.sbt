@@ -53,7 +53,7 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % "5.0.0",
+  "uk.gov.hmrc" %% "bootstrap-play-25" % "5.1.0",
   "org.typelevel" %% "cats-core" % "1.6.0"
 )
 

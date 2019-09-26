@@ -53,6 +53,7 @@ object ReturnPeriodTestConstants {
   val returnPeriodYJJson: JsValue = Json.obj("stdReturnPeriod" -> yjReturnPeriod)
   val returnPeriodYKJson: JsValue = Json.obj("stdReturnPeriod" -> ykReturnPeriod)
   val returnPeriodYLJson: JsValue = Json.obj("stdReturnPeriod" -> ylReturnPeriod)
+  val invalidReturnPeriod: JsValue = Json.obj("stdReturnPeriod" -> "invalid")
 
   val inflightReturnPeriodMCRelease6Json: JsValue = Json.obj("stdReturnPeriod" -> mcReturnPeriod)
 
@@ -72,5 +73,6 @@ object ReturnPeriodTestConstants {
   val inflightReturnPeriodYJJson: JsValue = Json.obj("returnPeriod" -> yjReturnPeriod)
   val inflightReturnPeriodYKJson: JsValue = Json.obj("returnPeriod" -> ykReturnPeriod)
   val inflightReturnPeriodYLJson: JsValue = Json.obj("returnPeriod" -> ylReturnPeriod)
+  val invalidInflightReturnPeriod: JsValue = Json.obj("returnPeriod" -> "invalid")
 
 }

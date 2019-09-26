@@ -65,8 +65,8 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
             response.json.validate(
 
              applicationConfig.features.api1363Version() match {
-               case Api1363R8 => VatCustomerInformation.release8Reads
-               case Api1363R10 => VatCustomerInformation.release10Reads
+               case Api1363R8 => VatCustomerInformation.release8Reads(applicationConfig)
+               case Api1363R10 => VatCustomerInformation.release10Reads(applicationConfig)
              }
 
             ) match {

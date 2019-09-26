@@ -80,22 +80,22 @@ class VatCustomerInformationSpec extends TestUtil {
     "all optional fields are populated for release 8" should {
 
       "parse the json correctly" in {
-        VatCustomerInformation.release8Reads.reads(customerInformationDESJsonMaxR8).get shouldBe customerInformationModelMaxR8
+        VatCustomerInformation.release8Reads(mockAppConfig).reads(customerInformationDESJsonMaxR8).get shouldBe customerInformationModelMaxR8
       }
     }
 
     "no optional fields are populated for release 8" should {
 
       "parse the json correctly" in {
-        VatCustomerInformation.release8Reads.reads(customerInformationDESJsonMinR8).get shouldBe customerInformationModelMin
+        VatCustomerInformation.release8Reads(mockAppConfig).reads(customerInformationDESJsonMinR8).get shouldBe customerInformationModelMin
       }
     }
 
     "current and in-flight return periods are not valid" should {
 
       "exclude these return periods from response" in {
-        VatCustomerInformation.release8Reads.reads(customerInformationDESJsonInvalidReturnPeriod).get.returnPeriod shouldBe None
-        VatCustomerInformation.release8Reads.reads(customerInformationDESJsonInvalidReturnPeriod).get.pendingChanges.get.returnPeriod shouldBe None
+        VatCustomerInformation.release8Reads(mockAppConfig).reads(customerInformationDESJsonInvalidReturnPeriod).get.returnPeriod shouldBe None
+        VatCustomerInformation.release8Reads(mockAppConfig).reads(customerInformationDESJsonInvalidReturnPeriod).get.pendingChanges shouldBe None
       }
     }
   }
