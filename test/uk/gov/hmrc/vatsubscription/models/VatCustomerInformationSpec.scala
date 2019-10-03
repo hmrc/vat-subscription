@@ -20,7 +20,7 @@ import assets.TestUtil
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants.bankDetailsModelMax
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{email, ppobModelMax}
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{email, ppobModelMax,phoneNumber,mobileNumber}
 
 class VatCustomerInformationSpec extends TestUtil {
 
@@ -71,6 +71,40 @@ class VatCustomerInformationSpec extends TestUtil {
 
       "return None" in {
         customerInformationModelMin.pendingContactEmail shouldBe None
+      }
+    }
+  }
+
+  ".pendingLandLine method" when {
+
+    "there is a pending LandLine change" should {
+
+      "return the pending changes" in {
+        customerInformationModelMax.pendingLandLine shouldBe Some(phoneNumber)
+      }
+    }
+
+    "there is NO pending LandLine change" should {
+
+      "return None" in {
+        customerInformationModelMin.pendingLandLine shouldBe None
+      }
+    }
+  }
+
+  ".pendingMobile method" when {
+
+    "there is a pending Mobile change" should {
+
+      "return the pending changes" in {
+        customerInformationModelMax.pendingMobile shouldBe Some(mobileNumber)
+      }
+    }
+
+    "there is NO pending Mobile change" should {
+
+      "return None" in {
+        customerInformationModelMin.pendingMobile shouldBe None
       }
     }
   }

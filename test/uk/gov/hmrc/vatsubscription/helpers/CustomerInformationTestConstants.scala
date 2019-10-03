@@ -632,6 +632,8 @@ object CustomerInformationTestConstants {
       "countryCode" -> countryCode
     ),
     "contactEmail" -> email,
+    "landLine" -> phoneNumber,
+    "mobile" -> mobileNumber,
     "businessName" -> orgName,
     "repaymentBankDetails" -> Json.obj(
       "accountHolderName" -> accName,
@@ -974,6 +976,8 @@ object CustomerInformationTestConstants {
       "countryCode" -> countryCode
     ),
     "contactEmail" -> email,
+    "landLine" -> phoneNumber,
+    "mobile" -> mobileNumber,
     "businessName" -> orgName,
     "repaymentBankDetails" -> Json.obj(
       "accountHolderName" -> accName,
