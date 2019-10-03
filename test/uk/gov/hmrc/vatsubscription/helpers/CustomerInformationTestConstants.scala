@@ -632,7 +632,7 @@ object CustomerInformationTestConstants {
       "countryCode" -> countryCode
     ),
     "contactEmail" -> email,
-    "landLine" -> phoneNumber,
+    "landline" -> phoneNumber,
     "mobile" -> mobileNumber,
     "businessName" -> orgName,
     "repaymentBankDetails" -> Json.obj(
@@ -976,7 +976,7 @@ object CustomerInformationTestConstants {
       "countryCode" -> countryCode
     ),
     "contactEmail" -> email,
-    "landLine" -> phoneNumber,
+    "landline" -> phoneNumber,
     "mobile" -> mobileNumber,
     "businessName" -> orgName,
     "repaymentBankDetails" -> Json.obj(
