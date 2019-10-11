@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.helpers
 
-import play.api.libs.json
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants._
@@ -26,7 +25,6 @@ import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.DeregistrationTestConstants._
 import uk.gov.hmrc.vatsubscription.models._
-
 
 object CustomerInformationTestConstants {
 
@@ -104,7 +102,8 @@ object CustomerInformationTestConstants {
         "PPOBDetails" -> true,
         "bankDetails" -> true,
         "returnPeriod" -> true,
-        "deregister" -> true
+        "deregister" -> true,
+        "annualAccounting" -> true
       ),
       "inFlightChanges" -> Json.obj(
         "PPOBDetails" -> Json.obj(
@@ -202,7 +201,8 @@ object CustomerInformationTestConstants {
         "PPOBDetails" -> true,
         "bankDetails" -> true,
         "returnPeriod" -> true,
-        "deregister" -> true
+        "deregister" -> true,
+        "annualAccounting" -> true
       ),
       "inFlightChanges" -> Json.obj(
         "PPOBDetails" -> Json.obj(
@@ -407,7 +407,8 @@ object CustomerInformationTestConstants {
       "PPOBDetails" -> true,
       "bankDetails" -> true,
       "returnPeriod" -> true,
-      "deregister" -> true
+      "deregister" -> true,
+      "annualAccounting" -> true
     ),
     "pendingChanges" -> Json.obj(
       "PPOBDetails" -> Json.obj(
@@ -489,7 +490,8 @@ object CustomerInformationTestConstants {
       "PPOBDetails" -> true,
       "bankDetails" -> true,
       "returnPeriod" -> true,
-      "deregister" -> true
+      "deregister" -> true,
+      "annualAccounting" -> true
     ),
     "pendingChanges" -> Json.obj(
       "PPOBDetails" -> Json.obj(
@@ -570,7 +572,8 @@ object CustomerInformationTestConstants {
       "PPOBDetails" -> true,
       "bankDetails" -> true,
       "returnPeriod" -> true,
-      "deregister" -> true
+      "deregister" -> true,
+      "annualAccounting" -> true
     ),
     "pendingChanges" -> Json.obj(
       "PPOBDetails" -> Json.obj(
@@ -674,7 +677,8 @@ object CustomerInformationTestConstants {
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
-      deregister = true
+      deregister = true,
+      annualAccounting = true
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
@@ -698,7 +702,8 @@ object CustomerInformationTestConstants {
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
-      deregister = true
+      deregister = true,
+      annualAccounting = true
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
@@ -722,7 +727,8 @@ object CustomerInformationTestConstants {
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
-      deregister = true
+      deregister = true,
+      annualAccounting = true
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
@@ -746,7 +752,8 @@ object CustomerInformationTestConstants {
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
-      deregister = true
+      deregister = true,
+      annualAccounting = true
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
@@ -770,7 +777,8 @@ object CustomerInformationTestConstants {
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
-      deregister = true
+      deregister = true,
+      annualAccounting = true
     )),
     Some(PendingChanges(
       Some(ppobModelMax),
@@ -913,7 +921,8 @@ object CustomerInformationTestConstants {
       "PPOBDetails" -> true,
       "bankDetails" -> true,
       "returnPeriod" -> true,
-      "deregister" -> true
+      "deregister" -> true,
+      "annualAccounting" -> true
     ),
     "pendingChanges" -> Json.obj(
       "PPOBDetails" -> Json.obj(

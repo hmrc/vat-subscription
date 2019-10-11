@@ -141,7 +141,7 @@ Where:
 * **ppob** is mandatory and consists of mandatory "line1" and "countryCode" with optional "line2", "line3", "line4", "line5" and "postCode".
 * **bankDetails** is optional and its elements are also all optional.
 * **returnPeriod** is optional and can be either "MA", "MB", "MC" or "MM".
-* **pendingChanges** is optional and consists of optional elements "ppob", "bankDetails" and "returnPeriod".
+* **pendingChanges** is optional and consists of optional elements "ppob", "bankDetails", "returnPeriod" and "annualAccounting"
 
 #### Error Responses
 
