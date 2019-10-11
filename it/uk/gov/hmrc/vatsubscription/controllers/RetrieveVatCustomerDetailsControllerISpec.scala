@@ -210,7 +210,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             ppob = true,
             bankDetails = true,
             returnPeriod = true,
-            deregister = true
+            deregister = true,
+            annualAccounting = false
           )),
           Some(PendingChanges(
             Some(PPOBGet(
@@ -393,7 +394,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             ppob = true,
             bankDetails = true,
             returnPeriod = true,
-            deregister = true
+            deregister = true,
+            annualAccounting = false
           )),
           Some(PendingChanges(
             Some(PPOBGet(
