@@ -72,7 +72,7 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
         case Right(vatInformation) =>
           if(vatInformation.changeIndicators.isEmpty)
-            Logger.warn("[CustomerCircumstancesHttpParser][read]: No changeIndicators object returned from GetCustomerInformation")
+            Logger.debug("[CustomerCircumstancesHttpParser][read]: No changeIndicators object returned from GetCustomerInformation")
           Ok(Json.toJson(vatInformation)(VatCustomerInformation.writes(
             appConfig.features.api1363Version() match {
               case Api1363R10 => true
