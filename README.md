@@ -14,7 +14,7 @@ Get Current State of Switches:
 `curl -X GET http://localhost:9567/vat-subscription/test-only/feature-switch`
 
 Change Feature Switches:
-`curl -X POST http://localhost:9567/vat-subscription/test-only/feature-switch -H 'content-type: application/json' -d '{ "latestApi1363Version": false, "latestApi1365Version": false, "stubDes" : false }'`
+`curl -X POST http://localhost:9567/vat-subscription/test-only/feature-switch -H 'content-type: application/json' -d '{ "latestApi1363Version": false, "latestApi1365Version": false}'`
 
 ## Endpoints
 
