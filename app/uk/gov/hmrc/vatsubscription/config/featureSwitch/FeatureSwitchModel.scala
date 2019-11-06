@@ -19,7 +19,6 @@ package uk.gov.hmrc.vatsubscription.config.featureSwitch
 import play.api.libs.json.{Json, OFormat}
 
 case class FeatureSwitchModel(Api1365Version: Api1365Version,
-                              stubDes: Boolean,
                               Api1363Version: Api1363Version,
                               enableAnnualAccounting: Boolean)
 

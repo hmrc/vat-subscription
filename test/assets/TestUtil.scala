@@ -36,7 +36,6 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    mockAppConfig.features.stubDes(false)
     mockAppConfig.features.latestApi1363Version(true)
     mockAppConfig.features.api1365Version(Api1365R7)
     mockAppConfig.features.api1363Version(Api1363R10)
@@ -45,7 +44,6 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
 
   override def afterEach(): Unit = {
     super.afterEach()
-    mockAppConfig.features.stubDes(false)
     mockAppConfig.features.latestApi1363Version(true)
     mockAppConfig.features.api1365Version(Api1365R7)
     mockAppConfig.features.api1363Version(Api1363R10)

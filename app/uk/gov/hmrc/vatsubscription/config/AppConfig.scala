@@ -28,8 +28,7 @@ class AppConfig @Inject()(implicit val runModeConfiguration: Configuration, envi
 
   def desUrl: String =
     getString(
-      if (features.stubDes()) "microservice.services.des.stub-url"
-      else "microservice.services.des.url"
+      "microservice.services.des.url"
     )
 
   lazy val desAuthorisationToken: String = s"Bearer ${getString("microservice.services.des.authorisation-token")}"
