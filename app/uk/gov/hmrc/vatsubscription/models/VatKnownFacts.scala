@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.json.{Json, OFormat}
 
 
-case class VatKnownFacts(vatRegistrationDate: String, businessPostCode: String)
+case class VatKnownFacts(vatRegistrationDate: String, businessPostCode: String, isOverseas: Boolean)
 
 object VatKnownFacts {
   implicit val format: OFormat[VatKnownFacts] = Json.format[VatKnownFacts]

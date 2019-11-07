@@ -39,7 +39,8 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
           case (Some(date), Some(postcode)) => Right(
             VatKnownFacts(
               vatRegistrationDate = date,
-              businessPostCode = postcode
+              businessPostCode = postcode,
+              isOverseas = vatCustomerInformation.customerDetails.overseasIndicator
             )
           )
           case _ => Left(InvalidVatKnownFacts)

@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
@@ -26,23 +26,23 @@ import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
 
 class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
-  val migrationResponse = Json.obj(
+  val migrationResponse: JsObject = Json.obj(
     "code" -> "MIGRATION"
   )
 
-  val testMinDesResponse = Json.obj(
+  val testMinDesResponse: JsObject = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "mandationStatus" -> "1")
     )
   )
 
-  val testSuccessDesResponse = Json.obj(
+  def testSuccessDesResponse(isOverseas: Boolean): JsObject = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
         "mandationStatus" -> "1",
         "effectiveRegistrationDate" -> effectiveDate,
-        "overseasIndicator" -> false
+        "overseasIndicator" -> isOverseas
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -60,20 +60,40 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
 
   "GET /:vatNumber/known-facts" when {
     "calls to DES is successful" when {
-      "both vat registration date and post code are present" should {
-        "return OK with the status" in {
-          stubAuth(OK, successfulAuthResponse())
-          stubGetInformation(testVatNumber)(OK, testSuccessDesResponse)
+      "both vat registration date and post code are present" when {
+        "the overseas indicator is set to false" should {
+          "return OK with the known facts and overseas set to false" in {
+            stubAuth(OK, successfulAuthResponse())
+            stubGetInformation(testVatNumber)(OK, testSuccessDesResponse(isOverseas = false))
 
-          val res = await(get(s"/$testVatNumber/known-facts"))
+            val res = await(get(s"/$testVatNumber/known-facts"))
 
-          res should have(
-            httpStatus(OK),
-            jsonBodyAs(Json.obj(
-              "vatRegistrationDate" -> effectiveDate,
-              "businessPostCode" -> postcode
-            ))
-          )
+            res should have(
+              httpStatus(OK),
+              jsonBodyAs(Json.obj(
+                "vatRegistrationDate" -> effectiveDate,
+                "businessPostCode" -> postcode,
+                "isOverseas" -> false
+              ))
+            )
+          }
+        }
+        "the overseas indicator is set to true" should {
+          "return OK with the status the known facts and overseas set to true" in {
+            stubAuth(OK, successfulAuthResponse())
+            stubGetInformation(testVatNumber)(OK, testSuccessDesResponse(isOverseas = true))
+
+            val res = await(get(s"/$testVatNumber/known-facts"))
+
+            res should have(
+              httpStatus(OK),
+              jsonBodyAs(Json.obj(
+                "vatRegistrationDate" -> effectiveDate,
+                "businessPostCode" -> postcode,
+                "isOverseas" -> true
+              ))
+            )
+          }
         }
       }
       "known facts are missing" should {
