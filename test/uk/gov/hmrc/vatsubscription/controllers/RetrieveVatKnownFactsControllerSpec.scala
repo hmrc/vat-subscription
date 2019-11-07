@@ -37,16 +37,28 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
   "the retrieveVatKnownFacts method" should {
     "return OK and the known facts" when {
-      "the known facts is returned from the VatKnownFactsRetrievalService" in {
+      "the known facts is returned from the VatKnownFactsRetrievalService" when {
+        "the user is not overseas" in {
+          mockAuthorise()(Future.successful(Unit))
 
-        mockAuthorise()(Future.successful(Unit))
+          mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(vatKnownFacts(isOverseas = false))))
 
-        mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(vatKnownFacts)))
+          val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
 
-        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe vatKnownFactsJson(isOverseas = false)
+        }
 
-        status(res) shouldBe OK
-        jsonBodyOf(res) shouldBe vatKnownFactsJson
+        "the user is overseas" in {
+          mockAuthorise()(Future.successful(Unit))
+
+          mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(vatKnownFacts(isOverseas = true))))
+
+          val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe vatKnownFactsJson(isOverseas = true)
+        }
       }
     }
 

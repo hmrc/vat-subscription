@@ -23,11 +23,12 @@ import uk.gov.hmrc.vatsubscription.models.VatKnownFacts
 
 object VatKnownFactsTestConstants {
 
-  val vatKnownFacts = VatKnownFacts(effectiveDate, postcode)
+  def vatKnownFacts(isOverseas: Boolean) = VatKnownFacts(effectiveDate, postcode, isOverseas)
 
-  val vatKnownFactsJson = Json.obj(
+  def vatKnownFactsJson(isOverseas: Boolean) = Json.obj(
     "vatRegistrationDate" -> effectiveDate,
-    "businessPostCode" -> postcode
+    "businessPostCode" -> postcode,
+    "isOverseas" -> isOverseas
   )
 
 }

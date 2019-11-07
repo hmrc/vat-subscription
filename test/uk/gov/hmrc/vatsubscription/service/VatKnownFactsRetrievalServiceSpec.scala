@@ -41,10 +41,16 @@ class VatKnownFactsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomer
 
   "getVatKnownFacts" should {
 
-    "retrieve the known facts if they exists in the vat customers details " in {
+    "retrieve the known facts if they exist in the vat customers details " in {
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
       val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)
-      await(res) shouldBe Right(vatKnownFacts)
+      await(res) shouldBe Right(vatKnownFacts(isOverseas = false))
+    }
+
+    "retrieve the known facts if they exist in the vat customers details when the overseas indicator is true " in {
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithTrueOverseas)))
+      val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)
+      await(res) shouldBe Right(vatKnownFacts(isOverseas = true))
     }
 
     "return a failure if any of the known facts are absent in the vat customer details" in {
