@@ -38,7 +38,7 @@ object PendingChanges {
   val reads: AppConfig => Reads[PendingChanges] = conf => for {
     ppob <- ppobPath.readNullable[PPOBGet]
     bankDetails <- bankDetailsPath.readNullable[BankDetails]
-    returnPeriod <- returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.newDesReads)
+    returnPeriod <- returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.inFlightReads)
     mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus].orElse(Reads.pure(None))
   } yield PendingChanges(
     ppob,

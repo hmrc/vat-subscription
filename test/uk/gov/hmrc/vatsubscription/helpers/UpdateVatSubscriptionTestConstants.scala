@@ -27,7 +27,7 @@ object UpdateVatSubscriptionTestConstants {
 
   val changeAll: RequestedChanges = RequestedChanges(ppobDetails = true, returnPeriod = true, deregInfo = true)
 
-  val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress")))
+  val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress"), None, None))
   val updatedPPOB: UpdatedPPOB = UpdatedPPOB(PPOBTestConstants.ppobModelMaxPost)
   val updatedMandationStatus: MandationStatus = NonMTDfB
 

@@ -37,10 +37,10 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
   object TestUpdateReturnPeriodController
     extends UpdateReturnPeriodController(mockVatAuthorised, mockUpdateReturnPeriodService, mockVatCustomerDetailsRetrievalService)
 
-  val maRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MAReturnPeriod(None)))
-  val mbRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MBReturnPeriod(None)))
-  val mcRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MCReturnPeriod(None)))
-  val mmRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MMReturnPeriod(None)))
+  val maRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MAReturnPeriod(None, None, None)))
+  val mbRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MBReturnPeriod(None, None, None)))
+  val mcRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MCReturnPeriod(None, None, None)))
+  val mmRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MMReturnPeriod(None, None, None)))
 
   "the.updateVatReturnPeriod() method" when {
 
@@ -61,7 +61,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateReturnPeriod(MAReturnPeriod(None))(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateReturnPeriod(MAReturnPeriod(None, None, None))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(maRequest))
 
@@ -73,7 +73,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateReturnPeriod(MBReturnPeriod(None))(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateReturnPeriod(MBReturnPeriod(None, None, None))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mbRequest))
 
@@ -85,7 +85,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateReturnPeriod(MCReturnPeriod(None))(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateReturnPeriod(MCReturnPeriod(None, None, None))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mcRequest))
 
@@ -97,7 +97,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateReturnPeriod(MMReturnPeriod(None))(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateReturnPeriod(MMReturnPeriod(None, None, None))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestUpdateReturnPeriodController.updateVatReturnPeriod(testVatNumber)(mmRequest))
 
@@ -130,7 +130,7 @@ class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised w
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-            mockUpdateReturnPeriod(MAReturnPeriod(None))(Future.successful(Left(updateErrorResponse)))
+            mockUpdateReturnPeriod(MAReturnPeriod(None, None, None))(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 

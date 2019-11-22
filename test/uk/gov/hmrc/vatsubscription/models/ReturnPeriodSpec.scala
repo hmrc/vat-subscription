@@ -16,33 +16,49 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
+import java.time.LocalDate
+
 import assets.TestUtil
-import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 
 class ReturnPeriodSpec extends TestUtil {
 
+  val fullModel: ReturnPeriod = MAReturnPeriod(
+    Some("agent@email.com"),
+    Some(Seq(
+      TaxPeriod(LocalDate.parse("2018-01-01"), LocalDate.parse("2018-02-02")),
+      TaxPeriod(LocalDate.parse("2018-03-03"), LocalDate.parse("2018-04-04"))
+    )),
+    Some(TaxPeriod(LocalDate.parse("2018-05-05"), LocalDate.parse("2018-06-06")))
+  )
+
+  val fullJson: JsObject = Json.obj(
+    "stdReturnPeriod" -> "MA",
+    "transactorOrCapacitorEmail" -> "agent@email.com",
+    "nonStdTaxPeriods" -> Json.arr(
+      Json.obj("periodStartDate" -> "2018-01-01", "periodEndDate" -> "2018-02-02"),
+      Json.obj("periodStartDate" -> "2018-03-03", "periodEndDate" -> "2018-04-04")
+    ),
+    "firstNonNSTPPeriod" -> Json.obj(
+      "periodStartDateOfFirstStandardPeriod" -> "2018-05-05",
+      "periodEndDateOfFirstStandardPeriod" -> "2018-06-06"
+    )
+  )
+
   "ReturnPeriod .currentReads" when {
-    "called with a transactorOrCapacitorEmail" should {
-      val json = Json.obj(
-        "stdReturnPeriod" -> "MA",
-        "transactorOrCapacitorEmail" -> "agent@email.com"
-      )
 
-      val model: ReturnPeriod = MAReturnPeriod(Some("agent@email.com"))
+    "all fields are present" should {
 
-      "output a correctly formatted ReturnPeriod json with an email address" in {
-        ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
+      "output an expected ReturnPeriod" in {
+        ReturnPeriod.currentDesReads.reads(fullJson).get shouldEqual fullModel
       }
     }
 
-    "called without a transactorOrCapacitorEmail" should {
-      val json = Json.obj(
-        "stdReturnPeriod" -> "MA"
-      )
+    "the minimum number of fields are present" should {
+      val json = Json.obj("stdReturnPeriod" -> "MA")
 
-      val model: ReturnPeriod = MAReturnPeriod(None)
+      val model: ReturnPeriod = MAReturnPeriod(None, None, None)
 
       "output a correctly formatted ReturnPeriod json with no email address" in {
         ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
@@ -50,97 +66,99 @@ class ReturnPeriodSpec extends TestUtil {
     }
   }
 
-  "ReturnPeriod .newReads" when {
-    "called with a transactorOrCapacitorEmail" should {
-      val json = Json.obj(
-        "returnPeriod" -> "MA",
-        "transactorOrCapacitorEmail" -> "agent@email.com"
-      )
+  "ReturnPeriod .inFlightReads" should {
 
-      val model: ReturnPeriod = MAReturnPeriod(Some("agent@email.com"))
+    val json = Json.obj("returnPeriod" -> "MA")
+    val model: ReturnPeriod = MAReturnPeriod(None, None, None)
 
-      "output a correctly formatted ReturnPeriod json" in {
-        ReturnPeriod.newDesReads.reads(json).get shouldEqual model
-      }
-    }
-
-    "called without a transactorOrCapacitorEmail" should {
-      val json = Json.obj(
-        "returnPeriod" -> "MA"
-      )
-
-      val model: ReturnPeriod = MAReturnPeriod(None)
-
-      "output a correctly formatted ReturnPeriod json" in {
-        ReturnPeriod.newDesReads.reads(json).get shouldEqual model
-      }
+    "output a correctly formatted ReturnPeriod json" in {
+      ReturnPeriod.inFlightReads.reads(json).get shouldEqual model
     }
   }
 
-  "ReturnPeriod Writes" should {
+  "ReturnPeriod Writes" when {
 
-    "output a fully populated MA ReturnPeriod object with all fields populated" in {
-      Json.toJson(MAReturnPeriod(None)) shouldBe returnPeriodMAJson
+    "all fields are present" should {
+
+      val json = Json.obj(
+        "stdReturnPeriod" -> "MA",
+        "nonStdTaxPeriods" -> Json.arr(
+          Json.obj("periodStart" -> "2018-01-01", "periodEnd" -> "2018-02-02"),
+          Json.obj("periodStart" -> "2018-03-03", "periodEnd" -> "2018-04-04")
+        ),
+        "firstNonNSTPPeriod" -> Json.obj("periodStart" -> "2018-05-05", "periodEnd" -> "2018-06-06")
+      )
+
+      "output correctly formatted JSON" in {
+        Json.toJson(fullModel) shouldBe json
+      }
     }
 
-    "output a fully populated MB ReturnPeriod object with all fields populated" in {
-      Json.toJson(MBReturnPeriod(None)) shouldBe returnPeriodMBJson
-    }
+    "the minimum number of fields are present" should {
 
-    "output a fully populated MC ReturnPeriod object with all fields populated" in {
-      Json.toJson(MCReturnPeriod(None)) shouldBe returnPeriodMCJson
-    }
+      "output correctly formatted JSON for a MAReturnPeriod" in {
+        Json.toJson(MAReturnPeriod(None, None, None)) shouldBe returnPeriodMAJson
+      }
 
-    "output a fully populated MM ReturnPeriod object with all fields populated" in {
-      Json.toJson(MMReturnPeriod(None)) shouldBe returnPeriodMMJson
-    }
+      "output correctly formatted JSON for a MBReturnPeriod" in {
+        Json.toJson(MBReturnPeriod(None, None, None)) shouldBe returnPeriodMBJson
+      }
 
-    "output a fully populated YA ReturnPeriod object with all fields populated" in {
-      Json.toJson(YAReturnPeriod(None)) shouldBe returnPeriodYAJson
-    }
+      "output correctly formatted JSON for a MCReturnPeriod" in {
+        Json.toJson(MCReturnPeriod(None, None, None)) shouldBe returnPeriodMCJson
+      }
 
-    "output a fully populated YB ReturnPeriod object with all fields populated" in {
-      Json.toJson(YBReturnPeriod(None)) shouldBe returnPeriodYBJson
-    }
+      "output correctly formatted JSON for a MMReturnPeriod" in {
+        Json.toJson(MMReturnPeriod(None, None, None)) shouldBe returnPeriodMMJson
+      }
 
-    "output a fully populated YC ReturnPeriod object with all fields populated" in {
-      Json.toJson(YCReturnPeriod(None)) shouldBe returnPeriodYCJson
-    }
+      "output correctly formatted JSON for a YAReturnPeriod" in {
+        Json.toJson(YAReturnPeriod(None, None, None)) shouldBe returnPeriodYAJson
+      }
 
-    "output a fully populated YD ReturnPeriod object with all fields populated" in {
-      Json.toJson(YDReturnPeriod(None)) shouldBe returnPeriodYDJson
-    }
+      "output correctly formatted JSON for a YBReturnPeriod" in {
+        Json.toJson(YBReturnPeriod(None, None, None)) shouldBe returnPeriodYBJson
+      }
 
-    "output a fully populated YE ReturnPeriod object with all fields populated" in {
-      Json.toJson(YEReturnPeriod(None)) shouldBe returnPeriodYEJson
-    }
+      "output correctly formatted JSON for a YCReturnPeriod" in {
+        Json.toJson(YCReturnPeriod(None, None, None)) shouldBe returnPeriodYCJson
+      }
 
-    "output a fully populated YF ReturnPeriod object with all fields populated" in {
-      Json.toJson(YFReturnPeriod(None)) shouldBe returnPeriodYFJson
-    }
+      "output correctly formatted JSON for a YDReturnPeriod" in {
+        Json.toJson(YDReturnPeriod(None, None, None)) shouldBe returnPeriodYDJson
+      }
 
-    "output a fully populated YG ReturnPeriod object with all fields populated" in {
-      Json.toJson(YGReturnPeriod(None)) shouldBe returnPeriodYGJson
-    }
+      "output correctly formatted JSON for a YEReturnPeriod" in {
+        Json.toJson(YEReturnPeriod(None, None, None)) shouldBe returnPeriodYEJson
+      }
 
-    "output a fully populated YH ReturnPeriod object with all fields populated" in {
-      Json.toJson(YHReturnPeriod(None)) shouldBe returnPeriodYHJson
-    }
+      "output correctly formatted JSON for a YFReturnPeriod" in {
+        Json.toJson(YFReturnPeriod(None, None, None)) shouldBe returnPeriodYFJson
+      }
 
-    "output a fully populated YI ReturnPeriod object with all fields populated" in {
-      Json.toJson(YIReturnPeriod(None)) shouldBe returnPeriodYIJson
-    }
+      "output correctly formatted JSON for a YGReturnPeriod" in {
+        Json.toJson(YGReturnPeriod(None, None, None)) shouldBe returnPeriodYGJson
+      }
 
-    "output a fully populated YJ ReturnPeriod object with all fields populated" in {
-      Json.toJson(YJReturnPeriod(None)) shouldBe returnPeriodYJJson
-    }
+      "output correctly formatted JSON for a YHReturnPeriod" in {
+        Json.toJson(YHReturnPeriod(None, None, None)) shouldBe returnPeriodYHJson
+      }
 
-    "output a fully populated YK ReturnPeriod object with all fields populated" in {
-      Json.toJson(YKReturnPeriod(None)) shouldBe returnPeriodYKJson
-    }
+      "output correctly formatted JSON for a YIReturnPeriod" in {
+        Json.toJson(YIReturnPeriod(None, None, None)) shouldBe returnPeriodYIJson
+      }
 
-    "output a fully populated YL ReturnPeriod object with all fields populated" in {
-      Json.toJson(YLReturnPeriod(None)) shouldBe returnPeriodYLJson
+      "output correctly formatted JSON for a YJReturnPeriod" in {
+        Json.toJson(YJReturnPeriod(None, None, None)) shouldBe returnPeriodYJJson
+      }
+
+      "output correctly formatted JSON for a YKReturnPeriod" in {
+        Json.toJson(YKReturnPeriod(None, None, None)) shouldBe returnPeriodYKJson
+      }
+
+      "output correctly formatted JSON for a YLReturnPeriod" in {
+        Json.toJson(YLReturnPeriod(None, None, None)) shouldBe returnPeriodYLJson
+      }
     }
   }
 
@@ -149,22 +167,22 @@ class ReturnPeriodSpec extends TestUtil {
     "the enableAnnualAccounting feature switch is enabled" should {
 
       val returnPeriods: List[ReturnPeriod] = List(
-        MAReturnPeriod(None),
-        MBReturnPeriod(None),
-        MCReturnPeriod(None),
-        MMReturnPeriod(None),
-        YAReturnPeriod(None),
-        YBReturnPeriod(None),
-        YCReturnPeriod(None),
-        YDReturnPeriod(None),
-        YEReturnPeriod(None),
-        YFReturnPeriod(None),
-        YGReturnPeriod(None),
-        YHReturnPeriod(None),
-        YIReturnPeriod(None),
-        YJReturnPeriod(None),
-        YKReturnPeriod(None),
-        YLReturnPeriod(None)
+        MAReturnPeriod(None, None, None),
+        MBReturnPeriod(None, None, None),
+        MCReturnPeriod(None, None, None),
+        MMReturnPeriod(None, None, None),
+        YAReturnPeriod(None, None, None),
+        YBReturnPeriod(None, None, None),
+        YCReturnPeriod(None, None, None),
+        YDReturnPeriod(None, None, None),
+        YEReturnPeriod(None, None, None),
+        YFReturnPeriod(None, None, None),
+        YGReturnPeriod(None, None, None),
+        YHReturnPeriod(None, None, None),
+        YIReturnPeriod(None, None, None),
+        YJReturnPeriod(None, None, None),
+        YKReturnPeriod(None, None, None),
+        YLReturnPeriod(None, None, None)
       )
 
       "return the same return periods back for all returnPeriods" in {
@@ -176,10 +194,10 @@ class ReturnPeriodSpec extends TestUtil {
 
       "return period is in valid values" should {
 
-        val returnPeriodMA: Option[ReturnPeriod] = Some(MAReturnPeriod(None))
-        val returnPeriodMB: Option[ReturnPeriod] = Some(MBReturnPeriod(None))
-        val returnPeriodMC: Option[ReturnPeriod] = Some(MCReturnPeriod(None))
-        val returnPeriodMM: Option[ReturnPeriod] = Some(MMReturnPeriod(None))
+        val returnPeriodMC: Option[ReturnPeriod] = Some(MCReturnPeriod(None, None, None))
+        val returnPeriodMM: Option[ReturnPeriod] = Some(MMReturnPeriod(None, None, None))
+        val returnPeriodMA: Option[ReturnPeriod] = Some(MAReturnPeriod(None, None, None))
+        val returnPeriodMB: Option[ReturnPeriod] = Some(MBReturnPeriod(None, None, None))
 
         "return the same return period back" in {
           mockAppConfig.features.enableAnnualAccounting(false)
@@ -193,7 +211,7 @@ class ReturnPeriodSpec extends TestUtil {
 
       "return period is not in valid values" should {
 
-        val returnPeriodYA: Option[ReturnPeriod] = Some(YAReturnPeriod(None))
+        val returnPeriodYA: Option[ReturnPeriod] = Some(YAReturnPeriod(None, None, None))
 
         "return None" in {
           mockAppConfig.features.enableAnnualAccounting(false)
