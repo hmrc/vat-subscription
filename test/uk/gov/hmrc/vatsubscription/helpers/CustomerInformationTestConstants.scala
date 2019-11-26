@@ -671,7 +671,7 @@ object CustomerInformationTestConstants {
     Some(frsModelMax),
     ppobModelMax,
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod(None)),
+    Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
       ppob = true,
@@ -683,7 +683,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None)),
+      Some(MCReturnPeriod(None, None, None)),
       Some(MTDfBMandated)
     )),
     Some(UKCompanyType),
@@ -696,7 +696,7 @@ object CustomerInformationTestConstants {
     None,
     ppobModelMax,
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod(None)),
+    Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
       ppob = true,
@@ -708,7 +708,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None)),
+      Some(MCReturnPeriod(None, None, None)),
       Some(MTDfBMandated)
     )),
     None,
@@ -721,7 +721,7 @@ object CustomerInformationTestConstants {
     None,
     ppobModelMax,
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod(None)),
+    Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
       ppob = true,
@@ -733,7 +733,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None)),
+      Some(MCReturnPeriod(None, None, None)),
       Some(MTDfBMandated)
     )),
     None,
@@ -746,7 +746,7 @@ object CustomerInformationTestConstants {
     None,
     ppobModelMax,
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod(None)),
+    Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
       ppob = true,
@@ -758,7 +758,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None)),
+      Some(MCReturnPeriod(None, None, None)),
       Some(MTDfBMandated)
     )),
     Some(UKCompanyType),
@@ -771,7 +771,7 @@ object CustomerInformationTestConstants {
     None,
     ppobModelMax,
     Some(bankDetailsModelMax),
-    Some(MCReturnPeriod(None)),
+    Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
       ppob = true,
@@ -783,7 +783,7 @@ object CustomerInformationTestConstants {
     Some(PendingChanges(
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
-      Some(MMReturnPeriod(None)),
+      Some(MMReturnPeriod(None, None, None)),
       None
     )),
     Some(IndividualZ1Type),

@@ -31,7 +31,7 @@ class PendingChangesSpec extends TestUtil {
       val model = PendingChanges(
         Some(ppobModelMax),
         Some(bankDetailsModelMax),
-        Some(MAReturnPeriod(None)),
+        Some(MAReturnPeriod(None, None, None)),
         Some(MTDfBMandated)
       )
 

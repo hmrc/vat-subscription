@@ -25,7 +25,7 @@ class UpdatedReturnPeriodSpec extends UnitSpec {
   "UpdatedReturnPeriod Writes" should {
 
     val model: UpdatedReturnPeriod = UpdatedReturnPeriod(
-      MAReturnPeriod(None))
+      MAReturnPeriod(None, None, None))
 
     "output a correctly formatted UpdatedReturnPeriod json" in {
       val result = Json.obj(

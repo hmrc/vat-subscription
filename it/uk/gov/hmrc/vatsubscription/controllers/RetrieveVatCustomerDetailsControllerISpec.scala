@@ -28,7 +28,7 @@ import uk.gov.hmrc.vatsubscription.models.get.{PPOBGet, PPOBAddressGet}
 
 class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
-  val migrationResponse = Json.obj(
+  val migrationResponse: JsObject = Json.obj(
     "code" -> "MIGRATION"
   )
 
@@ -200,7 +200,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(accNum),
             Some(accSort)
           )),
-          Some(MCReturnPeriod(None)),
+          Some(MCReturnPeriod(None, None, None)),
           Some(Deregistration(
             Some(reason),
             Some(cancellationDate),
@@ -238,7 +238,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accNum),
               Some(accSort)
             )),
-            Some(MCReturnPeriod(None)),
+            Some(MCReturnPeriod(None, None, None)),
             Some(MTDfBMandated)
           )),
           Some(UKCompanyType),
@@ -384,7 +384,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(accNum),
             Some(accSort)
           )),
-          Some(MCReturnPeriod(None)),
+          Some(MCReturnPeriod(None, None, None)),
           Some(Deregistration(
             Some(reason),
             Some(cancellationDate),
@@ -422,7 +422,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accNum),
               Some(accSort)
             )),
-            Some(MCReturnPeriod(None)),
+            Some(MCReturnPeriod(None, None, None)),
             Some(MTDfBMandated)
           )),
           partyType = Some(UKCompanyType),
