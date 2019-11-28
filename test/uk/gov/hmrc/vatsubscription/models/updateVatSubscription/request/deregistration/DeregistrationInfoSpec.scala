@@ -33,6 +33,7 @@ class DeregistrationInfoSpec extends UnitSpec {
           deregDate = Some(DeregistrationInfoTestConstants.deregDate),
           deregLaterDate = None,
           turnoverBelowThreshold = Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax),
+          zeroRatedExmpApplication = None,
           optionToTax = false,
           intendSellCapitalAssets = false,
           additionalTaxInvoices = false,
@@ -52,6 +53,7 @@ class DeregistrationInfoSpec extends UnitSpec {
           deregDate = None,
           deregLaterDate = None,
           turnoverBelowThreshold = None,
+          zeroRatedExmpApplication = None,
           optionToTax = false,
           intendSellCapitalAssets = false,
           additionalTaxInvoices = false,
@@ -71,6 +73,7 @@ class DeregistrationInfoSpec extends UnitSpec {
           deregDate = Some(DeregistrationInfoTestConstants.deregDate),
           deregLaterDate = None,
           turnoverBelowThreshold = None,
+          zeroRatedExmpApplication = None,
           optionToTax = true,
           intendSellCapitalAssets = false,
           additionalTaxInvoices = false,
@@ -90,6 +93,7 @@ class DeregistrationInfoSpec extends UnitSpec {
           deregDate = Some(DeregistrationInfoTestConstants.deregDate),
           deregLaterDate = None,
           turnoverBelowThreshold = None,
+          zeroRatedExmpApplication = None,
           optionToTax = false,
           intendSellCapitalAssets = true,
           additionalTaxInvoices = false,
@@ -109,6 +113,7 @@ class DeregistrationInfoSpec extends UnitSpec {
           deregDate = None,
           deregLaterDate = None,
           turnoverBelowThreshold = None,
+          zeroRatedExmpApplication = None,
           optionToTax = false,
           intendSellCapitalAssets = false,
           additionalTaxInvoices = false,
@@ -120,6 +125,26 @@ class DeregistrationInfoSpec extends UnitSpec {
         )
 
         invalid.validate shouldBe JsError("turnoverBelowThreshold is mandatory when deregReason is belowThreshold")
+      }
+
+      "Return 'zeroRatedExmpApplication is mandatory when deregReason is zeroRated'" in {
+        val invalid = DeregistrationInfo(
+          deregReason = ZeroRated,
+          deregDate = None,
+          deregLaterDate = None,
+          turnoverBelowThreshold = None,
+          zeroRatedExmpApplication = None,
+          optionToTax = false,
+          intendSellCapitalAssets = false,
+          additionalTaxInvoices = false,
+          cashAccountingScheme = false,
+          optionToTaxValue = None,
+          stocksValue = None,
+          capitalAssetsValue = None,
+          transactorOrCapacitorEmail = None
+        )
+
+        invalid.validate shouldBe JsError("zeroRatedExmpApplication is mandatory when deregReason is zeroRated")
       }
 
       "Return itself if it validates" in {
