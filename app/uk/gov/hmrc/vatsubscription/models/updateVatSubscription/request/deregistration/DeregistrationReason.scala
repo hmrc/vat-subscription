@@ -30,6 +30,10 @@ case object ReducedTurnover extends DeregistrationReason {
   override val value: String = "belowThreshold"
   override val desValue: String = "0010"
 }
+case object ZeroRated extends DeregistrationReason {
+  override val value: String = "zeroRated"
+  override val desValue: String = "0006"
+}
 
 object DeregistrationReason {
 
@@ -37,6 +41,7 @@ object DeregistrationReason {
     override def reads(json: JsValue): JsResult[DeregistrationReason] = json match {
       case JsString(CeasedTrading.value) => JsSuccess(CeasedTrading)
       case JsString(ReducedTurnover.value) => JsSuccess(ReducedTurnover)
+      case JsString(ZeroRated.value) => JsSuccess(ZeroRated)
       case x => JsError(s"Invalid deregistration reason supplied of '$x'")
     }
   }

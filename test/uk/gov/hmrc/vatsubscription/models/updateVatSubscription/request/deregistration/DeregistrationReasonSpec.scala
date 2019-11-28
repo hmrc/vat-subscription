@@ -33,6 +33,10 @@ class DeregistrationReasonSpec extends UnitSpec {
         JsString("belowThreshold").as[DeregistrationReason] shouldBe ReducedTurnover
       }
 
+      "return ZeroRated case object for 'zeroRated'" in {
+        JsString("zeroRated").as[DeregistrationReason] shouldBe ZeroRated
+      }
+
       "return JsError invalid" in {
         JsString("banana").validate[DeregistrationReason].isError shouldBe true
       }
@@ -46,6 +50,10 @@ class DeregistrationReasonSpec extends UnitSpec {
 
       "for ReducedTurnover output '0010'" in {
         Json.toJson(ReducedTurnover) shouldBe JsString("0010")
+      }
+
+      "for ReducedTurnover output '0006'" in {
+        Json.toJson(ZeroRated) shouldBe JsString("0006")
       }
     }
   }
