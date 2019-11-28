@@ -155,12 +155,16 @@ class DeregistrationInfoSpec extends UnitSpec {
 
     "deserializing JSON" should {
 
-      "return correct DeregistrationInfo model when valid JSON max is received" in {
+      "return correct DeregistrationInfo model when valid JSON that has deregReason CeasedTrading is received" in {
         deregInfoCeasedTradingFrontendJson.as[DeregistrationInfo] shouldBe deregInfoCeasedTradingModel
       }
 
-      "return correct DeregistrationInfo model when valid JSON min is received" in {
+      "return correct DeregistrationInfo model when valid JSON that has deregReason ReducedTurnover is received" in {
         deregInfoReducedTurnoverFrontendJson.as[DeregistrationInfo] shouldBe deregistrationInfoReducedTurnoverModel
+      }
+
+      "return correct DeregistrationInfo model when valid JSON that has deregReason ZeroRated is received" in {
+        deregInfoZeroRatedExmpApplicationFrontendJson.as[DeregistrationInfo] shouldBe deregistrationInfoZeroRatedExmpApplicationModel
       }
 
       "return JsError when invalid JSON is received" in {
@@ -170,12 +174,16 @@ class DeregistrationInfoSpec extends UnitSpec {
 
     "serializing to JSON" should {
 
-      "for turnoverBelowThresholdModelMax output correct JSON" in {
+      "for deregReason CeasedTrading output correct JSON" in {
         Json.toJson(deregInfoCeasedTradingModel) shouldBe deregInfoCeasedTradingDESJson
       }
 
-      "for turnoverBelowThresholdModelMin output correct JSON" in {
+      "for deregReason ReducedTurnover output correct JSON" in {
         Json.toJson(deregistrationInfoReducedTurnoverModel) shouldBe deregInfoReducedTurnoverDESJson
+      }
+
+      "for deregReason ZeroRated output correct JSON" in {
+        Json.toJson(deregistrationInfoZeroRatedExmpApplicationModel) shouldBe deregInfoZeroRatedExmpApplicationDESJson
       }
     }
   }
