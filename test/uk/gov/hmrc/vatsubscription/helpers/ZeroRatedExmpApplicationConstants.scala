@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.ZeroRatedExmpApplication
 
 object ZeroRatedExmpApplicationConstants {
 
@@ -36,5 +37,17 @@ object ZeroRatedExmpApplicationConstants {
     "estTotalTaxTurnover" -> estTotalTaxTurnoverValue
   )
 
+  val zeroRatedExmpApplicationFrontendModelMax: ZeroRatedExmpApplication = ZeroRatedExmpApplication(
+    Some("12345"),
+    false,
+     zeroRatedSuppliesValue,
+     estTotalTaxTurnoverValue
+  )
 
+  val zeroRatedExmpApplicationFrontendModelMin: ZeroRatedExmpApplication = ZeroRatedExmpApplication(
+    None,
+    false,
+    zeroRatedSuppliesValue,
+    estTotalTaxTurnoverValue
+  )
 }

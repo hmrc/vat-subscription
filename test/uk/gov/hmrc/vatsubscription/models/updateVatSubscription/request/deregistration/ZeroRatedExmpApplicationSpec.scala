@@ -27,14 +27,30 @@ class ZeroRatedExmpApplicationSpec extends UnitSpec {
     "deserializing JSON" should {
 
       "return correct ZeroRatedExmpApplication when valid JSON max is recieved" in {
-        zeroRatedExmpApplicationFrontendJsonMax.as[ZeroRatedExmpApplication] shouldBe zeroRatedExmpApplicationFrontendJsonMax
+        zeroRatedExmpApplicationFrontendJsonMax.as[ZeroRatedExmpApplication] shouldBe zeroRatedExmpApplicationFrontendModelMax
       }
 
       "return correct ZeroRatedExmpApplication when valid JSON min is recieved" in {
-        zeroRatedExmpApplicationFrontendJsonMin.as[ZeroRatedExmpApplication] shouldBe zeroRatedExmpApplicationFrontendJsonMin
+        zeroRatedExmpApplicationFrontendJsonMin.as[ZeroRatedExmpApplication] shouldBe zeroRatedExmpApplicationFrontendModelMin
+      }
+
+      "return JsError when invalid JSON is received" in {
+        JsString("banana").validate[TurnoverBelowThreshold].isError shouldBe true
       }
 
     }
+
+    "serializing to JSON" should {
+
+      "for turnoverBelowThresholdModelMax output correct JSON" in {
+        Json.toJson(zeroRatedExmpApplicationFrontendModelMax) shouldBe zeroRatedExmpApplicationFrontendJsonMax
+      }
+
+      "for turnoverBelowThresholdModelMin output correct JSON" in {
+        Json.toJson(zeroRatedExmpApplicationFrontendModelMin) shouldBe zeroRatedExmpApplicationFrontendJsonMin
+      }
+    }
+
   }
 
 }
