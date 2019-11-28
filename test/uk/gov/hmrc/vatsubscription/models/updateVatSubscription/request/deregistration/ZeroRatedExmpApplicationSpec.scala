@@ -35,7 +35,7 @@ class ZeroRatedExmpApplicationSpec extends UnitSpec {
       }
 
       "return JsError when invalid JSON is received" in {
-        JsString("banana").validate[TurnoverBelowThreshold].isError shouldBe true
+        JsString("banana").validate[ZeroRatedExmpApplication].isError shouldBe true
       }
 
     }

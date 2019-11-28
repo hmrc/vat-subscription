@@ -25,11 +25,18 @@ case class ZeroRatedExmpApplication(natureOfSupplies: Option[String], repaymentS
 object ZeroRatedExmpApplication {
 
   implicit val frontendReads: Reads[ZeroRatedExmpApplication] = (
-    ???
-    )
+    (__ \ "natureOfSupplies").readNullable[String] and
+      (__ \ "repaymentSituation").read[Boolean] and
+      (__ \ "zeroRatedSuppliesValue").read[BigDecimal] and
+      (__ \ "estTotalTaxTurnover").read[BigDecimal]
+    )(ZeroRatedExmpApplication.apply _)
 
   implicit val desWrites: Writes[ZeroRatedExmpApplication] = (
-    ???
-  )
+    (__ \ "natureOfSupplies").writeNullable[String] and
+      (__ \ "repaymentSituation").write[Boolean] and
+      (__ \ "zeroRatedSuppliesValue").write[BigDecimal] and
+      (__ \ "estTotalTaxTurnover").write[BigDecimal]
+    )(unlift(ZeroRatedExmpApplication.unapply))
+
 
 }
