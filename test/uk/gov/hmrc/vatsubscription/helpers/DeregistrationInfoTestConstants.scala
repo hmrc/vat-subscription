@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import PPOBTestConstants.email
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{CeasedTrading, DeregistrationInfo, ReducedTurnover}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{CeasedTrading, DeregistrationInfo, ReducedTurnover, ZeroRated}
 
 object DeregistrationInfoTestConstants {
 
@@ -46,19 +46,24 @@ object DeregistrationInfoTestConstants {
     "transactorOrCapacitorEmail" -> email
   )
 
-  val deregInfoCeasedTradingModel: DeregistrationInfo = DeregistrationInfo(
-    CeasedTrading,
-    Some(deregDate),
-    Some(deregLaterDate),
-    None,
-    optionToTax = true,
-    intendSellCapitalAssets = true,
-    additionalTaxInvoices = true,
-    cashAccountingScheme = true,
-    Some(optionToTaxValue),
-    Some(stocksValue),
-    Some(captialAssetsValue),
-    Some(email)
+
+
+  val deregInfoReducedTurnoverFrontendJson: JsValue = Json.obj(
+    "deregReason" -> ReducedTurnover.value,
+    "turnoverBelowThreshold" -> TurnoverBelowThresholdTestConstants.turnoverBelowThresholdFrontendJsonMax,
+    "optionToTax" -> false,
+    "intendSellCapitalAssets" -> false,
+    "additionalTaxInvoices" -> false,
+    "cashAccountingScheme" -> true
+  )
+
+  val deregInfoZeroRatedExmpApplicationFrontendJson: JsValue = Json.obj(
+    "deregReason" -> ZeroRated.value,
+    "zeroRatedExmpApplication" -> ZeroRatedExmpApplicationConstants.zeroRatedExmpApplicationFrontendModelMax,
+    "optionToTax" -> false,
+    "intendSellCapitalAssets" -> false,
+    "additionalTaxInvoices" -> false,
+    "cashAccountingScheme" -> true
   )
 
   val deregInfoCeasedTradingDESJson: JsValue = Json.obj(
@@ -74,31 +79,6 @@ object DeregistrationInfoTestConstants {
     )
   )
 
-
-  val deregInfoReducedTurnoverFrontendJson: JsValue = Json.obj(
-    "deregReason" -> ReducedTurnover.value,
-    "turnoverBelowThreshold" -> TurnoverBelowThresholdTestConstants.turnoverBelowThresholdFrontendJsonMax,
-    "optionToTax" -> false,
-    "intendSellCapitalAssets" -> false,
-    "additionalTaxInvoices" -> false,
-    "cashAccountingScheme" -> true
-  )
-
-  val deregistrationInfoReducedTurnoverModel: DeregistrationInfo = DeregistrationInfo(
-    ReducedTurnover,
-    None,
-    None,
-    Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax),
-    optionToTax = false,
-    intendSellCapitalAssets = false,
-    additionalTaxInvoices = false,
-    cashAccountingScheme = true,
-    None,
-    None,
-    None,
-    None
-  )
-
   val deregInfoReducedTurnoverDESJson: JsValue = Json.obj(
     "deregReason" -> ReducedTurnover.desValue,
     "deregDate" -> LocalDate.now(),
@@ -111,4 +91,65 @@ object DeregistrationInfoTestConstants {
       "OTTStocksAssetsValue" -> 0
     )
   )
+
+  val deregInfoZeroRatedExmpApplicationDESJson: JsValue = Json.obj(
+    "deregReason" -> ZeroRated.desValue,
+    "deregDate" -> LocalDate.now(),
+    "zeroRatedExmpApplication" -> ZeroRatedExmpApplicationConstants.zeroRatedExmpApplicationFrontendModelMax,
+    "deregDetails" -> Json.obj(
+      "optionTaxProperty" -> false,
+      "intendSellCapitalAssets" -> false,
+      "additionalTaxInvoices" -> false,
+      "cashAccountingScheme" -> true,
+      "OTTStocksAssetsValue" -> 0
+    )
+  )
+  val deregInfoCeasedTradingModel: DeregistrationInfo = DeregistrationInfo(
+    CeasedTrading,
+    Some(deregDate),
+    Some(deregLaterDate),
+    None,
+    None,
+    optionToTax = true,
+    intendSellCapitalAssets = true,
+    additionalTaxInvoices = true,
+    cashAccountingScheme = true,
+    Some(optionToTaxValue),
+    Some(stocksValue),
+    Some(captialAssetsValue),
+    Some(email)
+  )
+
+  val deregistrationInfoReducedTurnoverModel: DeregistrationInfo = DeregistrationInfo(
+    ReducedTurnover,
+    None,
+    None,
+    Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax),
+    None,
+    optionToTax = false,
+    intendSellCapitalAssets = false,
+    additionalTaxInvoices = false,
+    cashAccountingScheme = true,
+    None,
+    None,
+    None,
+    None
+  )
+
+  val deregistrationInfoZeroRatedExmpApplicationModel: DeregistrationInfo = DeregistrationInfo(
+    ZeroRated,
+    None,
+    None,
+    None,
+    Some(ZeroRatedExmpApplicationConstants.zeroRatedExmpApplicationFrontendModelMax),
+    optionToTax = false,
+    intendSellCapitalAssets = false,
+    additionalTaxInvoices = false,
+    cashAccountingScheme = true,
+    None,
+    None,
+    None,
+    None
+  )
+
 }

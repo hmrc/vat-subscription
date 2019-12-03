@@ -24,6 +24,7 @@ case class DeregistrationInfo(deregReason: DeregistrationReason,
                               deregDate: Option[LocalDate],
                               deregLaterDate: Option[LocalDate],
                               turnoverBelowThreshold: Option[TurnoverBelowThreshold],
+                              zeroRatedExmpApplication: Option[ZeroRatedExmpApplication],
                               optionToTax: Boolean,
                               intendSellCapitalAssets: Boolean,
                               additionalTaxInvoices: Boolean,
@@ -47,6 +48,11 @@ case class DeregistrationInfo(deregReason: DeregistrationReason,
     case _ => JsSuccess(this)
   }
 
+  private val validateZeroRated: JsResult[DeregistrationInfo] = zeroRatedExmpApplication match{
+    case None => JsError("zeroRatedExmpApplication is mandatory when deregReason is zeroRated")
+    case _ => JsSuccess(this)
+  }
+
   val validate: JsResult[DeregistrationInfo] =
     (optionToTax, optionToTaxValue, intendSellCapitalAssets, capitalAssetsValue) match {
       case (true, None, _, _) => JsError("optionToTaxValue is mandatory when optionToTax is true")
@@ -54,6 +60,7 @@ case class DeregistrationInfo(deregReason: DeregistrationReason,
       case (_, _, _, _) => deregReason match {
         case ReducedTurnover => validateReducedTurnover
         case CeasedTrading => validateCeasedTrading
+        case ZeroRated => validateZeroRated
       }
     }
 }
@@ -76,6 +83,7 @@ object DeregistrationInfo {
         Some("deregDate" -> Json.toJson(model.deregDate.getOrElse(LocalDate.now()))),
         model.deregLaterDate.map("deregLaterDate" -> Json.toJson(_)),
         model.turnoverBelowThreshold.map("turnoverBelowDeregLimit" -> Json.toJson(_)),
+        model.zeroRatedExmpApplication.map("zeroRatedExmpApplication" -> Json.toJson(_)),
         Some("deregDetails" -> JsObject(
           List(
             "optionTaxProperty" -> JsBoolean(model.optionToTax),
