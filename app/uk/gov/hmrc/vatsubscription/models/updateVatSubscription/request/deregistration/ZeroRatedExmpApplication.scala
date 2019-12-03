@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Reads, Writes, _}
+import play.api.libs.json._
 
 case class ZeroRatedExmpApplication(natureOfSupplies: Option[String], repaymentSituation: Boolean,
                                     zeroRatedSuppliesValue: BigDecimal, estTotalTaxTurnover: BigDecimal )
