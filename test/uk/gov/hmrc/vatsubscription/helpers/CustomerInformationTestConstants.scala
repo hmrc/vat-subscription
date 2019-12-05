@@ -17,13 +17,13 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.FlatRateSchemeTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.DeregistrationTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.FlatRateSchemeTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 import uk.gov.hmrc.vatsubscription.models._
 
 object CustomerInformationTestConstants {
@@ -688,6 +688,32 @@ object CustomerInformationTestConstants {
     )),
     Some(UKCompanyType),
     "00004"
+  )
+
+  val customerInformationModelMinWithFRS: VatCustomerInformation = VatCustomerInformation(
+    mandationStatus = MTDfBMandated,
+    customerDetails = customerDetailsModelMaxWithFRS,
+    flatRateScheme = None,
+    ppob = ppobModelMin,
+    bankDetails = None,
+    returnPeriod = None,
+    deregistration = None,
+    changeIndicators = None,
+    pendingChanges = None,
+    primaryMainCode = "00010"
+  )
+
+  val customerInformationModelMinWithOverseas: VatCustomerInformation = VatCustomerInformation(
+    mandationStatus = MTDfBMandated,
+    customerDetails = customerDetailsModelMaxWithTrueOverseas,
+    flatRateScheme = None,
+    ppob = ppobModelMin,
+    bankDetails = None,
+    returnPeriod = None,
+    deregistration = None,
+    changeIndicators = None,
+    pendingChanges = None,
+    primaryMainCode = "00010"
   )
 
   val customerInformationModelMax: VatCustomerInformation = VatCustomerInformation(

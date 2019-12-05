@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.helpers
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
-import uk.gov.hmrc.vatsubscription.models.VatKnownFacts
+import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService.VatKnownFacts
 
 object VatKnownFactsTestConstants {
 

@@ -21,8 +21,7 @@ import org.mockito.Mockito._
 import org.scalatest.Suite
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.vatsubscription.models.VatKnownFacts
-import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService.GetVatKnownFactsFailures
+import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService.VatKnownFactRetrievalServiceResponse
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.Future
@@ -33,7 +32,7 @@ trait MockVatKnownFactsRetrievalService extends MockitoSugar {
   val mockVatKnownFactsRetrievalService: VatKnownFactsRetrievalService = mock[VatKnownFactsRetrievalService]
 
   def mockRetrieveVatKnownFacts(vatNumber: String)
-                               (response: Future[Either[GetVatKnownFactsFailures, VatKnownFacts]]): Unit = {
+                               (response: Future[VatKnownFactRetrievalServiceResponse]): Unit = {
     when(mockVatKnownFactsRetrievalService.retrieveVatKnownFacts(ArgumentMatchers.eq(vatNumber))
     (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
   }

@@ -37,8 +37,9 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
     )
   )
 
-  def testSuccessDesResponse(isOverseas: Boolean): JsObject = Json.obj(
-    "approvedInformation" -> Json.obj(
+  def testSuccessDesResponse(isOverseas: Boolean, isDeregistered: Boolean = false): JsObject = {
+
+    val approvedInformationJson = Json.obj(
       "customerDetails" -> Json.obj(
         "mandationStatus" -> "1",
         "effectiveRegistrationDate" -> effectiveDate,
@@ -56,10 +57,32 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         "mainCode2" -> "00002"
       )
     )
-  )
+
+    Json.obj(
+      "approvedInformation" -> {
+        if (isDeregistered)
+          approvedInformationJson ++ Json.obj("deregistration" -> Json.obj())
+        else
+          approvedInformationJson
+      }
+    )
+
+  }
 
   "GET /:vatNumber/known-facts" when {
     "calls to DES is successful" when {
+      "the vat number is deregistered" in {
+        stubAuth(OK, successfulAuthResponse())
+        stubGetInformation(testVatNumber)(OK, testSuccessDesResponse(isOverseas = false, isDeregistered = true))
+
+        val res = await(get(s"/$testVatNumber/known-facts"))
+
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(Json.obj("deregistered" -> true))
+        )
+      }
+
       "both vat registration date and post code are present" when {
         "the overseas indicator is set to false" should {
           "return OK with the known facts and overseas set to false" in {
@@ -78,6 +101,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
             )
           }
         }
+
         "the overseas indicator is set to true" should {
           "return OK with the status the known facts and overseas set to true" in {
             stubAuth(OK, successfulAuthResponse())
@@ -96,6 +120,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
           }
         }
       }
+
       "known facts are missing" should {
         "return BAD_GATEWAY with the status" in {
           stubAuth(OK, successfulAuthResponse())
@@ -109,6 +134,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         }
       }
     }
+
     "DES returned NOT_FOUND" should {
       "return NOT_FOUND with the status" in {
         stubAuth(OK, successfulAuthResponse())
@@ -121,6 +147,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         )
       }
     }
+
     "DES returned BAD_REQUEST" should {
       "return BAD_REQUEST with the status" in {
         stubAuth(OK, successfulAuthResponse())
@@ -133,6 +160,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         )
       }
     }
+
     "DES returned FORBIDDEN with MIGRATION code" should {
       "return PRECONDITION_FAILED with the status" in {
         stubAuth(OK, successfulAuthResponse())
@@ -158,6 +186,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         )
       }
     }
+
     "DES returned INTERNAL_SERVER_ERROR" should {
       "return INTERNAL_SERVER_ERROR with the status" in {
         stubAuth(OK, successfulAuthResponse())
