@@ -18,10 +18,10 @@ package uk.gov.hmrc.vatsubscription.services
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors
 import uk.gov.hmrc.vatsubscription.connectors.GetVatCustomerInformationConnector
-import uk.gov.hmrc.vatsubscription.models._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,9 +31,11 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
 
   import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService._
 
-  def retrieveVatKnownFacts(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatKnownFactsFailures, VatKnownFacts]] = {
+  def retrieveVatKnownFacts(vatNumber: String)(implicit hc: HeaderCarrier): Future[VatKnownFactRetrievalServiceResponse] = {
     Logger.debug(s"[VatKnownFactsRetrievalService][retrieveVatKnownFacts]: retrieving Vat known facts for vat number - $vatNumber")
     vatCustomerDetailsConnector.getInformation(vatNumber) map {
+      case Right(vatCustomerInformation) if vatCustomerInformation.deregistration.isDefined =>
+        Right(DeregisteredUser)
       case Right(vatCustomerInformation) =>
         (vatCustomerInformation.customerDetails.vatRegistrationDate, vatCustomerInformation.ppob.address.postCode) match {
           case (Some(date), Some(postcode)) => Right(
@@ -56,6 +58,18 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
 }
 
 object VatKnownFactsRetrievalService {
+
+  type VatKnownFactRetrievalServiceResponse = Either[GetVatKnownFactsFailures, GetVatKnownFactsSuccess]
+
+  sealed trait GetVatKnownFactsSuccess
+
+  case object DeregisteredUser extends GetVatKnownFactsSuccess
+
+  case class VatKnownFacts(vatRegistrationDate: String, businessPostCode: String, isOverseas: Boolean) extends GetVatKnownFactsSuccess
+
+  object VatKnownFacts {
+    implicit val format: OFormat[VatKnownFacts] = Json.format[VatKnownFacts]
+  }
 
   sealed trait GetVatKnownFactsFailures
 

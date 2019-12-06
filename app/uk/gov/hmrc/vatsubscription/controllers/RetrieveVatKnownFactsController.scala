@@ -17,14 +17,12 @@
 package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService._
+import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService.{Migration, Forbidden => ForbiddenResponse, _}
 import uk.gov.hmrc.vatsubscription.services._
-import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService.{Migration, Forbidden => ForbiddenResponse}
 
 import scala.concurrent.ExecutionContext
 
@@ -35,7 +33,10 @@ class RetrieveVatKnownFactsController @Inject()(vatKnownFactsRetrievalService: V
   def retrieveVatKnownFacts(vatNumber: String): Action[AnyContent] = Action.async {
     implicit user =>
       vatKnownFactsRetrievalService.retrieveVatKnownFacts(vatNumber) map {
-        case Right(knownFacts) => Ok(Json.toJson(knownFacts))
+        case Right(DeregisteredUser) =>
+          Ok(Json.obj("deregistered" -> true))
+        case Right(knownFacts: VatKnownFacts) =>
+          Ok(Json.toJson(knownFacts))
         case Left(InvalidVatNumber) =>
           Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest
