@@ -19,138 +19,97 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregis
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.DeregistrationInfoTestConstants._
-import uk.gov.hmrc.vatsubscription.helpers.{DeregistrationInfoTestConstants, TurnoverBelowThresholdTestConstants}
+import uk.gov.hmrc.vatsubscription.helpers.{TurnoverBelowThresholdTestConstants, ZeroRatedExmpApplicationConstants}
 
 class DeregistrationInfoSpec extends UnitSpec {
+
+  val invalidDeregInfo = DeregistrationInfo(
+    deregReason = CeasedTrading,
+    deregDate = None,
+    deregLaterDate = None,
+    turnoverBelowThreshold = None,
+    zeroRatedExmpApplication = None,
+    optionToTax = false,
+    intendSellCapitalAssets = false,
+    additionalTaxInvoices = false,
+    cashAccountingScheme = false,
+    optionToTaxValue = None,
+    stocksValue = None,
+    capitalAssetsValue = None,
+    transactorOrCapacitorEmail = None
+  )
 
   "DeregInfo" when {
 
     "calling the .validate method" should {
 
       "Return 'unexpected turnoverBelowThreshold object when journey is ceasedTrading'" in {
-        val invalid = DeregistrationInfo(
-          deregReason = CeasedTrading,
-          deregDate = Some(DeregistrationInfoTestConstants.deregDate),
-          deregLaterDate = None,
-          turnoverBelowThreshold = Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax),
-          zeroRatedExmpApplication = None,
-          optionToTax = false,
-          intendSellCapitalAssets = false,
-          additionalTaxInvoices = false,
-          cashAccountingScheme = false,
-          optionToTaxValue = None,
-          stocksValue = None,
-          capitalAssetsValue = None,
-          transactorOrCapacitorEmail = None
+        val invalid = invalidDeregInfo.copy(
+          turnoverBelowThreshold = Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax)
         )
 
         invalid.validate shouldBe JsError("unexpected turnoverBelowThreshold object when journey is ceasedTrading")
       }
 
       "Return 'deregDate is mandatory when journey is ceasedTrading'" in {
-        val invalid = DeregistrationInfo(
-          deregReason = CeasedTrading,
-          deregDate = None,
-          deregLaterDate = None,
-          turnoverBelowThreshold = None,
-          zeroRatedExmpApplication = None,
-          optionToTax = false,
-          intendSellCapitalAssets = false,
-          additionalTaxInvoices = false,
-          cashAccountingScheme = false,
-          optionToTaxValue = None,
-          stocksValue = None,
-          capitalAssetsValue = None,
-          transactorOrCapacitorEmail = None
-        )
-
-        invalid.validate shouldBe JsError("deregDate is mandatory when journey is ceasedTrading")
+        invalidDeregInfo.validate shouldBe JsError("deregDate is mandatory when journey is ceasedTrading")
       }
 
       "Return 'optionToTaxValue is mandatory when optionToTax is true'" in {
-        val invalid = DeregistrationInfo(
-          deregReason = CeasedTrading,
-          deregDate = Some(DeregistrationInfoTestConstants.deregDate),
-          deregLaterDate = None,
-          turnoverBelowThreshold = None,
-          zeroRatedExmpApplication = None,
-          optionToTax = true,
-          intendSellCapitalAssets = false,
-          additionalTaxInvoices = false,
-          cashAccountingScheme = false,
-          optionToTaxValue = None,
-          stocksValue = None,
-          capitalAssetsValue = None,
-          transactorOrCapacitorEmail = None
+        val invalid = invalidDeregInfo.copy(
+          optionToTax = true
         )
 
         invalid.validate shouldBe JsError("optionToTaxValue is mandatory when optionToTax is true")
       }
 
       "Return 'capitalAssetsValue is mandatory when intendSellCapitalAssets is true'" in {
-        val invalid = DeregistrationInfo(
-          deregReason = CeasedTrading,
-          deregDate = Some(DeregistrationInfoTestConstants.deregDate),
-          deregLaterDate = None,
-          turnoverBelowThreshold = None,
-          zeroRatedExmpApplication = None,
-          optionToTax = false,
-          intendSellCapitalAssets = true,
-          additionalTaxInvoices = false,
-          cashAccountingScheme = false,
-          optionToTaxValue = None,
-          stocksValue = None,
-          capitalAssetsValue = None,
-          transactorOrCapacitorEmail = None
+        val invalid = invalidDeregInfo.copy(
+          intendSellCapitalAssets = true
         )
 
         invalid.validate shouldBe JsError("capitalAssetsValue is mandatory when intendSellCapitalAssets is true")
       }
 
       "Return 'turnoverBelowThreshold is mandatory when deregReason is belowThreshold'" in {
-        val invalid = DeregistrationInfo(
-          deregReason = ReducedTurnover,
-          deregDate = None,
-          deregLaterDate = None,
-          turnoverBelowThreshold = None,
-          zeroRatedExmpApplication = None,
-          optionToTax = false,
-          intendSellCapitalAssets = false,
-          additionalTaxInvoices = false,
-          cashAccountingScheme = false,
-          optionToTaxValue = None,
-          stocksValue = None,
-          capitalAssetsValue = None,
-          transactorOrCapacitorEmail = None
+        val invalid = invalidDeregInfo.copy(
+          deregReason = ReducedTurnover
         )
 
         invalid.validate shouldBe JsError("turnoverBelowThreshold is mandatory when deregReason is belowThreshold")
       }
 
       "Return 'zeroRatedExmpApplication is mandatory when deregReason is zeroRated'" in {
-        val invalid = DeregistrationInfo(
-          deregReason = ZeroRated,
-          deregDate = None,
-          deregLaterDate = None,
-          turnoverBelowThreshold = None,
-          zeroRatedExmpApplication = None,
-          optionToTax = false,
-          intendSellCapitalAssets = false,
-          additionalTaxInvoices = false,
-          cashAccountingScheme = false,
-          optionToTaxValue = None,
-          stocksValue = None,
-          capitalAssetsValue = None,
-          transactorOrCapacitorEmail = None
+        val invalid = invalidDeregInfo.copy(
+          deregReason = ZeroRated
         )
 
         invalid.validate shouldBe JsError("zeroRatedExmpApplication is mandatory when deregReason is zeroRated")
       }
 
+      "Return 'unexpected turnoverBelowThreshold object was provided when deregReason is exemptOnly'" in {
+        val invalid = invalidDeregInfo.copy(
+          deregReason = ExemptOnly,
+          turnoverBelowThreshold = Some(TurnoverBelowThresholdTestConstants.turnoverBelowThresholdModelMax)
+        )
+
+        invalid.validate shouldBe
+          JsError("unexpected turnoverBelowThreshold object was provided when deregReason is exemptOnly")
+      }
+
+      "Return 'unexpected zeroRatedExmpApplication object was provided when deregReason is exemptOnly'" in {
+        val invalid = invalidDeregInfo.copy(
+          deregReason = ExemptOnly,
+          zeroRatedExmpApplication = Some(ZeroRatedExmpApplicationConstants.zeroRatedExmpApplicationFrontendModelMax)
+        )
+
+        invalid.validate shouldBe
+          JsError("unexpected zeroRatedExmpApplication object was provided when deregReason is exemptOnly")
+      }
+
       "Return itself if it validates" in {
         deregistrationInfoReducedTurnoverModel.validate shouldBe JsSuccess(deregistrationInfoReducedTurnoverModel)
       }
-
     }
 
     "deserializing JSON" should {
@@ -165,6 +124,10 @@ class DeregistrationInfoSpec extends UnitSpec {
 
       "return correct DeregistrationInfo model when valid JSON that has deregReason ZeroRated is received" in {
         deregInfoZeroRatedExmpApplicationFrontendJson.as[DeregistrationInfo] shouldBe deregistrationInfoZeroRatedExmpApplicationModel
+      }
+
+      "return correct DeregistrationInfo model when valid JSON that has deregReason ExemptOnly is received" in {
+        deregInfoExemptOnlyFrontendJson.as[DeregistrationInfo] shouldBe deregistrationInfoExemptOnlyModel
       }
 
       "return JsError when invalid JSON is received" in {
@@ -184,6 +147,10 @@ class DeregistrationInfoSpec extends UnitSpec {
 
       "for deregReason ZeroRated output correct JSON" in {
         Json.toJson(deregistrationInfoZeroRatedExmpApplicationModel) shouldBe deregInfoZeroRatedExmpApplicationDESJson
+      }
+
+      "for deregReason ExemptOnly output correct JSON" in {
+        Json.toJson(deregistrationInfoExemptOnlyModel) shouldBe deregInfoExemptOnlyDESJson
       }
     }
   }

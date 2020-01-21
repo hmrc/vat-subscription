@@ -48,10 +48,17 @@ case class DeregistrationInfo(deregReason: DeregistrationReason,
     case _ => JsSuccess(this)
   }
 
-  private val validateZeroRated: JsResult[DeregistrationInfo] = zeroRatedExmpApplication match{
+  private val validateZeroRated: JsResult[DeregistrationInfo] = zeroRatedExmpApplication match {
     case None => JsError("zeroRatedExmpApplication is mandatory when deregReason is zeroRated")
     case _ => JsSuccess(this)
   }
+
+  private val validateExemptOnly: JsResult[DeregistrationInfo] =
+    (turnoverBelowThreshold, zeroRatedExmpApplication) match {
+      case (Some(_), _) => JsError("unexpected turnoverBelowThreshold object was provided when deregReason is exemptOnly")
+      case (_, Some(_)) => JsError("unexpected zeroRatedExmpApplication object was provided when deregReason is exemptOnly")
+      case _ => JsSuccess(this)
+    }
 
   val validate: JsResult[DeregistrationInfo] =
     (optionToTax, optionToTaxValue, intendSellCapitalAssets, capitalAssetsValue) match {
@@ -61,6 +68,7 @@ case class DeregistrationInfo(deregReason: DeregistrationReason,
         case ReducedTurnover => validateReducedTurnover
         case CeasedTrading => validateCeasedTrading
         case ZeroRated => validateZeroRated
+        case ExemptOnly => validateExemptOnly
       }
     }
 }

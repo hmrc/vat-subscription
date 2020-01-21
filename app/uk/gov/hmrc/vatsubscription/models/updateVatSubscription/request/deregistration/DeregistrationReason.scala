@@ -35,6 +35,11 @@ case object ZeroRated extends DeregistrationReason {
   override val desValue: String = "0006"
 }
 
+case object ExemptOnly extends DeregistrationReason {
+  override val value: String = "exemptOnly"
+  override val desValue: String = "0014"
+}
+
 object DeregistrationReason {
 
   implicit val frontendReads: Reads[DeregistrationReason] = new Reads[DeregistrationReason] {
@@ -42,6 +47,7 @@ object DeregistrationReason {
       case JsString(CeasedTrading.value) => JsSuccess(CeasedTrading)
       case JsString(ReducedTurnover.value) => JsSuccess(ReducedTurnover)
       case JsString(ZeroRated.value) => JsSuccess(ZeroRated)
+      case JsString(ExemptOnly.value) => JsSuccess(ExemptOnly)
       case x => JsError(s"Invalid deregistration reason supplied of '$x'")
     }
   }
