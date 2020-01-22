@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import PPOBTestConstants.email
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{CeasedTrading, DeregistrationInfo, ReducedTurnover, ZeroRated}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.{CeasedTrading, DeregistrationInfo, ExemptOnly, ReducedTurnover, ZeroRated}
 
 object DeregistrationInfoTestConstants {
 
@@ -46,8 +46,6 @@ object DeregistrationInfoTestConstants {
     "transactorOrCapacitorEmail" -> email
   )
 
-
-
   val deregInfoReducedTurnoverFrontendJson: JsValue = Json.obj(
     "deregReason" -> ReducedTurnover.value,
     "turnoverBelowThreshold" -> TurnoverBelowThresholdTestConstants.turnoverBelowThresholdFrontendJsonMax,
@@ -64,6 +62,14 @@ object DeregistrationInfoTestConstants {
     "intendSellCapitalAssets" -> false,
     "additionalTaxInvoices" -> false,
     "cashAccountingScheme" -> true
+  )
+
+  val deregInfoExemptOnlyFrontendJson: JsValue = Json.obj(
+    "deregReason" -> ExemptOnly.value,
+    "cashAccountingScheme" -> true,
+    "optionToTax" -> false,
+    "intendSellCapitalAssets" -> false,
+    "additionalTaxInvoices" -> false
   )
 
   val deregInfoCeasedTradingDESJson: JsValue = Json.obj(
@@ -104,6 +110,19 @@ object DeregistrationInfoTestConstants {
       "OTTStocksAssetsValue" -> 0
     )
   )
+
+  val deregInfoExemptOnlyDESJson: JsValue = Json.obj(
+    "deregReason" -> ExemptOnly.desValue,
+    "deregDate" -> LocalDate.now(),
+    "deregDetails" -> Json.obj(
+      "optionTaxProperty" -> false,
+      "intendSellCapitalAssets" -> false,
+      "additionalTaxInvoices" -> false,
+      "cashAccountingScheme" -> true,
+      "OTTStocksAssetsValue" -> 0
+    )
+  )
+
   val deregInfoCeasedTradingModel: DeregistrationInfo = DeregistrationInfo(
     CeasedTrading,
     Some(deregDate),
@@ -152,4 +171,19 @@ object DeregistrationInfoTestConstants {
     None
   )
 
+  val deregistrationInfoExemptOnlyModel: DeregistrationInfo = DeregistrationInfo(
+    ExemptOnly,
+    None,
+    None,
+    None,
+    None,
+    optionToTax = false,
+    intendSellCapitalAssets = false,
+    additionalTaxInvoices = false,
+    cashAccountingScheme = true,
+    None,
+    None,
+    None,
+    None
+  )
 }
