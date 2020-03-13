@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.connectors
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, NOT_FOUND, OK, PRECONDITION_FAILED}
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, NOT_FOUND, OK, PRECONDITION_FAILED, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.{JsSuccess, Json, Writes}
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
@@ -75,7 +75,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
                 Right(vatCustomerInformation)
               case _ =>
                 logUnexpectedResponse(response, "Invalid Success Response Json")
-                Left(UnexpectedGetVatCustomerInformationFailure(OK, response.body))
+                Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
             }
           case _ => handleErrorResponse(response)
         }
