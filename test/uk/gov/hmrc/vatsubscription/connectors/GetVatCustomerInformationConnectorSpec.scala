@@ -56,7 +56,7 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(OK, "{ }"))
+        res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
       }
 
       "parse a BAD_REQUEST response as a InvalidVatNumber" in {
