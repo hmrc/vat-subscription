@@ -18,8 +18,8 @@ package uk.gov.hmrc.vatsubscription.models
 
 import java.time.LocalDate
 
-import assets.TestUtil
 import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.helpers.ReturnPeriodTestConstants._
 
 class ReturnPeriodSpec extends TestUtil {

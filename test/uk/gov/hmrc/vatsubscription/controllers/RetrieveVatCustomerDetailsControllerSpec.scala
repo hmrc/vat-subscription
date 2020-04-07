@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -30,14 +29,20 @@ import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 import uk.gov.hmrc.vatsubscription.models.CustomerDetails
 import uk.gov.hmrc.vatsubscription.service.mocks.MockVatCustomerDetailsRetrievalService
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuthorised with MockVatCustomerDetailsRetrievalService {
+class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
+  with MockVatAuthorised
+  with MockVatCustomerDetailsRetrievalService {
 
   object TestRetrieveVatCustomerDetailsController
-    extends RetrieveVatCustomerDetailsController(mockVatAuthorised, mockVatCustomerDetailsRetrievalService, mockAppConfig)
+    extends RetrieveVatCustomerDetailsController(mockVatAuthorised,
+                                                mockVatCustomerDetailsRetrievalService,
+                                                mockAppConfig,
+                                                controllerComponents)
 
   "the retrieveVatCustomerDetails method" when {
 

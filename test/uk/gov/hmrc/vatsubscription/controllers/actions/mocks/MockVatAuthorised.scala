@@ -16,18 +16,19 @@
 
 package uk.gov.hmrc.vatsubscription.controllers.actions.mocks
 
-import assets.TestUtil
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, Retrievals}
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.vatsubscription.config.Constants
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
 trait MockVatAuthorised extends TestUtil with MockAuthConnector {
 
-  val mockVatAuthorised = new VatAuthorised(mockAuthConnector, mockAppConfig)
+  val mockVatAuthorised = new VatAuthorised(mockAuthConnector, controllerComponents, mockAppConfig)
 
   val vatAuthPredicate: Predicate = Enrolment(Constants.MtdVatEnrolmentKey)
     .withIdentifier(Constants.MtdVatReferenceKey, testVatNumber)

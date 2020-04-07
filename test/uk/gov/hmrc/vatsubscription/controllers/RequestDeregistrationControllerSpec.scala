@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -29,6 +28,7 @@ import uk.gov.hmrc.vatsubscription.helpers.DeregistrationInfoTestConstants
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.service.mocks.{MockDeregistrationRequestService, MockVatCustomerDetailsRetrievalService}
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
 import scala.concurrent.Future
 
@@ -36,7 +36,10 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
   with MockVatCustomerDetailsRetrievalService {
 
   object TestRequestDeregistrationController
-    extends RequestDeregistrationController(mockVatAuthorised, mockDeregistrationRequestService, mockVatCustomerDetailsRetrievalService)
+    extends RequestDeregistrationController(mockVatAuthorised,
+                                            mockDeregistrationRequestService,
+                                            mockVatCustomerDetailsRetrievalService,
+                                            controllerComponents)
 
   val deregRequest: FakeRequest[AnyContentAsJson] =
     FakeRequest().withJsonBody(DeregistrationInfoTestConstants.deregInfoCeasedTradingFrontendJson)

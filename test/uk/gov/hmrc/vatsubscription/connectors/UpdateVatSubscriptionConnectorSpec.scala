@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.connectors
 
-import assets.{MockHttpClient, TestUtil}
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365R7, Api1365R11}
+import uk.gov.hmrc.vatsubscription.assets.{MockHttpClient, TestUtil}
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365R11, Api1365R7}
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testUser
 import uk.gov.hmrc.vatsubscription.helpers.DeclarationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._

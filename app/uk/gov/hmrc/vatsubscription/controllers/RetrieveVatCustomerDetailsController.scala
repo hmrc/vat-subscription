@@ -19,13 +19,13 @@ package uk.gov.hmrc.vatsubscription.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.config.featureSwitch.Api1363R10
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
-import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, Migration,
-  UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResult}
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure,
+  VatNumberNotFound, Forbidden => ForbiddenResult}
 import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, VatCustomerInformation}
 import uk.gov.hmrc.vatsubscription.services._
 
@@ -34,8 +34,9 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorised,
                                                      vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
-                                                     appConfig: AppConfig)
-                                                    (implicit ec: ExecutionContext) extends BaseController {
+                                                     appConfig: AppConfig,
+                                                     cc: ControllerComponents)
+                                                    (implicit ec: ExecutionContext) extends BackendController(cc) {
 
   def retrieveVatCustomerDetails(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
     implicit user =>

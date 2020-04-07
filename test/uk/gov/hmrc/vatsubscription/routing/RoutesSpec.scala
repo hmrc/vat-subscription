@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.routing
 
-import assets.TestUtil
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.controllers.routes._
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
 

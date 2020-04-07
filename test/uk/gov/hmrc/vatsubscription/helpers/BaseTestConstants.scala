@@ -18,9 +18,9 @@ package uk.gov.hmrc.vatsubscription.helpers
 
 import java.util.UUID
 
-import assets.TestUtil
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.config.Constants._
 import uk.gov.hmrc.vatsubscription.models.User
 

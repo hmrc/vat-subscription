@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import assets.TestUtil
 import play.api.libs.json.Json
 import play.api.http.Status._
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -29,13 +28,18 @@ import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{u
 import uk.gov.hmrc.vatsubscription.models._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdateReturnPeriodService, MockVatCustomerDetailsRetrievalService}
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
 import scala.concurrent.Future
 
-class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateReturnPeriodService with MockVatCustomerDetailsRetrievalService{
+class UpdateReturnPeriodControllerSpec extends TestUtil with MockVatAuthorised
+  with MockUpdateReturnPeriodService with MockVatCustomerDetailsRetrievalService {
 
-  object TestUpdateReturnPeriodController
-    extends UpdateReturnPeriodController(mockVatAuthorised, mockUpdateReturnPeriodService, mockVatCustomerDetailsRetrievalService)
+  object TestUpdateReturnPeriodController extends UpdateReturnPeriodController(
+    mockVatAuthorised,
+    mockUpdateReturnPeriodService,
+    mockVatCustomerDetailsRetrievalService,
+    controllerComponents)
 
   val maRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MAReturnPeriod(None, None, None)))
   val mbRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(MBReturnPeriod(None, None, None)))

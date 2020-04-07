@@ -17,14 +17,14 @@
 package uk.gov.hmrc.vatsubscription.config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Mode.Mode
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
+import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.vatsubscription.config.featureSwitch.Features
 
 @Singleton
-class AppConfig @Inject()(implicit val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
-  override protected def mode: Mode = environment.mode
+class AppConfig @Inject()(implicit val configuration: Configuration, servicesConfig: ServicesConfig){
+
+  import servicesConfig._
 
   def desUrl: String =
     getString(

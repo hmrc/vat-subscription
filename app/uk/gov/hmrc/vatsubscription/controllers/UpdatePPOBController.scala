@@ -18,7 +18,8 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
 import uk.gov.hmrc.vatsubscription.services.{UpdatePPOBService, VatCustomerDetailsRetrievalService}
@@ -28,8 +29,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
                                      updatePPOBService: UpdatePPOBService,
-                                     vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService)
-                                    (implicit ec: ExecutionContext) extends MicroserviceBaseController {
+                                     vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
+                                     cc: ControllerComponents)
+                                    (implicit ec: ExecutionContext) extends BackendController(cc) with MicroserviceBaseController {
 
   def updatePPOB(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>

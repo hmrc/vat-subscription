@@ -63,7 +63,7 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
   def post[T](uri: String)(body: T)(implicit writes: Writes[T]): WSResponse = {
     await(
       buildClient(uri)
-        .withHeaders(
+        .withHttpHeaders(
           "Content-Type" -> "application/json",
           "X-Session-ID" -> "123456-session"
         )
@@ -74,7 +74,7 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
   def put[T](uri: String)(body: T)(implicit writes: Writes[T]): WSResponse = {
     await(
       buildClient(uri)
-        .withHeaders(
+        .withHttpHeaders(
           "Content-Type" -> "application/json",
           "X-Session-ID" -> "123456-session"
         )

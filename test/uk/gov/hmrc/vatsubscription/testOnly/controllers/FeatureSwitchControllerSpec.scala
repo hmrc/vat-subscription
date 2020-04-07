@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.testOnly.controllers
 
-import assets.TestUtil
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -24,12 +23,13 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.vatsubscription.config.featureSwitch._
 import uk.gov.hmrc.vatsubscription.testonly.controllers.FeatureSwitchController
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
 import scala.concurrent.Future
 
 class FeatureSwitchControllerSpec extends TestUtil {
 
-  private lazy val target = new FeatureSwitchController(mockAppConfig)
+  private lazy val target = new FeatureSwitchController(mockAppConfig, controllerComponents)
 
   "Calling the .get action" should {
 

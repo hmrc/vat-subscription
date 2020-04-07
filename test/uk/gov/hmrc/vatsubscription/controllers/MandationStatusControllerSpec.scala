@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
-import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, UnexpectedGetVatCustomerInformationFailure,
-  VatNumberNotFound, Forbidden, Migration}
+import uk.gov.hmrc.vatsubscription.connectors.{Forbidden, InvalidVatNumber, Migration,
+  UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
 import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
 import uk.gov.hmrc.vatsubscription.service.mocks.MockMandationStatusService
 
@@ -34,7 +34,7 @@ class MandationStatusControllerSpec extends TestUtil
   with MockAuthConnector with MockMandationStatusService {
 
   object TestMandationStatusController
-    extends MandationStatusController(mockAuthConnector, mockMandationStatusService)
+    extends MandationStatusController(mockAuthConnector, mockMandationStatusService, controllerComponents)
 
 
   "getMandationStatus" should {

@@ -16,22 +16,30 @@
 
 package uk.gov.hmrc.vatsubscription.controllers.actions
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.mvc.Result
 import play.api.mvc.Results._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments, InsufficientEnrolments}
 import uk.gov.hmrc.vatsubscription.config.Constants
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockAuthConnector
-import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testMtdVatEnrolment, testVatNumber}
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
 import scala.concurrent.Future
 
 
 class VatAuthorisedSpec extends TestUtil with MockAuthConnector {
 
-  object TestVatAuthorised extends VatAuthorised(mockAuthConnector, mockAppConfig)
+  object TestVatAuthorised extends VatAuthorised(mockAuthConnector, controllerComponents, mockAppConfig)
+
+  def mockAuthRetrieveCredentialsNone(predicate: Predicate = EmptyPredicate): Unit =
+    mockAuthorise(predicate = predicate, retrievals = retrievals)(
+      Future.successful(
+        new ~ (Enrolments(Set(testMtdVatEnrolment)), None)
+      )
+    )
 
   def result: Future[Result] = TestVatAuthorised.async(testVatNumber) {
     implicit user =>
@@ -52,6 +60,13 @@ class VatAuthorisedSpec extends TestUtil with MockAuthConnector {
         "Successfully authenticate and process the request" in {
           mockAuthRetrieveMtdVatEnrolled(authPredicate)
           status(result) shouldBe OK
+        }
+      }
+      "unable to retrieve Credentials.providerId from auth profile" should {
+
+        "Return a forbidden response" in {
+          mockAuthRetrieveCredentialsNone(authPredicate)
+          status(result) shouldBe FORBIDDEN
         }
       }
 

@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.vatsubscription.connectors
 
-import assets.TestUtil
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.config.featureSwitch.Api1363R8
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 
