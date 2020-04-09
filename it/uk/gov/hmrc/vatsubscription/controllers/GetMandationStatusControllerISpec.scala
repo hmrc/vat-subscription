@@ -23,14 +23,14 @@ import uk.gov.hmrc.vatsubscription.helpers.IntegrationTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.AuthStub._
 import uk.gov.hmrc.vatsubscription.helpers.servicemocks.GetVatCustomerInformationStub._
 import uk.gov.hmrc.vatsubscription.helpers.{ComponentSpecBase, CustomMatchers}
-import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
+import uk.gov.hmrc.vatsubscription.models.MTDfB
 
 class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
   val testSuccessResponse: JsObject = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
-        "mandationStatus" -> "1",
+        "mandationStatus" -> MTDfB.desValue,
         "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
@@ -65,7 +65,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
 
         res should have(
           httpStatus(OK),
-          jsonBodyAs(Json.obj("mandationStatus" -> MTDfBMandated.value))
+          jsonBodyAs(Json.obj("mandationStatus" -> MTDfB.value))
         )
       }
     }

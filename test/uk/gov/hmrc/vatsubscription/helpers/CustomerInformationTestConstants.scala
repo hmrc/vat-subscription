@@ -28,8 +28,7 @@ import uk.gov.hmrc.vatsubscription.models._
 
 object CustomerInformationTestConstants {
 
-  val mandationStatusCode = "1"
-  val mandationStatus = "MTDfB Mandated"
+  val mandationStatusCode = "2"
   val regReason = "0001"
   val effectiveDate = "1967-08-13"
   val startDate = "1967-08-13"
@@ -156,7 +155,7 @@ object CustomerInformationTestConstants {
         "welshIndicator" -> false,
         "isPartialMigration" -> false,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
-        "partyType" -> "Z1",
+        "partyType" -> "50",
         "overseasIndicator" -> false
       ),
       "PPOB" -> Json.obj(
@@ -179,6 +178,12 @@ object CustomerInformationTestConstants {
         ),
         "websiteAddress" -> website
       ),
+      "flatRateScheme" -> Json.obj(
+        "FRSCategory" -> frsCategory,
+        "FRSPercentage" -> frsPercentage,
+        "limitedCostTrader" -> frsLimitedCostTrader,
+        "startDate" -> frsStartDate
+      ),
       "deregistration" -> Json.obj(
         "deregistrationReason" -> reason,
         "effectDateOfCancellation" -> cancellationDate,
@@ -192,8 +197,7 @@ object CustomerInformationTestConstants {
       "returnPeriod" -> returnPeriodMCJson,
       "businessActivities" -> Json.obj(
         "primaryMainCode" -> "00001",
-        "mainCode2" -> "00002",
-        "mainCode2" -> "00003"
+        "mainCode2" -> "00002"
       )
     ),
     "inFlightInformation" -> Json.obj(
@@ -382,7 +386,7 @@ object CustomerInformationTestConstants {
       "effectDateOfCancellation" -> cancellationDate,
       "lastReturnDueDate" -> lastReturnDate
     ),
-    "mandationStatus" -> mandationStatus,
+    "mandationStatus" -> MTDfB.value,
     "ppob" -> Json.obj(
       "address" -> Json.obj(
         "line1" -> addLine1,
@@ -436,14 +440,14 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> mandationStatus
+      "mandationStatus" -> MTDfB.value
     ),
     "partyType" -> partyType,
     "primaryMainCode" -> "00004"
   )
 
   val customerInformationOutputJsonMax: JsValue = Json.obj(
-    "mandationStatus" -> mandationStatus,
+    "mandationStatus" -> MTDfB.value,
     "customerDetails" -> Json.obj(
       "firstName" -> firstName,
       "hasFlatRateScheme" -> false,
@@ -519,13 +523,13 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> mandationStatus
+      "mandationStatus" -> MTDfB.value
     ),
     "primaryMainCode" -> "00005"
   )
 
   val customerInformationOutputJsonMaxWithTrueOverseas: JsValue = Json.obj(
-    "mandationStatus" -> mandationStatus,
+    "mandationStatus" -> MTDfB.value,
     "customerDetails" -> Json.obj(
       "firstName" -> firstName,
       "hasFlatRateScheme" -> false,
@@ -601,14 +605,14 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> mandationStatus
+      "mandationStatus" -> MTDfB.value
     ),
     "primaryMainCode" -> "00006"
   )
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
     "customerDetails" -> customerDetailsJsonMin,
-    "mandationStatus" -> "MTDfB Mandated",
+    "mandationStatus" -> MTDfB.value,
     "ppob" -> Json.obj(
       "address" -> Json.obj(
         "line1" -> addLine1,
@@ -624,7 +628,7 @@ object CustomerInformationTestConstants {
   )
 
   val manageAccountSummaryOutputJsonMax: JsValue = Json.obj(
-    "mandationStatus" -> mandationStatus,
+    "mandationStatus" -> MTDfBVoluntary.value,
     "ppobAddress" -> Json.obj(
       "line1" -> addLine1,
       "line2" -> addLine2,
@@ -648,7 +652,7 @@ object CustomerInformationTestConstants {
   )
 
   val manageAccountSummaryOutputJsonMin: JsValue = Json.obj(
-    "mandationStatus" -> mandationStatus,
+    "mandationStatus" -> MTDfB.value,
     "ppobAddress" -> Json.obj(
       "line1" -> addLine1,
       "line2" -> addLine2,
@@ -666,7 +670,7 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationModelMaxWithFRS: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated,
+    MTDfB,
     customerDetailsModelMaxWithFRS,
     Some(frsModelMax),
     ppobModelMax,
@@ -684,14 +688,14 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfBMandated)
+      Some(MTDfB)
     )),
     Some(UKCompanyType),
     "00004"
   )
 
   val customerInformationModelMinWithFRS: VatCustomerInformation = VatCustomerInformation(
-    mandationStatus = MTDfBMandated,
+    mandationStatus = MTDfB,
     customerDetails = customerDetailsModelMaxWithFRS,
     flatRateScheme = None,
     ppob = ppobModelMin,
@@ -704,7 +708,7 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationModelMinWithOverseas: VatCustomerInformation = VatCustomerInformation(
-    mandationStatus = MTDfBMandated,
+    mandationStatus = MTDfB,
     customerDetails = customerDetailsModelMaxWithTrueOverseas,
     flatRateScheme = None,
     ppob = ppobModelMin,
@@ -717,7 +721,7 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationModelMax: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated,
+    MTDfB,
     customerDetailsModelMax,
     None,
     ppobModelMax,
@@ -735,14 +739,14 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfBMandated)
+      Some(MTDfB)
     )),
     None,
     "00005"
   )
 
   val customerInformationModelMaxWithTrueOverseas: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated,
+    MTDfB,
     customerDetailsModelMaxWithTrueOverseas,
     None,
     ppobModelMax,
@@ -760,14 +764,14 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfBMandated)
+      Some(MTDfB)
     )),
     None,
     "00006"
   )
 
   val manageAccountModelMax: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated,
+    MTDfBVoluntary,
     customerDetailsModelMax,
     None,
     ppobModelMax,
@@ -785,16 +789,16 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfBMandated)
+      Some(MTDfBVoluntary)
     )),
     Some(UKCompanyType),
     "00007"
   )
 
   val customerInformationModelMaxR8: VatCustomerInformation = VatCustomerInformation(
-    MTDfBMandated,
-    customerDetailsModelMaxR8,
-    None,
+    MTDfBVoluntary,
+    customerDetailsModelMaxR8.copy(hasFlatRateScheme = true),
+    Some(frsModelMax),
     ppobModelMax,
     Some(bankDetailsModelMax),
     Some(MCReturnPeriod(None, None, None)),
@@ -812,12 +816,13 @@ object CustomerInformationTestConstants {
       Some(MMReturnPeriod(None, None, None)),
       None
     )),
-    Some(IndividualZ1Type),
+    Some(UKCompanyType),
     "00001"
   )
 
+
   val customerInformationModelNoWelshIndicator: VatCustomerInformation = VatCustomerInformation(
-    mandationStatus = MTDfBMandated,
+    mandationStatus = MTDfB,
     customerDetails = customerDetailsModelNoWelshIndicator,
     flatRateScheme = None,
     ppob = ppobModelMax,
@@ -830,7 +835,7 @@ object CustomerInformationTestConstants {
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
-    mandationStatus = MTDfBMandated,
+    mandationStatus = MTDfB,
     customerDetails = CustomerDetails(
       firstName = None,
       lastName = None,
@@ -850,6 +855,9 @@ object CustomerInformationTestConstants {
     pendingChanges = None,
     primaryMainCode = "00010"
   )
+
+  val customerInformationModelMinR8: VatCustomerInformation =
+    customerInformationModelMin.copy(mandationStatus = MTDfBVoluntary)
 
   val inFlightChanges: JsObject = Json.obj(
     "PPOBDetails" -> Json.obj(
@@ -894,7 +902,7 @@ object CustomerInformationTestConstants {
 
   //Release 8 data -- Separated for ease of deletion
 
-  val customerInformationOutputJsonMaxWithFRSR8: JsValue = Json.obj(
+  val customerInformationOutputJsonMaxR8: JsValue = Json.obj(
     "bankDetails" -> Json.obj(
       "accountHolderName" -> accName,
       "bankAccountNumber" -> accNum,
@@ -907,7 +915,7 @@ object CustomerInformationTestConstants {
       "organisationName" -> orgName,
       "tradingName" -> tradingName,
       "vatRegistrationDate" -> effectiveDate,
-      "welshIndicator" -> true,
+      "welshIndicator" -> false,
       "isPartialMigration" -> false,
       "customerMigratedToETMPDate" -> customerMigratedToETMPDate
     ),
@@ -922,7 +930,7 @@ object CustomerInformationTestConstants {
       "effectDateOfCancellation" -> cancellationDate,
       "lastReturnDueDate" -> lastReturnDate
     ),
-    "mandationStatus" -> mandationStatus,
+    "mandationStatus" -> MTDfBVoluntary.value,
     "ppob" -> Json.obj(
       "address" -> Json.obj(
         "line1" -> addLine1,
@@ -975,16 +983,15 @@ object CustomerInformationTestConstants {
         "bankAccountNumber" -> accNum,
         "sortCode" -> accSort
       ),
-      "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> mandationStatus
+      "returnPeriod" -> returnPeriodMMJson
     ),
     "partyType" -> partyType,
-    "primaryMainCode" -> "00004"
+    "primaryMainCode" -> "00001"
   )
 
   val customerInformationOutputJsonMinR8: JsValue = Json.obj(
     "customerDetails" -> customerDetailsJsonMinR8,
-    "mandationStatus" -> "MTDfB Mandated",
+    "mandationStatus" -> MTDfBVoluntary.value,
     "ppob" -> Json.obj(
       "address" -> Json.obj(
         "line1" -> addLine1,
@@ -1000,7 +1007,7 @@ object CustomerInformationTestConstants {
   )
 
   val manageAccountSummaryOutputJsonMaxR8: JsValue = Json.obj(
-    "mandationStatus" -> mandationStatus,
+    "mandationStatus" -> MTDfBVoluntary.value,
     "ppobAddress" -> Json.obj(
       "line1" -> addLine1,
       "line2" -> addLine2,
@@ -1023,7 +1030,7 @@ object CustomerInformationTestConstants {
   )
 
   val manageAccountSummaryOutputJsonMinR8: JsValue = Json.obj(
-    "mandationStatus" -> mandationStatus,
+    "mandationStatus" -> MTDfBVoluntary.value,
     "ppobAddress" -> Json.obj(
       "line1" -> addLine1,
       "line2" -> addLine2,

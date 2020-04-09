@@ -19,6 +19,7 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, Writes, __}
 import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.models.MandationStatus.{desReader, desReaderOld}
 import uk.gov.hmrc.vatsubscription.models.ReturnPeriod.filterReturnPeriod
 import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
 
@@ -39,7 +40,9 @@ object PendingChanges {
     ppob <- ppobPath.readNullable[PPOBGet]
     bankDetails <- bankDetailsPath.readNullable[BankDetails]
     returnPeriod <- returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.inFlightReads)
-    mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus].orElse(Reads.pure(None))
+    mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus](
+      if (conf.features.newStatusIndicators()) desReader else desReaderOld
+    ).orElse(Reads.pure(None))
   } yield PendingChanges(
     ppob,
     bankDetails,

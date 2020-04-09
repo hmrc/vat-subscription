@@ -221,7 +221,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil with MockVatAuth
             mockAppConfig.features.api1363Version.apply(Api1363R8)
 
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMin)))
+            mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMinR8)))
 
             val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
 

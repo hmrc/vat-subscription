@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
+import assets.TestUtil
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
-import uk.gov.hmrc.vatsubscription.models.MTDfBMandated
+import uk.gov.hmrc.vatsubscription.models.{MTDfBExempt, MTDfBMandated}
 
-class UpdateVatSubscriptionSpec extends UnitSpec {
+class UpdateVatSubscriptionSpec extends TestUtil {
 
   "UpdateVatSubscription" when {
 
@@ -30,22 +30,26 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
       "for the current DES API1365 writes" should {
 
         "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-          UpdateVatSubscription.DESApi1365WritesR7.writes(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionCurrentDESApi1365JsonMax
+          UpdateVatSubscription.DESApi1365WritesR7.writes(updateVatSubscriptionModelMax) shouldBe
+            updateVatSubscriptionCurrentDESApi1365JsonMax
         }
 
         "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-          UpdateVatSubscription.DESApi1365WritesR7.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionCurrentDESApi1365JsonMin
+          UpdateVatSubscription.DESApi1365WritesR7.writes(updateVatSubscriptionModelMin) shouldBe
+            updateVatSubscriptionCurrentDESApi1365JsonMin
         }
       }
 
       "for the latest DES API1365 writes" should {
 
         "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-          UpdateVatSubscription.DESApi1365WritesR11.writes(updateVatSubscriptionModelMax) shouldBe updateVatSubscriptionLatestDESApi1365JsonMax
+          UpdateVatSubscription.DESApi1365WritesR11.writes(updateVatSubscriptionModelMax) shouldBe
+            updateVatSubscriptionLatestDESApi1365JsonMax
         }
 
         "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-          UpdateVatSubscription.DESApi1365WritesR11.writes(updateVatSubscriptionModelMin) shouldBe updateVatSubscriptionLatestDESApi1365JsonMin
+          UpdateVatSubscription.DESApi1365WritesR11.writes(updateVatSubscriptionModelMin) shouldBe
+            updateVatSubscriptionLatestDESApi1365JsonMin
         }
       }
     }
@@ -56,7 +60,8 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
     "serializing to JSON" should {
 
       "Output the correct JSON for the full model" in {
-        Json.toJson(ControlInformation(welshIndicator = true, mandationStatus = Some(MTDfBMandated))) shouldBe controlInformationJsonMax
+        Json.toJson(ControlInformation(welshIndicator = true, mandationStatus = Some(MTDfBExempt))) shouldBe
+          controlInformationJsonMax
       }
 
       "Output the correct JSON for the model without the optional fields" in {
@@ -66,12 +71,29 @@ class UpdateVatSubscriptionSpec extends UnitSpec {
 
     "reading from JSON" should {
 
-      "Output the correct model with all optional values from the provided JSON" in {
-        ControlInformation.reads.reads(controlInformationJsonMax).get shouldBe ControlInformation(welshIndicator = true, mandationStatus = Some(MTDfBMandated))
+      "Output the correct model with all optional values from the provided JSON" when {
+
+        "the newStatusIndicators feature is on" in {
+          ControlInformation.reads(mockAppConfig).reads(controlInformationJsonMax).get shouldBe
+            ControlInformation(
+              welshIndicator = true,
+              mandationStatus = Some(MTDfBExempt)
+            )
+        }
+
+        "the newStatusIndicators feature is off" in {
+          mockAppConfig.features.newStatusIndicators(false)
+          ControlInformation.reads(mockAppConfig).reads(controlInformationJsonMax).get shouldBe
+            ControlInformation(
+              welshIndicator = true,
+              mandationStatus = Some(MTDfBMandated)
+            )
+        }
       }
 
       "Output the correct model with no optional values from the provided JSON" in {
-        ControlInformation.reads.reads(controlInformationJsonMin).get shouldBe ControlInformation(welshIndicator = true)
+        ControlInformation.reads(mockAppConfig).reads(controlInformationJsonMin).get shouldBe
+          ControlInformation(welshIndicator = true)
       }
     }
   }

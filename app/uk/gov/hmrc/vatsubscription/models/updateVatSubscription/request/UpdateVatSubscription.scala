@@ -18,9 +18,10 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.MandationStatus
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.DeregistrationInfo
-import uk.gov.hmrc.vatsubscription.models.MandationStatus.desWriter
+import uk.gov.hmrc.vatsubscription.models.MandationStatus.{desReader, desReaderOld, desWriter}
 
 case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
                                  controlInformation: ControlInformation,
@@ -37,14 +38,13 @@ object UpdateVatSubscription {
 
   def writes(requestedChangesWrites: Writes[RequestedChanges]): Writes[UpdateVatSubscription] = (
     (__ \ "messageType").write[String] and
-      (__ \ "controlInformation").write[ControlInformation] and
-      (__ \ "requestedChange").write[RequestedChanges](requestedChangesWrites) and
-      (__ \ "contactDetails").writeNullable[UpdatedPPOB] and
-      (__ \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
-      (__ \ "deregistrationInfo").writeNullable[DeregistrationInfo] and
-      (__ \ "declaration").write[Declaration]
-    ) (unlift(UpdateVatSubscription.unapply))
-
+    (__ \ "controlInformation").write[ControlInformation] and
+    (__ \ "requestedChange").write[RequestedChanges](requestedChangesWrites) and
+    (__ \ "contactDetails").writeNullable[UpdatedPPOB] and
+    (__ \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
+    (__ \ "deregistrationInfo").writeNullable[DeregistrationInfo] and
+    (__ \ "declaration").write[Declaration]
+  ) (unlift(UpdateVatSubscription.unapply))
 }
 
 case class ControlInformation(welshIndicator: Boolean,
@@ -56,15 +56,17 @@ object ControlInformation {
   private val sourcePath = JsPath \ "source"
   private val mandationStatusPath = JsPath \ "mandationStatus"
 
-  implicit val reads: Reads[ControlInformation] = for {
+  implicit val reads: AppConfig => Reads[ControlInformation] = conf => for {
     welshIndicator <- welshIndicatorPath.read[Boolean]
     source <- sourcePath.read[String]
-    mandationStatus <- mandationStatusPath.readNullable[MandationStatus]
+    mandationStatus <- mandationStatusPath.readNullable[MandationStatus](
+      if (conf.features.newStatusIndicators()) desReader else desReaderOld
+    )
   } yield ControlInformation(welshIndicator, source, mandationStatus)
 
   implicit val writes: Writes[ControlInformation] = (
     welshIndicatorPath.write[Boolean] and
-      sourcePath.write[String] and
-      mandationStatusPath.writeNullable[MandationStatus](desWriter)
-    ) (unlift(ControlInformation.unapply))
+    sourcePath.write[String] and
+    mandationStatusPath.writeNullable[MandationStatus](desWriter)
+  ) (unlift(ControlInformation.unapply))
 }

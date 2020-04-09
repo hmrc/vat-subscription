@@ -27,7 +27,7 @@ class CustomerDetailsSpec extends UnitSpec {
     }
 
     "parse the json correctly when all optional fields are populated for release 8" in {
-      CustomerDetails.cdReaderR8.reads(customerDetailsJsonMax).get shouldBe customerDetailsModelMaxR8
+      CustomerDetails.cdReaderR8.reads(customerDetailsJsonMaxR8).get shouldBe customerDetailsModelMaxR8
     }
 
     "parse the json correctly when no fields are supplied for release 10" in {
@@ -49,7 +49,7 @@ class CustomerDetailsSpec extends UnitSpec {
     }
 
     "output a fully populated CustomerDetails object with all fields populated for release 8 (no overseas indicator in written Json)" in {
-      CustomerDetails.cdWriter(false).writes(customerDetailsModelMax) shouldBe customerDetailsJsonMaxR8
+      CustomerDetails.cdWriter(false).writes(customerDetailsModelMaxR8) shouldBe customerDetailsJsonMaxR8
     }
 
     "an empty json object when an empty CustomerDetails object is marshalled for release 10" in {

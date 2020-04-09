@@ -51,6 +51,20 @@ class MandationStatusSpec extends UnitSpec {
           MandationStatus.writer.writes(NonDigital).validate[String].get shouldBe "Non Digital"
         }
       }
+
+      "a MTDfBExempt value is passed through" should {
+
+        "return the correct value" in {
+          MandationStatus.writer.writes(MTDfBExempt).validate[String].get shouldBe "MTDfB Exempt"
+        }
+      }
+
+      "a MTDfB value is passed through" should {
+
+        "return the correct value" in {
+          MandationStatus.writer.writes(MTDfB).validate[String].get shouldBe "MTDfB"
+        }
+      }
     }
 
     "desWriter" when {
@@ -80,6 +94,20 @@ class MandationStatusSpec extends UnitSpec {
 
         "return the correct value" in {
           MandationStatus.desWriter.writes(NonDigital).validate[String].get shouldBe "4"
+        }
+      }
+
+      "a MTDfBExempt value is passed through" should {
+
+        "return the correct value" in {
+          MandationStatus.desWriter.writes(MTDfBExempt).validate[String].get shouldBe "1"
+        }
+      }
+
+      "a MTDfB value is passed through" should {
+
+        "return the correct value" in {
+          MandationStatus.desWriter.writes(MTDfB).validate[String].get shouldBe "2"
         }
       }
     }

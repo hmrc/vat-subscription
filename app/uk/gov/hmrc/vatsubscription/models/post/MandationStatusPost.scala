@@ -16,13 +16,18 @@
 
 package uk.gov.hmrc.vatsubscription.models.post
 
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.models.MandationStatus
+import uk.gov.hmrc.vatsubscription.models.MandationStatus.desReader
 
 case class MandationStatusPost(mandationStatus: MandationStatus,
                                transactorOrCapacitorEmail: Option[String])
 
 object MandationStatusPost {
 
-  implicit val reads: Reads[MandationStatusPost] = Json.reads[MandationStatusPost]
+  implicit val reads: Reads[MandationStatusPost] = (
+    (__ \ "mandationStatus").read[MandationStatus](desReader) and
+    (__ \ "transactorOrCapacitorEmail").readNullable[String]
+  )(MandationStatusPost.apply _)
 }

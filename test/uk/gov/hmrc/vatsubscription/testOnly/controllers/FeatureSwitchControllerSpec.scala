@@ -45,7 +45,12 @@ class FeatureSwitchControllerSpec extends TestUtil {
 
     "return feature switch configuration" in {
       await(jsonBodyOf(result)) shouldEqual Json.toJson(
-        FeatureSwitchModel(Api1365Version = Api1365R7, Api1363Version = Api1363R10, enableAnnualAccounting = true))
+        FeatureSwitchModel(
+          Api1365Version = Api1365R7,
+          Api1363Version = Api1363R10,
+          enableAnnualAccounting = true,
+          newStatusIndicators = true
+        ))
     }
   }
 
@@ -54,8 +59,9 @@ class FeatureSwitchControllerSpec extends TestUtil {
     val body = Json.toJson(FeatureSwitchModel(
       Api1365Version = Api1365R7,
       Api1363Version = Api1363R8,
-      enableAnnualAccounting = true)
-    )
+      enableAnnualAccounting = true,
+      newStatusIndicators = true
+    ))
 
     val result = call(target.update(), FakeRequest(POST, "")
       .withHeaders((CONTENT_TYPE, "application/json"))

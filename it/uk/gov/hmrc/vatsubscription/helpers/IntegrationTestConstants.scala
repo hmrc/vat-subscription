@@ -32,7 +32,7 @@ object IntegrationTestConstants {
   val firstName = "Fred"
   val lastName = "Flintstone"
   val middleName = "M"
-  val mandationStatus = "1"
+  val mandationStatus = "2"
   val regReason = "0001"
   val effectiveDate = "1967-08-13"
   val startDate = "1967-08-13"
@@ -190,7 +190,7 @@ object IntegrationTestConstants {
   val testVatNumber: String = UUID.randomUUID().toString
   val testArn: String = UUID.randomUUID().toString
 
-  val ppobAddressModelMax = PPOBAddressGet(
+  val ppobAddressModelMax: PPOBAddressGet = PPOBAddressGet(
     addLine1,
     Some(addLine2),
     Some(addLine3),
@@ -200,7 +200,7 @@ object IntegrationTestConstants {
     countryCode
   )
 
-  val ppobAddressModelMaxPost = PPOBAddressPost(
+  val ppobAddressModelMaxPost: PPOBAddressPost = PPOBAddressPost(
     addLine1,
     Some(addLine2),
     Some(addLine3),
@@ -210,7 +210,7 @@ object IntegrationTestConstants {
     countryCode
   )
 
-  val contactDetailsModelMax = ContactDetails(
+  val contactDetailsModelMax: ContactDetails = ContactDetails(
     Some(phoneNumber),
     Some(mobileNumber),
     Some(faxNumber),
@@ -218,7 +218,12 @@ object IntegrationTestConstants {
     Some(emailVerified)
   )
 
-  val ppobModelEmailMaxPost = EmailPost(ppobAddressModelMaxPost, contactDetailsModelMax, Some(website))
-  val ppobModelMax = PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
-  val ppobModelMaxPost = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website), Some(agentEmail))
+  val ppobModelEmailMaxPost: EmailPost =
+    EmailPost(ppobAddressModelMaxPost, contactDetailsModelMax, Some(website))
+
+  val ppobModelMax: PPOBGet =
+    PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
+
+  val ppobModelMaxPost: PPOBPost =
+    PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website), Some(agentEmail))
 }

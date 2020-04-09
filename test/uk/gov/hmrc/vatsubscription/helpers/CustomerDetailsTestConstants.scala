@@ -22,7 +22,7 @@ import uk.gov.hmrc.vatsubscription.models.CustomerDetails
 
 object CustomerDetailsTestConstants {
 
-  val customerDetailsModelMin = CustomerDetails(
+  val customerDetailsModelMin: CustomerDetails = CustomerDetails(
     None,
     None,
     None,
@@ -34,7 +34,7 @@ object CustomerDetailsTestConstants {
     overseasIndicator = false
   )
 
-  val customerDetailsModelMax = CustomerDetails(
+  val customerDetailsModelMax: CustomerDetails = CustomerDetails(
     Some(firstName),
     Some(lastName),
     Some(orgName),
@@ -46,7 +46,7 @@ object CustomerDetailsTestConstants {
     overseasIndicator = false
   )
 
-  val customerDetailsModelMaxWithTrueOverseas = CustomerDetails(
+  val customerDetailsModelMaxWithTrueOverseas: CustomerDetails = CustomerDetails(
     Some(firstName),
     Some(lastName),
     Some(orgName),
@@ -58,7 +58,7 @@ object CustomerDetailsTestConstants {
     overseasIndicator = true
   )
 
-  val customerDetailsModelMaxWithFRS = CustomerDetails(
+  val customerDetailsModelMaxWithFRS: CustomerDetails = CustomerDetails(
     Some(firstName),
     Some(lastName),
     Some(orgName),
@@ -71,7 +71,7 @@ object CustomerDetailsTestConstants {
     overseasIndicator = false
   )
 
-  val customerDetailsModelNoWelshIndicator = CustomerDetails(
+  val customerDetailsModelNoWelshIndicator: CustomerDetails = CustomerDetails(
     Some(firstName),
     Some(lastName),
     Some(orgName),
@@ -130,7 +130,7 @@ object CustomerDetailsTestConstants {
 
   ////////////////////////////Release 8 data -- Separated for easy removal
 
-  val customerDetailsModelMinR8 = CustomerDetails(
+  val customerDetailsModelMinR8: CustomerDetails = CustomerDetails(
     None,
     None,
     None,
@@ -142,7 +142,7 @@ object CustomerDetailsTestConstants {
     overseasIndicator = false
   )
 
-  val customerDetailsModelMaxR8 = CustomerDetails(
+  val customerDetailsModelMaxR8: CustomerDetails = CustomerDetails(
     Some(firstName),
     Some(lastName),
     Some(orgName),
@@ -151,7 +151,8 @@ object CustomerDetailsTestConstants {
     welshIndicator = Some(false),
     isPartialMigration = false,
     customerMigratedToETMPDate = Some("2019-01-01"),
-    overseasIndicator = false
+    overseasIndicator = false,
+    hasFlatRateScheme = true
   )
 
   val customerDetailsJsonMaxR8: JsValue = Json.obj(
@@ -160,7 +161,7 @@ object CustomerDetailsTestConstants {
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
     "vatRegistrationDate" -> effectiveDate,
-    "hasFlatRateScheme" -> false,
+    "hasFlatRateScheme" -> true,
     "welshIndicator" -> false,
     "isPartialMigration" -> false,
     "customerMigratedToETMPDate" -> customerMigratedToETMPDate

@@ -157,7 +157,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       "return OK with the status" in {
 
         val expectedCustomerInformationModel = VatCustomerInformation(
-          MTDfBMandated,
+          MTDfB,
           CustomerDetails(
             firstName = Some(firstName),
             lastName = Some(lastName),
@@ -239,7 +239,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accSort)
             )),
             Some(MCReturnPeriod(None, None, None)),
-            Some(MTDfBMandated)
+            Some(MTDfB)
           )),
           Some(UKCompanyType),
           primaryMainCode = "00001"
@@ -341,7 +341,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       "return OK with the status" in {
 
         val expectedCustomerInformationModel = VatCustomerInformation(
-          MTDfBMandated,
+          MTDfB,
           CustomerDetails(
             firstName = Some(firstName),
             lastName = Some(lastName),
@@ -423,7 +423,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accSort)
             )),
             Some(MCReturnPeriod(None, None, None)),
-            Some(MTDfBMandated)
+            Some(MTDfB)
           )),
           partyType = Some(UKCompanyType),
           primaryMainCode = "00003"
