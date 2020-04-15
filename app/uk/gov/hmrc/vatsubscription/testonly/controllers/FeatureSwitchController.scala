@@ -31,6 +31,7 @@ class FeatureSwitchController @Inject()(appConfig: AppConfig) extends BaseContro
     appConfig.features.api1365Version(req.body.Api1365Version)
     appConfig.features.api1363Version(req.body.Api1363Version)
     appConfig.features.enableAnnualAccounting(req.body.enableAnnualAccounting)
+    appConfig.features.newStatusIndicators(req.body.newStatusIndicators)
     result
   }
 
@@ -38,7 +39,8 @@ class FeatureSwitchController @Inject()(appConfig: AppConfig) extends BaseContro
     Ok(Json.toJson(FeatureSwitchModel(
       Api1365Version = appConfig.features.api1365Version(),
       Api1363Version = appConfig.features.api1363Version(),
-      enableAnnualAccounting = appConfig.features.enableAnnualAccounting()
+      enableAnnualAccounting = appConfig.features.enableAnnualAccounting(),
+      newStatusIndicators = appConfig.features.newStatusIndicators()
     )))
   }
 }

@@ -24,19 +24,37 @@ import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 
 class PendingChangesSpec extends TestUtil {
 
-  "newReads" when {
+  "PendingChanges" when {
 
-    "all optional fields are populated" should {
+    "all optional fields are populated" when {
 
-      val model = PendingChanges(
-        Some(ppobModelMax),
-        Some(bankDetailsModelMax),
-        Some(MAReturnPeriod(None, None, None)),
-        Some(MTDfBMandated)
-      )
+      "the newStatusIndicators feature is on" should {
 
-      "parse the json correctly" in {
-        PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldEqual model
+        val model = PendingChanges(
+          Some(ppobModelMax),
+          Some(bankDetailsModelMax),
+          Some(MAReturnPeriod(None, None, None)),
+          Some(MTDfB)
+        )
+
+        "parse the json correctly" in {
+          PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldEqual model
+        }
+      }
+
+      "the newStatusIndicators feature is off" should {
+
+        val model = PendingChanges(
+          Some(ppobModelMax),
+          Some(bankDetailsModelMax),
+          Some(MAReturnPeriod(None, None, None)),
+          Some(MTDfBVoluntary)
+        )
+
+        "parse the json correctly" in {
+          mockAppConfig.features.newStatusIndicators(false)
+          PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldEqual model
+        }
       }
     }
 

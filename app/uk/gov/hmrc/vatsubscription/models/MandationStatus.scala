@@ -33,24 +33,39 @@ case object MTDfBVoluntary extends MandationStatus {
   override val value: String = "MTDfB Voluntary"
 }
 
-
 case object NonMTDfB extends MandationStatus {
   override val desValue: String = "3"
   override val value: String = "Non MTDfB"
 }
-
 
 case object NonDigital extends MandationStatus {
   override val desValue: String = "4"
   override val value: String = "Non Digital"
 }
 
+case object MTDfBExempt extends MandationStatus {
+  override val desValue: String = "1"
+  override val value: String = "MTDfB Exempt"
+}
+
+case object MTDfB extends MandationStatus {
+  override val desValue: String = "2"
+  override val value: String = "MTDfB"
+}
+
 
 object MandationStatus {
 
-  implicit val desReader: Reads[MandationStatus] = JsPath.read[String].map {
+  val desReaderOld: Reads[MandationStatus] = JsPath.read[String].map {
     case MTDfBMandated.`desValue` => MTDfBMandated
     case MTDfBVoluntary.`desValue` => MTDfBVoluntary
+    case NonMTDfB.`desValue` => NonMTDfB
+    case NonDigital.`desValue` => NonDigital
+  }
+
+  val desReader: Reads[MandationStatus] = JsPath.read[String].map {
+    case MTDfBExempt.`desValue` => MTDfBExempt
+    case MTDfB.`desValue` => MTDfB
     case NonMTDfB.`desValue` => NonMTDfB
     case NonDigital.`desValue` => NonDigital
   }

@@ -41,11 +41,11 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRS))
+        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxR8))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Right(customerInformationModelMaxWithFRS)
+        res shouldBe Right(customerInformationModelMaxR8)
       }
 
       "parse an OK response with an invalid json as a UnexpectedGetVatCustomerInformationFailure" in {

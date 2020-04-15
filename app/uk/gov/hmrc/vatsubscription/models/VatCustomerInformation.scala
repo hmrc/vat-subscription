@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
+import MandationStatus.{desReader, desReaderOld}
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
@@ -91,7 +92,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
     vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     customerMigratedToETMPDate <- (customerDetailsPath \ customerMigratedToETMPDateKey).readOpt[String]
-    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus](desReaderOld)
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
@@ -135,7 +136,9 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
     vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     customerMigratedToETMPDate <- (customerDetailsPath \ customerMigratedToETMPDateKey).readOpt[String]
-    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus]
+    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus](
+      if (conf.features.newStatusIndicators()) desReader else desReaderOld
+    )
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]

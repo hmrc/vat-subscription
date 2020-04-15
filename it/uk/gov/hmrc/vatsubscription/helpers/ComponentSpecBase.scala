@@ -40,7 +40,8 @@ trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with Wiremo
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
-    "microservice.services.des.url" -> mockUrl
+    "microservice.services.des.url" -> mockUrl,
+    "feature-switch.newStatusIndicators" -> "true"
   )
 
   override def beforeAll(): Unit = {
