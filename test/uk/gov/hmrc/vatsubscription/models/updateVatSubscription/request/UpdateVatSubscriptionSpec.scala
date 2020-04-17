@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import assets.TestUtil
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
 import uk.gov.hmrc.vatsubscription.models.{MTDfBExempt, MTDfBMandated}
