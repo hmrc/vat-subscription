@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.vatsubscription.service
 
-import assets.TestUtil
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelEmailMaxPost

@@ -18,12 +18,13 @@ package uk.gov.hmrc.vatsubscription.testonly.controllers
 
 import javax.inject.Inject
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.config.featureSwitch.FeatureSwitchModel
 
-class FeatureSwitchController @Inject()(appConfig: AppConfig) extends BaseController {
+class FeatureSwitchController @Inject()(appConfig: AppConfig,
+                                        cc: ControllerComponents) extends BackendController(cc) {
 
   val get: Action[AnyContent] = Action { implicit request => result }
 

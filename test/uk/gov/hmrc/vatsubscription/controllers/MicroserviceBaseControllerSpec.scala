@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import assets.TestUtil
 import play.api.libs.json.Json
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobPostExample, ppobPostExampleJson}
 import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
@@ -26,7 +27,7 @@ import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorMo
 class MicroserviceBaseControllerSpec extends TestUtil {
 
   object TestMicroserviceBaseController
-    extends MicroserviceBaseController
+    extends BackendController(controllerComponents) with MicroserviceBaseController
 
   "the parseJsonBody() method" when {
 

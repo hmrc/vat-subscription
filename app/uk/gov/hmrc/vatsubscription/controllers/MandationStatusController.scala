@@ -19,20 +19,21 @@ package uk.gov.hmrc.vatsubscription.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, Migration,
-  UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResponse}
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure,
+  VatNumberNotFound, Forbidden => ForbiddenResponse}
 import uk.gov.hmrc.vatsubscription.services.MandationStatusService
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class MandationStatusController @Inject()(val authConnector: AuthConnector,
-                                          mandationStatusService: MandationStatusService
-                                         )(implicit ec: ExecutionContext)
-  extends BaseController with AuthorisedFunctions {
+                                          mandationStatusService: MandationStatusService,
+                                          cc: ControllerComponents)
+                                         (implicit ec: ExecutionContext)
+  extends BackendController(cc) with AuthorisedFunctions {
 
   val mandationStatusKey = "mandationStatus"
 

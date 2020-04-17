@@ -20,15 +20,19 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.auth.core.retrieve.v2.{Retrievals => retrieve}
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.config.{AppConfig, Constants}
 import uk.gov.hmrc.vatsubscription.models.User
+import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VatAuthorised @Inject()(val authConnector: AuthConnector, implicit val appConfig: AppConfig) extends BaseController with AuthorisedFunctions {
+class VatAuthorised @Inject()(val authConnector: AuthConnector,
+                              cc: ControllerComponents,
+                              implicit val appConfig: AppConfig)
+                              extends BackendController(cc) with AuthorisedFunctions {
 
   private def delegatedAuthRule(vrn: String): Enrolment =
     Enrolment(Constants.MtdVatEnrolmentKey)
@@ -41,9 +45,12 @@ class VatAuthorised @Inject()(val authConnector: AuthConnector, implicit val app
 
   def async(vrn: String)(f: User[_] => Future[Result])(implicit ec: ExecutionContext): Action[AnyContent] = Action.async {
     implicit request =>
-      authorised(delegatedAuthRule(vrn)).retrieve(Retrievals.allEnrolments and Retrievals.credentials) {
-        case enrolments ~ credentials =>
+      authorised(delegatedAuthRule(vrn)).retrieve(retrieve.allEnrolments and retrieve.credentials) {
+        case  enrolments ~ Some(credentials) =>
           f(User(vrn, arn(enrolments), credentials.providerId)(request))
+        case _ =>
+          Logger.warn(s"[VatAuthorised][async] - Unable to retrieve Credentials.providerId from auth profile")
+          Future(Forbidden)
       } recover {
         case _: AuthorisationException =>
           Logger.debug(s"[VatAuthorised][async] - User is not authorised to access the service")
@@ -51,3 +58,4 @@ class VatAuthorised @Inject()(val authConnector: AuthConnector, implicit val app
       }
   }
 }
+

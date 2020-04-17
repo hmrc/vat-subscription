@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import assets.TestUtil
 import play.api.libs.json.{JsError, Json}
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants.bankDetailsModelMax
 import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._

@@ -19,11 +19,12 @@ package uk.gov.hmrc.vatsubscription.controllers
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, Reads}
 import play.api.mvc.AnyContentAsJson
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 
-trait MicroserviceBaseController extends BaseController {
+
+trait MicroserviceBaseController extends BackendController {
 
   def parseJsonBody[T](implicit user: User[_], rds: Reads[T]): Either[ErrorModel, T] = user.body match {
     case body: AnyContentAsJson => body.json.validate[T] match {

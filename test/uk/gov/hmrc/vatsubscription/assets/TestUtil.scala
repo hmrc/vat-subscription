@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package assets
+package uk.gov.hmrc.vatsubscription.assets
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.Injector
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -51,5 +51,6 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
   implicit lazy val mockHttp: HttpClient = mock[HttpClient]
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
   implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
+  implicit lazy val controllerComponents: ControllerComponents = injector.instanceOf[ControllerComponents]
 
 }

@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -26,6 +25,7 @@ import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants._
 import uk.gov.hmrc.vatsubscription.helpers.VatKnownFactsTestConstants._
 import uk.gov.hmrc.vatsubscription.service.mocks.MockVatKnownFactsRetrievalService
 import uk.gov.hmrc.vatsubscription.services.VatKnownFactsRetrievalService._
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorised with MockVatKnownFactsRetrievalService {
 
   object TestRetrieveVatKnownFactsController
-    extends RetrieveVatKnownFactsController(mockVatKnownFactsRetrievalService)
+    extends RetrieveVatKnownFactsController(mockVatKnownFactsRetrievalService, controllerComponents)
 
   "retrieveVatKnownFacts" should {
     "return OK and Deregistered" when {

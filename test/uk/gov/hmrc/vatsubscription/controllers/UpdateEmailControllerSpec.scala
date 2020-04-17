@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -25,17 +24,22 @@ import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.connectors.VatNumberNotFound
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobModelMax, ppobModelEmailMaxPost}
-import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse, updateConflictResponse}
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.{ppobModelEmailMaxPost, ppobModelMax}
+import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
 import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdateEmailService, MockVatCustomerDetailsRetrievalService}
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
 import scala.concurrent.Future
 
-class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateEmailService with MockVatCustomerDetailsRetrievalService {
+class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateEmailService
+  with MockVatCustomerDetailsRetrievalService {
 
   object TestUpdateEmailController
-    extends UpdateEmailAddressController(mockVatAuthorised, mockUpdateEmailService, mockVatCustomerDetailsRetrievalService)
+    extends UpdateEmailAddressController(mockVatAuthorised,
+                                        mockUpdateEmailService,
+                                        mockVatCustomerDetailsRetrievalService,
+                                        controllerComponents)
 
   val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
 
