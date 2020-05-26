@@ -197,6 +197,7 @@ class VatCustomerInformationSpec extends TestUtil {
       Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites(true)) shouldBe
         manageAccountSummaryOutputJsonMax
     }
+
     "write the json correctly when all optional fields are populated for release 8 (no overseas indicator in Json)" in {
       Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites(false)) shouldBe
         manageAccountSummaryOutputJsonMaxR8
