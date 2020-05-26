@@ -88,11 +88,12 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
         logUnexpectedResponse(response, logBody = true)
         Left(InvalidVatNumber)
       case NOT_FOUND =>
-        Logger.debug("[CustomerCircumstancesHttpParser][read] - " +
+        Logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
           s"NOT FOUND returned - Subscription not found. Status: $NOT_FOUND. Body: ${response.body}")
         Left(VatNumberNotFound)
       case FORBIDDEN if response.body.contains("MIGRATION") =>
-        logUnexpectedResponse(response, "FORBIDDEN returned with MIGRATION - Migration in progress")
+        Logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
+          "FORBIDDEN returned with MIGRATION - Migration in progress.")
         Left(Migration)
       case FORBIDDEN =>
         logUnexpectedResponse(response, logBody = true)
@@ -105,7 +106,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
 
   private def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response", logBody: Boolean = false): Unit = {
     Logger.warn(
-      s"[CustomerCircumstancesHttpParser][read]: $message. " +
+      s"[CustomerCircumstancesHttpParser][logUnexpectedResponse]: $message. " +
       s"Status: ${response.status}. " +
       s"${ if(logBody) s"Body: ${response.body} " else "" } " +
       s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}"
