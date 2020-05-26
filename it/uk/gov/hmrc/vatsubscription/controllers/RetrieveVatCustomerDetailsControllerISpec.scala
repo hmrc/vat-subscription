@@ -242,7 +242,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(MTDfB)
           )),
           Some(UKCompanyType),
-          primaryMainCode = "00001"
+          primaryMainCode = "00001",
+          missingTrader = true
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
@@ -426,7 +427,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(MTDfB)
           )),
           partyType = Some(UKCompanyType),
-          primaryMainCode = "00003"
+          primaryMainCode = "00003",
+          missingTrader = true
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))

@@ -443,7 +443,8 @@ object CustomerInformationTestConstants {
       "mandationStatus" -> MTDfB.value
     ),
     "partyType" -> partyType,
-    "primaryMainCode" -> "00004"
+    "primaryMainCode" -> "00004",
+    "missingTrader" -> true
   )
 
   val customerInformationOutputJsonMax: JsValue = Json.obj(
@@ -525,7 +526,8 @@ object CustomerInformationTestConstants {
       "returnPeriod" -> returnPeriodMCJson,
       "mandationStatus" -> MTDfB.value
     ),
-    "primaryMainCode" -> "00005"
+    "primaryMainCode" -> "00005",
+    "missingTrader" -> true
   )
 
   val customerInformationOutputJsonMaxWithTrueOverseas: JsValue = Json.obj(
@@ -607,7 +609,8 @@ object CustomerInformationTestConstants {
       "returnPeriod" -> returnPeriodMCJson,
       "mandationStatus" -> MTDfB.value
     ),
-    "primaryMainCode" -> "00006"
+    "primaryMainCode" -> "00006",
+    "missingTrader" -> true
   )
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
@@ -624,7 +627,8 @@ object CustomerInformationTestConstants {
         "countryCode" -> countryCode
       )
     ),
-    "primaryMainCode" -> "00010"
+    "primaryMainCode" -> "00010",
+    "missingTrader" -> false
   )
 
   val manageAccountSummaryOutputJsonMax: JsValue = Json.obj(
@@ -648,7 +652,8 @@ object CustomerInformationTestConstants {
       "sortCode" -> accSort
     ),
     "partyType" -> "50",
-    "overseasIndicator" -> false
+    "overseasIndicator" -> false,
+    "missingTrader" -> true
   )
 
   val manageAccountSummaryOutputJsonMin: JsValue = Json.obj(
@@ -662,7 +667,8 @@ object CustomerInformationTestConstants {
       "postCode" -> postcode,
       "countryCode" -> countryCode
     ),
-    "overseasIndicator" -> false
+    "overseasIndicator" -> false,
+    "missingTrader" -> false
   )
 
   val migrationDESJson: JsValue = Json.obj(
@@ -691,7 +697,8 @@ object CustomerInformationTestConstants {
       Some(MTDfB)
     )),
     Some(UKCompanyType),
-    "00004"
+    "00004",
+    missingTrader = true
   )
 
   val customerInformationModelMinWithFRS: VatCustomerInformation = VatCustomerInformation(
@@ -742,7 +749,8 @@ object CustomerInformationTestConstants {
       Some(MTDfB)
     )),
     None,
-    "00005"
+    "00005",
+    missingTrader = true
   )
 
   val customerInformationModelMaxWithTrueOverseas: VatCustomerInformation = VatCustomerInformation(
@@ -767,7 +775,8 @@ object CustomerInformationTestConstants {
       Some(MTDfB)
     )),
     None,
-    "00006"
+    "00006",
+    missingTrader = true
   )
 
   val manageAccountModelMax: VatCustomerInformation = VatCustomerInformation(
@@ -792,7 +801,8 @@ object CustomerInformationTestConstants {
       Some(MTDfBVoluntary)
     )),
     Some(UKCompanyType),
-    "00007"
+    "00007",
+    missingTrader = true
   )
 
   val customerInformationModelMaxR8: VatCustomerInformation = VatCustomerInformation(
@@ -817,7 +827,8 @@ object CustomerInformationTestConstants {
       None
     )),
     Some(UKCompanyType),
-    "00001"
+    "00001",
+    missingTrader = true
   )
 
 
@@ -831,7 +842,8 @@ object CustomerInformationTestConstants {
     deregistration = None,
     changeIndicators = None,
     pendingChanges = None,
-    primaryMainCode = "00009"
+    primaryMainCode = "00009",
+    missingTrader = true
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
@@ -986,7 +998,8 @@ object CustomerInformationTestConstants {
       "returnPeriod" -> returnPeriodMMJson
     ),
     "partyType" -> partyType,
-    "primaryMainCode" -> "00001"
+    "primaryMainCode" -> "00001",
+    "missingTrader" -> true
   )
 
   val customerInformationOutputJsonMinR8: JsValue = Json.obj(
@@ -1003,7 +1016,8 @@ object CustomerInformationTestConstants {
         "countryCode" -> countryCode
       )
     ),
-    "primaryMainCode" -> "00010"
+    "primaryMainCode" -> "00010",
+    "missingTrader" -> false
   )
 
   val manageAccountSummaryOutputJsonMaxR8: JsValue = Json.obj(
@@ -1026,7 +1040,8 @@ object CustomerInformationTestConstants {
       "bankAccountNumber" -> accNum,
       "sortCode" -> accSort
     ),
-    "partyType" -> "50"
+    "partyType" -> "50",
+    "missingTrader" -> true
   )
 
   val manageAccountSummaryOutputJsonMinR8: JsValue = Json.obj(
@@ -1039,6 +1054,7 @@ object CustomerInformationTestConstants {
       "line5" -> addLine5,
       "postCode" -> postcode,
       "countryCode" -> countryCode
-    )
+    ),
+    "missingTrader" -> false
   )
 }
