@@ -43,30 +43,7 @@ object CustomerDetails extends JsonObjectSugar {
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
   private val overseasIndicatorPath = JsPath \ "overseasIndicator"
 
-  implicit val cdReaderR8: Reads[CustomerDetails] = for {
-    firstName <- firstNamePath.readNullable[String]
-    lastName <- lastNamePath.readNullable[String]
-    organisationName <- organisationNamePath.readNullable[String]
-    tradingName <- tradingNamePath.readNullable[String]
-    vatRegistrationDate <- vatRegistrationDatePath.readNullable[String]
-    customerMigratedToETMPDate <- customerMigratedToETMPDatePath.readNullable[String]
-    hasFlatRateScheme <- hasFlatRateSchemePath.read[Boolean]
-    welshIndicator <- welshIndicatorPath.readNullable[Boolean]
-    isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
-  } yield CustomerDetails(
-    firstName,
-    lastName,
-    organisationName,
-    tradingName,
-    vatRegistrationDate,
-    customerMigratedToETMPDate,
-    hasFlatRateScheme,
-    welshIndicator,
-    isPartialMigration.contains(true),
-    overseasIndicator = false
-  )
-
-  implicit val cdReaderR10: Reads[CustomerDetails] = for {
+  implicit val cdReader: Reads[CustomerDetails] = for {
     firstName <- firstNamePath.readNullable[String]
     lastName <- lastNamePath.readNullable[String]
     organisationName <- organisationNamePath.readNullable[String]
@@ -90,9 +67,8 @@ object CustomerDetails extends JsonObjectSugar {
     overseasIndicator
   )
 
-  implicit val cdWriter: Boolean => Writes[CustomerDetails] = isRelease10 =>
-    Writes { model =>
-      jsonObjNoNulls(
+  implicit val cdWriter: Writes[CustomerDetails] = Writes { model =>
+    jsonObjNoNulls(
         "firstName" -> model.firstName,
         "lastName" -> model.lastName,
         "organisationName" -> model.organisationName,
@@ -101,10 +77,10 @@ object CustomerDetails extends JsonObjectSugar {
         "customerMigratedToETMPDate" -> model.customerMigratedToETMPDate,
         "hasFlatRateScheme" -> model.hasFlatRateScheme,
         "welshIndicator" -> model.welshIndicator,
-        "isPartialMigration" -> model.isPartialMigration
-      ) ++ (if(isRelease10) {
-        Json.obj("overseasIndicator" -> model.overseasIndicator)
-      } else Json.obj())
+        "isPartialMigration" -> model.isPartialMigration,
+        "overseasIndicator" -> model.overseasIndicator
+      )
+
     }
 }
 

@@ -24,21 +24,11 @@ class PartyTypeSpec extends UnitSpec {
 
     "given a valid partyType" should {
 
-      "for release 7" should {
-        PartyType.r7PartyTypes.foreach { partyType =>
+      "for the latest release" should {
+        PartyType.partyTypes.foreach { partyType =>
           s"return the correct party type for ${partyType.value}" in {
-            PartyType.apply(PartyType.r7PartyTypes)(partyType.value) shouldBe partyType
+            PartyType.apply(PartyType.partyTypes)(partyType.value) shouldBe partyType
           }
-
-        }
-      }
-
-      "for release 8" should {
-        PartyType.r8PartyTypes.foreach { partyType =>
-          s"return the correct party type for ${partyType.value}" in {
-            PartyType.apply(PartyType.r8PartyTypes)(partyType.value) shouldBe partyType
-          }
-
         }
       }
     }
@@ -46,7 +36,7 @@ class PartyTypeSpec extends UnitSpec {
     "given an invalid partyType" should {
       "throw IllegalArgumentException(Invalid Charge Type)" in {
         val exception = intercept[IllegalArgumentException] {
-          PartyType.apply(PartyType.r7PartyTypes)("Bad Party Type")
+          PartyType.apply(PartyType.partyTypes)("Bad Party Type")
         }
         exception.getMessage shouldBe "Invalid Party Type: Bad Party Type"
       }
@@ -55,16 +45,8 @@ class PartyTypeSpec extends UnitSpec {
 
   "Party Type unapply method" should  {
 
-    "for release 7" should {
-      PartyType.r7PartyTypes.foreach { partyType =>
-        s"return the correct value for ${partyType.value}" in {
-          PartyType.unapply(partyType) shouldBe partyType.value
-        }
-      }
-    }
-
-    "for release 8" should {
-      PartyType.r8PartyTypes.foreach { partyType =>
+    "for the latest release" should {
+      PartyType.partyTypes.foreach { partyType =>
         s"return the correct value for ${partyType.value}" in {
           PartyType.unapply(partyType) shouldBe partyType.value
         }
@@ -77,16 +59,15 @@ class PartyTypeSpec extends UnitSpec {
     "given an invalid charge type" should {
 
       "return false" in {
-        PartyType.isValidPartyType("Z123456", PartyType.r7PartyTypes) shouldBe false
+        PartyType.isValidPartyType("Z123456", PartyType.partyTypes) shouldBe false
       }
     }
 
     "given a valid charge type" should {
 
       "return true" in {
-        PartyType.isValidPartyType("Z1", PartyType.r8PartyTypes) shouldBe true
+        PartyType.isValidPartyType("Z1", PartyType.partyTypes) shouldBe true
       }
     }
   }
-
 }

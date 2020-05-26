@@ -21,7 +21,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.assets.TestUtil
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.Api1363R8
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.Api1363Latest
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
 
 class GetVatCustomerInformationConnectorSpec extends TestUtil {
@@ -35,17 +35,17 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
     "read" should {
 
-      "parse an OK response with a valid json as a VatCustomerInformation Release 8" in {
+      "parse an OK response with a valid json as a VatCustomerInformation the latest release" in {
 
-        mockAppConfig.features.api1363Version(Api1363R8)
+        mockAppConfig.features.api1363Version(Api1363Latest)
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxR8))
+        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRS))
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Right(customerInformationModelMaxR8)
+        res shouldBe Right(customerInformationModelMaxWithFRS)
       }
 
       "parse an OK response with an invalid json as a UnexpectedGetVatCustomerInformationFailure" in {

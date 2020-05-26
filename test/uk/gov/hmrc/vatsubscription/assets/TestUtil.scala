@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363R10, Api1365R7}
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1363Latest, Api1365Latest}
 
 import scala.concurrent.ExecutionContext
 
@@ -36,9 +36,8 @@ class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    mockAppConfig.features.latestApi1363Version(true)
-    mockAppConfig.features.api1365Version(Api1365R7)
-    mockAppConfig.features.api1363Version(Api1363R10)
+    mockAppConfig.features.api1365Version(Api1365Latest)
+    mockAppConfig.features.api1363Version(Api1363Latest)
     mockAppConfig.features.enableAnnualAccounting(true)
     mockAppConfig.features.newStatusIndicators(true)
   }

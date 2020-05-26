@@ -159,38 +159,7 @@ object PartyType {
 
   val logger = Logger(getClass.getSimpleName)
 
-  val r7PartyTypes: Set[PartyType] = Set(
-    IndividualType,
-    SoleTraderType,
-    IPSType,
-    OrganisationType,
-    LloydsSyndicateType,
-    LLPType,
-    PartnershipType,
-    IncorpBodyType,
-    UnicorpBodyType,
-    UKCompanyType,
-    NonUKCompanyType,
-    LimitedLiaPartnershipType,
-    CharitableIncorpOrgType,
-    CommunityBenefitSocietyType,
-    CoopSocietyType,
-    GovernmentOrgType,
-    CorportationSoleType,
-    ScottishPartnershipType,
-    ScottishLimitedPartnershipType,
-    TrustIncomeTaxType,
-    TrustType,
-    OrdinaryPartnershipType,
-    LimitedPartnershipType,
-    CompanyType,
-    CIOType,
-    NonUkCharityType,
-    IndividualZ1Type,
-    VATGroupType
-  )
-
-  val r8PartyTypes: Set[PartyType] = Set(
+  val partyTypes: Set[PartyType] = Set(
     SoleTraderType,
     LLPType,
     PartnershipType,
@@ -241,8 +210,7 @@ object PartyType {
     }
   }
 
-  val r7reads: Reads[PartyType] = __.read[String].map(apply(r7PartyTypes))
-  val r8reads: Reads[PartyType] = __.read[String].map(apply(r8PartyTypes))
+  val reads: Reads[PartyType] = __.read[String].map(apply(partyTypes))
 
   implicit val writes: Writes[PartyType] = Writes { charge => JsString(charge.value) }
 

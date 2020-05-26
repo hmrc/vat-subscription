@@ -88,53 +88,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val changeIndicatorsPath = __ \ pendingChangesKey \ changeIndicators
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
 
-  val release8Reads: AppConfig => Reads[VatCustomerInformation] = conf => for {
-    firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
-    lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
-    organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
-    tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
-    vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
-    customerMigratedToETMPDate <- (customerDetailsPath \ customerMigratedToETMPDateKey).readOpt[String]
-    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus](desReaderOld)
-    welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
-    isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
-    flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
-    ppob <- ppobPath.read[PPOBGet]
-    bankDetails <- bankDetailsPath.readOpt[BankDetails]
-    returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
-    deregistration <- deregistrationPath.readOpt[Deregistration]
-    changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
-    pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(conf))
-    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
-    primaryMainCode <- primaryMainCodePath.read[String]
-    rlsType <- rlsTypePath.readOpt[String]
-  } yield VatCustomerInformation(
-    mandationStatus,
-    CustomerDetails(
-      firstName = firstName,
-      lastName = lastName,
-      organisationName = organisationName,
-      tradingName = tradingName,
-      vatRegistrationDate,
-      customerMigratedToETMPDate,
-      flatRateScheme.isDefined,
-      welshIndicator,
-      isPartialMigration.contains(true),
-      overseasIndicator = false
-    ),
-    flatRateScheme,
-    ppob,
-    bankDetails,
-    filterReturnPeriod(returnPeriod, conf),
-    deregistration,
-    changeIndicators,
-    pendingChanges,
-    partyType,
-    primaryMainCode,
-    rlsType.nonEmpty
-  )
-
-  val release10Reads: AppConfig => Reads[VatCustomerInformation] = conf => for {
+  val reads: AppConfig => Reads[VatCustomerInformation] = conf => for {
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
@@ -154,7 +108,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(conf))
-    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.r8reads)
+    partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.reads)
     primaryMainCode <- primaryMainCodePath.read[String]
     rlsType <- rlsTypePath.readOpt[String]
   } yield VatCustomerInformation(
@@ -183,11 +137,11 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     rlsType.nonEmpty
   )
 
-  implicit val writes: Boolean => Writes[VatCustomerInformation] = isRelease10 => Writes {
+  implicit val writes: Writes[VatCustomerInformation] = Writes {
     model =>
       jsonObjNoNulls(
         "mandationStatus" -> model.mandationStatus.value,
-        "customerDetails" -> Json.toJson(model.customerDetails)(CustomerDetails.cdWriter(isRelease10)),
+        "customerDetails" -> Json.toJson(model.customerDetails)(CustomerDetails.cdWriter),
         "flatRateScheme" -> model.flatRateScheme,
         "ppob" -> model.ppob,
         "bankDetails" -> model.bankDetails,
@@ -201,7 +155,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
       )
   }
 
-  val manageAccountWrites: Boolean => Writes[VatCustomerInformation] = release10 => Writes {
+  val manageAccountWrites: Writes[VatCustomerInformation] = Writes {
     model =>
       jsonObjNoNulls(
         "mandationStatus" -> model.mandationStatus.value,
@@ -212,9 +166,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),
         "businessName" -> model.customerDetails.organisationName,
         "partyType" -> model.partyType,
-        "missingTrader" -> model.missingTrader
-      ) ++ (if (release10) {
-        Json.obj("overseasIndicator" -> model.customerDetails.overseasIndicator)
-      } else Json.obj())
+        "missingTrader" -> model.missingTrader,
+        "overseasIndicator" -> model.customerDetails.overseasIndicator
+      )
   }
 }
