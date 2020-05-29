@@ -22,10 +22,9 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.Api1363Latest
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
 import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResult}
-import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, VatCustomerInformation}
+import uk.gov.hmrc.vatsubscription.models.VatCustomerInformation
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.ExecutionContext
