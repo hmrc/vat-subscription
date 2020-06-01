@@ -27,28 +27,15 @@ class UpdateVatSubscriptionSpec extends TestUtil {
 
     "serializing to JSON" should {
 
-      "for the current DES API1365 writes" should {
-
-        "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-          UpdateVatSubscription.DESApi1365WritesR7.writes(updateVatSubscriptionModelMax) shouldBe
-            updateVatSubscriptionCurrentDESApi1365JsonMax
-        }
-
-        "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-          UpdateVatSubscription.DESApi1365WritesR7.writes(updateVatSubscriptionModelMin) shouldBe
-            updateVatSubscriptionCurrentDESApi1365JsonMin
-        }
-      }
-
       "for the latest DES API1365 writes" should {
 
         "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-          UpdateVatSubscription.DESApi1365WritesR11.writes(updateVatSubscriptionModelMax) shouldBe
+          UpdateVatSubscription.DESApi1365Writes.writes(updateVatSubscriptionModelMax) shouldBe
             updateVatSubscriptionLatestDESApi1365JsonMax
         }
 
         "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-          UpdateVatSubscription.DESApi1365WritesR11.writes(updateVatSubscriptionModelMin) shouldBe
+          UpdateVatSubscription.DESApi1365Writes.writes(updateVatSubscriptionModelMin) shouldBe
             updateVatSubscriptionLatestDESApi1365JsonMin
         }
       }

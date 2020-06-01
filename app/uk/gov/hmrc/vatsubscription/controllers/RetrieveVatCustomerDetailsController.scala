@@ -22,11 +22,9 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.Api1363R10
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
-import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure,
-  VatNumberNotFound, Forbidden => ForbiddenResult}
-import uk.gov.hmrc.vatsubscription.models.{CustomerDetails, VatCustomerInformation}
+import uk.gov.hmrc.vatsubscription.connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResult}
+import uk.gov.hmrc.vatsubscription.models.VatCustomerInformation
 import uk.gov.hmrc.vatsubscription.services._
 
 import scala.concurrent.ExecutionContext
@@ -41,12 +39,7 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
   def retrieveVatCustomerDetails(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
     implicit user =>
       vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vatNumber) map {
-        case Right(customerDetails) => Ok(Json.toJson(customerDetails)(CustomerDetails.cdWriter(
-          appConfig.features.api1363Version() match {
-            case Api1363R10 => true
-            case _ => false
-          }
-        )))
+        case Right(customerDetails) => Ok(Json.toJson(customerDetails))
         case Left(InvalidVatNumber) =>
           Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest(Json.toJson(InvalidVatNumber))
@@ -72,14 +65,9 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
     implicit user =>
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
         case Right(vatInformation) =>
-          if(vatInformation.changeIndicators.isEmpty)
+          if (vatInformation.changeIndicators.isEmpty)
             Logger.debug("[RetrieveVatCustomerDetailsController][retrieveVatInformation]: No changeIndicators object returned from GetCustomerInformation")
-          Ok(Json.toJson(vatInformation)(VatCustomerInformation.writes(
-            appConfig.features.api1363Version() match {
-              case Api1363R10 => true
-              case _ => false
-            }
-          )))
+          Ok(Json.toJson(vatInformation))
         case Left(InvalidVatNumber) =>
           Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest(Json.toJson(InvalidVatNumber))
@@ -104,12 +92,7 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
   def manageAccountSummary(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
     implicit user =>
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
-        case Right(vatInformation) => Ok(Json.toJson(vatInformation)(VatCustomerInformation.manageAccountWrites(
-          appConfig.features.api1363Version() match {
-            case Api1363R10 => true
-            case _ => false
-          }
-        )))
+        case Right(vatInformation) => Ok(Json.toJson(vatInformation)(VatCustomerInformation.manageAccountWrites))
         case Left(InvalidVatNumber) =>
           Logger.debug(s"[RetrieveVatCustomerDetailsController][manageAccountSummary]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest(Json.toJson(InvalidVatNumber))

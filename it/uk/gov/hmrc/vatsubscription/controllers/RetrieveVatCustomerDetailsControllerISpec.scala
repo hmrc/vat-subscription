@@ -253,7 +253,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
 
         res should have(
           httpStatus(OK),
-          jsonBodyAs(Json.toJson(expectedCustomerInformationModel)(VatCustomerInformation.writes(true)))
+          jsonBodyAs(Json.toJson(expectedCustomerInformationModel)(VatCustomerInformation.writes))
         )
       }
     }
@@ -438,7 +438,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
 
         res should have(
           httpStatus(OK),
-          jsonBodyAs(Json.toJson(expectedCustomerInformationModel)(VatCustomerInformation.manageAccountWrites(true)))
+          jsonBodyAs(Json.toJson(expectedCustomerInformationModel)(VatCustomerInformation.manageAccountWrites))
         )
       }
     }
@@ -508,5 +508,4 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       }
     }
   }
-
 }

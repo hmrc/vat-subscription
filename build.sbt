@@ -51,7 +51,7 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.6.0",
+  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.8.0",
   "org.typelevel" %% "cats-core" % "1.6.0",
   "com.typesafe.play" %% "play-json-joda" % "2.6.14"
 )

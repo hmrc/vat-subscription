@@ -35,20 +35,7 @@ object ChangeMandationStatus extends RequestedChanges(mandationStatus = true)
 
 object RequestedChanges {
 
-  val DESApi1365WritesR7: Writes[RequestedChanges] = Writes { model =>
-    Json.obj(
-      "PPOBDetails" -> model.ppobDetails,
-      "returnPeriod" -> model.returnPeriod,
-      "deregInfo" -> model.deregInfo,
-      "repaymentBankDetails" -> model.repaymentBankDetails,
-      "businessActivities" -> model.businessActivities,
-      "flatRateScheme" -> model.flatRateScheme,
-      "correspDetails" -> model.correspDetails,
-      "organisationDetails" -> model.organisationDetails
-    )
-  }
-
-  val DESApi1365WritesR11: Writes[RequestedChanges] = Writes { model =>
+  val DESApi1365Writes: Writes[RequestedChanges] = Writes { model =>
     Json.obj(
       "PPOBDetails" -> model.ppobDetails,
       "returnPeriod" -> model.returnPeriod,

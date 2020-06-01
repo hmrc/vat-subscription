@@ -33,8 +33,7 @@ case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
 
 object UpdateVatSubscription {
 
-  val DESApi1365WritesR7: Writes[UpdateVatSubscription] = writes(RequestedChanges.DESApi1365WritesR7)
-  val DESApi1365WritesR11: Writes[UpdateVatSubscription] = writes(RequestedChanges.DESApi1365WritesR11)
+  val DESApi1365Writes: Writes[UpdateVatSubscription] = writes(RequestedChanges.DESApi1365Writes)
 
   def writes(requestedChangesWrites: Writes[RequestedChanges]): Writes[UpdateVatSubscription] = (
     (__ \ "messageType").write[String] and

@@ -23,7 +23,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365R7, Api1365R11}
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser._
 import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.UpdateVatSubscription
@@ -37,10 +36,7 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
 
   private[connectors] val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
 
-  implicit val writes: Writes[UpdateVatSubscription] = appConfig.features.api1365Version() match {
-    case Api1365R7 => DESApi1365WritesR7
-    case Api1365R11 => DESApi1365WritesR11
-  }
+  implicit val writes: Writes[UpdateVatSubscription] = DESApi1365Writes
 
   def updateVatSubscription(user: User[_], vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
                            (implicit ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {

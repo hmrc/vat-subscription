@@ -109,12 +109,12 @@ class VatCustomerInformationSpec extends TestUtil {
     }
   }
 
-  "release 10 reads" when {
+  "the latest release reads" when {
 
     "the newStatusIndicators feature is on" should {
 
       "parse the json correctly" in {
-        VatCustomerInformation.release10Reads(mockAppConfig).reads(customerInformationDESJsonMaxWithFRS).get shouldBe
+        VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMaxWithFRS).get shouldBe
           customerInformationModelMaxWithFRS
       }
     }
@@ -133,84 +133,35 @@ class VatCustomerInformationSpec extends TestUtil {
 
       "parse the json correctly" in {
         mockAppConfig.features.newStatusIndicators(false)
-        VatCustomerInformation.release10Reads(mockAppConfig).reads(customerInformationDESJsonMaxWithFRS).get shouldBe
+        VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMaxWithFRS).get shouldBe
           model
-      }
-    }
-  }
-
-  "release 8 reads" when {
-
-    "all optional fields are populated for release 8" should {
-
-      "parse the json correctly" in {
-        VatCustomerInformation.release8Reads(mockAppConfig).reads(customerInformationDESJsonMaxR8).get shouldBe
-          customerInformationModelMaxR8
-      }
-    }
-
-    "no optional fields are populated for release 8" should {
-
-      "parse the json correctly" in {
-        VatCustomerInformation.release8Reads(mockAppConfig).reads(customerInformationDESJsonMinR8).get  shouldBe
-          customerInformationModelMinR8
-      }
-    }
-
-    "current and in-flight return periods are not valid" should {
-
-      "exclude these return periods from response" in {
-        VatCustomerInformation.release8Reads(mockAppConfig)
-          .reads(customerInformationDESJsonInvalidReturnPeriod).get.returnPeriod shouldBe None
-        VatCustomerInformation.release8Reads(mockAppConfig)
-          .reads(customerInformationDESJsonInvalidReturnPeriod).get.pendingChanges shouldBe None
       }
     }
   }
 
   "Writes" should {
 
-    "write the json correctly when all optional fields are populated for release 10" in {
-      Json.toJson(customerInformationModelMaxWithFRS)(VatCustomerInformation.writes(true)) shouldBe
+    "write the json correctly when all optional fields are populated for the latest release" in {
+      Json.toJson(customerInformationModelMaxWithFRS)(VatCustomerInformation.writes) shouldBe
         customerInformationOutputJsonMaxWithFRS
     }
 
-    "write the json correctly when all optional fields are populated for release 8 (no overseas indicator in Json)" in {
-      Json.toJson(customerInformationModelMaxR8)(VatCustomerInformation.writes(false)) shouldBe
-        customerInformationOutputJsonMaxR8
-    }
-
-    "write the json correctly when no optional fields are populated for release 10" in {
-      Json.toJson(customerInformationModelMin)(VatCustomerInformation.writes(true)) shouldBe
+    "write the json correctly when no optional fields are populated for the latest release" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.writes) shouldBe
         customerInformationOutputJsonMin
-    }
-
-    "write the json correctly when no optional fields are populated for release 8 (no overseas indicator in Json)" in {
-      Json.toJson(customerInformationModelMinR8)(VatCustomerInformation.writes(false)) shouldBe
-        customerInformationOutputJsonMinR8
     }
   }
 
   "Manage Account writes" should {
 
-    "write the json correctly when all optional fields are populated for release 10" in {
-      Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites(true)) shouldBe
+    "write the json correctly when all optional fields are populated for the latest release" in {
+      Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites) shouldBe
         manageAccountSummaryOutputJsonMax
     }
 
-    "write the json correctly when all optional fields are populated for release 8 (no overseas indicator in Json)" in {
-      Json.toJson(manageAccountModelMax)(VatCustomerInformation.manageAccountWrites(false)) shouldBe
-        manageAccountSummaryOutputJsonMaxR8
-    }
-
-    "write the json correctly when no optional fields are populated for release 10" in {
-      Json.toJson(customerInformationModelMin)(VatCustomerInformation.manageAccountWrites(true)) shouldBe
+    "write the json correctly when no optional fields are populated for the latest release" in {
+      Json.toJson(customerInformationModelMin)(VatCustomerInformation.manageAccountWrites) shouldBe
         manageAccountSummaryOutputJsonMin
-    }
-
-    "write the json correctly when no optional fields are populated for release 8 (no overseas indicator in Json)" in {
-      Json.toJson(customerInformationModelMinR8)(VatCustomerInformation.manageAccountWrites(false)) shouldBe
-        manageAccountSummaryOutputJsonMinR8
     }
   }
 }

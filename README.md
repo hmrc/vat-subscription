@@ -16,6 +16,14 @@ Get Current State of Switches:
 Change Feature Switches:
 `curl -X POST http://localhost:9567/vat-subscription/test-only/feature-switch -H 'content-type: application/json' -d '{ "latestApi1363Version": false, "latestApi1365Version": false}'`
 
+[API1363Version & API1365Version]
+The above have been updated & named to reflect the "latest" version. 
+If there is a need to implement feature switches for future releases we can refer to them as "upcoming"
+
+["enableNewStatusIndicators"]
+When on this will use the following mandation statuses:
+"Exempt", "MTDfb", "Non MTDfb" or "Non Digital"
+
 ## Endpoints
 
 ### GET /vat-subscription/:vatNumber/mandation-status

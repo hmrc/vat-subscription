@@ -22,42 +22,22 @@ import uk.gov.hmrc.vatsubscription.helpers.CustomerDetailsTestConstants._
 class CustomerDetailsSpec extends UnitSpec {
 
   "CustomerDetails Reads" should {
-    "parse the json correctly when all optional fields are populated for release 10" in {
-      CustomerDetails.cdReaderR10.reads(customerDetailsJsonMax).get shouldBe customerDetailsModelMax
+    "parse the json correctly when all optional fields are populated for the latest release" in {
+      CustomerDetails.cdReader.reads(customerDetailsJsonMax).get shouldBe customerDetailsModelMax
     }
 
-    "parse the json correctly when all optional fields are populated for release 8" in {
-      CustomerDetails.cdReaderR8.reads(customerDetailsJsonMaxR8).get shouldBe customerDetailsModelMaxR8
-    }
-
-    "parse the json correctly when no fields are supplied for release 10" in {
-      CustomerDetails.cdReaderR10.reads(customerDetailsJsonMin).get shouldBe customerDetailsModelMin
-    }
-
-    "parse the json correctly when no fields are supplied for release 8" in {
-      CustomerDetails.cdReaderR8.reads(customerDetailsJsonMin).get shouldBe customerDetailsModelMinR8
-    }
-
-    "parse the json and set overseas indicator to false, if true in Json, if in release 8" in {
-      CustomerDetails.cdReaderR8.reads(customerDetailsJsonMinWithTrueOverseas).get shouldBe customerDetailsModelMinR8
+    "parse the json correctly when no fields are supplied for the latest release" in {
+      CustomerDetails.cdReader.reads(customerDetailsJsonMin).get shouldBe customerDetailsModelMin
     }
   }
 
   "CustomerDetails Writes" should {
-    "output a fully populated CustomerDetails object with all fields populated for release 10" in {
-      CustomerDetails.cdWriter(true).writes(customerDetailsModelMax) shouldBe customerDetailsJsonMax
+    "output a fully populated CustomerDetails object with all fields populated for the latest release" in {
+      CustomerDetails.cdWriter.writes(customerDetailsModelMax) shouldBe customerDetailsJsonMax
     }
 
-    "output a fully populated CustomerDetails object with all fields populated for release 8 (no overseas indicator in written Json)" in {
-      CustomerDetails.cdWriter(false).writes(customerDetailsModelMaxR8) shouldBe customerDetailsJsonMaxR8
-    }
-
-    "an empty json object when an empty CustomerDetails object is marshalled for release 10" in {
-      CustomerDetails.cdWriter(true).writes(customerDetailsModelMin) shouldBe customerDetailsJsonMin
-    }
-
-    "an empty json object when an empty CustomerDetails object is marshalled for release 8 (no overseas indicator in written Json)" in {
-      CustomerDetails.cdWriter(false).writes(customerDetailsModelMin) shouldBe customerDetailsJsonMinR8
+    "an empty json object when an empty CustomerDetails object is marshalled for the latest release" in {
+      CustomerDetails.cdWriter.writes(customerDetailsModelMin) shouldBe customerDetailsJsonMin
     }
   }
 }
