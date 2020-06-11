@@ -191,23 +191,23 @@ object IntegrationTestConstants {
   val testArn: String = UUID.randomUUID().toString
 
   val ppobAddressModelMax: PPOBAddressGet = PPOBAddressGet(
-    addLine1,
+    Some(addLine1),
     Some(addLine2),
     Some(addLine3),
     Some(addLine4),
     Some(addLine5),
     Some(postcode),
-    countryCode
+    Some(countryCode)
   )
 
   val ppobAddressModelMaxPost: PPOBAddressPost = PPOBAddressPost(
-    addLine1,
+    Some(addLine1),
     Some(addLine2),
     Some(addLine3),
     Some(addLine4),
     Some(addLine5),
     Some(postcode),
-    countryCode
+    Some(countryCode)
   )
 
   val contactDetailsModelMax: ContactDetails = ContactDetails(

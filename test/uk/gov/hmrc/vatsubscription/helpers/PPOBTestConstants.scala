@@ -44,23 +44,23 @@ object PPOBTestConstants {
   val partyType = "50"
 
   val ppobAddressModelMax = PPOBAddressGet(
-    addLine1,
+    Some(addLine1),
     Some(addLine2),
     Some(addLine3),
     Some(addLine4),
     Some(addLine5),
     Some(postcode),
-    countryCode
+    Some(countryCode)
   )
 
   val ppobAddressModelMaxPost = PPOBAddressPost(
-    addLine1,
+    Some(addLine1),
     Some(addLine2),
     Some(addLine3),
     Some(addLine4),
     Some(addLine5),
     Some(postcode),
-    countryCode
+    Some(countryCode)
   )
 
   val contactDetailsModelMax = ContactDetails(
@@ -83,7 +83,7 @@ object PPOBTestConstants {
 
 
   val ppobAddressGetJson: JsValue = Json.obj("line1" -> "Ronaldini Road", "line3" -> "Pell Way", "postCode" -> "R10 AAA", "countryCode" -> "BRAZIL")
-  val ppobAddressGetValue: PPOBAddressGet = PPOBAddressGet("Ronaldini Road", None, Some("Pell Way"), None, None, Some("R10 AAA"),"BRAZIL")
+  val ppobAddressGetValue: PPOBAddressGet = PPOBAddressGet(Some("Ronaldini Road"), None, Some("Pell Way"), None, None, Some("R10 AAA"), Some("BRAZIL"))
 
   val emailPostJson: JsValue =  Json.parse(s"""{
                                               |	"address": {
@@ -138,10 +138,10 @@ object PPOBTestConstants {
     "countryCode" -> countryCode
   )
   val ppobAddressPostValue: PPOBAddressPost = PPOBAddressPost(
-    "Ronaldini Road",
+    Some("Ronaldini Road"),
     None, None, None, None,
     Some("R10 AAA"),
-    countryCode
+    Some(countryCode)
   )
   val ppobAddressPostWritesResult: JsValue = Json.obj(
     "line1" -> "Ronaldini Road",
