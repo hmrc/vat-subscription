@@ -20,13 +20,13 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, Writes, __}
 import uk.gov.hmrc.vatsubscription.utils.JsonReadUtil
 
-case class PPOBAddressGet(line1: String,
+case class PPOBAddressGet(line1: Option[String],
                           line2: Option[String],
                           line3: Option[String],
                           line4: Option[String],
                           line5: Option[String],
                           postCode: Option[String],
-                          countryCode: String)
+                          countryCode: Option[String])
 
 object PPOBAddressGet extends JsonReadUtil {
 
@@ -39,22 +39,22 @@ object PPOBAddressGet extends JsonReadUtil {
   private val countryCodePath = __ \ "countryCode"
 
   implicit val ppobAddressReader: Reads[PPOBAddressGet] = for {
-    line1 <- line1Path.read[String]
+    line1 <- line1Path.readNullable[String]
     line2 <- line2Path.readNullable[String]
     line3 <- line3Path.readNullable[String]
     line4 <- line4Path.readNullable[String]
     line5 <- line5Path.readNullable[String]
     postCode <- postCodePath.readNullable[String]
-    countryCode <- countryCodePath.read[String]
+    countryCode <- countryCodePath.readNullable[String]
   } yield PPOBAddressGet(line1, line2, line3, line4, line5, postCode, countryCode)
 
   implicit val ppobAddressWriter: Writes[PPOBAddressGet] = (
-    line1Path.write[String] and
+    line1Path.writeNullable[String] and
       line2Path.writeNullable[String] and
       line3Path.writeNullable[String] and
       line4Path.writeNullable[String] and
       line5Path.writeNullable[String] and
       postCodePath.writeNullable[String] and
-      countryCodePath.write[String]
+      countryCodePath.writeNullable[String]
     )(unlift(PPOBAddressGet.unapply))
 }

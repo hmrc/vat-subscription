@@ -178,13 +178,13 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           )),
           PPOBGet(
             PPOBAddressGet(
-              addLine1,
+              Some(addLine1),
               Some(addLine2),
               Some(addLine3),
               Some(addLine4),
               Some(addLine5),
               Some(postcode),
-              countryCode
+              Some(countryCode)
             ),
             Some(ContactDetails(
               Some(phoneNumber),
@@ -216,13 +216,13 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           Some(PendingChanges(
             Some(PPOBGet(
               PPOBAddressGet(
-                addLine1,
+                Some(addLine1),
                 Some(addLine2),
                 Some(addLine3),
                 Some(addLine4),
                 Some(addLine5),
                 Some(postcode),
-                countryCode
+                Some(countryCode)
               ),
               Some(ContactDetails(
                 Some(phoneNumber),
@@ -363,13 +363,13 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           )),
           PPOBGet(
             PPOBAddressGet(
-              addLine1,
+              Some(addLine1),
               Some(addLine2),
               Some(addLine3),
               Some(addLine4),
               Some(addLine5),
               Some(postcode),
-              countryCode
+              Some(countryCode)
             ),
             Some(ContactDetails(
               Some(phoneNumber),
@@ -401,13 +401,13 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           Some(PendingChanges(
             Some(PPOBGet(
               PPOBAddressGet(
-                addLine1,
+                Some(addLine1),
                 Some(addLine2),
                 Some(addLine3),
                 Some(addLine4),
                 Some(addLine5),
                 Some(postcode),
-                countryCode
+                Some(countryCode)
               ),
               Some(ContactDetails(
                 Some(phoneNumber),
