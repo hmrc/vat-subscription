@@ -127,7 +127,8 @@ class VatCustomerInformationSpec extends TestUtil {
           Some(ppobModelMax),
           Some(bankDetailsModelMax),
           Some(MCReturnPeriod(None, None, None)),
-          Some(MTDfBVoluntary)
+          Some(MTDfBVoluntary),
+          Some(DigitalPreference)
         ))
       )
 

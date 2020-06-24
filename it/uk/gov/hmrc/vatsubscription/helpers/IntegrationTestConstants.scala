@@ -19,7 +19,7 @@ package uk.gov.hmrc.vatsubscription.helpers
 import java.util.UUID
 
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.vatsubscription.models.ContactDetails
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, DigitalPreference}
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
 import uk.gov.hmrc.vatsubscription.models.post.{EmailPost, PPOBAddressPost, PPOBPost}
 
@@ -119,7 +119,10 @@ object IntegrationTestConstants {
           "emailAddress" -> email,
           "emailVerified" -> emailVerified
         ),
-        "websiteAddress" -> website
+        "websiteAddress" -> website,
+        "commsPreference" -> Json.obj(
+          "commsPreference" -> DigitalPreference.desValue
+        )
       ),
       "flatRateScheme" -> Json.obj(
         "FRSCategory" -> frsCategory,
@@ -182,6 +185,9 @@ object IntegrationTestConstants {
         ),
         "mandationStatus" -> Json.obj(
           "mandationStatus" -> mandationStatus
+        ),
+        "commsPreference" -> Json.obj(
+          "commsPreference" -> DigitalPreference.desValue
         )
       )
     )

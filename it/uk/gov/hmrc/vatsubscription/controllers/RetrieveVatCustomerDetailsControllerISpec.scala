@@ -239,11 +239,13 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accSort)
             )),
             Some(MCReturnPeriod(None, None, None)),
-            Some(MTDfB)
+            Some(MTDfB),
+            Some(DigitalPreference)
           )),
           Some(UKCompanyType),
           primaryMainCode = "00001",
-          missingTrader = true
+          missingTrader = true,
+          commsPreference = Some(DigitalPreference)
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
@@ -424,11 +426,13 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
               Some(accSort)
             )),
             Some(MCReturnPeriod(None, None, None)),
-            Some(MTDfB)
+            Some(MTDfB),
+            Some(DigitalPreference)
           )),
           partyType = Some(UKCompanyType),
           primaryMainCode = "00003",
-          missingTrader = true
+          missingTrader = true,
+          commsPreference = Some(DigitalPreference)
         )
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
