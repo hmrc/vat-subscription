@@ -17,9 +17,9 @@
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 
-class RequestedChangesSpec extends UnitSpec {
+class RequestedChangesSpec extends TestUtil {
 
   "RequestedChanges Writes" should {
 
@@ -39,10 +39,11 @@ class RequestedChangesSpec extends UnitSpec {
         "flatRateScheme" -> false,
         "organisationDetails" -> false,
         "correspDetails" -> false,
-        "mandationStatus" -> false
+        "mandationStatus" -> false,
+        "commsPreference" -> false
       )
 
-      RequestedChanges.DESApi1365Writes.writes(model) shouldBe result
+      RequestedChanges.DESApi1365Writes(mockAppConfig).writes(model) shouldBe result
     }
   }
 }

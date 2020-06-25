@@ -36,11 +36,15 @@ case object DigitalPreference extends CommsPreference {
 object CommsPreference {
 
   implicit val reads: Reads[CommsPreference] = JsPath.read[String].map {
-    case PaperPreference.desValue => PaperPreference
-    case DigitalPreference.desValue => DigitalPreference
+    case PaperPreference.desValue | PaperPreference.mdtpValue => PaperPreference
+    case DigitalPreference.desValue | DigitalPreference.mdtpValue => DigitalPreference
   }
 
   implicit val writes: Writes[CommsPreference] = Writes[CommsPreference] { model =>
     JsString(model.mdtpValue)
+  }
+
+  implicit val updatePreferenceWrites: Writes[CommsPreference] = Writes[CommsPreference] { model =>
+    JsString(model.desValue)
   }
 }

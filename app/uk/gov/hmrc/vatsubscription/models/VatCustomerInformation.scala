@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatsubscription.models
 
 import MandationStatus.{desReader, desReaderOld}
+import akka.io.Tcp.Write
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
@@ -142,6 +143,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     commsPreference
   )
 
+  implicit val commsPreferenceWrites: Writes[CommsPreference] = CommsPreference.writes
+
   implicit val writes: Writes[VatCustomerInformation] = Writes {
     model =>
       jsonObjNoNulls(
@@ -173,8 +176,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "businessName" -> model.customerDetails.organisationName,
         "partyType" -> model.partyType,
         "missingTrader" -> model.missingTrader,
-        "overseasIndicator" -> model.customerDetails.overseasIndicator,
-        "commsPreference" -> model.commsPreference
+        "overseasIndicator" -> model.customerDetails.overseasIndicator
       )
   }
 }

@@ -46,7 +46,8 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
       updatedPPOB = None,
       updatedReturnPeriod = Some(updatedReturnPeriod),
       updateDeregistrationInfo = None,
-      declaration = declarationModelAgent
+      declaration = declarationModelAgent,
+      commsPreference = None
     )
 
     def setup(response: UpdateVatSubscriptionResponse): UpdateVatSubscriptionConnector = {
@@ -64,7 +65,6 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
         val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
 
         await(result) shouldBe Right(SuccessModel("12345"))
-        connector.writes shouldBe UpdateVatSubscription.DESApi1365Writes
       }
 
     }

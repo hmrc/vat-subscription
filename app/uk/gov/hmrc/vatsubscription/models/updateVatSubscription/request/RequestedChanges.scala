@@ -17,6 +17,9 @@
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.config.AppConfig
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365Latest, Api1365PreRelease}
+import uk.gov.hmrc.vatsubscription.models.CustomerDetails.jsonObjNoNulls
 
 case class RequestedChanges(ppobDetails: Boolean = false,
                             returnPeriod: Boolean = false,
@@ -26,16 +29,18 @@ case class RequestedChanges(ppobDetails: Boolean = false,
                             flatRateScheme: Boolean = false,
                             organisationDetails: Boolean = false,
                             correspDetails: Boolean = false,
-                            mandationStatus: Boolean = false)
+                            mandationStatus: Boolean = false,
+                            commsPreference: Boolean = false)
 
 object ChangePPOB extends RequestedChanges(ppobDetails = true)
 object ChangeReturnPeriod extends RequestedChanges(returnPeriod = true)
 object DeregistrationRequest extends RequestedChanges(deregInfo = true)
 object ChangeMandationStatus extends RequestedChanges(mandationStatus = true)
+object ChangeCommsPreference extends RequestedChanges(commsPreference = true)
 
 object RequestedChanges {
 
-  val DESApi1365Writes: Writes[RequestedChanges] = Writes { model =>
+  val DESApi1365Writes: AppConfig => Writes[RequestedChanges] = appConfig => Writes { model =>
     Json.obj(
       "PPOBDetails" -> model.ppobDetails,
       "returnPeriod" -> model.returnPeriod,
@@ -46,6 +51,9 @@ object RequestedChanges {
       "correspDetails" -> model.correspDetails,
       "organisationDetails" -> model.organisationDetails,
       "mandationStatus" -> model.mandationStatus
-    )
+    ) ++ (appConfig.features.api1365Version() match {
+      case Api1365Latest => Json.obj("commsPreference" -> model.commsPreference)
+      case Api1365PreRelease => Json.obj()
+    })
   }
 }

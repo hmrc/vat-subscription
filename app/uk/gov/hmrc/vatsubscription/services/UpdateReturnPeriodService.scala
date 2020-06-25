@@ -33,7 +33,7 @@ class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: Update
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod, welshIndicator)
-    Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
+    Logger.debug(s"[UpdateReturnPeriodService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
@@ -55,7 +55,8 @@ class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: Update
       updatedPPOB = None,
       updatedReturnPeriod = Some(UpdatedReturnPeriod(updatedReturnPeriod)),
       updateDeregistrationInfo = None,
-      declaration = Declaration(agentOrCapacitor, Signing())
+      declaration = Declaration(agentOrCapacitor, Signing()),
+      commsPreference = None
     )
   }
 }

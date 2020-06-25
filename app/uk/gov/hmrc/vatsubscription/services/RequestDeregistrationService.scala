@@ -56,7 +56,8 @@ class RequestDeregistrationService @Inject()(updateVatSubscriptionConnector: Upd
       updatedPPOB = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = Some(deregistration),
-      declaration = Declaration(agentOrCapacitor, Signing())
+      declaration = Declaration(agentOrCapacitor, Signing()),
+      commsPreference = None
     )
   }
 }

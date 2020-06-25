@@ -61,6 +61,6 @@ object PendingChanges {
     bankDetailsPath.writeNullable[BankDetails] and
     returnPeriodPath.writeNullable[ReturnPeriod] and
     mandationStatusWritesPath.writeNullable[MandationStatus](MandationStatus.writer) and
-    commsPreferenceWritesPath.writeNullable[CommsPreference]
+    commsPreferenceWritesPath.writeNullable[CommsPreference](CommsPreference.writes)
   )(unlift(PendingChanges.unapply))
 }

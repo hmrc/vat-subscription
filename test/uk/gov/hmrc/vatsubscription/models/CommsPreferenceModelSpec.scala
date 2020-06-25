@@ -31,12 +31,20 @@ class CommsPreferenceModelSpec extends UnitSpec {
       JsString(PaperPreference.desValue).as[CommsPreference] shouldBe PaperPreference
     }
 
-    "correctly parse to json for DigitalPreference" in {
-      Json.toJson(DigitalPreference) shouldBe JsString(DigitalPreference.mdtpValue)
+    "correctly parse to json for DigitalPreference to frontends" in {
+      Json.toJson(DigitalPreference)(CommsPreference.writes) shouldBe JsString(DigitalPreference.mdtpValue)
     }
 
-    "correctly parse to json for PaperPreference" in {
-      Json.toJson(PaperPreference) shouldBe JsString(PaperPreference.mdtpValue)
+    "correctly parse to json for PaperPreference to frontends" in {
+      Json.toJson(PaperPreference)(CommsPreference.writes) shouldBe JsString(PaperPreference.mdtpValue)
+    }
+
+    "correctly parse to json for DigitalPreference to DES" in {
+      Json.toJson(DigitalPreference)(CommsPreference.updatePreferenceWrites) shouldBe JsString(DigitalPreference.desValue)
+    }
+
+    "correctly parse to json for PaperPreference to DES" in {
+      Json.toJson(PaperPreference)(CommsPreference.updatePreferenceWrites) shouldBe JsString(PaperPreference.desValue)
     }
 
   }

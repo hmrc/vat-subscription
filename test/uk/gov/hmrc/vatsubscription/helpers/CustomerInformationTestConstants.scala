@@ -538,8 +538,7 @@ object CustomerInformationTestConstants {
     ),
     "partyType" -> "50",
     "overseasIndicator" -> false,
-    "missingTrader" -> true,
-    "commsPreference" -> DigitalPreference.mdtpValue
+    "missingTrader" -> true
   )
 
   val manageAccountSummaryOutputJsonMin: JsValue = Json.obj(
