@@ -41,7 +41,8 @@ object UpdateVatSubscriptionTestConstants {
     updatedPPOB = Some(updatedPPOB),
     updatedReturnPeriod = Some(updatedReturnPeriod),
     updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
-    declaration = DeclarationTestConstants.declarationModelAgent
+    declaration = DeclarationTestConstants.declarationModelAgent,
+    commsPreference = None
   )
 
   val updateVatSubscriptionLatestDESApi1365JsonMax: JsValue = Json.obj(
@@ -60,7 +61,8 @@ object UpdateVatSubscriptionTestConstants {
     updatedPPOB = None,
     updatedReturnPeriod = Some(updatedReturnPeriod),
     updateDeregistrationInfo = None,
-    declaration = Declaration(None, Signing())
+    declaration = Declaration(None, Signing()),
+    commsPreference = None
   )
 
   val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(

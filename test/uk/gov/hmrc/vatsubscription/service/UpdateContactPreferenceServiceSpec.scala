@@ -18,28 +18,30 @@ package uk.gov.hmrc.vatsubscription.service
 
 import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
-import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
+import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testUser
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.{ContactDetails, MAReturnPeriod}
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
+import uk.gov.hmrc.vatsubscription.models.{CommsPreference, DigitalPreference, PaperPreference}
+import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{ChangeCommsPreference, ControlInformation, Declaration, RequestedChanges, Signing, UpdateVatSubscription}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import uk.gov.hmrc.vatsubscription.services.UpdateReturnPeriodService
+import uk.gov.hmrc.vatsubscription.services.UpdateContactPreferenceService
 
-class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
+class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
-  def setup(response: UpdateVatSubscriptionResponse): UpdateReturnPeriodService = {
+  def setup(response: UpdateVatSubscriptionResponse): UpdateContactPreferenceService = {
     mockUpdateVatSubscriptionResponse(response)
-    new UpdateReturnPeriodService(mockUpdateVatSubscriptionConnector)
+    new UpdateContactPreferenceService(mockUpdateVatSubscriptionConnector)
   }
 
-  "Calling .updateReturnPeriod" when {
+  "Calling .updateContactPreference" when {
 
-    "connector call is successful" should {
+    "connecter call is successful" should {
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateReturnPeriod(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser, hc, ec)
-        await(result) shouldEqual Right(SuccessModel("12345"))
+          val result = service.updateContactPreference(CommsPreferencePost(PaperPreference, None),
+            welshIndicator = false)(testUser, hc, ec)
+          await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
 
@@ -47,28 +49,30 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateReturnPeriod(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateContactPreference(CommsPreferencePost(PaperPreference, None),
+          welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
   }
 
-  "Calling .constructReturnPeriodUpdateModel" when {
+  "Calling .constructUpdateContactPreferenceModel" when {
 
-    val service = new UpdateReturnPeriodService(mockUpdateVatSubscriptionConnector)
+    val service = new UpdateContactPreferenceService(mockUpdateVatSubscriptionConnector)
 
     "user is not an Agent" should {
 
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser)
+      val result = service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference, None),
+        welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangeReturnPeriod,
+        requestedChanges = ChangeCommsPreference,
         updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
+        updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing()),
-        commsPreference = None
+        commsPreference = Some(PaperPreference)
       )
 
       "return a correct UpdateVatSubscription model" in {
@@ -78,16 +82,17 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
     "user has a welshIndicator" should {
 
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(None, None, None), welshIndicator = true)(testUser)
+      val result = service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference, None),
+        welshIndicator = true)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
-        requestedChanges = ChangeReturnPeriod,
+        requestedChanges = ChangeCommsPreference,
         updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
+        updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing()),
-        commsPreference = None
+        commsPreference = Some(PaperPreference)
       )
 
       "return a correct UpdateVatSubscription model" in {
@@ -97,21 +102,20 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
     "user is an Agent" should {
 
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(Some("agent@emailaddress.com"), None, None),
-        welshIndicator = false)(testAgentUser)
+      val result = service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference,
+        Some("agent@emailaddress.com")), welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangeReturnPeriod,
+        requestedChanges = ChangeCommsPreference,
         updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress.com"), None, None))),
+        updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, Some(ContactDetails(None, None, None,
-          Some("agent@emailaddress.com"), None)))), Signing()),
-        commsPreference = None
+        declaration = Declaration(None, Signing()),
+        commsPreference = Some(PaperPreference)
       )
 
-      "return an UpdateVatSubscription model containing agentOrCapacitor" in {
+      "return a correct UpdateVatSubscription model" in {
         result shouldEqual expectedResult
       }
     }

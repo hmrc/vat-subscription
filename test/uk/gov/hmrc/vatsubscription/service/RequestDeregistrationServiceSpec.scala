@@ -68,7 +68,8 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
-        declaration = Declaration(None, Signing())
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
       )
 
       "return a correct UpdateVatSubscription model" in {
@@ -86,7 +87,8 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, Some(agentContactDetails))), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, Some(agentContactDetails))), Signing()),
+        commsPreference = None
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {

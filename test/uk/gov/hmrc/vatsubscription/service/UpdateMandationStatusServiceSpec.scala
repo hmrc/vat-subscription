@@ -69,7 +69,8 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing())
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
       )
 
       "return a correct UpdateVatSubscription model" in {
@@ -89,7 +90,8 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing()),
+        commsPreference = None
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
@@ -108,7 +110,8 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing())
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
       )
 
       "return a correct UpdateVatSubscription model" in {

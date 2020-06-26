@@ -23,6 +23,7 @@ import uk.gov.hmrc.vatsubscription.models.CommsPreference.updatePreferenceReads
 
 case class CommsPreferencePost(commsPreference: CommsPreference,
                                transactorOrCapacitorEmail: Option[String])
+
 object CommsPreferencePost {
   implicit val reads: Reads[CommsPreferencePost] = (
     __.read[CommsPreference](updatePreferenceReads) and

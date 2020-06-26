@@ -17,6 +17,7 @@
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json._
+import uk.gov.hmrc.vatsubscription.models.CustomerDetails.jsonObjNoNulls
 
 case class RequestedChanges(ppobDetails: Boolean = false,
                             returnPeriod: Boolean = false,
@@ -26,17 +27,19 @@ case class RequestedChanges(ppobDetails: Boolean = false,
                             flatRateScheme: Boolean = false,
                             organisationDetails: Boolean = false,
                             correspDetails: Boolean = false,
-                            mandationStatus: Boolean = false)
+                            mandationStatus: Boolean = false,
+                            commsPreference: Option[Boolean] = None)
 
 object ChangePPOB extends RequestedChanges(ppobDetails = true)
 object ChangeReturnPeriod extends RequestedChanges(returnPeriod = true)
 object DeregistrationRequest extends RequestedChanges(deregInfo = true)
 object ChangeMandationStatus extends RequestedChanges(mandationStatus = true)
+object ChangeCommsPreference extends RequestedChanges(commsPreference = Some(true))
 
 object RequestedChanges {
 
   val DESApi1365Writes: Writes[RequestedChanges] = Writes { model =>
-    Json.obj(
+    jsonObjNoNulls(
       "PPOBDetails" -> model.ppobDetails,
       "returnPeriod" -> model.returnPeriod,
       "deregInfo" -> model.deregInfo,
@@ -45,7 +48,8 @@ object RequestedChanges {
       "flatRateScheme" -> model.flatRateScheme,
       "correspDetails" -> model.correspDetails,
       "organisationDetails" -> model.organisationDetails,
-      "mandationStatus" -> model.mandationStatus
+      "mandationStatus" -> model.mandationStatus,
+      "commsPreference" -> model.commsPreference
     )
   }
 }
