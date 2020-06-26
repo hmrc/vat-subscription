@@ -18,22 +18,32 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import play.api.http.Status._
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContentAsJson, Result}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.assets.TestUtil
+import uk.gov.hmrc.vatsubscription.connectors.VatNumberNotFound
 import uk.gov.hmrc.vatsubscription.controllers.actions.mocks.MockVatAuthorised
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testVatNumber
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.SuccessModel
+import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
+import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.ErrorModel
+import uk.gov.hmrc.vatsubscription.models.{DigitalPreference, PaperPreference}
+import uk.gov.hmrc.vatsubscription.service.mocks.{MockUpdateContactPreferenceService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 
-class UpdateContactPreferenceControllerSpec extends TestUtil
-with MockVatAuthorised {
-  object TestCommsPreference
-  extends UpdateContactPreferenceController(mockVatAuthorised ,controllerComponents)
+class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthorised
+  with MockUpdateContactPreferenceService with MockVatCustomerDetailsRetrievalService {
+
+  object TestCommsPreference extends UpdateContactPreferenceController(
+    mockVatAuthorised,
+    mockUpdateContactPreferenceService,
+    mockVatCustomerDetailsRetrievalService,
+    controllerComponents)
 
   val paperPref: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.obj("commsPreference" -> "PAPER"))
+  val digitalPref: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.obj("commsPreference" -> "DIGITAL"))
 
   "the updateContactPreferences() method" when {
 
@@ -49,12 +59,80 @@ with MockVatAuthorised {
 
     "the user is authorised" should {
 
-      "return OK" in {
+      "return a successful response" when {
 
-        mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-        val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
+        "Paper Preference is supplied and the response from the UpdateVatSubscription service is successful" in {
 
-        status(res) shouldBe OK
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
+          mockUpdateContactPreference(CommsPreferencePost(PaperPreference, None))(Future.successful(Right(updateSuccessResponse)))
+
+          val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+        }
+
+        "Digital Preference is supplied ant the response from the UpdateVatSubscription service is successful" in {
+
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
+          mockUpdateContactPreference(CommsPreferencePost(DigitalPreference, None))(Future.successful(Right(updateSuccessResponse)))
+
+          val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(digitalPref))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+        }
+      }
+
+      "return an error response" when {
+
+        "no json body is supplied for the PUT" should {
+
+          val unknownContactPreferenceRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(unknownContactPreferenceRequest))
+
+          "return status BAD_REQUEST (400)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            status(res) shouldBe BAD_REQUEST
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${unknownContactPreferenceRequest.body}"))
+          }
+        }
+
+        "a valid return period is supplied but an error is returned from the UpdateVatSubscription Service" should {
+
+          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
+
+          "return status INTERNAL_SERVER_ERROR (500)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
+            mockUpdateContactPreference(CommsPreferencePost(PaperPreference, None))(Future.successful(Left(updateErrorResponse)))
+            status(res) shouldBe INTERNAL_SERVER_ERROR
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+          }
+        }
+
+        "a valid return period is supplied but an error is returned instead of a welshIndicator" should {
+
+          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
+
+          "return status INTERNAL_SERVER_ERROR (500)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockExtractWelshIndicator(testVatNumber)(Future(Left(VatNumberNotFound)))
+            status(res) shouldBe INTERNAL_SERVER_ERROR
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+          }
+        }
       }
     }
   }

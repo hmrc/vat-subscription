@@ -16,19 +16,20 @@
 
 package uk.gov.hmrc.vatsubscription.controllers
 
-import play.api.mvc.Results.Ok
-import play.api.libs.json.Json
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
-import uk.gov.hmrc.vatsubscription.models.CommsPreference
 import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
+import uk.gov.hmrc.vatsubscription.services.{UpdateContactPreferenceService, VatCustomerDetailsRetrievalService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdateContactPreferenceController @Inject()(VatAuthorised: VatAuthorised,
+                                                  updatedContactPreferenceService: UpdateContactPreferenceService,
+                                                  vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
                                                   cc: ControllerComponents)
                                                  (implicit ec: ExecutionContext) extends BackendController(cc)
                                                   with MicroserviceBaseController {
@@ -37,7 +38,14 @@ class UpdateContactPreferenceController @Inject()(VatAuthorised: VatAuthorised,
     implicit user =>
       parseJsonBody[CommsPreferencePost] match {
         case Right(updatedCommsPreference) =>
-          Future(Ok)
+          vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
+            case Right(welshIndicator) =>
+              updatedContactPreferenceService.updateContactPreference(updatedCommsPreference, welshIndicator).map {
+                case Right(success) => Ok(Json.toJson(success))
+                case Left(error) => InternalServerError(Json.toJson(error))
+              }
+            case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
+          }
         case Left(error) =>
           Future.successful(BadRequest(Json.toJson(error)))
       }
