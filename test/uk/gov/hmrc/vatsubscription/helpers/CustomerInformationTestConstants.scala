@@ -72,7 +72,8 @@ object CustomerInformationTestConstants {
           "emailAddress" -> email,
           "emailVerified" -> emailVerified
         ),
-        "websiteAddress" -> website
+        "websiteAddress" -> website,
+        "commsPreference" -> Json.obj("commsPreference"-> "ZEL")
       ),
       "flatRateScheme" -> Json.obj(
         "FRSCategory" -> frsCategory,
@@ -132,6 +133,9 @@ object CustomerInformationTestConstants {
         "returnPeriod" -> inflightReturnPeriodMCJson,
         "mandationStatus" -> Json.obj(
           "mandationStatus" -> mandationStatusCode
+        ),
+        "commsPreference" -> Json.obj(
+          "commsPreference" -> "ZEL"
         )
       )
     )
@@ -315,11 +319,13 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> MTDfB.value
+      "mandationStatus" -> MTDfB.value,
+      "commsPreference" -> DigitalPreference.mdtpValue
     ),
     "partyType" -> partyType,
     "primaryMainCode" -> "00004",
-    "missingTrader" -> true
+    "missingTrader" -> true,
+    "commsPreference" -> DigitalPreference.mdtpValue
   )
 
   val customerInformationOutputJsonMax: JsValue = Json.obj(
@@ -399,10 +405,12 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> MTDfB.value
+      "mandationStatus" -> MTDfB.value,
+      "commsPreference" -> DigitalPreference.mdtpValue
     ),
     "primaryMainCode" -> "00005",
-    "missingTrader" -> true
+    "missingTrader" -> true,
+    "commsPreference" -> DigitalPreference.mdtpValue
   )
 
   val customerInformationOutputJsonMaxWithTrueOverseas: JsValue = Json.obj(
@@ -482,10 +490,12 @@ object CustomerInformationTestConstants {
         "sortCode" -> accSort
       ),
       "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> MTDfB.value
+      "mandationStatus" -> MTDfB.value,
+      "commsPreference" -> DigitalPreference.mdtpValue
     ),
     "primaryMainCode" -> "00006",
-    "missingTrader" -> true
+    "missingTrader" -> true,
+    "commsPreference" -> DigitalPreference.mdtpValue
   )
 
   val customerInformationOutputJsonMin: JsValue = Json.obj(
@@ -528,7 +538,8 @@ object CustomerInformationTestConstants {
     ),
     "partyType" -> "50",
     "overseasIndicator" -> false,
-    "missingTrader" -> true
+    "missingTrader" -> true,
+    "commsPreference" -> DigitalPreference.mdtpValue
   )
 
   val manageAccountSummaryOutputJsonMin: JsValue = Json.obj(
@@ -569,11 +580,13 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfB)
+      Some(MTDfB),
+      Some(DigitalPreference)
     )),
     Some(UKCompanyType),
     "00004",
-    missingTrader = true
+    missingTrader = true,
+    Some(DigitalPreference)
   )
 
   val customerInformationModelMinWithFRS: VatCustomerInformation = VatCustomerInformation(
@@ -586,7 +599,8 @@ object CustomerInformationTestConstants {
     deregistration = None,
     changeIndicators = None,
     pendingChanges = None,
-    primaryMainCode = "00010"
+    primaryMainCode = "00010",
+    commsPreference = None
   )
 
   val customerInformationModelMinWithOverseas: VatCustomerInformation = VatCustomerInformation(
@@ -599,7 +613,8 @@ object CustomerInformationTestConstants {
     deregistration = None,
     changeIndicators = None,
     pendingChanges = None,
-    primaryMainCode = "00010"
+    primaryMainCode = "00010",
+    commsPreference = None
   )
 
   val customerInformationModelMax: VatCustomerInformation = VatCustomerInformation(
@@ -621,11 +636,13 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfB)
+      Some(MTDfB),
+      Some(DigitalPreference)
     )),
     None,
     "00005",
-    missingTrader = true
+    missingTrader = true,
+    commsPreference = Some(DigitalPreference)
   )
 
   val customerInformationModelMaxWithTrueOverseas: VatCustomerInformation = VatCustomerInformation(
@@ -647,11 +664,13 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfB)
+      Some(MTDfB),
+      Some(DigitalPreference)
     )),
     None,
     "00006",
-    missingTrader = true
+    missingTrader = true,
+    commsPreference = Some(DigitalPreference)
   )
 
   val manageAccountModelMax: VatCustomerInformation = VatCustomerInformation(
@@ -673,11 +692,13 @@ object CustomerInformationTestConstants {
       Some(ppobModelMax),
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfBVoluntary)
+      Some(MTDfBVoluntary),
+      Some(DigitalPreference)
     )),
     Some(UKCompanyType),
     "00007",
-    missingTrader = true
+    missingTrader = true,
+    commsPreference = Some(DigitalPreference)
   )
 
   val customerInformationModelNoWelshIndicator: VatCustomerInformation = VatCustomerInformation(
@@ -691,7 +712,8 @@ object CustomerInformationTestConstants {
     changeIndicators = None,
     pendingChanges = None,
     primaryMainCode = "00009",
-    missingTrader = true
+    missingTrader = true,
+    commsPreference = None
   )
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
@@ -713,7 +735,8 @@ object CustomerInformationTestConstants {
     deregistration = None,
     changeIndicators = None,
     pendingChanges = None,
-    primaryMainCode = "00010"
+    primaryMainCode = "00010",
+    commsPreference = None
   )
 
   val inFlightChanges: JsObject = Json.obj(
@@ -744,6 +767,9 @@ object CustomerInformationTestConstants {
     "returnPeriod" -> inflightReturnPeriodMAJson,
     "mandationStatus" -> Json.obj(
       "mandationStatus" -> mandationStatusCode
+    ),
+    "commsPreference" -> Json.obj(
+      "commsPreference" -> "ZEL"
     )
   )
 

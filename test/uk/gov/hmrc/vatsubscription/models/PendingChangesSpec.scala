@@ -19,8 +19,8 @@ package uk.gov.hmrc.vatsubscription.models
 import play.api.libs.json.{JsError, Json}
 import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.helpers.BankDetailsTestConstants.bankDetailsModelMax
-import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
 import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants.ppobModelMax
 
 class PendingChangesSpec extends TestUtil {
 
@@ -34,7 +34,8 @@ class PendingChangesSpec extends TestUtil {
           Some(ppobModelMax),
           Some(bankDetailsModelMax),
           Some(MAReturnPeriod(None, None, None)),
-          Some(MTDfB)
+          Some(MTDfB),
+          Some(DigitalPreference)
         )
 
         "parse the json correctly" in {
@@ -48,7 +49,8 @@ class PendingChangesSpec extends TestUtil {
           Some(ppobModelMax),
           Some(bankDetailsModelMax),
           Some(MAReturnPeriod(None, None, None)),
-          Some(MTDfBVoluntary)
+          Some(MTDfBVoluntary),
+          Some(DigitalPreference)
         )
 
         "parse the json correctly" in {
@@ -61,7 +63,7 @@ class PendingChangesSpec extends TestUtil {
     "no optional fields are populated" should {
 
       "parse the json correctly" in {
-        PendingChanges.reads(mockAppConfig).reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None)
+        PendingChanges.reads(mockAppConfig).reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None, None)
       }
     }
 

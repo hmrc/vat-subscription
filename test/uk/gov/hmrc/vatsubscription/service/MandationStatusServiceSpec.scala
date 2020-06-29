@@ -62,7 +62,8 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
           deregistration = None,
           changeIndicators = None,
           pendingChanges = None,
-          primaryMainCode = "00011"
+          primaryMainCode = "00011",
+          commsPreference = None
         )
 
       mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(testSuccessfulResponse)))

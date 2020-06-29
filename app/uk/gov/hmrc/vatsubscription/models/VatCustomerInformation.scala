@@ -34,7 +34,8 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   pendingChanges: Option[PendingChanges],
                                   partyType: Option[PartyType] = None,
                                   primaryMainCode: String,
-                                  missingTrader: Boolean = false
+                                  missingTrader: Boolean = false,
+                                  commsPreference: Option[CommsPreference]
                                  ) {
 
   val pendingPPOBAddress: Option[PPOBAddressGet] = pendingChanges.flatMap(_.ppob.map(_.address))
@@ -70,6 +71,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   val deregistrationKey = "deregistration"
   val partyTypeKey = "partyType"
   val rlsTypeKey = "RLS"
+  val commsPreferenceKey = "commsPreference"
 
   val businessActivitiesKey = "businessActivities"
   val primaryMainCodeKey = "primaryMainCode"
@@ -84,6 +86,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val deregistrationPath = path \ deregistrationKey
   private val primaryMainCodePath = path \ businessActivitiesKey \ primaryMainCodeKey
   private val rlsTypePath = ppobPath \ rlsTypeKey
+  private val approvedCommsPreferencePath = ppobPath \ commsPreferenceKey
 
   private val changeIndicatorsPath = __ \ pendingChangesKey \ changeIndicators
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
@@ -111,6 +114,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.reads)
     primaryMainCode <- primaryMainCodePath.read[String]
     rlsType <- rlsTypePath.readOpt[String]
+    commsPreference <- approvedCommsPreferencePath.readOpt[CommsPreference]
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(
@@ -134,7 +138,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     pendingChanges,
     partyType,
     primaryMainCode,
-    rlsType.nonEmpty
+    rlsType.nonEmpty,
+    commsPreference
   )
 
   implicit val writes: Writes[VatCustomerInformation] = Writes {
@@ -151,7 +156,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "pendingChanges" -> model.pendingChanges,
         "partyType" -> model.partyType,
         "primaryMainCode" -> model.primaryMainCode,
-        "missingTrader" -> model.missingTrader
+        "missingTrader" -> model.missingTrader,
+        "commsPreference" -> model.commsPreference
       )
   }
 
@@ -167,7 +173,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "businessName" -> model.customerDetails.organisationName,
         "partyType" -> model.partyType,
         "missingTrader" -> model.missingTrader,
-        "overseasIndicator" -> model.customerDetails.overseasIndicator
+        "overseasIndicator" -> model.customerDetails.overseasIndicator,
+        "commsPreference" -> model.commsPreference
       )
   }
 }

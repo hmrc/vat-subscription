@@ -17,9 +17,9 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
-import uk.gov.hmrc.vatsubscription.models.post.{PPOBAddressPost, EmailPost, PPOBPost}
 import uk.gov.hmrc.vatsubscription.models.ContactDetails
+import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
+import uk.gov.hmrc.vatsubscription.models.post.{EmailPost, PPOBAddressPost, PPOBPost}
 
 object PPOBTestConstants {
 
@@ -80,7 +80,6 @@ object PPOBTestConstants {
   val ppobModelMaxPostAgent = PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website), Some(agentEmail))
 
   val ppobModelEmailMaxPost = EmailPost(ppobAddressModelMaxPost, contactDetailsModelMax, Some(website))
-
 
   val ppobAddressGetJson: JsValue = Json.obj("line1" -> "Ronaldini Road", "line3" -> "Pell Way", "postCode" -> "R10 AAA", "countryCode" -> "BRAZIL")
   val ppobAddressGetValue: PPOBAddressGet = PPOBAddressGet(Some("Ronaldini Road"), None, Some("Pell Way"), None, None, Some("R10 AAA"), Some("BRAZIL"))
