@@ -44,7 +44,7 @@ object UpdateVatSubscription {
     (__ \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
     (__ \ "deregistrationInfo").writeNullable[DeregistrationInfo] and
     (__ \ "declaration").write[Declaration] and
-     __.writeNullable[CommsPreference](CommsPreference.updatePreferenceWrites)
+    (__ \ "commsPreference").writeNullable[CommsPreference](CommsPreference.updatePreferenceWrites)
   ) (unlift(UpdateVatSubscription.unapply))
 }
 

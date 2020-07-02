@@ -20,9 +20,9 @@ import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testUser
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.{CommsPreference, DigitalPreference, PaperPreference}
+import uk.gov.hmrc.vatsubscription.models.PaperPreference
 import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{ChangeCommsPreference, ControlInformation, Declaration, RequestedChanges, Signing, UpdateVatSubscription}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateContactPreferenceService
 
@@ -39,8 +39,8 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-          val result = service.updateContactPreference(CommsPreferencePost(PaperPreference, None),
-            welshIndicator = false)(testUser, hc, ec)
+          val result =
+            service.updateContactPreference(CommsPreferencePost(PaperPreference), welshIndicator = false)(testUser, hc, ec)
           await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -49,8 +49,8 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateContactPreference(CommsPreferencePost(PaperPreference, None),
-          welshIndicator = false)(testUser, hc, ec)
+        val result =
+          service.updateContactPreference(CommsPreferencePost(PaperPreference), welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -60,10 +60,10 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
     val service = new UpdateContactPreferenceService(mockUpdateVatSubscriptionConnector)
 
-    "user is not an Agent" should {
+    "user does not have a welshIndicator" should {
 
-      val result = service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference, None),
-        welshIndicator = false)(testUser)
+      val result =
+        service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference), welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
@@ -82,8 +82,8 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
     "user has a welshIndicator" should {
 
-      val result = service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference, None),
-        welshIndicator = true)(testUser)
+      val result =
+        service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference), welshIndicator = true)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
@@ -102,8 +102,8 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
     "user is an Agent" should {
 
-      val result = service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference,
-        Some("agent@emailaddress.com")), welshIndicator = false)(testUser)
+      val result = service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference),
+        welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),

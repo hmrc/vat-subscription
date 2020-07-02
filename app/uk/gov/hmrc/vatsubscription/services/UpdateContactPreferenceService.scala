@@ -21,32 +21,28 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.{ContactDetails, User}
+import uk.gov.hmrc.vatsubscription.models.User
 import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.{AgentOrCapacitor,
-  ChangeCommsPreference, ControlInformation, Declaration, Signing, UpdateVatSubscription}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def updateContactPreference(updatedContactPreference: CommsPreferencePost, welshIndicator: Boolean)
-                             (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
+  def updateContactPreference(updatedContactPreference: CommsPreferencePost,
+                              welshIndicator: Boolean)
+                             (implicit user: User[_],
+                              hc: HeaderCarrier,
+                              ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructContactPreferenceModel(updatedContactPreference, welshIndicator)
-    Logger.debug(s"[UpdateContactPreferenceService][updateContactPreference]: updating contact preference for user with vrn - ${user.vrn}")
+    Logger.debug("[UpdateContactPreferenceService][updateContactPreference]: " +
+      s"updating contact preference for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
   def constructContactPreferenceModel(updatedContactPreference: CommsPreferencePost, welshIndicator: Boolean)
                                      (implicit user: User[_]): UpdateVatSubscription = {
-    val agentContactDetails: Option[ContactDetails] =
-      if(updatedContactPreference.transactorOrCapacitorEmail.isDefined)
-        Some(ContactDetails(None, None, None, updatedContactPreference.transactorOrCapacitorEmail, None))
-      else
-        None
-
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
@@ -54,7 +50,7 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
       updatedPPOB = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
-      declaration = Declaration(agentOrCapacitor, Signing()),
+      declaration = Declaration(None, Signing()),
       commsPreference = Some(updatedContactPreference.commsPreference)
     )
   }

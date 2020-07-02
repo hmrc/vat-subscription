@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import MandationStatus.{desReader, desReaderOld}
-import akka.io.Tcp.Write
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
+import uk.gov.hmrc.vatsubscription.models.MandationStatus.{desReader, desReaderOld}
 import uk.gov.hmrc.vatsubscription.models.ReturnPeriod.filterReturnPeriod
+import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
 import uk.gov.hmrc.vatsubscription.utils.{JsonObjectSugar, JsonReadUtil}
 
 case class VatCustomerInformation(mandationStatus: MandationStatus,

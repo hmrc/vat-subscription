@@ -19,7 +19,6 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
 import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365Latest, Api1365PreRelease}
-import uk.gov.hmrc.vatsubscription.models.CustomerDetails.jsonObjNoNulls
 
 case class RequestedChanges(ppobDetails: Boolean = false,
                             returnPeriod: Boolean = false,

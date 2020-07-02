@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
-import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.helpers.{DeclarationTestConstants, DeregistrationInfoTestConstants}
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
-import uk.gov.hmrc.vatsubscription.models.{MTDfBExempt, MTDfBMandated}
+import uk.gov.hmrc.vatsubscription.helpers.{DeclarationTestConstants, DeregistrationInfoTestConstants}
+import uk.gov.hmrc.vatsubscription.models.{CommsPreference, MTDfBExempt, MTDfBMandated, PaperPreference}
 
 class UpdateVatSubscriptionSpec extends TestUtil {
 
@@ -31,7 +31,8 @@ class UpdateVatSubscriptionSpec extends TestUtil {
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
-    "declaration" -> DeclarationTestConstants.declarationDESJsonAgent
+    "declaration" -> DeclarationTestConstants.declarationDESJsonAgent,
+    "commsPreference" -> Json.toJson(PaperPreference)(CommsPreference.updatePreferenceWrites)
   )
 
   val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(

@@ -40,11 +40,11 @@ object CommsPreference {
     case DigitalPreference.desValue | DigitalPreference.mdtpValue => DigitalPreference
   }
 
-  implicit val writes: Writes[CommsPreference] = Writes[CommsPreference] { model =>
+  val writes: Writes[CommsPreference] = Writes[CommsPreference] { model =>
     JsString(model.mdtpValue)
   }
 
-  implicit val updatePreferenceWrites: Writes[CommsPreference] = Writes[CommsPreference] { model =>
+  val updatePreferenceWrites: Writes[CommsPreference] = Writes[CommsPreference] { model =>
     JsString(model.desValue)
   }
 }

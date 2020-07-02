@@ -16,16 +16,11 @@
 
 package uk.gov.hmrc.vatsubscription.models.post
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.models.CommsPreference
 
-case class CommsPreferencePost(commsPreference: CommsPreference,
-                               transactorOrCapacitorEmail: Option[String])
+case class CommsPreferencePost(commsPreference: CommsPreference)
 
 object CommsPreferencePost {
-  implicit val reads: Reads[CommsPreferencePost] = (
-    __.read[CommsPreference] and
-      (__ \ "transactorOrCapacitorEmail").readNullable[String]
-    )(CommsPreferencePost.apply _)
+  implicit val reads: Reads[CommsPreferencePost] = Json.reads[CommsPreferencePost]
 }

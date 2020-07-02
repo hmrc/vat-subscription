@@ -65,7 +65,7 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateContactPreference(CommsPreferencePost(PaperPreference, None))(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateContactPreference(CommsPreferencePost(PaperPreference))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
 
@@ -77,7 +77,7 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-          mockUpdateContactPreference(CommsPreferencePost(DigitalPreference, None))(Future.successful(Right(updateSuccessResponse)))
+          mockUpdateContactPreference(CommsPreferencePost(DigitalPreference))(Future.successful(Right(updateSuccessResponse)))
 
           val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(digitalPref))
 
@@ -103,14 +103,14 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           }
         }
 
-        "a valid return period is supplied but an error is returned from the UpdateVatSubscription Service" should {
+        "a valid result is supplied but an error is returned from the UpdateVatSubscription Service" should {
 
           lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-            mockUpdateContactPreference(CommsPreferencePost(PaperPreference, None))(Future.successful(Left(updateErrorResponse)))
+            mockUpdateContactPreference(CommsPreferencePost(PaperPreference))(Future.successful(Left(updateErrorResponse)))
             status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
@@ -119,7 +119,7 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           }
         }
 
-        "a valid return period is supplied but an error is returned instead of a welshIndicator" should {
+        "a valid result is supplied but an error is returned instead of a welshIndicator" should {
 
           lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
 

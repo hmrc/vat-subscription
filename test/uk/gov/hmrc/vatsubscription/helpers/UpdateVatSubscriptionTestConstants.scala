@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MTDfBMandated, MandationStatus, NonMTDfB}
+import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MTDfBMandated, MandationStatus, NonMTDfB, PaperPreference}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 
@@ -42,7 +42,7 @@ object UpdateVatSubscriptionTestConstants {
     updatedReturnPeriod = Some(updatedReturnPeriod),
     updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
     declaration = DeclarationTestConstants.declarationModelAgent,
-    commsPreference = None
+    commsPreference = Some(PaperPreference)
   )
 
   val updateVatSubscriptionModelMin: UpdateVatSubscription = UpdateVatSubscription(
