@@ -35,8 +35,7 @@ object PendingChanges {
   private val bankDetailsPath =  __ \ "bankDetails"
   private val returnPeriodPath = __ \ "returnPeriod"
   private val mandationStatusDesPath = __ \ "mandationStatus" \ "mandationStatus"
-  private val mandationStatusWritesPath = __ \ "mandationStatus"
-  private val commsPreferencePath = __ \ "commsPreference"
+  private val commsPreferenceDesPath = __ \ "commsPreference" \ "commsPreference"
 
   val reads: AppConfig => Reads[PendingChanges] = conf => for {
     ppob <- ppobPath.readNullable[PPOBGet]
@@ -45,7 +44,7 @@ object PendingChanges {
     mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus](
       if (conf.features.newStatusIndicators()) desReader else desReaderOld
     ).orElse(Reads.pure(None))
-    commsPref <- commsPreferencePath.readNullable[CommsPreference]
+    commsPref <- commsPreferenceDesPath.readNullable[CommsPreference].orElse(Reads.pure(None))
   } yield PendingChanges(
     ppob,
     bankDetails,
@@ -54,11 +53,14 @@ object PendingChanges {
     commsPref
   )
 
+  private val mandationStatusWritesPath = __ \ "mandationStatus"
+  private val commsPreferenceWritesPath = __ \ "commsPreference"
+
   implicit val writes: Writes[PendingChanges] = (
     ppobPath.writeNullable[PPOBGet] and
     bankDetailsPath.writeNullable[BankDetails] and
     returnPeriodPath.writeNullable[ReturnPeriod] and
     mandationStatusWritesPath.writeNullable[MandationStatus](MandationStatus.writer) and
-    commsPreferencePath.writeNullable[CommsPreference]
+    commsPreferenceWritesPath.writeNullable[CommsPreference]
   )(unlift(PendingChanges.unapply))
 }

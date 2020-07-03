@@ -73,7 +73,7 @@ object CustomerInformationTestConstants {
           "emailVerified" -> emailVerified
         ),
         "websiteAddress" -> website,
-        "commsPreference" -> Json.obj("commsPreference"-> "ZEL")
+        "commsPreference" -> "ZEL"
       ),
       "flatRateScheme" -> Json.obj(
         "FRSCategory" -> frsCategory,
