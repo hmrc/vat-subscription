@@ -24,15 +24,11 @@ class CommsPreferenceModelSpec extends UnitSpec {
   "CommsPreferenceModel" should {
 
     "correctly parse from json for DigitalPreference" in {
-      val validJson = Json.obj("commsPreference" -> DigitalPreference.desValue)
-
-      validJson.as[CommsPreference] shouldBe DigitalPreference
+      JsString(DigitalPreference.desValue).as[CommsPreference] shouldBe DigitalPreference
     }
 
     "correctly parse from json for PaperPreference" in {
-      val validJson = Json.obj("commsPreference" -> PaperPreference.desValue)
-
-      validJson.as[CommsPreference] shouldBe PaperPreference
+      JsString(PaperPreference.desValue).as[CommsPreference] shouldBe PaperPreference
     }
 
     "correctly parse to json for DigitalPreference" in {

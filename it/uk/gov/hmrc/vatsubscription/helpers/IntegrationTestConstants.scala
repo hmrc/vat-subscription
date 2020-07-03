@@ -120,9 +120,7 @@ object IntegrationTestConstants {
           "emailVerified" -> emailVerified
         ),
         "websiteAddress" -> website,
-        "commsPreference" -> Json.obj(
-          "commsPreference" -> DigitalPreference.desValue
-        )
+        "commsPreference" -> DigitalPreference.desValue
       ),
       "flatRateScheme" -> Json.obj(
         "FRSCategory" -> frsCategory,

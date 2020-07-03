@@ -34,9 +34,8 @@ case object DigitalPreference extends CommsPreference {
 }
 
 object CommsPreference {
-  val path = "commsPreference"
 
-  implicit val reads: Reads[CommsPreference] = (__ \ path).read[String].map {
+  implicit val reads: Reads[CommsPreference] = JsPath.read[String].map {
     case PaperPreference.desValue => PaperPreference
     case DigitalPreference.desValue => DigitalPreference
   }
