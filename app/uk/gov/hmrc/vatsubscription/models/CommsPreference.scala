@@ -35,7 +35,7 @@ case object DigitalPreference extends CommsPreference {
 
 object CommsPreference {
 
-  implicit val reads: Reads[CommsPreference] = JsPath.read[String].map {
+  implicit val reads: Reads[CommsPreference] = JsPath.read[String].collect(JsonValidationError("Invalid contact preference")) {
     case PaperPreference.desValue | PaperPreference.mdtpValue => PaperPreference
     case DigitalPreference.desValue | DigitalPreference.mdtpValue => DigitalPreference
   }

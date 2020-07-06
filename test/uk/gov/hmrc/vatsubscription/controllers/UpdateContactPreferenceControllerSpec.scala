@@ -18,7 +18,7 @@ package uk.gov.hmrc.vatsubscription.controllers
 
 import play.api.http.Status._
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
+import play.api.mvc.{AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.vatsubscription.assets.TestUtil
@@ -44,6 +44,7 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
 
   val paperPref: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.obj("commsPreference" -> "PAPER"))
   val digitalPref: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.obj("commsPreference" -> "DIGITAL"))
+  val invalidPref: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.obj("commsPreference" -> "FAX"))
 
   "the updateContactPreferences() method" when {
 
@@ -88,10 +89,9 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
 
       "return an error response" when {
 
-        "no json body is supplied for the PUT" should {
+        "no JSON body is supplied" should {
 
-          val unknownContactPreferenceRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(unknownContactPreferenceRequest))
+          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(fakeRequest))
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -99,7 +99,23 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${unknownContactPreferenceRequest.body}"))
+            jsonBodyOf(res) shouldBe
+              Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${fakeRequest.body}"))
+          }
+        }
+
+        "an invalid JSON body is supplied" should {
+
+          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(invalidPref))
+
+          "return status BAD_REQUEST (400)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            status(res) shouldBe BAD_REQUEST
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe
+              Json.toJson(ErrorModel("INVALID_JSON", s"Json received, but did not validate"))
           }
         }
 
