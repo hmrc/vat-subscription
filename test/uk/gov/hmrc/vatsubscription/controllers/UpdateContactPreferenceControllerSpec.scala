@@ -74,7 +74,7 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
         }
 
-        "Digital Preference is supplied ant the response from the UpdateVatSubscription service is successful" in {
+        "Digital Preference is supplied and the response from the UpdateVatSubscription service is successful" in {
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))

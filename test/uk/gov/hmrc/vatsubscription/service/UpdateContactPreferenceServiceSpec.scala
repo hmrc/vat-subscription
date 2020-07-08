@@ -99,25 +99,5 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
         result shouldEqual expectedResult
       }
     }
-
-    "user is an Agent" should {
-
-      val result = service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference),
-        welshIndicator = false)(testUser)
-
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangeCommsPreference,
-        updatedPPOB = None,
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = Some(PaperPreference)
-      )
-
-      "return a correct UpdateVatSubscription model" in {
-        result shouldEqual expectedResult
-      }
-    }
   }
 }

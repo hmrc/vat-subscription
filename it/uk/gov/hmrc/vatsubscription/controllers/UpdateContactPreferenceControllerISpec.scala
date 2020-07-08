@@ -32,56 +32,56 @@ class UpdateContactPreferenceControllerISpec extends ComponentSpecBase with Cust
   val testErrorDesResponse: JsValue = Json.obj("code" -> "TEST", "reason" -> "ERROR")
   val testErrorResponse: JsValue = Json.obj("status" -> "TEST", "message" -> "ERROR")
 
-    "PUT /vat-subsription/:vatNumber/contact-preference" when {
+  "PUT /vat-subsription/:vatNumber/contact-preference" when {
 
-      "the user is unauthorised" should {
-        "return FORBIDDEN" in {
+    "the user is unauthorised" should {
+      "return FORBIDDEN" in {
 
-          stubAuthFailure()
+        stubAuthFailure()
+
+        val res = await(put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson))
+
+        res should have(
+          httpStatus(FORBIDDEN)
+        )
+      }
+    }
+
+    "the user is authorised" when {
+
+      "the call to DES is successful" should {
+
+        "return OK with the status" in {
+
+          stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+          stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
+          stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
           val res = await(put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson))
 
           res should have(
-            httpStatus(FORBIDDEN)
+            httpStatus(OK),
+            jsonBodyAs(testSuccessDesResponse)
           )
         }
       }
 
-      "the use is authorised" when {
+      "the call to DES returns an error" should {
 
-        "the call to DES is successful" should {
+        "return ISE with the error response" in {
 
-          "return OK with the status" in {
+          stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+          stubGetInformation(testVatNumber)(OK,testSuccessCustomerDetailsDesResponse)
+          stubUpdateSubscription(testVatNumber)(BAD_REQUEST,  testErrorDesResponse)
 
-            stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-            stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
-            stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
+          val res = await(put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson))
 
-            val res = await(put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson))
-
-            res should have(
-              httpStatus(OK),
-              jsonBodyAs(testSuccessDesResponse)
-            )
-          }
+          res should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            jsonBodyAs(testErrorResponse)
+          )
         }
-
-        "the call to DES returns an error" should {
-
-          "return ISE with the error response" in {
-
-              stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-              stubGetInformation(testVatNumber)(OK,testSuccessCustomerDetailsDesResponse)
-              stubUpdateSubscription(testVatNumber)(BAD_REQUEST,  testErrorDesResponse)
-
-              val res = await(put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson))
-
-              res should have(
-                httpStatus(INTERNAL_SERVER_ERROR),
-                jsonBodyAs(testErrorResponse)
-              )
-            }
-          }
-        }
+      }
     }
+  }
 }
