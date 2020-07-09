@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.vatsubscription.models
 
-import MandationStatus.{desReader, desReaderOld}
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
+import uk.gov.hmrc.vatsubscription.models.MandationStatus.{desReader, desReaderOld}
 import uk.gov.hmrc.vatsubscription.models.ReturnPeriod.filterReturnPeriod
+import uk.gov.hmrc.vatsubscription.models.get.{PPOBAddressGet, PPOBGet}
 import uk.gov.hmrc.vatsubscription.utils.{JsonObjectSugar, JsonReadUtil}
 
 case class VatCustomerInformation(mandationStatus: MandationStatus,
@@ -142,6 +142,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     commsPreference
   )
 
+  implicit val commsPreferenceWrites: Writes[CommsPreference] = CommsPreference.writes
+
   implicit val writes: Writes[VatCustomerInformation] = Writes {
     model =>
       jsonObjNoNulls(
@@ -173,8 +175,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "businessName" -> model.customerDetails.organisationName,
         "partyType" -> model.partyType,
         "missingTrader" -> model.missingTrader,
-        "overseasIndicator" -> model.customerDetails.overseasIndicator,
-        "commsPreference" -> model.commsPreference
+        "overseasIndicator" -> model.customerDetails.overseasIndicator
       )
   }
 }

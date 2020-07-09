@@ -67,7 +67,8 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
         updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing())
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
       )
 
       "return a correct UpdateVatSubscription model" in {
@@ -85,7 +86,8 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
         updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing())
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
       )
 
       "return a correct UpdateVatSubscription model" in {
@@ -105,7 +107,8 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress.com"), None, None))),
         updateDeregistrationInfo = None,
         declaration = Declaration(Some(AgentOrCapacitor(testArn, Some(ContactDetails(None, None, None,
-          Some("agent@emailaddress.com"), None)))), Signing())
+          Some("agent@emailaddress.com"), None)))), Signing()),
+        commsPreference = None
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {

@@ -21,43 +21,37 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.{ContactDetails, User}
-import uk.gov.hmrc.vatsubscription.models.post.PPOBPost
+import uk.gov.hmrc.vatsubscription.models.User
+import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
+class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def updatePPOB(updatedPPOB: PPOBPost, welshIndicator: Boolean)
-                (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
-
-    val subscriptionModel = constructPPOBUpdateModel(updatedPPOB, welshIndicator)
-    Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating PPOB for user with vrn - ${user.vrn}")
+  def updateContactPreference(updatedContactPreference: CommsPreferencePost,
+                              welshIndicator: Boolean)
+                             (implicit user: User[_],
+                              hc: HeaderCarrier,
+                              ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
+    val subscriptionModel = constructContactPreferenceModel(updatedContactPreference, welshIndicator)
+    Logger.debug("[UpdateContactPreferenceService][updateContactPreference]: " +
+      s"updating contact preference for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructPPOBUpdateModel(updatedPPOB: PPOBPost,
-                               welshIndicator: Boolean)
-                              (implicit user: User[_]): UpdateVatSubscription = {
-
-    val agentContactDetails: Option[ContactDetails] =
-      if(updatedPPOB.transactorOrCapacitorEmail.isDefined)
-        Some(ContactDetails(None, None, None, updatedPPOB.transactorOrCapacitorEmail, None))
-      else
-        None
-
-    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
+  def constructContactPreferenceModel(updatedContactPreference: CommsPreferencePost, welshIndicator: Boolean)
+                                     (implicit user: User[_]): UpdateVatSubscription = {
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
-      requestedChanges = ChangePPOB,
-      updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+      requestedChanges = ChangeCommsPreference,
+      updatedPPOB = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
-      declaration = Declaration(agentOrCapacitor, Signing()),
-      commsPreference = None
+      declaration = Declaration(None, Signing()),
+      commsPreference = Some(updatedContactPreference.commsPreference)
     )
   }
 }

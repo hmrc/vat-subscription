@@ -70,7 +70,8 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
         updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing())
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
       )
 
       "return a correct UpdateVatSubscription model" in {
@@ -88,7 +89,8 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
         updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing())
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing()),
+        commsPreference = None
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
@@ -106,7 +108,8 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
         updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing())
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
       )
 
       "return a correct UpdateVatSubscription model" in {

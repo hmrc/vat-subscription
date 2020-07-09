@@ -16,12 +16,32 @@
 
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.vatsubscription.assets.TestUtil
-import play.api.libs.json.Json
 import uk.gov.hmrc.vatsubscription.helpers.UpdateVatSubscriptionTestConstants._
-import uk.gov.hmrc.vatsubscription.models.{MTDfBExempt, MTDfBMandated}
+import uk.gov.hmrc.vatsubscription.helpers.{DeclarationTestConstants, DeregistrationInfoTestConstants}
+import uk.gov.hmrc.vatsubscription.models.{CommsPreference, MTDfBExempt, MTDfBMandated, PaperPreference}
 
 class UpdateVatSubscriptionSpec extends TestUtil {
+
+  val updateVatSubscriptionLatestDESApi1365JsonMax: JsValue = Json.obj(
+    "messageType" -> messageType,
+    "controlInformation" -> ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
+    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365Writes(mockAppConfig)),
+    "contactDetails" -> Json.toJson(updatedPPOB),
+    "returnPeriods" -> Json.toJson(updatedReturnPeriod),
+    "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
+    "declaration" -> DeclarationTestConstants.declarationDESJsonAgent,
+    "commsPreference" -> Json.toJson(PaperPreference)(CommsPreference.updatePreferenceWrites)
+  )
+
+  val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(
+    "messageType" -> messageType,
+    "controlInformation" -> ControlInformation(welshIndicator = false),
+    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.DESApi1365Writes(mockAppConfig)),
+    "returnPeriods" -> Json.toJson(updatedReturnPeriod),
+    "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
+  )
 
   "UpdateVatSubscription" when {
 
@@ -30,12 +50,12 @@ class UpdateVatSubscriptionSpec extends TestUtil {
       "for the latest DES API1365 writes" should {
 
         "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-          UpdateVatSubscription.DESApi1365Writes.writes(updateVatSubscriptionModelMax) shouldBe
+          UpdateVatSubscription.DESApi1365Writes(mockAppConfig).writes(updateVatSubscriptionModelMax) shouldBe
             updateVatSubscriptionLatestDESApi1365JsonMax
         }
 
         "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-          UpdateVatSubscription.DESApi1365Writes.writes(updateVatSubscriptionModelMin) shouldBe
+          UpdateVatSubscription.DESApi1365Writes(mockAppConfig).writes(updateVatSubscriptionModelMin) shouldBe
             updateVatSubscriptionLatestDESApi1365JsonMin
         }
       }

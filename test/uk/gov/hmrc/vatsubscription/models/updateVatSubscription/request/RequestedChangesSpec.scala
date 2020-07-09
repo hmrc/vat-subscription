@@ -17,32 +17,64 @@
 package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.vatsubscription.assets.TestUtil
+import uk.gov.hmrc.vatsubscription.config.featureSwitch.{Api1365Latest, Api1365PreRelease}
 
-class RequestedChangesSpec extends UnitSpec {
+class RequestedChangesSpec extends TestUtil {
 
-  "RequestedChanges Writes" should {
+  "RequestedChanges Writes" when {
 
-    val model: RequestedChanges = RequestedChanges(
-      ppobDetails = true,
-      returnPeriod = true,
-      deregInfo = true
-    )
+    "the API1365 version is Latest" should {
 
-    "output a correctly formatted RequestedChanges json for the latest DES API1365 writes" in {
-      val result = Json.obj(
-        "PPOBDetails" -> true,
-        "returnPeriod" -> true,
-        "deregInfo" -> true,
-        "repaymentBankDetails" -> false,
-        "businessActivities" -> false,
-        "flatRateScheme" -> false,
-        "organisationDetails" -> false,
-        "correspDetails" -> false,
-        "mandationStatus" -> false
+      val model: RequestedChanges = RequestedChanges(
+        ppobDetails = true,
+        returnPeriod = true,
+        deregInfo = true
       )
 
-      RequestedChanges.DESApi1365Writes.writes(model) shouldBe result
+      "output a correctly formatted RequestedChanges json for the latest DES API1365 writes" in {
+        val result = Json.obj(
+          "PPOBDetails" -> true,
+          "returnPeriod" -> true,
+          "deregInfo" -> true,
+          "repaymentBankDetails" -> false,
+          "businessActivities" -> false,
+          "flatRateScheme" -> false,
+          "organisationDetails" -> false,
+          "correspDetails" -> false,
+          "mandationStatus" -> false,
+          "commsPreference" -> false
+        )
+
+        mockAppConfig.features.api1365Version(Api1365Latest)
+        RequestedChanges.DESApi1365Writes(mockAppConfig).writes(model) shouldBe result
+      }
+    }
+
+    "the API1365 version is Pre-release" should {
+
+      val model: RequestedChanges = RequestedChanges(
+        correspDetails = true,
+        mandationStatus = true,
+        deregInfo = true
+      )
+
+      "output correctly formatted RequestedChanges json which omits the commsPreference field" in {
+        val result = Json.obj(
+          "PPOBDetails" -> false,
+          "returnPeriod" -> false,
+          "deregInfo" -> true,
+          "repaymentBankDetails" -> false,
+          "businessActivities" -> false,
+          "flatRateScheme" -> false,
+          "organisationDetails" -> false,
+          "correspDetails" -> true,
+          "mandationStatus" -> true
+        )
+
+        mockAppConfig.features.api1365Version(Api1365PreRelease)
+        RequestedChanges.DESApi1365Writes(mockAppConfig).writes(model) shouldBe result
+      }
     }
   }
 }

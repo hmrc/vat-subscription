@@ -17,7 +17,7 @@
 package uk.gov.hmrc.vatsubscription.helpers
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MTDfBMandated, MandationStatus, NonMTDfB}
+import uk.gov.hmrc.vatsubscription.models.{MAReturnPeriod, MTDfBMandated, MandationStatus, NonMTDfB, PaperPreference}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 
@@ -41,17 +41,8 @@ object UpdateVatSubscriptionTestConstants {
     updatedPPOB = Some(updatedPPOB),
     updatedReturnPeriod = Some(updatedReturnPeriod),
     updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
-    declaration = DeclarationTestConstants.declarationModelAgent
-  )
-
-  val updateVatSubscriptionLatestDESApi1365JsonMax: JsValue = Json.obj(
-    "messageType" -> messageType,
-    "controlInformation" -> ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
-    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365Writes),
-    "contactDetails" -> Json.toJson(updatedPPOB),
-    "returnPeriods" -> Json.toJson(updatedReturnPeriod),
-    "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
-    "declaration" -> DeclarationTestConstants.declarationDESJsonAgent
+    declaration = DeclarationTestConstants.declarationModelAgent,
+    commsPreference = Some(PaperPreference)
   )
 
   val updateVatSubscriptionModelMin: UpdateVatSubscription = UpdateVatSubscription(
@@ -60,15 +51,8 @@ object UpdateVatSubscriptionTestConstants {
     updatedPPOB = None,
     updatedReturnPeriod = Some(updatedReturnPeriod),
     updateDeregistrationInfo = None,
-    declaration = Declaration(None, Signing())
-  )
-
-  val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(
-    "messageType" -> messageType,
-    "controlInformation" -> ControlInformation(welshIndicator = false),
-    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.DESApi1365Writes),
-    "returnPeriods" -> Json.toJson(updatedReturnPeriod),
-    "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
+    declaration = Declaration(None, Signing()),
+    commsPreference = None
   )
 
   val controlInformationJsonMax: JsValue = Json.obj(

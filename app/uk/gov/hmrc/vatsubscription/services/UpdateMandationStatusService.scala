@@ -56,7 +56,8 @@ class UpdateMandationStatusService @Inject()(updateVatSubscriptionConnector: Upd
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       updatedPPOB = None,
-      declaration = Declaration(agentOrCapacitor, Signing())
+      declaration = Declaration(agentOrCapacitor, Signing()),
+      commsPreference = None
     )
   }
 }

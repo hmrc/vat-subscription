@@ -19,9 +19,9 @@ package uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.vatsubscription.config.AppConfig
-import uk.gov.hmrc.vatsubscription.models.MandationStatus
-import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.DeregistrationInfo
 import uk.gov.hmrc.vatsubscription.models.MandationStatus.{desReader, desReaderOld, desWriter}
+import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request.deregistration.DeregistrationInfo
+import uk.gov.hmrc.vatsubscription.models.{CommsPreference, MandationStatus}
 
 case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
                                  controlInformation: ControlInformation,
@@ -29,11 +29,12 @@ case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
                                  updatedPPOB: Option[UpdatedPPOB],
                                  updatedReturnPeriod: Option[UpdatedReturnPeriod],
                                  updateDeregistrationInfo: Option[DeregistrationInfo],
-                                 declaration: Declaration)
+                                 declaration: Declaration,
+                                 commsPreference: Option[CommsPreference])
 
 object UpdateVatSubscription {
 
-  val DESApi1365Writes: Writes[UpdateVatSubscription] = writes(RequestedChanges.DESApi1365Writes)
+  val DESApi1365Writes: AppConfig => Writes[UpdateVatSubscription] = appConfig => writes(RequestedChanges.DESApi1365Writes(appConfig))
 
   def writes(requestedChangesWrites: Writes[RequestedChanges]): Writes[UpdateVatSubscription] = (
     (__ \ "messageType").write[String] and
@@ -42,7 +43,8 @@ object UpdateVatSubscription {
     (__ \ "contactDetails").writeNullable[UpdatedPPOB] and
     (__ \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
     (__ \ "deregistrationInfo").writeNullable[DeregistrationInfo] and
-    (__ \ "declaration").write[Declaration]
+    (__ \ "declaration").write[Declaration] and
+    (__ \ "commsPreference").writeNullable[CommsPreference](CommsPreference.updatePreferenceWrites)
   ) (unlift(UpdateVatSubscription.unapply))
 }
 

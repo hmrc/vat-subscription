@@ -52,7 +52,8 @@ class UpdateEmailService @Inject()(updateVatSubscriptionConnector: UpdateVatSubs
       updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
-      declaration = Declaration(agentOrCapacitor, Signing())
+      declaration = Declaration(agentOrCapacitor, Signing()),
+      commsPreference = None
     )
   }
 }

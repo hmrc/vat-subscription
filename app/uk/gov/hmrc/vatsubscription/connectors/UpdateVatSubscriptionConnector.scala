@@ -36,7 +36,7 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
 
   private[connectors] val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
 
-  implicit val writes: Writes[UpdateVatSubscription] = DESApi1365Writes
+  implicit val writes: Writes[UpdateVatSubscription] = DESApi1365Writes(appConfig)
 
   def updateVatSubscription(user: User[_], vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
                            (implicit ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
