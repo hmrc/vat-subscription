@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.vatsubscription.controllers.actions.VatAuthorised
-import uk.gov.hmrc.vatsubscription.models.post.{CommsPreferenceEmailPost, CommsPreferencePost}
+import uk.gov.hmrc.vatsubscription.models.post.CommsPreferenceEmailPost
 import uk.gov.hmrc.vatsubscription.services.{UpdateContactPreferenceService, VatCustomerDetailsRetrievalService}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +33,7 @@ class UpdateContactPreferenceAndEmailController @Inject()(VatAuthorised: VatAuth
                                                           vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
                                                           cc: ControllerComponents)
                                                          (implicit ec: ExecutionContext) extends BackendController(cc)
-                                                  with MicroserviceBaseController {
+                                                                                         with MicroserviceBaseController {
 
   def update(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
