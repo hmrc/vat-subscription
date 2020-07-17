@@ -36,6 +36,8 @@ object ChangeReturnPeriod extends RequestedChanges(returnPeriod = true)
 object DeregistrationRequest extends RequestedChanges(deregInfo = true)
 object ChangeMandationStatus extends RequestedChanges(mandationStatus = true)
 object ChangeCommsPreference extends RequestedChanges(commsPreference = true)
+object ChangeCommsPreferenceAndEmail extends RequestedChanges(commsPreference = true,
+                                                              correspDetails = true)
 
 object RequestedChanges {
 

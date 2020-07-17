@@ -20,8 +20,11 @@ import uk.gov.hmrc.vatsubscription.assets.TestUtil
 import uk.gov.hmrc.vatsubscription.connectors.mocks.MockUpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.helpers.BaseTestConstants.testUser
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.PaperPreference
-import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, DigitalPreference, PaperPreference}
+import uk.gov.hmrc.vatsubscription.helpers.PPOBTestConstants._
+import uk.gov.hmrc.vatsubscription.helpers.CustomerInformationTestConstants._
+import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
+import uk.gov.hmrc.vatsubscription.models.post.{CommsPreferencePost, PPOBAddressPost, PPOBPost}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import uk.gov.hmrc.vatsubscription.services.UpdateContactPreferenceService
@@ -35,7 +38,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
   "Calling .updateContactPreference" when {
 
-    "connecter call is successful" should {
+    "connector call is successful" should {
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
@@ -47,7 +50,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
     "connector call is unsuccessful" should {
 
-      "return successful UpdateVatSubscriptionResponse model" in {
+      "return ErrorModel" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
         val result =
           service.updateContactPreference(CommsPreferencePost(PaperPreference), welshIndicator = false)(testUser, hc, ec)
@@ -97,6 +100,110 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
       "return a correct UpdateVatSubscription model" in {
         result shouldEqual expectedResult
+      }
+    }
+  }
+
+  "Calling .constructContactPreferenceAndEmailModel" when {
+
+    val service = new UpdateContactPreferenceService(mockUpdateVatSubscriptionConnector)
+
+    "all optional fields in the 'PPOBGet' model are present" should {
+
+      val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = true),
+        requestedChanges = ChangeCommsPreferenceAndEmail,
+        updatedPPOB = Some(UpdatedPPOB(PPOBPost(
+          address = PPOBAddressPost(
+            ppobAddressModelMax.line1,
+            ppobAddressModelMax.line2,
+            ppobAddressModelMax.line3,
+            ppobAddressModelMax.line4,
+            ppobAddressModelMax.line5,
+            ppobAddressModelMax.postCode,
+            ppobAddressModelMax.countryCode
+          ),
+          contactDetails = Some(ContactDetails(
+            contactDetailsModelMax.phoneNumber,
+            contactDetailsModelMax.mobileNumber,
+            contactDetailsModelMax.faxNumber,
+            Some("newemail@email.com"),
+            emailVerified = Some(true)
+          )),
+          websiteAddress = Some(website),
+          transactorOrCapacitorEmail = None
+        ))),
+        updatedReturnPeriod = None,
+        updateDeregistrationInfo = None,
+        declaration = Declaration(None, Signing()),
+        commsPreference = Some(DigitalPreference)
+      )
+
+      val result = service.constructContactPreferenceAndEmailModel(
+        newEmail = "newemail@email.com",
+        welshIndicator = Some(true),
+        currentContactDetails = ppobModelMax
+      )
+
+      "return the correct UpdateVatSubscription model" in {
+        result shouldBe expectedResult
+      }
+    }
+
+    "all optional fields in the 'PPOBGet' model are not present" should {
+
+      val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = false),
+        requestedChanges = ChangeCommsPreferenceAndEmail,
+        updatedPPOB = Some(UpdatedPPOB(PPOBPost(
+          address = PPOBAddressPost(None, None, None, None, None, None, None),
+          contactDetails = Some(ContactDetails(
+            None,
+            None,
+            None,
+            Some("newemail@email.com"),
+            emailVerified = Some(true)
+          )),
+          websiteAddress = None,
+          transactorOrCapacitorEmail = None
+        ))),
+        updatedReturnPeriod = None,
+        updateDeregistrationInfo = None,
+        declaration = Declaration(None, Signing()),
+        commsPreference = Some(DigitalPreference)
+      )
+
+      val result = service.constructContactPreferenceAndEmailModel(
+        newEmail = "newemail@email.com",
+        welshIndicator = None,
+        currentContactDetails = PPOBGet(ppobAddressModelMin, None, None)
+      )
+
+      "return the correct UpdateVatSubscription model" in {
+        result shouldBe expectedResult
+      }
+    }
+  }
+
+  "Calling .updatePreferenceAndEmail" when {
+
+    "connector call is successful" should {
+
+      lazy val service = setup(Right(SuccessModel("12345")))
+      lazy val result = service.updatePreferenceAndEmail("newemail@email.com", customerInformationModelMax)(testUser, hc, ec)
+
+      "return successful UpdateVatSubscriptionResponse model" in {
+        await(result) shouldEqual Right(SuccessModel("12345"))
+      }
+    }
+
+    "connector call is unsuccessful" should {
+
+      lazy val service = setup(Left(ErrorModel("ERROR", "Error")))
+      lazy val result = service.updatePreferenceAndEmail("newemail@email.com", customerInformationModelMax)(testUser, hc, ec)
+
+      "return ErrorModel" in {
+        await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
   }

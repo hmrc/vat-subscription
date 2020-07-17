@@ -21,8 +21,9 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.connectors.UpdateVatSubscriptionConnector
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.User
-import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
+import uk.gov.hmrc.vatsubscription.models.get.PPOBGet
+import uk.gov.hmrc.vatsubscription.models.{ContactDetails, DigitalPreference, User, VatCustomerInformation}
+import uk.gov.hmrc.vatsubscription.models.post.{CommsPreferencePost, PPOBAddressPost, PPOBPost}
 import uk.gov.hmrc.vatsubscription.models.updateVatSubscription.request._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,9 +42,17 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
+  def updatePreferenceAndEmail(newEmail: String,
+                               currentDetails: VatCustomerInformation)
+                              (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
+    val subscriptionModel = constructContactPreferenceAndEmailModel(newEmail, currentDetails.customerDetails.welshIndicator, currentDetails.ppob)
+    Logger.debug("[UpdateContactPreferenceService][updatePreferenceAndEmail]: updating contact preference " +
+      s"and email for user with vrn - ${user.vrn}")
+    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+  }
+
   def constructContactPreferenceModel(updatedContactPreference: CommsPreferencePost, welshIndicator: Boolean)
                                      (implicit user: User[_]): UpdateVatSubscription = {
-
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangeCommsPreference,
@@ -52,6 +61,41 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
       updateDeregistrationInfo = None,
       declaration = Declaration(None, Signing()),
       commsPreference = Some(updatedContactPreference.commsPreference)
+    )
+  }
+
+  def constructContactPreferenceAndEmailModel(newEmail: String,
+                                              welshIndicator: Option[Boolean],
+                                              currentContactDetails: PPOBGet): UpdateVatSubscription = {
+    val currentAddress: PPOBAddressPost = PPOBAddressPost(
+      line1 = currentContactDetails.address.line1,
+      line2 = currentContactDetails.address.line2,
+      line3 = currentContactDetails.address.line3,
+      line4 = currentContactDetails.address.line4,
+      line5 = currentContactDetails.address.line5,
+      postCode = currentContactDetails.address.postCode,
+      countryCode = currentContactDetails.address.countryCode
+    )
+
+    val updatedContactDetails: ContactDetails = currentContactDetails.contactDetails.fold(
+      ContactDetails(None, None, None, emailAddress = Some(newEmail), emailVerified = Some(true))
+    )(
+      currentDetails => currentDetails.copy(emailAddress = Some(newEmail), emailVerified = Some(true))
+    )
+
+    UpdateVatSubscription(
+      controlInformation = ControlInformation(welshIndicator.contains(true)),
+      requestedChanges = ChangeCommsPreferenceAndEmail,
+      updatedPPOB = Some(UpdatedPPOB(PPOBPost(
+        address = currentAddress,
+        contactDetails = Some(updatedContactDetails),
+        websiteAddress = currentContactDetails.websiteAddress,
+        transactorOrCapacitorEmail = None
+      ))),
+      updatedReturnPeriod = None,
+      updateDeregistrationInfo = None,
+      declaration = Declaration(None, Signing()),
+      commsPreference = Some(DigitalPreference)
     )
   }
 }
