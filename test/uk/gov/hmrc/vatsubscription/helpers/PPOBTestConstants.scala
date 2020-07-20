@@ -53,6 +53,16 @@ object PPOBTestConstants {
     Some(countryCode)
   )
 
+  val ppobAddressModelMin = PPOBAddressGet(
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None
+  )
+
   val ppobAddressModelMaxPost = PPOBAddressPost(
     Some(addLine1),
     Some(addLine2),

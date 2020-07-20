@@ -22,7 +22,7 @@ import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.vatsubscription.httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import uk.gov.hmrc.vatsubscription.models.User
+import uk.gov.hmrc.vatsubscription.models.{User, VatCustomerInformation}
 import uk.gov.hmrc.vatsubscription.models.post.CommsPreferencePost
 import uk.gov.hmrc.vatsubscription.services.UpdateContactPreferenceService
 
@@ -35,11 +35,21 @@ trait MockUpdateContactPreferenceService extends MockitoSugar {
 
   def mockUpdateContactPreference(newContactPref: CommsPreferencePost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdateContactPreferenceService
-    .updateContactPreference(ArgumentMatchers.eq(newContactPref),ArgumentMatchers.any[Boolean])(
+    .updateContactPreference(ArgumentMatchers.eq(newContactPref), ArgumentMatchers.any[Boolean])(
       ArgumentMatchers.any[User[_]],
       ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[ExecutionContext]
     )
+    ).thenReturn(response)
+  }
+
+  def mockUpdatePreferenceAndEmail()(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+    when(mockUpdateContactPreferenceService
+      .updatePreferenceAndEmail(ArgumentMatchers.any[String], ArgumentMatchers.any[VatCustomerInformation])(
+        ArgumentMatchers.any[User[_]],
+        ArgumentMatchers.any[HeaderCarrier],
+        ArgumentMatchers.any[ExecutionContext]
+      )
     ).thenReturn(response)
   }
 }

@@ -1,23 +1,25 @@
 # microservice specific routes
 
-GET         /:vatNumber/mandation-status                                             @uk.gov.hmrc.vatsubscription.controllers.MandationStatusController.getMandationStatus(vatNumber: String)
+GET    /:vatNumber/mandation-status           @uk.gov.hmrc.vatsubscription.controllers.MandationStatusController.getMandationStatus(vatNumber: String)
 
-GET         /:vatNumber/known-facts                                                  @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatKnownFactsController.retrieveVatKnownFacts(vatNumber: String)
+GET    /:vatNumber/known-facts                @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatKnownFactsController.retrieveVatKnownFacts(vatNumber: String)
 
-GET         /:vatNumber/customer-details                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(vatNumber: String)
+GET    /:vatNumber/customer-details           @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(vatNumber: String)
 
-GET         /:vatNumber/full-information                                             @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatInformation(vatNumber: String)
+GET    /:vatNumber/full-information           @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.retrieveVatInformation(vatNumber: String)
 
-GET         /:vatNumber/manage-account-summary                                       @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.manageAccountSummary(vatNumber: String)
+GET    /:vatNumber/manage-account-summary     @uk.gov.hmrc.vatsubscription.controllers.RetrieveVatCustomerDetailsController.manageAccountSummary(vatNumber: String)
 
-PUT         /:vatNumber/return-period                                                @uk.gov.hmrc.vatsubscription.controllers.UpdateReturnPeriodController.updateVatReturnPeriod(vatNumber: String)
+PUT    /:vatNumber/return-period              @uk.gov.hmrc.vatsubscription.controllers.UpdateReturnPeriodController.updateVatReturnPeriod(vatNumber: String)
 
-PUT         /:vatNumber/ppob                                                         @uk.gov.hmrc.vatsubscription.controllers.UpdatePPOBController.updatePPOB(vatNumber: String)
+PUT    /:vatNumber/ppob                       @uk.gov.hmrc.vatsubscription.controllers.UpdatePPOBController.updatePPOB(vatNumber: String)
 
-PUT         /:vatNumber/deregister                                                   @uk.gov.hmrc.vatsubscription.controllers.RequestDeregistrationController.deregister(vatNumber: String)
+PUT    /:vatNumber/deregister                 @uk.gov.hmrc.vatsubscription.controllers.RequestDeregistrationController.deregister(vatNumber: String)
 
-PUT         /:vatNumber/email-address                                                @uk.gov.hmrc.vatsubscription.controllers.UpdateEmailAddressController.updateEmail(vatNumber: String)
+PUT    /:vatNumber/email-address              @uk.gov.hmrc.vatsubscription.controllers.UpdateEmailAddressController.updateEmail(vatNumber: String)
 
-PUT         /:vatNumber/mandation-status                                             @uk.gov.hmrc.vatsubscription.controllers.UpdateMandationStatusController.updateMandationStatus(vatNumber: String)
+PUT    /:vatNumber/mandation-status           @uk.gov.hmrc.vatsubscription.controllers.UpdateMandationStatusController.updateMandationStatus(vatNumber: String)
 
-PUT         /:vatNumber/contact-preference                                           @uk.gov.hmrc.vatsubscription.controllers.UpdateContactPreferenceController.updateContactPreference(vatNumber: String)
+PUT    /:vatNumber/contact-preference         @uk.gov.hmrc.vatsubscription.controllers.UpdateContactPreferenceController.updateContactPreference(vatNumber: String)
+
+PUT    /:vatNumber/contact-preference/email   @uk.gov.hmrc.vatsubscription.controllers.UpdateContactPreferenceAndEmailController.update(vatNumber: String)
