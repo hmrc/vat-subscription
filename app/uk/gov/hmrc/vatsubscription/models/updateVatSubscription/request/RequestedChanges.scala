@@ -37,7 +37,7 @@ object DeregistrationRequest extends RequestedChanges(deregInfo = true)
 object ChangeMandationStatus extends RequestedChanges(mandationStatus = true)
 object ChangeCommsPreference extends RequestedChanges(commsPreference = true)
 object ChangeCommsPreferenceAndEmail extends RequestedChanges(commsPreference = true,
-                                                              correspDetails = true)
+                                                              ppobDetails = true)
 
 object RequestedChanges {
 
