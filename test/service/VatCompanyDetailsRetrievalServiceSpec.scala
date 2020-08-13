@@ -27,7 +27,6 @@ import helpers.CustomerDetailsTestConstants._
 import helpers.CustomerInformationTestConstants._
 import services._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomerInformationConnector {

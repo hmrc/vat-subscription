@@ -25,7 +25,7 @@ import play.api.inject.Injector
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import config.AppConfig
 import config.featureSwitch.{Api1363Latest, Api1365Latest}

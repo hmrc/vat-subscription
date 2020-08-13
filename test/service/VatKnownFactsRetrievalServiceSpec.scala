@@ -27,7 +27,6 @@ import helpers.VatKnownFactsTestConstants._
 import services.VatKnownFactsRetrievalService._
 import services._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class VatKnownFactsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomerInformationConnector {

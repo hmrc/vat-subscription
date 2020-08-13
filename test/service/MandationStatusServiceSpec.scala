@@ -27,7 +27,6 @@ import helpers.PPOBTestConstants.ppobModelMax
 import models.{CustomerDetails, MTDfBMandated, VatCustomerInformation}
 import services.MandationStatusService
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MandationStatusServiceSpec extends UnitSpec with EitherValues

@@ -16,7 +16,7 @@
 
 package models.updateVatSubscription.request.deregistration
 
-import play.api.libs.json.{JsError, JsString, Json}
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class BelowThresholdSpec extends UnitSpec {

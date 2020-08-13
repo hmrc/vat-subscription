@@ -27,7 +27,6 @@ import service.mocks.MockVatKnownFactsRetrievalService
 import services.VatKnownFactsRetrievalService._
 import assets.TestUtil
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorised with MockVatKnownFactsRetrievalService {

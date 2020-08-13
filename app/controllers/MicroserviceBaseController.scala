@@ -19,7 +19,7 @@ package controllers
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, Reads}
 import play.api.mvc.AnyContentAsJson
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import models.User
 import models.updateVatSubscription.response.ErrorModel
 

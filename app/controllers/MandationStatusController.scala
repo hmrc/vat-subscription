@@ -21,7 +21,7 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure,
   VatNumberNotFound, Forbidden => ForbiddenResponse}
 import services.MandationStatusService

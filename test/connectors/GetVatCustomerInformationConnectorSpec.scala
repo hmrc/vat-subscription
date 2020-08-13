@@ -19,7 +19,7 @@ package connectors
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import assets.TestUtil
 import config.featureSwitch.Api1363Latest
 import helpers.CustomerInformationTestConstants._

@@ -42,7 +42,7 @@ class VatAuthorisedSpec extends TestUtil with MockAuthConnector {
     )
 
   def result: Future[Result] = TestVatAuthorised.async(testVatNumber) {
-    implicit user =>
+    _ =>
       Future.successful(Ok)
   }(ec)(fakeRequest)
 

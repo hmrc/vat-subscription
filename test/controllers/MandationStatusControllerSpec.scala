@@ -27,7 +27,6 @@ import connectors.{Forbidden, InvalidVatNumber, Migration,
 import models.MTDfBMandated
 import service.mocks.MockMandationStatusService
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MandationStatusControllerSpec extends TestUtil

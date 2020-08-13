@@ -30,7 +30,6 @@ import models.CustomerDetails
 import service.mocks.MockVatCustomerDetailsRetrievalService
 import assets.TestUtil
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
