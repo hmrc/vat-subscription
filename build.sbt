@@ -35,9 +35,9 @@ lazy val coverageSettings: Seq[Setting[_]] = {
     "uk.gov.hmrc.BuildInfo",
     "app.*",
     "prod.*",
-    "uk.gov.hmrc.vatsubscription.config.*",
+    "config.*",
     "testOnlyDoNotUseInAppConf.*",
-    "uk.gov.hmrc.vatsubscription.testonly.*")
+    "testonly.*")
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
