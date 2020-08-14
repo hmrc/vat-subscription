@@ -16,6 +16,7 @@
 
 package testOnly.controllers
 
+import assets.TestUtil
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -23,7 +24,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import config.featureSwitch._
 import testonly.controllers.FeatureSwitchController
-import assets.TestUtil
 
 import scala.concurrent.Future
 

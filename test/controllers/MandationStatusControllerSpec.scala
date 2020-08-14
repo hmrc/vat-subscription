@@ -16,14 +16,13 @@
 
 package controllers
 
+import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import assets.TestUtil
 import connectors.mocks.MockAuthConnector
 import helpers.BaseTestConstants._
-import connectors.{Forbidden, InvalidVatNumber, Migration,
-  UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
+import connectors.{Forbidden, InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
 import models.MTDfBMandated
 import service.mocks.MockMandationStatusService
 

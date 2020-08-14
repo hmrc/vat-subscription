@@ -16,6 +16,7 @@
 
 package controllers
 
+import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -28,7 +29,6 @@ import helpers.PPOBTestConstants.{ppobModelMax, ppobModelMaxPost}
 import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
 import service.mocks.{MockUpdatePPOBService, MockVatCustomerDetailsRetrievalService}
-import assets.TestUtil
 
 import scala.concurrent.Future
 

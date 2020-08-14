@@ -16,6 +16,7 @@
 
 package controllers
 
+import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -25,7 +26,6 @@ import helpers.BaseTestConstants._
 import helpers.VatKnownFactsTestConstants._
 import service.mocks.MockVatKnownFactsRetrievalService
 import services.VatKnownFactsRetrievalService._
-import assets.TestUtil
 
 import scala.concurrent.Future
 

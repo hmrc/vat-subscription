@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import assets.TestUtil
 import play.api.http.Status._
 import play.api.mvc.Result
 import play.api.mvc.Results._
@@ -25,7 +26,6 @@ import uk.gov.hmrc.auth.core.{Enrolment, Enrolments, InsufficientEnrolments}
 import config.Constants
 import connectors.mocks.MockAuthConnector
 import helpers.BaseTestConstants.{testMtdVatEnrolment, testVatNumber}
-import assets.TestUtil
 
 import scala.concurrent.Future
 

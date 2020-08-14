@@ -16,12 +16,12 @@
 
 package controllers
 
+import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsJson
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import assets.TestUtil
 import connectors.UnexpectedGetVatCustomerInformationFailure
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber

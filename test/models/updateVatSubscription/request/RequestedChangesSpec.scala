@@ -16,8 +16,8 @@
 
 package models.updateVatSubscription.request
 
-import play.api.libs.json.Json
 import assets.TestUtil
+import play.api.libs.json.Json
 import config.featureSwitch.{Api1365Latest, Api1365PreRelease}
 
 class RequestedChangesSpec extends TestUtil {

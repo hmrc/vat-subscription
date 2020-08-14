@@ -16,6 +16,7 @@
 
 package controllers
 
+import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -28,7 +29,6 @@ import helpers.CustomerDetailsTestConstants._
 import helpers.CustomerInformationTestConstants._
 import models.CustomerDetails
 import service.mocks.MockVatCustomerDetailsRetrievalService
-import assets.TestUtil
 
 import scala.concurrent.Future
 

@@ -16,8 +16,8 @@
 
 package models
 
-import play.api.libs.json.{JsError, Json}
 import assets.TestUtil
+import play.api.libs.json.{JsError, Json}
 import helpers.BankDetailsTestConstants.bankDetailsModelMax
 import helpers.CustomerInformationTestConstants._
 import helpers.PPOBTestConstants.ppobModelMax

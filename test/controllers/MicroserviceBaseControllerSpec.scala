@@ -16,9 +16,9 @@
 
 package controllers
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import assets.TestUtil
+import play.api.libs.json.Json
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import helpers.PPOBTestConstants.{ppobPostExample, ppobPostExampleJson}
 import models.User
 import models.post.PPOBPost

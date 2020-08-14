@@ -16,11 +16,11 @@
 
 package connectors
 
+import assets.TestUtil
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpClient
-import assets.TestUtil
 import config.featureSwitch.Api1363Latest
 import helpers.CustomerInformationTestConstants._
 
@@ -41,7 +41,7 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(OK, responseJson = Some(customerInformationDESJsonMaxWithFRS))
+        val httpResponse = HttpResponse(OK, customerInformationDESJsonMaxWithFRS.toString)
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
@@ -52,7 +52,7 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(OK, responseJson = Some(Json.obj()))
+        val httpResponse = HttpResponse(OK,Json.obj().toString)
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
@@ -63,7 +63,7 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(BAD_REQUEST)
+        val httpResponse = HttpResponse(BAD_REQUEST, "")
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
@@ -74,7 +74,7 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(NOT_FOUND)
+        val httpResponse = HttpResponse(NOT_FOUND, "")
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
@@ -85,7 +85,7 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(FORBIDDEN, Some(migrationDESJson))
+        val httpResponse = HttpResponse(FORBIDDEN, migrationDESJson.toString)
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
@@ -96,7 +96,7 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(FORBIDDEN, responseJson = Some(Json.obj()))
+        val httpResponse = HttpResponse(FORBIDDEN, Json.obj().toString)
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
@@ -107,11 +107,11 @@ class GetVatCustomerInformationConnectorSpec extends TestUtil {
 
         val mockConnector: GetVatCustomerInformationConnector = new GetVatCustomerInformationConnector(httpClient, mockAppConfig)
 
-        val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, responseJson = Some(Json.obj()))
+        val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, Json.obj().toString)
 
         val res = mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
 
-        res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "{ }"))
+        res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "{}"))
       }
     }
   }

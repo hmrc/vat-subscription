@@ -18,8 +18,8 @@ package models
 
 import java.time.LocalDate
 
-import play.api.libs.json.{JsObject, Json}
 import assets.TestUtil
+import play.api.libs.json.{JsObject, Json}
 import helpers.ReturnPeriodTestConstants._
 
 class ReturnPeriodSpec extends TestUtil {

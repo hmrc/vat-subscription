@@ -16,8 +16,8 @@
 
 package models
 
-import play.api.libs.json.Json
 import assets.TestUtil
+import play.api.libs.json.Json
 import helpers.BankDetailsTestConstants.bankDetailsModelMax
 import helpers.CustomerInformationTestConstants._
 import helpers.PPOBTestConstants.{email, mobileNumber, phoneNumber, ppobModelMax}

@@ -18,9 +18,9 @@ package helpers
 
 import java.util.UUID
 
+import assets.TestUtil
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import assets.TestUtil
 import config.Constants._
 import models.User
 

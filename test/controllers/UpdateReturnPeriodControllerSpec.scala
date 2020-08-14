@@ -16,6 +16,7 @@
 
 package controllers
 
+import assets.TestUtil
 import play.api.libs.json.Json
 import play.api.http.Status._
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -28,7 +29,6 @@ import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSu
 import models._
 import models.updateVatSubscription.response.ErrorModel
 import service.mocks.{MockUpdateReturnPeriodService, MockVatCustomerDetailsRetrievalService}
-import assets.TestUtil
 
 import scala.concurrent.Future
 

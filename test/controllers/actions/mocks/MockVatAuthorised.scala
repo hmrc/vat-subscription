@@ -16,6 +16,7 @@
 
 package controllers.actions.mocks
 
+import assets.TestUtil
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
@@ -24,7 +25,6 @@ import config.Constants
 import connectors.mocks.MockAuthConnector
 import controllers.actions.VatAuthorised
 import helpers.BaseTestConstants.testVatNumber
-import assets.TestUtil
 
 trait MockVatAuthorised extends TestUtil with MockAuthConnector {
 

@@ -16,8 +16,8 @@
 
 package models.updateVatSubscription.request
 
-import play.api.libs.json.{JsValue, Json}
 import assets.TestUtil
+import play.api.libs.json.{JsValue, Json}
 import helpers.UpdateVatSubscriptionTestConstants._
 import helpers.{DeclarationTestConstants, DeregistrationInfoTestConstants}
 import models.{CommsPreference, MTDfBExempt, MTDfBMandated, PaperPreference}

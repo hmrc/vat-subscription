@@ -32,7 +32,7 @@ class UpdateVatSubscriptionHttpParserSpec extends UnitSpec {
       "valid json is returned" should {
 
         val response: JsObject = Json.obj("formBundle" -> "12345")
-        val result = UpdateVatSubscriptionReads.read("", "", HttpResponse(Status.OK, Some(response)))
+        val result = UpdateVatSubscriptionReads.read("", "", HttpResponse(Status.OK, response.toString))
 
         "return a SuccessModel" in {
           result shouldBe Right(SuccessModel(formBundle = "12345"))
@@ -42,7 +42,7 @@ class UpdateVatSubscriptionHttpParserSpec extends UnitSpec {
       "invalid json is returned" should {
 
         val response: JsObject = Json.obj("form" -> "12345")
-        val result = UpdateVatSubscriptionReads.read("", "", HttpResponse(Status.OK, Some(response)))
+        val result = UpdateVatSubscriptionReads.read("", "", HttpResponse(Status.OK, response.toString))
 
         "return an ErrorModel" in {
           result shouldBe Left(ErrorModel("INTERNAL_SERVER_ERROR", "Invalid Json returned in Success response."))
@@ -55,7 +55,7 @@ class UpdateVatSubscriptionHttpParserSpec extends UnitSpec {
       "valid json is returned" should {
 
         val response: JsObject = Json.obj("code" -> "BAD_REQUEST", "reason" -> "REASON")
-        val result = UpdateVatSubscriptionReads.read("", "", HttpResponse(Status.BAD_REQUEST, Some(response)))
+        val result = UpdateVatSubscriptionReads.read("", "", HttpResponse(Status.BAD_REQUEST, response.toString))
 
         "return an ErrorModel" in {
           result shouldBe Left(ErrorModel("BAD_REQUEST", "REASON"))
@@ -65,7 +65,7 @@ class UpdateVatSubscriptionHttpParserSpec extends UnitSpec {
       "invalid json is returned" should {
 
         val response: JsObject = Json.obj("" -> "")
-        val result = UpdateVatSubscriptionReads.read("", "", HttpResponse(Status.BAD_REQUEST, Some(response)))
+        val result = UpdateVatSubscriptionReads.read("", "", HttpResponse(Status.BAD_REQUEST, response.toString))
 
         "return an ErrorModel" in {
           result shouldBe Left(ErrorModel("INTERNAL_SERVER_ERROR", "Invalid Json returned in Error response. Status 400 returned"))
