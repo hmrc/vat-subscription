@@ -15,29 +15,29 @@
  */
 
 import play.core.PlayVersion
-import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
+import play.sbt.routes.RoutesKeys
+import sbt.Keys.{javaOptions, retrieveManaged, scalaVersion}
+import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
-name := "vat-subscription"
+RoutesKeys.routesImport := Seq.empty
 
-lazy val root = (project in file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+val appName = "vat-subscription"
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
 
   val excludedPackages = Seq(
     "<empty>",
-    "Reverse.*",
+    ".*Reverse.*",
     ".*standardError*.*",
     "uk.gov.hmrc.BuildInfo",
     "app.*",
     "prod.*",
-    "uk.gov.hmrc.vatsubscription.config.*",
+    "config.*",
     "testOnlyDoNotUseInAppConf.*",
-    "uk.gov.hmrc.vatsubscription.testonly.*")
+    "testonly.*"
+  )
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
@@ -51,45 +51,45 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.14.0",
-  "org.typelevel" %% "cats-core" % "1.6.0",
-  "com.typesafe.play" %% "play-json-joda" % "2.6.14"
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-26"  % "2.24.0",
+  "org.typelevel"     %% "cats-core"                  % "1.6.0",
+  "com.typesafe.play" %% "play-json-joda"             % "2.6.14"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % scope,
-  "org.scalatest" %% "scalatest" % "3.0.8" % scope,
-  "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % scope,
-  "com.github.tomakehurst" % "wiremock-jre8" % "2.25.1" % scope,
-  "org.mockito" % "mockito-core" % "3.2.0" % scope
+  "uk.gov.hmrc"              %% "hmrctest"              % "3.9.0-play-26"      % scope,
+  "org.scalatest"            %% "scalatest"             % "3.0.8"              % scope,
+  "org.pegdown"              % "pegdown"                % "1.6.0"              % scope,
+  "com.typesafe.play"        %% "play-test"             % PlayVersion.current  % scope,
+  "org.scalatestplus.play"   %% "scalatestplus-play"    % "3.1.3"              % scope,
+  "com.github.tomakehurst"   % "wiremock-jre8"          % "2.27.1"             % scope,
+  "org.mockito"               % "mockito-core"          % "3.2.0"              % scope
 )
-
-coverageSettings
-scalaSettings
-publishingSettings
-defaultSettings()
-majorVersion := 0
-
-libraryDependencies ++= appDependencies
-retrieveManaged := true
-evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
-
-Keys.fork in Test := true
-javaOptions in Test += "-Dlogger.resource=logback-test.xml"
-parallelExecution in Test := true
-
-Keys.fork in IntegrationTest := true
-unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value
-javaOptions in IntegrationTest += "-Dlogger.resource=logback-test.xml"
-addTestReportOption(IntegrationTest, "int-test-reports")
-parallelExecution in IntegrationTest := false
-PlayKeys.playDefaultPort := 9567
-
-resolvers ++= Seq(
-  Resolver.bintrayRepo("hmrc", "releases"),
-  Resolver.jcenterRepo
-)
-
-scalacOptions += "-Ypartial-unification"
+lazy val root = Project(appName, file("."))
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .settings(scalaSettings: _*)
+  .settings(publishingSettings: _*)
+  .settings(coverageSettings: _*)
+  .settings(defaultSettings(): _*)
+  .settings(
+    scalaVersion := "2.12.11",
+    majorVersion := 0,
+    libraryDependencies ++= appDependencies,
+    retrieveManaged := true,
+    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    PlayKeys.playDefaultPort := 9567
+  )
+  .configs(IntegrationTest)
+  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+  .settings(
+    Keys.fork in IntegrationTest := true,
+    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value,
+    javaOptions in IntegrationTest += "-Dlogger.resource=logback-test.xml",
+    addTestReportOption(IntegrationTest, "int-test-reports"),
+    parallelExecution in IntegrationTest := false
+  )
+  .settings(
+    resolvers ++= Seq(
+      Resolver.bintrayRepo("hmrc", "releases"),
+      Resolver.jcenterRepo)
+  )

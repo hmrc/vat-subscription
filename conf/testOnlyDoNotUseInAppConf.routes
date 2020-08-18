@@ -12,7 +12,7 @@
 # Add all the application routes to the prod.routes file
 
 
-GET           /vat-subscription/test-only/feature-switch               @uk.gov.hmrc.vatsubscription.testonly.controllers.FeatureSwitchController.get
-POST          /vat-subscription/test-only/feature-switch               @uk.gov.hmrc.vatsubscription.testonly.controllers.FeatureSwitchController.update
+GET           /vat-subscription/test-only/feature-switch               @testonly.controllers.FeatureSwitchController.get
+POST          /vat-subscription/test-only/feature-switch               @testonly.controllers.FeatureSwitchController.update
 
 ->            /                                                        prod.Routes
