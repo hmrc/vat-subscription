@@ -16,27 +16,28 @@
 
 package connectors
 
+import config.AppConfig
+import httpparsers.GetVatCustomerInformationHttpParser
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, PRECONDITION_FAILED}
-import play.api.libs.json.{JsSuccess, Json, Writes}
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, NOT_FOUND, PRECONDITION_FAILED}
+import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
-import config.AppConfig
-import models.VatCustomerInformation
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
-                                                   val applicationConfig: AppConfig) {
+                                                   val applicationConfig: AppConfig,
+                                                   val httpParser: GetVatCustomerInformationHttpParser) {
+
+  import httpParser.GetVatCustomerInformationHttpParserResponse
 
   private def url(vatNumber: String) = s"${applicationConfig.desUrl}/vat/customer/vrn/$vatNumber/information"
 
   def getInformation(vatNumber: String)
-                    (implicit hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpParserResponse] = {
+                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetVatCustomerInformationHttpParserResponse] = {
     val headerCarrier = hc
       .withExtraHeaders(applicationConfig.desEnvironmentHeader)
       .copy(authorization = Some(Authorization(applicationConfig.desAuthorisationToken)))
@@ -44,67 +45,12 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
     Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
     Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: ${headerCarrier.headers}")
 
-    http.GET[GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpParserResponse](
+    http.GET[GetVatCustomerInformationHttpParserResponse](
       url = url(vatNumber)
     )(
-      GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpReads,
+      httpParser.GetVatCustomerInformationHttpReads,
       headerCarrier,
       implicitly[ExecutionContext]
-    )
-  }
-
-  object GetVatCustomerInformationHttpParser {
-    type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
-
-    implicit object GetVatCustomerInformationHttpReads extends HttpReads[GetVatCustomerInformationHttpParserResponse] {
-      override def read(method: String, url: String, response: HttpResponse): GetVatCustomerInformationHttpParserResponse =
-        response.status match {
-          case OK =>
-            Logger.debug("[CustomerCircumstancesHttpParser][read]: Status OK")
-            response.json.validate(
-              VatCustomerInformation.reads(applicationConfig)
-
-            ) match {
-              case JsSuccess(vatCustomerInformation, _) =>
-                Logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
-                Right(vatCustomerInformation)
-              case _ =>
-                logUnexpectedResponse(response, "Invalid Success Response Json")
-                Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
-            }
-          case _ => handleErrorResponse(response)
-        }
-    }
-  }
-
-  private def handleErrorResponse(response: HttpResponse): Left[GetVatCustomerInformationFailure, VatCustomerInformation] = {
-    response.status match {
-      case BAD_REQUEST =>
-        logUnexpectedResponse(response, logBody = true)
-        Left(InvalidVatNumber)
-      case NOT_FOUND =>
-        Logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
-          s"NOT FOUND returned - Subscription not found. Status: $NOT_FOUND. Body: ${response.body}")
-        Left(VatNumberNotFound)
-      case FORBIDDEN if response.body.contains("MIGRATION") =>
-        Logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
-          "FORBIDDEN returned with MIGRATION - Migration in progress.")
-        Left(Migration)
-      case FORBIDDEN =>
-        logUnexpectedResponse(response, logBody = true)
-        Left(Forbidden)
-      case status =>
-        logUnexpectedResponse(response, logBody = true)
-        Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
-    }
-  }
-
-  private def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response", logBody: Boolean = false): Unit = {
-    Logger.warn(
-      s"[CustomerCircumstancesHttpParser][logUnexpectedResponse]: $message. " +
-      s"Status: ${response.status}. " +
-      s"${ if(logBody) s"Body: ${response.body} " else "" } " +
-      s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}"
     )
   }
 }

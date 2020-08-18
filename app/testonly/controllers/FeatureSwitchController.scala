@@ -26,7 +26,7 @@ import config.featureSwitch.FeatureSwitchModel
 class FeatureSwitchController @Inject()(appConfig: AppConfig,
                                         cc: ControllerComponents) extends BackendController(cc) {
 
-  val get: Action[AnyContent] = Action { implicit request => result }
+  val get: Action[AnyContent] = Action(result)
 
   lazy val update: Action[FeatureSwitchModel] = Action(parse.json[FeatureSwitchModel]) { req =>
     appConfig.features.api1365Version(req.body.Api1365Version)

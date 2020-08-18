@@ -35,7 +35,7 @@ trait MockGetVatCustomerInformationConnector extends MockitoSugar with BeforeAnd
   val mockConnector: GetVatCustomerInformationConnector = mock[GetVatCustomerInformationConnector]
 
   def mockGetVatCustomerInformationConnector(vatNumber: String)
-                                            (response: Future[mockConnector.GetVatCustomerInformationHttpParser.GetVatCustomerInformationHttpParserResponse])
+                                            (response: Future[mockConnector.httpParser.GetVatCustomerInformationHttpParserResponse])
   : Unit = {
     when(mockConnector.getInformation(
       ArgumentMatchers.eq(vatNumber)

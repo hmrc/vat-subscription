@@ -51,8 +51,8 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructContactPreferenceModel(updatedContactPreference: CommsPreferencePost, welshIndicator: Boolean)
-                                     (implicit user: User[_]): UpdateVatSubscription = {
+  def constructContactPreferenceModel(updatedContactPreference: CommsPreferencePost,
+                                      welshIndicator: Boolean): UpdateVatSubscription = {
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangeCommsPreference,

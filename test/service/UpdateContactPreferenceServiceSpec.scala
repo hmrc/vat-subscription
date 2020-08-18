@@ -66,7 +66,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
     "user does not have a welshIndicator" should {
 
       val result =
-        service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference), welshIndicator = false)(testUser)
+        service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference), welshIndicator = false)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
@@ -86,7 +86,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
     "user has a welshIndicator" should {
 
       val result =
-        service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference), welshIndicator = true)(testUser)
+        service.constructContactPreferenceModel(CommsPreferencePost(PaperPreference), welshIndicator = true)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
