@@ -136,6 +136,9 @@ object CustomerInformationTestConstants {
         ),
         "commsPreference" -> Json.obj(
           "commsPreference" -> "ZEL"
+        ),
+        "organisationDetails" -> Json.obj(
+          "tradingName" -> tradingName
         )
       )
     )
@@ -320,7 +323,8 @@ object CustomerInformationTestConstants {
       ),
       "returnPeriod" -> returnPeriodMCJson,
       "mandationStatus" -> MTDfB.value,
-      "commsPreference" -> DigitalPreference.mdtpValue
+      "commsPreference" -> DigitalPreference.mdtpValue,
+      "tradingName" -> tradingName
     ),
     "partyType" -> partyType,
     "primaryMainCode" -> "00004",
@@ -406,7 +410,8 @@ object CustomerInformationTestConstants {
       ),
       "returnPeriod" -> returnPeriodMCJson,
       "mandationStatus" -> MTDfB.value,
-      "commsPreference" -> DigitalPreference.mdtpValue
+      "commsPreference" -> DigitalPreference.mdtpValue,
+      "tradingName" -> tradingName
     ),
     "primaryMainCode" -> "00005",
     "missingTrader" -> true,
@@ -491,7 +496,8 @@ object CustomerInformationTestConstants {
       ),
       "returnPeriod" -> returnPeriodMCJson,
       "mandationStatus" -> MTDfB.value,
-      "commsPreference" -> DigitalPreference.mdtpValue
+      "commsPreference" -> DigitalPreference.mdtpValue,
+      "tradingName" -> tradingName
     ),
     "primaryMainCode" -> "00006",
     "missingTrader" -> true,
@@ -580,7 +586,8 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
       Some(MTDfB),
-      Some(DigitalPreference)
+      Some(DigitalPreference),
+      Some(tradingName)
     )),
     Some(UKCompanyType),
     "00004",
@@ -636,7 +643,8 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
       Some(MTDfB),
-      Some(DigitalPreference)
+      Some(DigitalPreference),
+      Some(tradingName)
     )),
     None,
     "00005",
@@ -664,7 +672,8 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
       Some(MTDfB),
-      Some(DigitalPreference)
+      Some(DigitalPreference),
+      Some(tradingName)
     )),
     None,
     "00006",
@@ -692,7 +701,8 @@ object CustomerInformationTestConstants {
       Some(bankDetailsModelMax),
       Some(MCReturnPeriod(None, None, None)),
       Some(MTDfBVoluntary),
-      Some(DigitalPreference)
+      Some(DigitalPreference),
+      Some(tradingName)
     )),
     Some(UKCompanyType),
     "00007",
@@ -769,6 +779,9 @@ object CustomerInformationTestConstants {
     ),
     "commsPreference" -> Json.obj(
       "commsPreference" -> "ZEL"
+    ),
+    "organisationDetails" -> Json.obj(
+      "tradingName" -> tradingName
     )
   )
 
