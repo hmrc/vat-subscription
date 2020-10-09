@@ -51,7 +51,7 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-26"  % "2.24.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-26"  % "2.25.0",
   "org.typelevel"     %% "cats-core"                  % "1.6.0",
   "com.typesafe.play" %% "play-json-joda"             % "2.6.14"
 )
@@ -59,12 +59,13 @@ val compile = Seq(
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc"              %% "hmrctest"              % "3.9.0-play-26"      % scope,
   "org.scalatest"            %% "scalatest"             % "3.0.8"              % scope,
-  "org.pegdown"              % "pegdown"                % "1.6.0"              % scope,
+  "org.pegdown"              %  "pegdown"               % "1.6.0"              % scope,
   "com.typesafe.play"        %% "play-test"             % PlayVersion.current  % scope,
   "org.scalatestplus.play"   %% "scalatestplus-play"    % "3.1.3"              % scope,
-  "com.github.tomakehurst"   % "wiremock-jre8"          % "2.27.1"             % scope,
-  "org.mockito"               % "mockito-core"          % "3.2.0"              % scope
+  "com.github.tomakehurst"   %  "wiremock-jre8"         % "2.27.2"             % scope,
+  "org.mockito"              %  "mockito-core"          % "3.5.13"             % scope
 )
+
 lazy val root = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .settings(scalaSettings: _*)
