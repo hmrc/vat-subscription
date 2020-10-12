@@ -240,7 +240,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             )),
             Some(MCReturnPeriod(None, None, None)),
             Some(MTDfB),
-            Some(DigitalPreference)
+            Some(DigitalPreference),
+            Some(tradingName)
           )),
           Some(UKCompanyType),
           primaryMainCode = "00001",
@@ -427,7 +428,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             )),
             Some(MCReturnPeriod(None, None, None)),
             Some(MTDfB),
-            Some(DigitalPreference)
+            Some(DigitalPreference),
+            Some(tradingName)
           )),
           partyType = Some(UKCompanyType),
           primaryMainCode = "00003",

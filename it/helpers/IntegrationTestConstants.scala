@@ -186,6 +186,9 @@ object IntegrationTestConstants {
         ),
         "commsPreference" -> Json.obj(
           "commsPreference" -> DigitalPreference.desValue
+        ),
+        "organisationDetails" -> Json.obj(
+          "tradingName" -> tradingName
         )
       )
     )

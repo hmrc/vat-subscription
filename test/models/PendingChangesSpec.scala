@@ -19,6 +19,7 @@ package models
 import assets.TestUtil
 import play.api.libs.json.{JsError, Json}
 import helpers.BankDetailsTestConstants.bankDetailsModelMax
+import helpers.BaseTestConstants.tradingName
 import helpers.CustomerInformationTestConstants._
 import helpers.PPOBTestConstants.ppobModelMax
 
@@ -35,7 +36,8 @@ class PendingChangesSpec extends TestUtil {
           Some(bankDetailsModelMax),
           Some(MAReturnPeriod(None, None, None)),
           Some(MTDfB),
-          Some(DigitalPreference)
+          Some(DigitalPreference),
+          Some(tradingName)
         )
 
         "parse the json correctly" in {
@@ -50,7 +52,8 @@ class PendingChangesSpec extends TestUtil {
           Some(bankDetailsModelMax),
           Some(MAReturnPeriod(None, None, None)),
           Some(MTDfBVoluntary),
-          Some(DigitalPreference)
+          Some(DigitalPreference),
+          Some(tradingName)
         )
 
         "parse the json correctly" in {
@@ -63,7 +66,7 @@ class PendingChangesSpec extends TestUtil {
     "no optional fields are populated" should {
 
       "parse the json correctly" in {
-        PendingChanges.reads(mockAppConfig).reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None, None)
+        PendingChanges.reads(mockAppConfig).reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None, None, None)
       }
     }
 
