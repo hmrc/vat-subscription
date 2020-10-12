@@ -68,6 +68,7 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
 
 lazy val root = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .disablePlugins(JUnitXmlReportPlugin)
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
   .settings(coverageSettings: _*)
