@@ -19,13 +19,15 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class ChangeIndicators(ppob: Boolean,
+case class ChangeIndicators(organisationDetails: Boolean,
+                            ppob: Boolean,
                             bankDetails: Boolean,
                             returnPeriod: Boolean,
                             deregister: Boolean,
                             annualAccounting: Boolean)
 
 object ChangeIndicators {
+  private val organisationDetailsPath = JsPath \ "organisationDetails"
   private val ppobDetailsPath = JsPath \ "PPOBDetails"
   private val bankDetailsPath =  JsPath \ "bankDetails"
   private val returnPeriodPath = JsPath \ "returnPeriod"
@@ -33,12 +35,14 @@ object ChangeIndicators {
   private val annualAccountingPath = JsPath \ "annualAccounting"
 
   implicit val changeIndicatorsReader: Reads[ChangeIndicators] = for {
+    organisationDetails <- organisationDetailsPath.read[Boolean]
     ppob <- ppobDetailsPath.read[Boolean]
     bankDetails <- bankDetailsPath.read[Boolean]
     returnPeriod <- returnPeriodPath.read[Boolean]
     deregister <- deregisterPath.read[Boolean]
     annualAccounting <- annualAccountingPath.read[Boolean] or Reads.pure(false)
   } yield ChangeIndicators(
+    organisationDetails,
     ppob,
     bankDetails,
     returnPeriod,
@@ -47,6 +51,7 @@ object ChangeIndicators {
   )
 
   implicit val changeIndicatorsWriter: Writes[ChangeIndicators] = (
+    organisationDetailsPath.write[Boolean] and
     ppobDetailsPath.write[Boolean] and
     bankDetailsPath.write[Boolean] and
     returnPeriodPath.write[Boolean] and

@@ -99,6 +99,7 @@ object CustomerInformationTestConstants {
     ),
     "inFlightInformation" -> Json.obj(
       "changeIndicators" -> Json.obj(
+        "organisationDetails" -> true,
         "PPOBDetails" -> true,
         "bankDetails" -> true,
         "returnPeriod" -> true,
@@ -201,6 +202,7 @@ object CustomerInformationTestConstants {
     ),
     "inFlightInformation" -> Json.obj(
       "changeIndicators" -> Json.obj(
+        "organisationDetails" -> true,
         "PPOBDetails" -> true,
         "bankDetails" -> true,
         "returnPeriod" -> true,
@@ -290,6 +292,7 @@ object CustomerInformationTestConstants {
     ),
     "returnPeriod" -> returnPeriodMCJson,
     "changeIndicators" -> Json.obj(
+      "organisationDetails" -> true,
       "PPOBDetails" -> true,
       "bankDetails" -> true,
       "returnPeriod" -> true,
@@ -377,6 +380,7 @@ object CustomerInformationTestConstants {
       "lastReturnDueDate" -> lastReturnDate
     ),
     "changeIndicators" -> Json.obj(
+      "organisationDetails" -> true,
       "PPOBDetails" -> true,
       "bankDetails" -> true,
       "returnPeriod" -> true,
@@ -463,6 +467,7 @@ object CustomerInformationTestConstants {
       "lastReturnDueDate" -> lastReturnDate
     ),
     "changeIndicators" -> Json.obj(
+      "organisationDetails" -> true,
       "PPOBDetails" -> true,
       "bankDetails" -> true,
       "returnPeriod" -> true,
@@ -575,6 +580,7 @@ object CustomerInformationTestConstants {
     Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
+      organisationDetails = true,
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
@@ -632,6 +638,7 @@ object CustomerInformationTestConstants {
     Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
+      organisationDetails = true,
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
@@ -661,6 +668,7 @@ object CustomerInformationTestConstants {
     Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
+      organisationDetails = true,
       ppob = true,
       bankDetails = true,
       returnPeriod = true,
@@ -690,6 +698,7 @@ object CustomerInformationTestConstants {
     Some(MCReturnPeriod(None, None, None)),
     Some(deregModel),
     Some(ChangeIndicators(
+      organisationDetails = true,
       ppob = true,
       bankDetails = true,
       returnPeriod = true,

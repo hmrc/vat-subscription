@@ -26,6 +26,7 @@ class ChangeIndicatorsSpec extends UnitSpec {
     "annualAccounting is returned" should {
 
       val json = Json.obj(
+        "organisationDetails" -> true,
         "PPOBDetails" -> true,
         "bankDetails" -> false,
         "returnPeriod" -> true,
@@ -34,6 +35,7 @@ class ChangeIndicatorsSpec extends UnitSpec {
       )
 
       val model = ChangeIndicators(
+        organisationDetails = true,
         ppob = true,
         bankDetails = false,
         returnPeriod = true,
@@ -49,6 +51,7 @@ class ChangeIndicatorsSpec extends UnitSpec {
     "annualAccounting is not returned" should {
 
       val json = Json.obj(
+        "organisationDetails" -> true,
         "PPOBDetails" -> true,
         "bankDetails" -> false,
         "returnPeriod" -> true,
@@ -56,6 +59,7 @@ class ChangeIndicatorsSpec extends UnitSpec {
       )
 
       val model = ChangeIndicators(
+        organisationDetails = true,
         ppob = true,
         bankDetails = false,
         returnPeriod = true,
@@ -72,6 +76,7 @@ class ChangeIndicatorsSpec extends UnitSpec {
   "ChangeIndicators .writes" should {
 
     val model = ChangeIndicators(
+      organisationDetails = true,
       ppob = true,
       bankDetails = false,
       returnPeriod = true,
@@ -80,6 +85,7 @@ class ChangeIndicatorsSpec extends UnitSpec {
     )
 
     val json = Json.obj(
+      "organisationDetails" -> true,
       "PPOBDetails" -> true,
       "bankDetails" -> false,
       "returnPeriod" -> true,
