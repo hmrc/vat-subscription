@@ -148,6 +148,7 @@ object IntegrationTestConstants {
     ),
     "inFlightInformation" -> Json.obj(
       "changeIndicators" -> Json.obj(
+        "organisationDetails" -> true,
         "PPOBDetails" -> true,
         "bankDetails" -> true,
         "returnPeriod" -> true,

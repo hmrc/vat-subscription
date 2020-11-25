@@ -207,6 +207,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(lastReturnDate)
           )),
           Some(ChangeIndicators(
+            organisationDetails = true,
             ppob = true,
             bankDetails = true,
             returnPeriod = true,
@@ -395,6 +396,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(lastReturnDate)
           )),
           Some(ChangeIndicators(
+            organisationDetails = true,
             ppob = true,
             bankDetails = true,
             returnPeriod = true,
