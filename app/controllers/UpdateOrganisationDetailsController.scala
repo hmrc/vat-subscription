@@ -37,10 +37,10 @@ class UpdateOrganisationDetailsController @Inject()(VatAuthorised: VatAuthorised
   def updateTradingName(vrn:String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
       parseJsonBody[TradingName] match {
-        case Right(name) =>
+        case Right(tradingName) =>
           vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
             case Right(welshIndicator) =>
-              updateOrganisationDetailsService.updateTradingName(name, welshIndicator).map {
+              updateOrganisationDetailsService.updateTradingName(tradingName, welshIndicator).map {
                 case Right(success) => Ok(Json.toJson(success))
                 case Left(error) => InternalServerError(Json.toJson(error))
               }

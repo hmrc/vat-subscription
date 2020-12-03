@@ -50,7 +50,7 @@ class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector:
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangeOrganisationDetailsRequest,
-      organisationDetails = Some(UpdatedOrganisationDetails(None, None, updatedTradingName.tradingName)),
+      organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(removedNameIsEmpty(updatedTradingName.tradingName)))),
       updatedPPOB = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
@@ -58,5 +58,7 @@ class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector:
       commsPreference = None
     )
   }
+
+  private def removedNameIsEmpty(newTradingName: Option[String]): String = newTradingName.fold("")(name => name)
 
 }
