@@ -99,7 +99,8 @@ object IntegrationTestConstants {
         "isPartialMigration" -> true,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
         "partyType" -> "50",
-        "overseasIndicator" -> false
+        "overseasIndicator" -> false,
+        "nameIsReadOnly" -> true
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(

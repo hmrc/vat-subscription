@@ -23,8 +23,9 @@ import uk.gov.hmrc.play.test.UnitSpec
 import connectors.mocks.MockGetVatCustomerInformationConnector
 import helpers.BaseTestConstants._
 import connectors.{Forbidden, InvalidVatNumber, Migration}
+import helpers.CustomerDetailsTestConstants.customerDetailsModelMin
 import helpers.PPOBTestConstants.ppobModelMax
-import models.{CustomerDetails, MTDfBMandated, VatCustomerInformation}
+import models.{MTDfBMandated, VatCustomerInformation}
 import services.MandationStatusService
 
 import scala.concurrent.Future
@@ -44,16 +45,7 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
       val testSuccessfulResponse =
         VatCustomerInformation(
           mandationStatus = MTDfBMandated,
-          customerDetails = CustomerDetails(
-            firstName = None,
-            lastName = None,
-            organisationName = None,
-            tradingName = None,
-            vatRegistrationDate = None,
-            welshIndicator = None,
-            isPartialMigration = false,
-            customerMigratedToETMPDate = None,
-            overseasIndicator = false),
+          customerDetails = customerDetailsModelMin,
           flatRateScheme = None,
           ppob = ppobModelMax,
           bankDetails = None,

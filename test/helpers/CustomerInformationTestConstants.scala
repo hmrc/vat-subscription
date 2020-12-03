@@ -52,7 +52,8 @@ object CustomerInformationTestConstants {
         "isPartialMigration" -> false,
         "partyType" -> partyType,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
-        "overseasIndicator" -> false
+        "overseasIndicator" -> false,
+        "nameIsReadOnly" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -163,7 +164,8 @@ object CustomerInformationTestConstants {
         "welshIndicator" -> false,
         "isPartialMigration" -> false,
         "partyType" -> "Z1",
-        "overseasIndicator" -> false
+        "overseasIndicator" -> false,
+        "nameIsReadOnly" -> false
       ),
       "PPOB" -> Json.obj(
         "address" -> Json.obj(
@@ -247,18 +249,7 @@ object CustomerInformationTestConstants {
       "bankAccountNumber" -> accNum,
       "sortCode" -> accSort
     ),
-    "customerDetails" -> Json.obj(
-      "firstName" -> firstName,
-      "hasFlatRateScheme" -> true,
-      "lastName" -> lastName,
-      "organisationName" -> orgName,
-      "tradingName" -> tradingName,
-      "vatRegistrationDate" -> effectiveDate,
-      "welshIndicator" -> true,
-      "isPartialMigration" -> false,
-      "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
-      "overseasIndicator" -> false
-    ),
+    "customerDetails" -> customerDetailsJsonMaxWithFRS,
     "flatRateScheme" -> Json.obj(
       "FRSCategory" -> frsCategory,
       "FRSPercentage" -> frsPercentage,
@@ -337,18 +328,7 @@ object CustomerInformationTestConstants {
 
   val customerInformationOutputJsonMax: JsValue = Json.obj(
     "mandationStatus" -> MTDfB.value,
-    "customerDetails" -> Json.obj(
-      "firstName" -> firstName,
-      "hasFlatRateScheme" -> false,
-      "lastName" -> lastName,
-      "organisationName" -> orgName,
-      "tradingName" -> tradingName,
-      "vatRegistrationDate" -> effectiveDate,
-      "welshIndicator" -> false,
-      "isPartialMigration" -> false,
-      "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
-      "overseasIndicator" -> false
-    ),
+    "customerDetails" -> customerDetailsJsonMax,
     "ppob" -> Json.obj(
       "address" -> Json.obj(
         "line1" -> addLine1,
@@ -424,18 +404,7 @@ object CustomerInformationTestConstants {
 
   val customerInformationOutputJsonMaxWithTrueOverseas: JsValue = Json.obj(
     "mandationStatus" -> MTDfB.value,
-    "customerDetails" -> Json.obj(
-      "firstName" -> firstName,
-      "hasFlatRateScheme" -> false,
-      "lastName" -> lastName,
-      "organisationName" -> orgName,
-      "tradingName" -> tradingName,
-      "vatRegistrationDate" -> effectiveDate,
-      "welshIndicator" -> false,
-      "isPartialMigration" -> false,
-      "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
-      "overseasIndicator" -> true
-    ),
+    "customerDetails" -> customerDetailsJsonMaxWithTrueOverseas,
     "ppob" -> Json.obj(
       "address" -> Json.obj(
         "line1" -> addLine1,
@@ -736,16 +705,7 @@ object CustomerInformationTestConstants {
 
   val customerInformationModelMin: VatCustomerInformation = VatCustomerInformation(
     mandationStatus = MTDfB,
-    customerDetails = CustomerDetails(
-      firstName = None,
-      lastName = None,
-      organisationName = None,
-      tradingName = None,
-      vatRegistrationDate = None,
-      welshIndicator = None,
-      isPartialMigration = false,
-      customerMigratedToETMPDate = None,
-      overseasIndicator = false),
+    customerDetails = customerDetailsModelMin,
     flatRateScheme = None,
     ppob = ppobModelMin,
     bankDetails = None,
