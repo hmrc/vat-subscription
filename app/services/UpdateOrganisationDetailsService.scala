@@ -16,35 +16,32 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.{ContactDetails, User}
-import models.post.PPOBPost
+import javax.inject.{Inject, Singleton}
+import models.{ContactDetails, TradingName, User}
 import models.updateVatSubscription.request._
+import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
+class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def updatePPOB(updatedPPOB: PPOBPost, welshIndicator: Boolean)
-                (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
-
-    val subscriptionModel = constructPPOBUpdateModel(updatedPPOB, welshIndicator)
-    Logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating PPOB for user with vrn - ${user.vrn}")
+  def updateTradingName(updatedTradingName: TradingName, welshIndicator: Boolean)
+                       (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
+    val subscriptionModel = constructTradingNameUpdateModel(updatedTradingName, welshIndicator)
+    Logger.debug(s"[UpdateReturnPeriodService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructPPOBUpdateModel(updatedPPOB: PPOBPost,
-                               welshIndicator: Boolean)
-                              (implicit user: User[_]): UpdateVatSubscription = {
+  def constructTradingNameUpdateModel(updatedTradingName: TradingName, welshIndicator: Boolean)
+                                      (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentContactDetails: Option[ContactDetails] =
-      if(updatedPPOB.transactorOrCapacitorEmail.isDefined)
-        Some(ContactDetails(None, None, None, updatedPPOB.transactorOrCapacitorEmail, None))
+      if(updatedTradingName.transactorOrCapacitorEmail.isDefined)
+        Some(ContactDetails(None, None, None, updatedTradingName.transactorOrCapacitorEmail, None))
       else
         None
 
@@ -52,13 +49,14 @@ class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubsc
 
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
-      requestedChanges = ChangePPOB,
-      organisationDetails = None,
-      updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+      requestedChanges = ChangeOrganisationDetailsRequest,
+      organisationDetails = Some(UpdatedOrganisationDetails(None, None, updatedTradingName.tradingName)),
+      updatedPPOB = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(agentOrCapacitor, Signing()),
       commsPreference = None
     )
   }
+
 }

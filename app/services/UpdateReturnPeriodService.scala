@@ -52,6 +52,7 @@ class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: Update
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangeReturnPeriod,
+      organisationDetails = None,
       updatedPPOB = None,
       updatedReturnPeriod = Some(UpdatedReturnPeriod(updatedReturnPeriod)),
       updateDeregistrationInfo = None,

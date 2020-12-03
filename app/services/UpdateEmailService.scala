@@ -49,6 +49,7 @@ class UpdateEmailService @Inject()(updateVatSubscriptionConnector: UpdateVatSubs
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangePPOB,
+      organisationDetails = None,
       updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,

@@ -23,3 +23,5 @@ PUT    /:vatNumber/mandation-status           @controllers.UpdateMandationStatus
 PUT    /:vatNumber/contact-preference         @controllers.UpdateContactPreferenceController.updateContactPreference(vatNumber: String)
 
 PUT    /:vatNumber/contact-preference/email   @controllers.UpdateContactPreferenceAndEmailController.update(vatNumber: String)
+
+PUT    /:vatNumber/trading-name               @controllers.UpdateOrganisationDetailsController.updateTradingName(vatNumber:String)

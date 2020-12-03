@@ -53,6 +53,7 @@ class UpdateMandationStatusService @Inject()(updateVatSubscriptionConnector: Upd
     UpdateVatSubscription(
       controlInformation = ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = welshIndicator),
       requestedChanges = ChangeMandationStatus,
+      organisationDetails = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       updatedPPOB = None,
