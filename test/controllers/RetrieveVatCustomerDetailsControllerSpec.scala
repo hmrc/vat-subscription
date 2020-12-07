@@ -27,7 +27,6 @@ import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants._
 import helpers.CustomerDetailsTestConstants._
 import helpers.CustomerInformationTestConstants._
-import models.CustomerDetails
 import service.mocks.MockVatCustomerDetailsRetrievalService
 
 import scala.concurrent.Future
@@ -78,19 +77,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
         }
         "the customer details are empty" in {
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(
-            CustomerDetails(
-              firstName = None,
-              lastName = None,
-              organisationName = None,
-              tradingName = None,
-              vatRegistrationDate = None,
-              welshIndicator = None,
-              isPartialMigration = false,
-              customerMigratedToETMPDate = None,
-              overseasIndicator = false
-            )
-          )))
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMin)))
 
           val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
 

@@ -57,7 +57,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "welshIndicator" -> true,
         "isPartialMigration" -> true,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
-        "overseasIndicator" -> false
+        "overseasIndicator" -> false,
+        "nameIsReadOnly" -> true
       )
 
       "return OK with the status" in {
@@ -168,7 +169,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             welshIndicator = Some(true),
             isPartialMigration = true,
             customerMigratedToETMPDate = Some(customerMigratedToETMPDate),
-            overseasIndicator = false
+            overseasIndicator = false,
+            nameIsReadOnly = Some(true)
           ),
           Some(FlatRateScheme(
             Some(frsCategory),
@@ -357,7 +359,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             welshIndicator = Some(true),
             isPartialMigration = true,
             customerMigratedToETMPDate = Some("2019-01-01"),
-            overseasIndicator = false
+            overseasIndicator = false,
+            nameIsReadOnly = Some(true)
           ),
           Some(FlatRateScheme(
             Some(frsCategory),

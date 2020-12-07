@@ -63,6 +63,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   val isPartialMigrationKey = "isPartialMigration"
   val flatRateSchemeKey = "flatRateScheme"
   val overseasIndicatorKey = "overseasIndicator"
+  val nameIsReadOnlyKey = "nameIsReadOnly"
   val ppobKey = "PPOB"
   val bankDetailsKey = "bankDetails"
   val returnPeriodKey = "returnPeriod"
@@ -80,6 +81,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val customerDetailsPath = path \ customerDetailsKey
   private val flatRateSchemePath = path \ flatRateSchemeKey
   private val overseasIndicatorPath = path \ customerDetailsKey \ overseasIndicatorKey
+  private val nameIsReadOnlyPath = path \ customerDetailsKey \ nameIsReadOnlyKey
   private val ppobPath = path \ ppobKey
   private val bankDetailsPath = path \ bankDetailsKey
   private val returnPeriodPath = path \ returnPeriodKey
@@ -105,6 +107,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     overseasIndicator <- overseasIndicatorPath.read[Boolean]
+    nameIsReadOnly <- nameIsReadOnlyPath.readNullable[Boolean]
     ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
@@ -127,7 +130,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
       flatRateScheme.isDefined,
       welshIndicator,
       isPartialMigration.contains(true),
-      overseasIndicator
+      overseasIndicator,
+      nameIsReadOnly
     ),
     flatRateScheme,
     ppob,

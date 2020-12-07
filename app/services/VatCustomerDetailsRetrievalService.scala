@@ -47,7 +47,8 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
           welshIndicator = vatCustomerInformation.customerDetails.welshIndicator,
           isPartialMigration = vatCustomerInformation.customerDetails.isPartialMigration,
           customerMigratedToETMPDate = vatCustomerInformation.customerDetails.customerMigratedToETMPDate,
-          overseasIndicator = vatCustomerInformation.customerDetails.overseasIndicator
+          overseasIndicator = vatCustomerInformation.customerDetails.overseasIndicator,
+          nameIsReadOnly = vatCustomerInformation.customerDetails.nameIsReadOnly
         )
     }).value
   }

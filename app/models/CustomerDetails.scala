@@ -28,7 +28,8 @@ case class CustomerDetails(firstName: Option[String],
                            hasFlatRateScheme: Boolean = false,
                            welshIndicator: Option[Boolean],
                            isPartialMigration: Boolean,
-                           overseasIndicator: Boolean)
+                           overseasIndicator: Boolean,
+                           nameIsReadOnly: Option[Boolean])
 
 object CustomerDetails extends JsonObjectSugar {
 
@@ -42,6 +43,7 @@ object CustomerDetails extends JsonObjectSugar {
   private val welshIndicatorPath = JsPath \ "welshIndicator"
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
   private val overseasIndicatorPath = JsPath \ "overseasIndicator"
+  private val nameIsReadOnlyPath = JsPath \ "nameIsReadOnly"
 
   implicit val cdReader: Reads[CustomerDetails] = for {
     firstName <- firstNamePath.readNullable[String]
@@ -54,6 +56,7 @@ object CustomerDetails extends JsonObjectSugar {
     welshIndicator <- welshIndicatorPath.readNullable[Boolean]
     isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
     overseasIndicator <- overseasIndicatorPath.read[Boolean]
+    nameIsReadOnly <- nameIsReadOnlyPath.readNullable[Boolean]
   } yield CustomerDetails(
     firstName,
     lastName,
@@ -64,7 +67,8 @@ object CustomerDetails extends JsonObjectSugar {
     hasFlatRateScheme,
     welshIndicator,
     isPartialMigration.contains(true),
-    overseasIndicator
+    overseasIndicator,
+    nameIsReadOnly
   )
 
   implicit val cdWriter: Writes[CustomerDetails] = Writes { model =>
@@ -78,9 +82,9 @@ object CustomerDetails extends JsonObjectSugar {
         "hasFlatRateScheme" -> model.hasFlatRateScheme,
         "welshIndicator" -> model.welshIndicator,
         "isPartialMigration" -> model.isPartialMigration,
-        "overseasIndicator" -> model.overseasIndicator
+        "overseasIndicator" -> model.overseasIndicator,
+        "nameIsReadOnly" -> model.nameIsReadOnly
       )
-
     }
 }
 
