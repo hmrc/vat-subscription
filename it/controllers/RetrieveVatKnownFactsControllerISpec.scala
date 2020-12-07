@@ -45,13 +45,22 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         "effectiveRegistrationDate" -> effectiveDate,
         "overseasIndicator" -> isOverseas
       ),
-      "PPOB" -> Json.obj(
-        "address" -> Json.obj(
-          "line1" -> addLine1,
-          "postCode" -> postcode,
-          "countryCode" -> countryCode
+      "PPOB" -> (if (isOverseas) {
+        Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "countryCode" -> countryCode
+          )
         )
-      ),
+      } else {
+        Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "postCode" -> postcode,
+            "countryCode" -> countryCode
+          )
+        )
+      }),
       "businessActivities" -> Json.obj(
         "primaryMainCode" -> "00001",
         "mainCode2" -> "00002"
@@ -101,7 +110,9 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
             )
           }
         }
+      }
 
+      "vat registration date is present but post code is not" when {
         "the overseas indicator is set to true" should {
           "return OK with the status the known facts and overseas set to true" in {
             stubAuth(OK, successfulAuthResponse())
@@ -113,7 +124,6 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
               httpStatus(OK),
               jsonBodyAs(Json.obj(
                 "vatRegistrationDate" -> effectiveDate,
-                "businessPostCode" -> postcode,
                 "isOverseas" -> true
               ))
             )

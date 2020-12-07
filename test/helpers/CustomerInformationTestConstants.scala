@@ -619,7 +619,7 @@ object CustomerInformationTestConstants {
     mandationStatus = MTDfB,
     customerDetails = customerDetailsModelMaxWithTrueOverseas,
     flatRateScheme = None,
-    ppob = ppobModelMin,
+    ppob = ppobModelOverseas,
     bankDetails = None,
     returnPeriod = None,
     deregistration = None,
