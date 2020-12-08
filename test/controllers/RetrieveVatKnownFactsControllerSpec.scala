@@ -58,7 +58,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
           val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe vatKnownFactsJson(isOverseas = false)
+          jsonBodyOf(res) shouldBe vatKnownFactsJson
         }
 
         "the user is overseas" in {
@@ -69,7 +69,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
           val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe vatKnownFactsJson(isOverseas = true)
+          jsonBodyOf(res) shouldBe vatKnownFactsOverseasJson
         }
       }
     }

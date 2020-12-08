@@ -16,19 +16,24 @@
 
 package helpers
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import helpers.BaseTestConstants._
 import helpers.PPOBTestConstants._
 import services.VatKnownFactsRetrievalService.VatKnownFacts
 
 object VatKnownFactsTestConstants {
 
-  def vatKnownFacts(isOverseas: Boolean) = VatKnownFacts(effectiveDate, postcode, isOverseas)
+  def vatKnownFacts(isOverseas: Boolean): VatKnownFacts = VatKnownFacts(effectiveDate, if (isOverseas) None else Some(postcode), isOverseas)
 
-  def vatKnownFactsJson(isOverseas: Boolean) = Json.obj(
+  val vatKnownFactsOverseasJson: JsObject = Json.obj(
+    "vatRegistrationDate" -> effectiveDate,
+    "isOverseas" -> true
+  )
+
+  val vatKnownFactsJson: JsObject = Json.obj(
     "vatRegistrationDate" -> effectiveDate,
     "businessPostCode" -> postcode,
-    "isOverseas" -> isOverseas
+    "isOverseas" -> false
   )
 
 }
