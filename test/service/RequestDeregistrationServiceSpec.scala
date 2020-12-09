@@ -65,6 +65,7 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = DeregistrationRequest,
+        organisationDetails = None,
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
@@ -84,6 +85,7 @@ class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscr
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = DeregistrationRequest,
+        organisationDetails = None,
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),

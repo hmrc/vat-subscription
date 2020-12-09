@@ -19,7 +19,7 @@ package helpers
 import java.util.UUID
 
 import play.api.libs.json.{JsObject, Json}
-import models.{ContactDetails, DigitalPreference}
+import models.{ContactDetails, DigitalPreference, TradingName}
 import models.get.{PPOBAddressGet, PPOBGet}
 import models.post.{EmailPost, PPOBAddressPost, PPOBPost}
 
@@ -234,4 +234,6 @@ object IntegrationTestConstants {
 
   val ppobModelMaxPost: PPOBPost =
     PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website), Some(agentEmail))
+
+  val tradingNameModel: TradingName = TradingName(None, Some("some Random name"))
 }

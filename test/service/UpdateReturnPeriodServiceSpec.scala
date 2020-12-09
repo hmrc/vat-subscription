@@ -64,6 +64,7 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeReturnPeriod,
+        organisationDetails = None,
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
         updateDeregistrationInfo = None,
@@ -83,6 +84,7 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
         requestedChanges = ChangeReturnPeriod,
+        organisationDetails = None,
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
         updateDeregistrationInfo = None,
@@ -103,6 +105,7 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeReturnPeriod,
+        organisationDetails = None,
         updatedPPOB = None,
         updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress.com"), None, None))),
         updateDeregistrationInfo = None,

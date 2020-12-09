@@ -65,6 +65,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangePPOB,
+        organisationDetails = None,
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -85,6 +86,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangePPOB,
+        organisationDetails = None,
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPostAgent)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -104,6 +106,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
         requestedChanges = ChangePPOB,
+        organisationDetails = None,
         updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,

@@ -28,6 +28,7 @@ object UpdateVatSubscriptionTestConstants {
   val changeAll: RequestedChanges = RequestedChanges(ppobDetails = true, returnPeriod = true, deregInfo = true)
 
   val updatedReturnPeriod: UpdatedReturnPeriod = UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress"), None, None))
+  val updatedTradingName: UpdatedOrganisationDetails = UpdatedOrganisationDetails(None, None, Some("He-man's accounting firm"))
   val updatedPPOB: UpdatedPPOB = UpdatedPPOB(PPOBTestConstants.ppobModelMaxPost)
   val updatedMandationStatus: MandationStatus = NonMTDfB
 
@@ -38,6 +39,7 @@ object UpdateVatSubscriptionTestConstants {
   val updateVatSubscriptionModelMax: UpdateVatSubscription = UpdateVatSubscription(
     controlInformation = ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
     requestedChanges = changeAll,
+    organisationDetails = Some(updatedTradingName),
     updatedPPOB = Some(updatedPPOB),
     updatedReturnPeriod = Some(updatedReturnPeriod),
     updateDeregistrationInfo = Some(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel),
@@ -48,6 +50,7 @@ object UpdateVatSubscriptionTestConstants {
   val updateVatSubscriptionModelMin: UpdateVatSubscription = UpdateVatSubscription(
     controlInformation = ControlInformation(welshIndicator = false),
     requestedChanges = ChangeReturnPeriod,
+    organisationDetails = None,
     updatedPPOB = None,
     updatedReturnPeriod = Some(updatedReturnPeriod),
     updateDeregistrationInfo = None,
