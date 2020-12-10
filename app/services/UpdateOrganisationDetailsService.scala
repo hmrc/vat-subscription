@@ -32,7 +32,7 @@ class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector:
   def updateTradingName(updatedTradingName: TradingName, welshIndicator: Boolean)
                        (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructTradingNameUpdateModel(updatedTradingName, welshIndicator)
-    Logger.debug(s"[UpdateReturnPeriodService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
+    Logger.debug(s"[UpdateOrganisationDetailsService][updateTradingName]: updating trading name for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 

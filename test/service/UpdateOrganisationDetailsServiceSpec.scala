@@ -33,7 +33,7 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
     new UpdateOrganisationDetailsService(mockUpdateVatSubscriptionConnector)
   }
 
-  "Calling .updatePPOB" when {
+  "Calling .updateTradingName" when {
 
     "connector call is successful" should {
 
@@ -54,7 +54,7 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
     }
   }
 
-  "Calling .constructPPOBUpdateModel" when {
+  "Calling .constructTradingNameUpdateModel" when {
 
     val service = new UpdateOrganisationDetailsService(mockUpdateVatSubscriptionConnector)
 

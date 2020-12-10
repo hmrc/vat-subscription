@@ -16,6 +16,7 @@
 
 package models.updateVatSubscription.request
 
+import models.ReturnPeriod.jsonObjNoNulls
 import play.api.libs.json.{Json, Writes}
 
 case class UpdatedOrganisationDetails(organisationName: Option[String],
@@ -25,7 +26,7 @@ case class UpdatedOrganisationDetails(organisationName: Option[String],
 object UpdatedOrganisationDetails {
 
   implicit val writes: Writes[UpdatedOrganisationDetails] = Writes {
-    model => Json.obj(
+    model => jsonObjNoNulls(
       "organisationName" -> model.organisationName,
       "individualName" -> model.individualName,
       "tradingName" -> model.tradingName
@@ -39,7 +40,7 @@ case class IndividualName(title: Option[String], firstName: Option[String], midd
 object IndividualName {
 
   implicit val writes: Writes[IndividualName] = Writes {
-    model => Json.obj(
+    model => jsonObjNoNulls(
       "title" -> model.title,
       "firstName" -> model.firstName,
       "middleName" -> model.middleName,
