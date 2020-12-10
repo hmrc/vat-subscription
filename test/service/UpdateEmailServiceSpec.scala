@@ -67,6 +67,7 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangePPOB,
+        organisationDetails = None,
         updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -86,6 +87,7 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangePPOB,
+        organisationDetails = None,
         updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -105,6 +107,7 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
         requestedChanges = ChangePPOB,
+        organisationDetails = None,
         updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,

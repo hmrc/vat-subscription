@@ -56,6 +56,7 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangeCommsPreference,
+      organisationDetails = None,
       updatedPPOB = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
@@ -86,6 +87,7 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator.contains(true)),
       requestedChanges = ChangeCommsPreferenceAndEmail,
+      organisationDetails = None,
       updatedPPOB = Some(UpdatedPPOB(PPOBPost(
         address = currentAddress,
         contactDetails = Some(updatedContactDetails),

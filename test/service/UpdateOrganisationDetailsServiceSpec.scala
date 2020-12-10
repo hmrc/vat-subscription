@@ -19,27 +19,27 @@ package service
 import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
-import helpers.MandationStatusTestConstants._
+import helpers.OrganisationDetailsTestConstants._
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.ContactDetails
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import services.UpdateMandationStatusService
+import services.UpdateOrganisationDetailsService
 
-class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
+class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
-  def setup(response: UpdateVatSubscriptionResponse): UpdateMandationStatusService = {
+  def setup(response: UpdateVatSubscriptionResponse): UpdateOrganisationDetailsService = {
     mockUpdateVatSubscriptionResponse(response)
-    new UpdateMandationStatusService(mockUpdateVatSubscriptionConnector)
+    new UpdateOrganisationDetailsService(mockUpdateVatSubscriptionConnector)
   }
 
-  "Calling .updateMandationStatus" when {
+  "Calling .updateTradingName" when {
 
     "connector call is successful" should {
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateMandationStatus(mandationStatusPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateTradingName(tradingNameModel, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -48,25 +48,44 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateMandationStatus(mandationStatusPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateTradingName(tradingNameModel, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
   }
 
-  "Calling .constructMandationStatusUpdateModel" when {
+  "Calling .constructTradingNameUpdateModel" when {
 
-    val service = new UpdateMandationStatusService(mockUpdateVatSubscriptionConnector)
+    val service = new UpdateOrganisationDetailsService(mockUpdateVatSubscriptionConnector)
 
     "user is not an Agent" should {
 
-      val result = service.constructMandationStatusUpdateModel(mandationStatusPost, welshIndicator = false)(testUser)
+      val result = service.constructTradingNameUpdateModel(tradingNameModel, welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
-        controlInformation =
-          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = false),
-        requestedChanges = ChangeMandationStatus,
-        organisationDetails = None,
+        controlInformation = ControlInformation(welshIndicator = false),
+        requestedChanges = ChangeOrganisationDetailsRequest,
+        organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(tradingName))),
+        updatedPPOB = None,
+        updatedReturnPeriod = None,
+        updateDeregistrationInfo = None,
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
+      )
+
+      "return a correct UpdateVatSubscription model" in {
+        result shouldEqual expectedResult
+      }
+    }
+
+    "user has removed their trading name" should {
+
+      val result = service.constructTradingNameUpdateModel(removedTradingNameModel, welshIndicator = false)(testUser)
+
+      val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = false),
+        requestedChanges = ChangeOrganisationDetailsRequest,
+        organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(""))),
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -81,14 +100,13 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user is an Agent" should {
 
-      val result = service.constructMandationStatusUpdateModel(mandationStatusPostAgent, welshIndicator = false)(testAgentUser)
-      val agentContactDetails = Some(ContactDetails(None, None, None, Some("test@test.com"), None))
+      val result = service.constructTradingNameUpdateModel(tradingNameModelAgent, welshIndicator = false)(testAgentUser)
+      val agentContactDetails = Some(ContactDetails(None, None, None, Some("agent@emailaddress.com"), None))
 
       val expectedResult = UpdateVatSubscription(
-        controlInformation =
-          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = false),
-        requestedChanges = ChangeMandationStatus,
-        organisationDetails = None,
+        controlInformation = ControlInformation(welshIndicator = false),
+        requestedChanges = ChangeOrganisationDetailsRequest,
+        organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(tradingName))),
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -103,13 +121,12 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
 
     "user has a welshIndicator" should {
 
-      val result = service.constructMandationStatusUpdateModel(mandationStatusPost, welshIndicator = true)(testUser)
+      val result = service.constructTradingNameUpdateModel(tradingNameModel, welshIndicator = true)(testUser)
 
       val expectedResult = UpdateVatSubscription(
-        controlInformation =
-          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = true),
-        requestedChanges = ChangeMandationStatus,
-        organisationDetails = None,
+        controlInformation = ControlInformation(welshIndicator = true),
+        requestedChanges = ChangeOrganisationDetailsRequest,
+        organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(tradingName))),
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -122,4 +139,5 @@ class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscr
       }
     }
   }
+
 }

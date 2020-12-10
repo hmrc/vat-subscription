@@ -71,6 +71,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeCommsPreference,
+        organisationDetails = None,
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -91,6 +92,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
         requestedChanges = ChangeCommsPreference,
+        organisationDetails = None,
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -113,6 +115,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
         requestedChanges = ChangeCommsPreferenceAndEmail,
+        organisationDetails = None,
         updatedPPOB = Some(UpdatedPPOB(PPOBPost(
           address = PPOBAddressPost(
             ppobAddressModelMax.line1,
@@ -155,6 +158,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeCommsPreferenceAndEmail,
+        organisationDetails = None,
         updatedPPOB = Some(UpdatedPPOB(PPOBPost(
           address = PPOBAddressPost(None, None, None, None, None, None, None),
           contactDetails = Some(ContactDetails(

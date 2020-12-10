@@ -28,6 +28,7 @@ class UpdateVatSubscriptionSpec extends TestUtil {
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
     "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365Writes(mockAppConfig)),
+    "organisationDetails" -> Json.toJson(updatedTradingName),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,

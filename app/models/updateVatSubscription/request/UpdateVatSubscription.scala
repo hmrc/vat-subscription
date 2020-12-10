@@ -26,6 +26,7 @@ import models.{CommsPreference, MandationStatus}
 case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
                                  controlInformation: ControlInformation,
                                  requestedChanges: RequestedChanges,
+                                 organisationDetails: Option[UpdatedOrganisationDetails],
                                  updatedPPOB: Option[UpdatedPPOB],
                                  updatedReturnPeriod: Option[UpdatedReturnPeriod],
                                  updateDeregistrationInfo: Option[DeregistrationInfo],
@@ -40,6 +41,7 @@ object UpdateVatSubscription {
     (__ \ "messageType").write[String] and
     (__ \ "controlInformation").write[ControlInformation] and
     (__ \ "requestedChange").write[RequestedChanges](requestedChangesWrites) and
+    (__ \ "organisationDetails").writeNullable[UpdatedOrganisationDetails] and
     (__ \ "contactDetails").writeNullable[UpdatedPPOB] and
     (__ \ "returnPeriods").writeNullable[UpdatedReturnPeriod] and
     (__ \ "deregistrationInfo").writeNullable[DeregistrationInfo] and

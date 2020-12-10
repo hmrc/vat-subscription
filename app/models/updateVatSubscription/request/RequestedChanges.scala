@@ -34,6 +34,7 @@ case class RequestedChanges(ppobDetails: Boolean = false,
 object ChangePPOB extends RequestedChanges(ppobDetails = true)
 object ChangeReturnPeriod extends RequestedChanges(returnPeriod = true)
 object DeregistrationRequest extends RequestedChanges(deregInfo = true)
+object ChangeOrganisationDetailsRequest extends RequestedChanges(organisationDetails = true)
 object ChangeMandationStatus extends RequestedChanges(mandationStatus = true)
 object ChangeCommsPreference extends RequestedChanges(commsPreference = true)
 object ChangeCommsPreferenceAndEmail extends RequestedChanges(commsPreference = true,

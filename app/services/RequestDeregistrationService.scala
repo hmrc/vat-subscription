@@ -53,6 +53,7 @@ class RequestDeregistrationService @Inject()(updateVatSubscriptionConnector: Upd
     UpdateVatSubscription(
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = DeregistrationRequest,
+      organisationDetails = None,
       updatedPPOB = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = Some(deregistration),
