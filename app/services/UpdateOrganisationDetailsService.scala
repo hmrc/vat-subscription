@@ -18,8 +18,9 @@ package services
 
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
+
 import javax.inject.{Inject, Singleton}
-import models.{ContactDetails, TradingName, User}
+import models.{BusinessName, ContactDetails, CustomerDetails, TradingName, User}
 import models.updateVatSubscription.request._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,4 +62,42 @@ class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector:
 
   private def removedNameIsEmpty(newTradingName: Option[String]): String = newTradingName.fold("")(name => name)
 
+  def updateBusinessName(updatedBusinessName: BusinessName, approvedDetails: CustomerDetails)
+                        (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
+    val subscriptionModel = constructBusinessNameUpdateModel(updatedBusinessName, approvedDetails)
+    Logger.debug(s"[UpdateOrganisationDetailsService][updateBusinessName]: updating business name for user with vrn - ${user.vrn}")
+    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+  }
+
+  def constructBusinessNameUpdateModel(updatedBusinessName: BusinessName, approvedDetails: CustomerDetails)
+                                      (implicit user: User[_]): UpdateVatSubscription = {
+
+    val agentContactDetails: Option[ContactDetails] =
+      if(updatedBusinessName.transactorOrCapacitorEmail.isDefined)
+        Some(ContactDetails(None, None, None, updatedBusinessName.transactorOrCapacitorEmail, None))
+      else
+        None
+
+    val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
+
+    val welshIndicator = approvedDetails.welshIndicator.contains(true)
+    val updatedOrgDetails = UpdatedOrganisationDetails(
+      Some(updatedBusinessName.businessName),
+      Some(IndividualName(
+        approvedDetails.title, approvedDetails.firstName, approvedDetails.middleName, approvedDetails.lastName
+      )),
+      approvedDetails.tradingName
+    )
+
+    UpdateVatSubscription(
+      controlInformation = ControlInformation(welshIndicator),
+      requestedChanges = ChangeOrganisationDetailsRequest,
+      organisationDetails = Some(updatedOrgDetails),
+      updatedPPOB = None,
+      updatedReturnPeriod = None,
+      updateDeregistrationInfo = None,
+      declaration = Declaration(agentOrCapacitor, Signing()),
+      commsPreference = None
+    )
+  }
 }

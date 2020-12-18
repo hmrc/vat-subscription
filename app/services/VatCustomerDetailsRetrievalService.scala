@@ -38,7 +38,9 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
     (EitherT(vatCustomerDetailsConnector.getInformation(vatNumber)) map {
       vatCustomerInformation =>
         CustomerDetails(
+          title = vatCustomerInformation.customerDetails.title,
           firstName = vatCustomerInformation.customerDetails.firstName,
+          middleName = vatCustomerInformation.customerDetails.middleName,
           lastName = vatCustomerInformation.customerDetails.lastName,
           organisationName = vatCustomerInformation.customerDetails.organisationName,
           tradingName = vatCustomerInformation.customerDetails.tradingName,

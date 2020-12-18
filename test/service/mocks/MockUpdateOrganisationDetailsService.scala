@@ -17,7 +17,7 @@
 package service.mocks
 
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.{TradingName, User}
+import models.{BusinessName, CustomerDetails, TradingName, User}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
@@ -36,6 +36,16 @@ trait MockUpdateOrganisationDetailsService extends MockitoSugar {
   def mockUpdateTradingName(newTradingName: TradingName)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdateOrganisationDetailsService
       .updateTradingName(ArgumentMatchers.eq(newTradingName),ArgumentMatchers.any[Boolean])(
+        ArgumentMatchers.any[User[_]],
+        ArgumentMatchers.any[HeaderCarrier],
+        ArgumentMatchers.any[ExecutionContext]
+      )
+    ).thenReturn(response)
+  }
+
+  def mockUpdateBusinessName(newBusinessName: BusinessName)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+    when(mockUpdateOrganisationDetailsService
+      .updateBusinessName(ArgumentMatchers.eq(newBusinessName),ArgumentMatchers.any[CustomerDetails])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

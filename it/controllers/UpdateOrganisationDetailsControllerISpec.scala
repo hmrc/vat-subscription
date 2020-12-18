@@ -16,7 +16,7 @@
 
 package controllers
 
-import helpers.IntegrationTestConstants.{testSuccessCustomerDetailsDesResponse, testVatNumber, tradingNameModel}
+import helpers.IntegrationTestConstants.{businessNameModel, testSuccessCustomerDetailsDesResponse, testVatNumber, tradingNameModel}
 import helpers.servicemocks.AuthStub.{mtdVatEnrolment, stubAuth, stubAuthFailure, successfulAuthResponse}
 import helpers.servicemocks.GetVatCustomerInformationStub.stubGetInformation
 import helpers.servicemocks.UpdateVatCustomerSubscriptionStub.stubUpdateSubscription
@@ -28,6 +28,7 @@ import play.api.libs.json.{JsValue, Json}
 class UpdateOrganisationDetailsControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 
   val validTradingNameJson: JsValue = Json.toJson(tradingNameModel)
+  val validBusinessNameJson: JsValue = Json.toJson(businessNameModel)
 
   val testSuccessDesResponse: JsValue = Json.obj("formBundle" -> "XAIT000000123456")
   val testErrorDesResponse: JsValue = Json.obj("code" -> "TEST", "reason" -> "ERROR")
@@ -86,4 +87,56 @@ class UpdateOrganisationDetailsControllerISpec extends ComponentSpecBase with Be
     }
   }
 
+  "PUT /vat-subscription/:vatNumber/business-name" when {
+
+    "the user is unauthorised" should {
+      "return FORBIDDEN" in {
+
+        stubAuthFailure()
+
+        val res = await(put(s"/$testVatNumber/business-name")(validBusinessNameJson))
+
+        res should have(
+          httpStatus(FORBIDDEN)
+        )
+      }
+    }
+
+    "the user is authorised" should {
+
+      "calls to DES is successful" should {
+
+        "return OK with the status" in {
+
+          stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+          stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
+          stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
+
+          val res = await(put(s"/$testVatNumber/business-name")(validBusinessNameJson))
+
+          res should have(
+            httpStatus(OK),
+            jsonBodyAs(testSuccessDesResponse)
+          )
+        }
+      }
+
+      "calls to DES return an error" should {
+
+        "return ISE with the error response" in {
+
+          stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+          stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
+          stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
+
+          val res = await(put(s"/$testVatNumber/business-name")(validBusinessNameJson))
+
+          res should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            jsonBodyAs(testErrorResponse)
+          )
+        }
+      }
+    }
+  }
 }

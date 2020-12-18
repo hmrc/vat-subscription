@@ -28,6 +28,8 @@ object CustomerDetailsTestConstants {
     None,
     None,
     None,
+    None,
+    None,
     welshIndicator = None,
     isPartialMigration = false,
     customerMigratedToETMPDate = None,
@@ -36,7 +38,9 @@ object CustomerDetailsTestConstants {
   )
 
   val customerDetailsModelMax: CustomerDetails = CustomerDetails(
+    Some(title),
     Some(firstName),
+    Some(middleName),
     Some(lastName),
     Some(orgName),
     Some(tradingName),
@@ -56,7 +60,9 @@ object CustomerDetailsTestConstants {
   val customerDetailsModelNoWelshIndicator: CustomerDetails = customerDetailsModelMax.copy(welshIndicator = None)
 
   val customerDetailsJsonMaxWithFRS: JsValue = Json.obj(
+    "title" -> title,
     "firstName" -> firstName,
+    "middleName" -> middleName,
     "lastName" -> lastName,
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
@@ -70,7 +76,9 @@ object CustomerDetailsTestConstants {
   )
 
   val customerDetailsJsonNoWelshIndicator: JsValue = Json.obj(
+    "title" -> title,
     "firstName" -> firstName,
+    "middleName" -> middleName,
     "lastName" -> lastName,
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
@@ -83,7 +91,9 @@ object CustomerDetailsTestConstants {
   )
 
   val customerDetailsJsonMax: JsValue = Json.obj(
+    "title" -> title,
     "firstName" -> firstName,
+    "middleName" -> middleName,
     "lastName" -> lastName,
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
@@ -103,9 +113,11 @@ object CustomerDetailsTestConstants {
   )
 
   val customerDetailsJsonMaxWithTrueOverseas: JsObject = Json.obj(
+    "title" -> title,
     "firstName" -> firstName,
-    "hasFlatRateScheme" -> false,
+    "middleName" -> middleName,
     "lastName" -> lastName,
+    "hasFlatRateScheme" -> false,
     "organisationName" -> orgName,
     "tradingName" -> tradingName,
     "vatRegistrationDate" -> effectiveDate,
