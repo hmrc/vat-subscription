@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
 package helpers
 
 import java.util.UUID
-
 import play.api.libs.json.{JsObject, Json}
-import models.{ContactDetails, DigitalPreference, TradingName}
+import models.{BusinessName, ContactDetails, DigitalPreference, TradingName}
 import models.get.{PPOBAddressGet, PPOBGet}
 import models.post.{EmailPost, PPOBAddressPost, PPOBPost}
 
@@ -87,8 +86,7 @@ object IntegrationTestConstants {
           "title" -> title,
           "firstName" -> firstName,
           "middleName" -> middleName,
-          "lastName" -> lastName,
-          "customerMigratedToETMPDate" -> customerMigratedToETMPDate
+          "lastName" -> lastName
         ),
         "tradingName" -> tradingName,
         "mandationStatus" -> mandationStatus,
@@ -237,4 +235,5 @@ object IntegrationTestConstants {
     PPOBPost(ppobAddressModelMaxPost, Some(contactDetailsModelMax), Some(website), Some(agentEmail))
 
   val tradingNameModel: TradingName = TradingName(None, Some("some Random name"))
+  val businessNameModel: BusinessName = BusinessName("MyBiz", None)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,9 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
     (EitherT(vatCustomerDetailsConnector.getInformation(vatNumber)) map {
       vatCustomerInformation =>
         CustomerDetails(
+          title = vatCustomerInformation.customerDetails.title,
           firstName = vatCustomerInformation.customerDetails.firstName,
+          middleName = vatCustomerInformation.customerDetails.middleName,
           lastName = vatCustomerInformation.customerDetails.lastName,
           organisationName = vatCustomerInformation.customerDetails.organisationName,
           tradingName = vatCustomerInformation.customerDetails.tradingName,

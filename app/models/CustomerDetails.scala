@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package models
 import play.api.libs.json._
 import utils.JsonObjectSugar
 
-case class CustomerDetails(firstName: Option[String],
+case class CustomerDetails(title: Option[String],
+                           firstName: Option[String],
+                           middleName: Option[String],
                            lastName: Option[String],
                            organisationName: Option[String],
                            tradingName: Option[String],
@@ -33,7 +35,9 @@ case class CustomerDetails(firstName: Option[String],
 
 object CustomerDetails extends JsonObjectSugar {
 
+  private val titlePath = JsPath \ "title"
   private val firstNamePath = JsPath \ "firstName"
+  private val middleNamePath = JsPath \ "middleName"
   private val lastNamePath = JsPath \ "lastName"
   private val organisationNamePath = JsPath \ "organisationName"
   private val tradingNamePath = JsPath \ "tradingName"
@@ -46,7 +50,9 @@ object CustomerDetails extends JsonObjectSugar {
   private val nameIsReadOnlyPath = JsPath \ "nameIsReadOnly"
 
   implicit val cdReader: Reads[CustomerDetails] = for {
+    title <- titlePath.readNullable[String]
     firstName <- firstNamePath.readNullable[String]
+    middleName <- middleNamePath.readNullable[String]
     lastName <- lastNamePath.readNullable[String]
     organisationName <- organisationNamePath.readNullable[String]
     tradingName <- tradingNamePath.readNullable[String]
@@ -58,7 +64,9 @@ object CustomerDetails extends JsonObjectSugar {
     overseasIndicator <- overseasIndicatorPath.read[Boolean]
     nameIsReadOnly <- nameIsReadOnlyPath.readNullable[Boolean]
   } yield CustomerDetails(
+    title,
     firstName,
+    middleName,
     lastName,
     organisationName,
     tradingName,
@@ -73,7 +81,9 @@ object CustomerDetails extends JsonObjectSugar {
 
   implicit val cdWriter: Writes[CustomerDetails] = Writes { model =>
     jsonObjNoNulls(
+        "title" -> model.title,
         "firstName" -> model.firstName,
+        "middleName" -> model.middleName,
         "lastName" -> model.lastName,
         "organisationName" -> model.organisationName,
         "tradingName" -> model.tradingName,

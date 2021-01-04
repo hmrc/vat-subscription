@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
-import models.TradingName
+import models.{BusinessName, TradingName}
 import play.api.libs.json.Json
 import services.{UpdateOrganisationDetailsService, VatCustomerDetailsRetrievalService}
 
@@ -52,4 +52,21 @@ class UpdateOrganisationDetailsController @Inject()(VatAuthorised: VatAuthorised
       }
   }
 
+  def updateBusinessName(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
+    implicit user =>
+      parseJsonBody[BusinessName] match {
+        case Right(businessName) =>
+          vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vrn).flatMap {
+            case Right(details) =>
+              updateOrganisationDetailsService.updateBusinessName(businessName, details).map {
+                case Right(success) => Ok(Json.toJson(success))
+                case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
+                case Left(error) => InternalServerError(Json.toJson(error))
+              }
+            case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
+          }
+        case Left(error) =>
+          Future.successful(BadRequest(Json.toJson(error)))
+      }
+  }
 }

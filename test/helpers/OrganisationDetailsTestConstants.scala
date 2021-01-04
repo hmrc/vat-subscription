@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@
 
 package helpers
 
-import models.TradingName
+import models.{BusinessName, TradingName}
 
 object OrganisationDetailsTestConstants {
 
   val tradingName = "He-man's accounting firm"
+  val businessName = "Super Mario storage facilities"
   val agentEmail = "agent@emailaddress.com"
 
-  val removedTradingNameModel = TradingName(None, None)
-  val tradingNameModel = TradingName(None, Some(tradingName))
-  val tradingNameModelAgent = TradingName(Some(agentEmail), Some(tradingName))
+  val removedTradingNameModel: TradingName = TradingName(None, None)
+  val tradingNameModel: TradingName = TradingName(None, Some(tradingName))
+  val tradingNameModelAgent: TradingName = TradingName(Some(agentEmail), Some(tradingName))
+
+  val businessNameModel: BusinessName = BusinessName(businessName, None)
+  val businessNameModelAgent: BusinessName = BusinessName(businessName, Some(agentEmail))
 }

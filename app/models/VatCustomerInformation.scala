@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,9 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
 
   val customerDetailsKey = "customerDetails"
   val individualKey = "individual"
+  val titleKey = "title"
   val firstNameKey = "firstName"
+  val middleNameKey = "middleName"
   val lastNameKey = "lastName"
   val organisationNameKey = "organisationName"
   val tradingNameKey = "tradingName"
@@ -94,7 +96,9 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val pendingChangesPath = __ \ pendingChangesKey \ changes
 
   val reads: AppConfig => Reads[VatCustomerInformation] = conf => for {
+    title <- (customerDetailsPath \ individualKey \ titleKey).readOpt[String]
     firstName <- (customerDetailsPath \ individualKey \ firstNameKey).readOpt[String]
+    middleName <- (customerDetailsPath \ individualKey \ middleNameKey).readOpt[String]
     lastName <- (customerDetailsPath \ individualKey \ lastNameKey).readOpt[String]
     organisationName <- (customerDetailsPath \ organisationNameKey).readOpt[String]
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
@@ -121,7 +125,9 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   } yield VatCustomerInformation(
     mandationStatus,
     CustomerDetails(
+      title = title,
       firstName = firstName,
+      middleName = middleName,
       lastName = lastName,
       organisationName = organisationName,
       tradingName = tradingName,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,9 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
 
       val expectedCustomerDetailsJson: JsObject = Json.obj(
         "organisationName" -> orgName,
+        "title" -> title,
         "firstName" -> firstName,
+        "middleName" -> middleName,
         "lastName" -> lastName,
         "tradingName" -> tradingName,
         "vatRegistrationDate" -> effectiveDate,
@@ -160,7 +162,9 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         val expectedCustomerInformationModel = VatCustomerInformation(
           MTDfB,
           CustomerDetails(
+            title = Some(title),
             firstName = Some(firstName),
+            middleName = Some(middleName),
             lastName = Some(lastName),
             organisationName = Some(orgName),
             tradingName = Some(tradingName),
@@ -350,7 +354,9 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         val expectedCustomerInformationModel = VatCustomerInformation(
           MTDfB,
           CustomerDetails(
+            title = Some(title),
             firstName = Some(firstName),
+            middleName = Some(middleName),
             lastName = Some(lastName),
             organisationName = Some(orgName),
             tradingName = Some(tradingName),

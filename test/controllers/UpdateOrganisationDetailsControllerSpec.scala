@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import assets.TestUtil
 import connectors.VatNumberNotFound
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
+import helpers.CustomerDetailsTestConstants.customerDetailsModelMax
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -41,7 +42,8 @@ with MockVatCustomerDetailsRetrievalService {
       mockVatCustomerDetailsRetrievalService,
       controllerComponents)
 
-  val orgDetailsPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(tradingNameModel))
+  val tradingNamePostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(tradingNameModel))
+  val businessNamePostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(businessNameModel))
 
   "the.updateTradingName() method" when {
 
@@ -49,7 +51,7 @@ with MockVatCustomerDetailsRetrievalService {
 
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(orgDetailsPostRequest))
+        val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
         status(res) shouldBe FORBIDDEN
       }
     }
@@ -64,7 +66,7 @@ with MockVatCustomerDetailsRetrievalService {
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
           mockUpdateTradingName(tradingNameModel)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(orgDetailsPostRequest))
+          val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
 
           status(res) shouldBe OK
           jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
@@ -91,7 +93,7 @@ with MockVatCustomerDetailsRetrievalService {
 
         "a valid TradingName is supplied but a Conflict error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(orgDetailsPostRequest))
+          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
 
           "return status CONFLICT (409)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -107,7 +109,7 @@ with MockVatCustomerDetailsRetrievalService {
 
         "a valid TradingName is supplied but an error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(orgDetailsPostRequest))
+          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -123,7 +125,7 @@ with MockVatCustomerDetailsRetrievalService {
 
         "a valid TradingName  is supplied but an error is returned instead of a welsh indicator" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(orgDetailsPostRequest))
+          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -141,4 +143,99 @@ with MockVatCustomerDetailsRetrievalService {
 
   }
 
+  "the.updateBusinessName() method" when {
+
+    "the user is not authorised" should {
+
+      "return FORBIDDEN" in {
+        mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
+        val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+        status(res) shouldBe FORBIDDEN
+      }
+    }
+
+    "The user is authorised" should {
+
+      "return a successful response" when {
+
+        "a valid BusinessName is supplied and the response from the UpdateVatSubscription service is successful" in {
+
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
+          mockUpdateBusinessName(businessNameModel)(Future.successful(Right(updateSuccessResponse)))
+
+          val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+
+          status(res) shouldBe OK
+          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+        }
+      }
+
+      "return an error response" when {
+
+        "no json body is supplied for the PUT" should {
+
+          val emptyRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(emptyRequest))
+
+          "return status BAD_REQUEST (400)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            status(res) shouldBe BAD_REQUEST
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
+          }
+        }
+
+        "a valid BusinessName is supplied but a Conflict error is returned from the UpdateVatSubscription Service" should {
+
+          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+
+          "return status CONFLICT (409)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
+            mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateConflictResponse)))
+            status(res) shouldBe CONFLICT
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(updateConflictResponse)
+          }
+        }
+
+        "a valid BusinessName is supplied but an error is returned from the UpdateVatSubscription Service" should {
+
+          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+
+          "return status INTERNAL_SERVER_ERROR (500)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
+            mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateErrorResponse)))
+            status(res) shouldBe INTERNAL_SERVER_ERROR
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+          }
+        }
+
+        "a valid BusinessName is supplied but an error is returned instead of customer details" should {
+
+          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+
+          "return status INTERNAL_SERVER_ERROR (500)" in {
+            mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+            mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
+            mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateErrorResponse)))
+            status(res) shouldBe INTERNAL_SERVER_ERROR
+          }
+
+          "return the expected error model" in {
+            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+          }
+        }
+      }
+    }
+  }
 }

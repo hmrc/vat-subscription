@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package models.post
+package models
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json._
-import models.MandationStatus
-import models.MandationStatus.desReader
+import play.api.libs.json.{Reads, Writes, __}
 
-case class MandationStatusPost(mandationStatus: MandationStatus,
-                               transactorOrCapacitorEmail: Option[String])
+case class BusinessName(businessName: String, transactorOrCapacitorEmail: Option[String])
 
-object MandationStatusPost {
+object BusinessName {
 
-  implicit val reads: Reads[MandationStatusPost] = (
-    (__ \ "mandationStatus").read[MandationStatus](desReader) and
-    (__ \ "transactorOrCapacitorEmail").readNullable[String]
-  )(MandationStatusPost.apply _)
+  private val transOrCapEmailPath = __ \ "transactorOrCapacitorEmail"
+  private val businessNamePath =  __ \ "organisationName"
+
+  implicit val reads: Reads[BusinessName] = (
+    businessNamePath.read[String] and
+    transOrCapEmailPath.readNullable[String]
+  )(BusinessName.apply _)
+
+  implicit val writes: Writes[BusinessName] = (
+    businessNamePath.write[String] and
+    transOrCapEmailPath.writeNullable[String]
+  )(unlift(BusinessName.unapply))
 }
