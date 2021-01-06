@@ -73,6 +73,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   val returnPeriodKey = "returnPeriod"
   val vatRegistrationDateKey = "effectiveRegistrationDate"
   val customerMigratedToETMPDateKey = "customerMigratedToETMPDate"
+  val hybridToFullMigrationDateKey = "hybridToFullMigrationDate"
   val deregistrationKey = "deregistration"
   val partyTypeKey = "partyType"
   val rlsTypeKey = "RLS"
@@ -108,6 +109,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     tradingName <- (customerDetailsPath \ tradingNameKey).readOpt[String]
     vatRegistrationDate <- (customerDetailsPath \ vatRegistrationDateKey).readOpt[String]
     customerMigratedToETMPDate <- (customerDetailsPath \ customerMigratedToETMPDateKey).readOpt[String]
+    hybridToFullMigrationDate <- (customerDetailsPath \ hybridToFullMigrationDateKey).readOpt[String]
     mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus](
       if (conf.features.newStatusIndicators()) desReader else desReaderOld
     )
@@ -139,6 +141,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
       tradingName = tradingName,
       vatRegistrationDate,
       customerMigratedToETMPDate,
+      hybridToFullMigrationDate,
       flatRateScheme.isDefined,
       welshIndicator,
       isPartialMigration.contains(true),
