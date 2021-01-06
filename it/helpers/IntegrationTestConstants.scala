@@ -97,6 +97,8 @@ object IntegrationTestConstants {
         "isPartialMigration" -> true,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
         "partyType" -> "50",
+        "isInsolvent" -> false,
+        "continueToTrade" -> true,
         "overseasIndicator" -> false,
         "nameIsReadOnly" -> true
       ),
