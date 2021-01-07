@@ -30,6 +30,8 @@ case class CustomerDetails(title: Option[String],
                            hasFlatRateScheme: Boolean = false,
                            welshIndicator: Option[Boolean],
                            isPartialMigration: Boolean,
+                           isInsolvent: Option[Boolean],
+                           continueToTrade: Option[Boolean],
                            overseasIndicator: Boolean,
                            nameIsReadOnly: Option[Boolean])
 
@@ -46,6 +48,8 @@ object CustomerDetails extends JsonObjectSugar {
   private val hasFlatRateSchemePath = JsPath \ "hasFlatRateScheme"
   private val welshIndicatorPath = JsPath \ "welshIndicator"
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
+  private val isInsolventPath = JsPath \ "isInsolvent"
+  private val continueToTradePath = JsPath \ "continueToTrade"
   private val overseasIndicatorPath = JsPath \ "overseasIndicator"
   private val nameIsReadOnlyPath = JsPath \ "nameIsReadOnly"
 
@@ -61,6 +65,8 @@ object CustomerDetails extends JsonObjectSugar {
     hasFlatRateScheme <- hasFlatRateSchemePath.read[Boolean]
     welshIndicator <- welshIndicatorPath.readNullable[Boolean]
     isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
+    isInsolvent <- isInsolventPath.readNullable[Boolean]
+    continueToTrade <- continueToTradePath.readNullable[Boolean]
     overseasIndicator <- overseasIndicatorPath.read[Boolean]
     nameIsReadOnly <- nameIsReadOnlyPath.readNullable[Boolean]
   } yield CustomerDetails(
@@ -75,6 +81,8 @@ object CustomerDetails extends JsonObjectSugar {
     hasFlatRateScheme,
     welshIndicator,
     isPartialMigration.contains(true),
+    isInsolvent,
+    continueToTrade,
     overseasIndicator,
     nameIsReadOnly
   )
@@ -92,6 +100,8 @@ object CustomerDetails extends JsonObjectSugar {
         "hasFlatRateScheme" -> model.hasFlatRateScheme,
         "welshIndicator" -> model.welshIndicator,
         "isPartialMigration" -> model.isPartialMigration,
+        "isInsolvent" -> model.isInsolvent,
+        "continueToTrade" -> model.continueToTrade,
         "overseasIndicator" -> model.overseasIndicator,
         "nameIsReadOnly" -> model.nameIsReadOnly
       )

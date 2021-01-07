@@ -52,6 +52,8 @@ object CustomerInformationTestConstants {
         "isPartialMigration" -> false,
         "partyType" -> partyType,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+        "isInsolvent" -> false,
+        "continueToTrade" -> true,
         "overseasIndicator" -> false,
         "nameIsReadOnly" -> false
       ),

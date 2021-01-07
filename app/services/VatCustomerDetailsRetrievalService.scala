@@ -49,6 +49,8 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
           welshIndicator = vatCustomerInformation.customerDetails.welshIndicator,
           isPartialMigration = vatCustomerInformation.customerDetails.isPartialMigration,
           customerMigratedToETMPDate = vatCustomerInformation.customerDetails.customerMigratedToETMPDate,
+          isInsolvent = vatCustomerInformation.customerDetails.isInsolvent,
+          continueToTrade = vatCustomerInformation.customerDetails.continueToTrade,
           overseasIndicator = vatCustomerInformation.customerDetails.overseasIndicator,
           nameIsReadOnly = vatCustomerInformation.customerDetails.nameIsReadOnly
         )

@@ -59,6 +59,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "welshIndicator" -> true,
         "isPartialMigration" -> true,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+        "isInsolvent" -> false,
+        "continueToTrade" -> true,
         "overseasIndicator" -> false,
         "nameIsReadOnly" -> true
       )
@@ -173,6 +175,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             welshIndicator = Some(true),
             isPartialMigration = true,
             customerMigratedToETMPDate = Some(customerMigratedToETMPDate),
+            isInsolvent = Some(false),
+            continueToTrade = Some(true),
             overseasIndicator = false,
             nameIsReadOnly = Some(true)
           ),
@@ -365,6 +369,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             welshIndicator = Some(true),
             isPartialMigration = true,
             customerMigratedToETMPDate = Some("2019-01-01"),
+            isInsolvent = Some(false),
+            continueToTrade = Some(true),
             overseasIndicator = false,
             nameIsReadOnly = Some(true)
           ),

@@ -33,6 +33,8 @@ object CustomerDetailsTestConstants {
     welshIndicator = None,
     isPartialMigration = false,
     customerMigratedToETMPDate = None,
+    isInsolvent = None,
+    continueToTrade = None,
     overseasIndicator = false,
     nameIsReadOnly = None
   )
@@ -48,6 +50,8 @@ object CustomerDetailsTestConstants {
     welshIndicator = Some(false),
     isPartialMigration = false,
     customerMigratedToETMPDate = Some("2019-01-01"),
+    isInsolvent = Some(false),
+    continueToTrade = Some(true),
     overseasIndicator = false,
     nameIsReadOnly = Some(false)
   )
@@ -71,6 +75,8 @@ object CustomerDetailsTestConstants {
     "welshIndicator" -> true,
     "isPartialMigration" -> false,
     "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+    "isInsolvent" -> false,
+    "continueToTrade" -> true,
     "overseasIndicator" -> false,
     "nameIsReadOnly" -> false
   )
@@ -102,6 +108,8 @@ object CustomerDetailsTestConstants {
     "welshIndicator" -> false,
     "isPartialMigration" -> false,
     "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+    "isInsolvent" -> false,
+    "continueToTrade" -> true,
     "overseasIndicator" -> false,
     "nameIsReadOnly" -> false
   )
@@ -124,6 +132,8 @@ object CustomerDetailsTestConstants {
     "welshIndicator" -> false,
     "isPartialMigration" -> false,
     "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+    "isInsolvent" -> false,
+    "continueToTrade" -> true,
     "overseasIndicator" -> true,
     "nameIsReadOnly" -> false
   )
