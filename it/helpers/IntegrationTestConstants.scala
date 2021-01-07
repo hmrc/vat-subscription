@@ -36,6 +36,7 @@ object IntegrationTestConstants {
   val effectiveDate = "1967-08-13"
   val startDate = "1967-08-13"
   val customerMigratedToETMPDate = "2019-01-01"
+  val hybridToFullMigrationDate = "2019-01-01"
 
   //PPOB
   val addLine1 = "Add Line 1"
@@ -96,6 +97,7 @@ object IntegrationTestConstants {
         "welshIndicator" -> true,
         "isPartialMigration" -> true,
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+        "hybridToFullMigrationDate" -> hybridToFullMigrationDate,
         "partyType" -> "50",
         "isInsolvent" -> false,
         "continueToTrade" -> true,

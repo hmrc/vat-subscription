@@ -35,6 +35,7 @@ object CustomerDetailsTestConstants {
     customerMigratedToETMPDate = None,
     isInsolvent = None,
     continueToTrade = None,
+    hybridToFullMigrationDate = None,
     overseasIndicator = false,
     nameIsReadOnly = None
   )
@@ -52,6 +53,7 @@ object CustomerDetailsTestConstants {
     customerMigratedToETMPDate = Some("2019-01-01"),
     isInsolvent = Some(false),
     continueToTrade = Some(true),
+    hybridToFullMigrationDate = Some("2019-01-01"),
     overseasIndicator = false,
     nameIsReadOnly = Some(false)
   )
@@ -77,6 +79,7 @@ object CustomerDetailsTestConstants {
     "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
     "isInsolvent" -> false,
     "continueToTrade" -> true,
+    "hybridToFullMigrationDate" -> hybridToFullMigrationDate,
     "overseasIndicator" -> false,
     "nameIsReadOnly" -> false
   )
@@ -110,6 +113,7 @@ object CustomerDetailsTestConstants {
     "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
     "isInsolvent" -> false,
     "continueToTrade" -> true,
+    "hybridToFullMigrationDate" -> hybridToFullMigrationDate,
     "overseasIndicator" -> false,
     "nameIsReadOnly" -> false
   )
@@ -134,6 +138,7 @@ object CustomerDetailsTestConstants {
     "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
     "isInsolvent" -> false,
     "continueToTrade" -> true,
+    "hybridToFullMigrationDate" -> hybridToFullMigrationDate,
     "overseasIndicator" -> true,
     "nameIsReadOnly" -> false
   )

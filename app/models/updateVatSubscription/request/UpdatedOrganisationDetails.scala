@@ -17,7 +17,7 @@
 package models.updateVatSubscription.request
 
 import models.ReturnPeriod.jsonObjNoNulls
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Writes
 
 case class UpdatedOrganisationDetails(organisationName: Option[String],
                                       individualName: Option[IndividualName],

@@ -61,6 +61,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
         "isInsolvent" -> false,
         "continueToTrade" -> true,
+        "hybridToFullMigrationDate" -> hybridToFullMigrationDate,
         "overseasIndicator" -> false,
         "nameIsReadOnly" -> true
       )
@@ -177,6 +178,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             customerMigratedToETMPDate = Some(customerMigratedToETMPDate),
             isInsolvent = Some(false),
             continueToTrade = Some(true),
+            hybridToFullMigrationDate = Some(hybridToFullMigrationDate),
             overseasIndicator = false,
             nameIsReadOnly = Some(true)
           ),
@@ -371,6 +373,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             customerMigratedToETMPDate = Some("2019-01-01"),
             isInsolvent = Some(false),
             continueToTrade = Some(true),
+            hybridToFullMigrationDate = Some("2019-01-01"),
             overseasIndicator = false,
             nameIsReadOnly = Some(true)
           ),

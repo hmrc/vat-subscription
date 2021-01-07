@@ -27,6 +27,7 @@ case class CustomerDetails(title: Option[String],
                            tradingName: Option[String],
                            vatRegistrationDate: Option[String],
                            customerMigratedToETMPDate: Option[String],
+                           hybridToFullMigrationDate: Option[String],
                            hasFlatRateScheme: Boolean = false,
                            welshIndicator: Option[Boolean],
                            isPartialMigration: Boolean,
@@ -45,6 +46,7 @@ object CustomerDetails extends JsonObjectSugar {
   private val tradingNamePath = JsPath \ "tradingName"
   private val vatRegistrationDatePath = JsPath \ "vatRegistrationDate"
   private val customerMigratedToETMPDatePath = JsPath \ "customerMigratedToETMPDate"
+  private val hybridToFullMigrationDate = JsPath \ "hybridToFullMigrationDate"
   private val hasFlatRateSchemePath = JsPath \ "hasFlatRateScheme"
   private val welshIndicatorPath = JsPath \ "welshIndicator"
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
@@ -62,6 +64,7 @@ object CustomerDetails extends JsonObjectSugar {
     tradingName <- tradingNamePath.readNullable[String]
     vatRegistrationDate <- vatRegistrationDatePath.readNullable[String]
     customerMigratedToETMPDate <- customerMigratedToETMPDatePath.readNullable[String]
+    hybridToFullMigrationDate <- hybridToFullMigrationDate.readNullable[String]
     hasFlatRateScheme <- hasFlatRateSchemePath.read[Boolean]
     welshIndicator <- welshIndicatorPath.readNullable[Boolean]
     isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
@@ -78,6 +81,7 @@ object CustomerDetails extends JsonObjectSugar {
     tradingName,
     vatRegistrationDate,
     customerMigratedToETMPDate,
+    hybridToFullMigrationDate,
     hasFlatRateScheme,
     welshIndicator,
     isPartialMigration.contains(true),
@@ -97,6 +101,7 @@ object CustomerDetails extends JsonObjectSugar {
         "tradingName" -> model.tradingName,
         "vatRegistrationDate" -> model.vatRegistrationDate,
         "customerMigratedToETMPDate" -> model.customerMigratedToETMPDate,
+        "hybridToFullMigrationDate" -> model.hybridToFullMigrationDate,
         "hasFlatRateScheme" -> model.hasFlatRateScheme,
         "welshIndicator" -> model.welshIndicator,
         "isPartialMigration" -> model.isPartialMigration,
