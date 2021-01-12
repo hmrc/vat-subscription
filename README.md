@@ -3,10 +3,14 @@
 [![Build Status](https://travis-ci.org/hmrc/vat-subscription.svg)](https://travis-ci.org/hmrc/vat-subscription) [ ![Download](https://api.bintray.com/packages/hmrc/releases/vat-subscription/images/download.svg) ](https://bintray.com/hmrc/releases/vat-subscription/_latestVersion)
 
 ## Summary
-This is the backend for `Manage-vat-subscription-frontend` service.
+This is the backend service which retrieves customer information for all VATVC services.
 
 ## Running
 `sbt "run 9567 -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"`
+
+or alternatively:
+
+`./run.sh`
 
 ## Feature Switches
 
@@ -69,15 +73,24 @@ Where:
 **Example HTTP Response Body**:
 ```
 {
-   "firstName": "Frank",
-   "lastName": "Grimes",
-   "organisationName": "Grimey Org",
-   "tradingName": "Grimey Ltd",
-   "hasFlatRateScheme": true,
-   "isPartialMigration": false,
-   "overseasIndicator": false
+    "title": "0001",
+    "firstName": "Frank",
+    "middleName": "Andrew",
+    "lastName": "Grimes",
+    "vatRegistrationDate": "2018-01-01",
+    "customerMigratedToETMPDate": "2018-01-01",
+    "hybridToFullMigrationDate": "2018-01-01",
+    "hasFlatRateScheme": true,
+    "welshIndicator": false,
+    "isPartialMigration": false,
+    "isInsolvent": false,
+    "continueToTrade": true,
+    "overseasIndicator": false,
+    "nameIsReadOnly": false
 }
 ```
+
+Where the fields "hasFlatRateScheme" and "overseasIndicator" are mandatory, and all other fields are optional.
 
 #### Error Responses
 
@@ -105,13 +118,20 @@ Where:
 {
     "mandationStatus": "MTDfB Mandated",
     "customerDetails": {
+        "title": "0001",
         "firstName": "Frank",
+        "middleName": "Andrew",
         "lastName": "Grimes",
-        "organisationName": "Grimey Org",
-        "tradingName": "Grimey Ltd",
+        "vatRegistrationDate": "2018-01-01",
+        "customerMigratedToETMPDate": "2018-01-01",
+        "hybridToFullMigrationDate": "2018-01-01",
         "hasFlatRateScheme": true,
+        "welshIndicator": false,
         "isPartialMigration": false,
-        "overseasIndicator": false
+        "isInsolvent": false,
+        "continueToTrade": true,
+        "overseasIndicator": false,
+        "nameIsReadOnly": false
     },
     "flatRateScheme": {
         "FRSCategory": "001",
@@ -121,12 +141,19 @@ Where:
     },
     "ppob": {
         "address": {
-            "line1": "64 Zoo Lane",
+            "line1": "VAT PPOB Line1",
+            "line2": "VAT PPOB Line2",
+            "line3": "VAT PPOB Line3",
+            "line4": "VAT PPOB Line5",
+            "postCode": "TF3 4ER",
             "countryCode": "EN"
         },
         "contactDetails": {
-            "phoneNumber": "07712345678",
-            "emailAddress": "person@earth.com"
+            "primaryPhoneNumber": "012345678901",
+            "mobileNumber": "07814 557733",
+            "faxNumber": "012345678903",
+            "emailAddress": "person@earth.com",
+            "emailVerified": true
         },
         "websiteAddress": "www.site.com"
     },
@@ -135,21 +162,55 @@ Where:
         "bankAccountNumber": "****0001",
         "sortCode": "****56"
     },
-    "returnPeriod": "MA",
-    "pendingChanges": {
-        "returnPeriod": "MB"
+    "returnPeriod": {
+        "stdReturnPeriod": "MA",
+        "nonStdTaxPeriods": [
+            {
+                "periodStart": "2018-01-01",
+                "periodEnd": "2018-01-15"
+            },
+            {
+                "periodStart": "2018-01-16",
+                "periodEnd": "2018-01-31"
+            }
+        ]
+        "firstNonNSTPPeriod": {
+            "periodStart": "2018-02-01",
+            "periodEnd": "2018-04-30"
+        }
     },
-    "partyType": "50"
+    "changeIndicators": {
+        "organisationDetails": false,
+        "PPOBDetails": false,
+        "bankDetails": false,
+        "returnPeriod": true,
+        "deregister": false,
+        "annualAccounting": false
+    },
+    "pendingChanges": {
+        "returnPeriod": {
+            "stdReturnPeriod": "MB"
+        }
+    },
+    "partyType": "50",
+    "primaryMainCode": "10410",
+    "missingTrader": false,
+    "commsPreference": "DIGITAL"
 }
 ```
 Where:
-* **mandationStatus** can be "MTDfB Mandated", "MTDfB Voluntary", "Non MTDfB" or "Non Digital".
-* **CustomerDetails** is mandatory.
+* **mandationStatus** can be "MTDfB Exempt", "MTDfB", "Non MTDfB" or "Non Digital".
+* **customerDetails** is mandatory and consists of mandatory "hasFlatRateScheme" and "overseasIndicator", with all other fields in this block being optional.
 * **flatRateScheme** is optional and its elements are also all optional.
-* **ppob** is mandatory and consists of mandatory "line1" and "countryCode" with optional "line2", "line3", "line4", "line5" and "postCode".
+* **ppob** is mandatory and consists of mandatory "line1" and "countryCode", with all other fields in this block being optional.
 * **bankDetails** is optional and its elements are also all optional.
-* **returnPeriod** is optional and can be either "MA", "MB", "MC" or "MM".
-* **pendingChanges** is optional and consists of optional elements "ppob", "bankDetails", "returnPeriod" and "annualAccounting"
+* **returnPeriod** is optional and its elements are also all optional.
+* **changeIndicators** is optional and consists of mandatory boolean values to denote which sections of data have pending changes.
+* **pendingChanges** is optional and consists of optional elements "ppob", "bankDetails", "returnPeriod", "mandationStatus", "commsPreference" and "tradingName".
+* **partyType** is optional.
+* **primaryMainCode** is mandatory.
+* **missingTrader** is mandatory.
+* **commsPreference** is optional.
 
 #### Error Responses
 
@@ -164,55 +225,7 @@ Where:
 
 ### GET /vat-subscription/:vatNumber/manage-account-summary
 
-Where:
-
-* **:vatNumber** is a valid VRN, for example: "999999999"
-
-Provides a summary view of the Customers VAT Subscription for the Manage Account section on the Business Tax Account.
-
-#### Success Response
-
-**HTTP Status**: 200
-
-**Example HTTP Response Body**:
-```
-{   
-    "mandationStatus": "MTDfB Mandated",
-    "overseasIndicator": false,
-    "ppobAddress": {
-      "line1": "addLine1",
-      "line2": "addLine2",
-      "line3": "addLine3",
-      "line4": "addLine4",
-      "line5": "addLine5",
-      "postCode": "TE3 3TT,
-      "countryCode": "EN"
-    },
-    "contactEmail": "test@testemail.com",
-    "businessName": "Grimey Org",
-    "repaymentBankDetails": {
-       "accountHolderName": "Monty Burns",
-       "bankAccountNumber": "****0001",
-       "sortCode": "****56"
-    }
-}
-```
-Where:
-* **mandationStatus** is mandatory and can be "MTDfB Mandated", "MTDfB Voluntary", "Non MTDfB" or "Non Digital".
-* **ppobAddress** is mandatory and consists of mandatory "line1" and "countryCode" with optional "line2", "line3", "line4", "line5" and "postCode".
-* **bankDetails** is optional and its elements are also all optional.
-* **businessName** is optional and is only returned if there is an organisation name for the VRN
-
-#### Error Responses
-
-##### INVALID_VAT_NUMBER
-* **Status**: 400
-
-##### VAT_NUMBER_NOT_FOUND
-* **Status**: 404
-
-##### UNEXPECTED_GET_VAT_CUSTOMER_INFORMATION_FAILURE
-* **Status**: (any)
+This endpoint is deprecated and `/vat-subscription/:vatNumber/full-information` should be used instead.
 
 ### PUT /vat-subscription/:vatNumber/return-period
 
