@@ -100,6 +100,7 @@ object IntegrationTestConstants {
         "hybridToFullMigrationDate" -> hybridToFullMigrationDate,
         "partyType" -> "50",
         "isInsolvent" -> false,
+        "insolvencyType" -> "03",
         "continueToTrade" -> true,
         "overseasIndicator" -> false,
         "nameIsReadOnly" -> true
