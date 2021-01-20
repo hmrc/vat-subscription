@@ -54,6 +54,7 @@ object CustomerInformationTestConstants {
         "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
         "isInsolvent" -> false,
         "insolvencyType" -> "03",
+        "insolvencyDate" -> "2019-01-02",
         "continueToTrade" -> true,
         "hybridToFullMigrationDate" -> hybridToFullMigrationDate,
         "overseasIndicator" -> false,

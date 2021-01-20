@@ -101,6 +101,7 @@ object IntegrationTestConstants {
         "partyType" -> "50",
         "isInsolvent" -> false,
         "insolvencyType" -> "03",
+        "insolvencyDate" -> "2019-01-02",
         "continueToTrade" -> true,
         "overseasIndicator" -> false,
         "nameIsReadOnly" -> true
