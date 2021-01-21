@@ -32,6 +32,8 @@ case class CustomerDetails(title: Option[String],
                            welshIndicator: Option[Boolean],
                            isPartialMigration: Boolean,
                            isInsolvent: Option[Boolean],
+                           insolvencyType: Option[String],
+                           insolvencyDate: Option[String],
                            continueToTrade: Option[Boolean],
                            overseasIndicator: Boolean,
                            nameIsReadOnly: Option[Boolean])
@@ -51,6 +53,8 @@ object CustomerDetails extends JsonObjectSugar {
   private val welshIndicatorPath = JsPath \ "welshIndicator"
   private val isPartialMigrationPath = JsPath \ "isPartialMigration"
   private val isInsolventPath = JsPath \ "isInsolvent"
+  private val insolvencyTypePath = JsPath \ "insolvencyType"
+  private val insolvencyDatePath = JsPath \ "insolvencyDate"
   private val continueToTradePath = JsPath \ "continueToTrade"
   private val overseasIndicatorPath = JsPath \ "overseasIndicator"
   private val nameIsReadOnlyPath = JsPath \ "nameIsReadOnly"
@@ -69,6 +73,8 @@ object CustomerDetails extends JsonObjectSugar {
     welshIndicator <- welshIndicatorPath.readNullable[Boolean]
     isPartialMigration <- isPartialMigrationPath.readNullable[Boolean]
     isInsolvent <- isInsolventPath.readNullable[Boolean]
+    insolvencyType <- insolvencyTypePath.readNullable[String]
+    insolvencyDate <- insolvencyDatePath.readNullable[String]
     continueToTrade <- continueToTradePath.readNullable[Boolean]
     overseasIndicator <- overseasIndicatorPath.read[Boolean]
     nameIsReadOnly <- nameIsReadOnlyPath.readNullable[Boolean]
@@ -86,6 +92,8 @@ object CustomerDetails extends JsonObjectSugar {
     welshIndicator,
     isPartialMigration.contains(true),
     isInsolvent,
+    insolvencyType,
+    insolvencyDate,
     continueToTrade,
     overseasIndicator,
     nameIsReadOnly
@@ -106,6 +114,8 @@ object CustomerDetails extends JsonObjectSugar {
         "welshIndicator" -> model.welshIndicator,
         "isPartialMigration" -> model.isPartialMigration,
         "isInsolvent" -> model.isInsolvent,
+        "insolvencyType" -> model.insolvencyType,
+        "insolvencyDate" -> model.insolvencyDate,
         "continueToTrade" -> model.continueToTrade,
         "overseasIndicator" -> model.overseasIndicator,
         "nameIsReadOnly" -> model.nameIsReadOnly

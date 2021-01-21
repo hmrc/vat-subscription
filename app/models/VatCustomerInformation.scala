@@ -66,6 +66,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   val flatRateSchemeKey = "flatRateScheme"
   val overseasIndicatorKey = "overseasIndicator"
   val isInsolventKey = "isInsolvent"
+  val insolvencyTypeKey = "insolvencyType"
+  val insolvencyDateKey = "insolvencyDate"
   val continueToTradeKey = "continueToTrade"
   val nameIsReadOnlyKey = "nameIsReadOnly"
   val ppobKey = "PPOB"
@@ -87,6 +89,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val flatRateSchemePath = path \ flatRateSchemeKey
   private val overseasIndicatorPath = path \ customerDetailsKey \ overseasIndicatorKey
   private val isInsolventPath = path \ customerDetailsKey \ isInsolventKey
+  private val insolvencyTypePath = path \ customerDetailsKey \ insolvencyTypeKey
+  private val insolvencyDatePath = path \ customerDetailsKey \ insolvencyDateKey
   private val continueToTradePath = path \ customerDetailsKey \ continueToTradeKey
   private val nameIsReadOnlyPath = path \ customerDetailsKey \ nameIsReadOnlyKey
   private val ppobPath = path \ ppobKey
@@ -118,6 +122,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]
     overseasIndicator <- overseasIndicatorPath.read[Boolean]
     isInsolvent <- isInsolventPath.readOpt[Boolean]
+    insolvencyType <- insolvencyTypePath.readOpt[String]
+    insolvencyDate <- insolvencyDatePath.readOpt[String]
     continueToTrade <- continueToTradePath.readOpt[Boolean]
     nameIsReadOnly <- nameIsReadOnlyPath.readNullable[Boolean]
     ppob <- ppobPath.read[PPOBGet]
@@ -146,6 +152,8 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
       welshIndicator,
       isPartialMigration.contains(true),
       isInsolvent,
+      insolvencyType,
+      insolvencyDate,
       continueToTrade,
       overseasIndicator,
       nameIsReadOnly
