@@ -192,19 +192,4 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
       )
   }
 
-  val manageAccountWrites: Writes[VatCustomerInformation] = Writes {
-    model =>
-      jsonObjNoNulls(
-        "mandationStatus" -> model.mandationStatus.value,
-        "ppobAddress" -> model.pendingPPOBAddress.fold(model.ppob.address)(x => x),
-        "contactEmail" -> model.pendingContactEmail.fold(model.ppob.contactDetails.flatMap(_.emailAddress))(x => Some(x)),
-        "landline" -> model.pendingLandLine.fold(model.ppob.contactDetails.flatMap(_.phoneNumber))(x => Some(x)),
-        "mobile" -> model.pendingMobile.fold(model.ppob.contactDetails.flatMap(_.mobileNumber))(x => Some(x)),
-        "repaymentBankDetails" -> model.pendingBankDetails.fold(model.bankDetails)(x => Some(x)),
-        "businessName" -> model.customerDetails.organisationName,
-        "partyType" -> model.partyType,
-        "missingTrader" -> model.missingTrader,
-        "overseasIndicator" -> model.customerDetails.overseasIndicator
-      )
-  }
 }
