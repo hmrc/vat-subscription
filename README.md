@@ -231,6 +231,8 @@ Where:
 
 This endpoint is deprecated and `/vat-subscription/:vatNumber/full-information` should be used instead.
 
+Endpoint removed January 2021
+
 ### PUT /vat-subscription/:vatNumber/return-period
 
 Where:

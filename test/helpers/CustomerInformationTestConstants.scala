@@ -501,46 +501,6 @@ object CustomerInformationTestConstants {
     "missingTrader" -> false
   )
 
-  val manageAccountSummaryOutputJsonMax: JsValue = Json.obj(
-    "mandationStatus" -> MTDfBVoluntary.value,
-    "ppobAddress" -> Json.obj(
-      "line1" -> addLine1,
-      "line2" -> addLine2,
-      "line3" -> addLine3,
-      "line4" -> addLine4,
-      "line5" -> addLine5,
-      "postCode" -> postcode,
-      "countryCode" -> countryCode
-    ),
-    "contactEmail" -> email,
-    "landline" -> phoneNumber,
-    "mobile" -> mobileNumber,
-    "businessName" -> orgName,
-    "repaymentBankDetails" -> Json.obj(
-      "accountHolderName" -> accName,
-      "bankAccountNumber" -> accNum,
-      "sortCode" -> accSort
-    ),
-    "partyType" -> "50",
-    "overseasIndicator" -> false,
-    "missingTrader" -> true
-  )
-
-  val manageAccountSummaryOutputJsonMin: JsValue = Json.obj(
-    "mandationStatus" -> MTDfB.value,
-    "ppobAddress" -> Json.obj(
-      "line1" -> addLine1,
-      "line2" -> addLine2,
-      "line3" -> addLine3,
-      "line4" -> addLine4,
-      "line5" -> addLine5,
-      "postCode" -> postcode,
-      "countryCode" -> countryCode
-    ),
-    "overseasIndicator" -> false,
-    "missingTrader" -> false
-  )
-
   val migrationDESJson: JsValue = Json.obj(
     "code" -> "MIGRATION"
   )
@@ -659,36 +619,6 @@ object CustomerInformationTestConstants {
     )),
     None,
     "00006",
-    missingTrader = true,
-    commsPreference = Some(DigitalPreference)
-  )
-
-  val manageAccountModelMax: VatCustomerInformation = VatCustomerInformation(
-    MTDfBVoluntary,
-    customerDetailsModelMax,
-    None,
-    ppobModelMax,
-    Some(bankDetailsModelMax),
-    Some(MCReturnPeriod(None, None, None)),
-    Some(deregModel),
-    Some(ChangeIndicators(
-      organisationDetails = true,
-      ppob = true,
-      bankDetails = true,
-      returnPeriod = true,
-      deregister = true,
-      annualAccounting = true
-    )),
-    Some(PendingChanges(
-      Some(ppobModelMax),
-      Some(bankDetailsModelMax),
-      Some(MCReturnPeriod(None, None, None)),
-      Some(MTDfBVoluntary),
-      Some(DigitalPreference),
-      Some(tradingName)
-    )),
-    Some(UKCompanyType),
-    "00007",
     missingTrader = true,
     commsPreference = Some(DigitalPreference)
   )
