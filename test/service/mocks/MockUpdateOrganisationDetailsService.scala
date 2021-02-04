@@ -33,9 +33,9 @@ trait MockUpdateOrganisationDetailsService extends MockitoSugar {
 
   val mockUpdateOrganisationDetailsService: UpdateOrganisationDetailsService = mock[UpdateOrganisationDetailsService]
 
-  def mockUpdateTradingName(newTradingName: TradingName)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+  def mockUpdateTradingName(newTradingName: TradingName, customerDetails: CustomerDetails)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdateOrganisationDetailsService
-      .updateTradingName(ArgumentMatchers.eq(newTradingName),ArgumentMatchers.any[Boolean])(
+      .updateTradingName(ArgumentMatchers.eq(newTradingName),ArgumentMatchers.eq(customerDetails))(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

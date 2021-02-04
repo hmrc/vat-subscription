@@ -45,6 +45,7 @@ object BaseTestConstants extends TestUtil {
   val firstName = "Fred"
   val lastName = "Flintstone"
   val middleName = "M"
+  val concatNames = "Fred M Flintstone"
   val effectiveDate = "1967-08-13"
   val customerMigratedToETMPDate = "2019-01-01"
   val hybridToFullMigrationDate = "2019-01-01"
