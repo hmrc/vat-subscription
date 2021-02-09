@@ -27,7 +27,7 @@ import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
 import helpers.CustomerInformationTestConstants.customerInformationModelMax
 import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
-import service.mocks.{MockUpdateContactPreferenceService, MockVatCustomerDetailsRetrievalService}
+import services.mocks.{MockUpdateContactPreferenceService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 

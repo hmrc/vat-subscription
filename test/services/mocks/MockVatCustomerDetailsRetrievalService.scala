@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package service.mocks
+package services.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

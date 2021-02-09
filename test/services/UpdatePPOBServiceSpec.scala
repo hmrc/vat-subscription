@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package service
+package services
 
 import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
-import helpers.PPOBTestConstants.ppobModelEmailMaxPost
+import helpers.PPOBTestConstants.{ppobModelMaxPost, ppobModelMaxPostAgent}
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.post.PPOBPost
+import models.ContactDetails
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import services.UpdateEmailService
+import services.UpdatePPOBService
 
-class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
+class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
-  def setup(response: UpdateVatSubscriptionResponse): UpdateEmailService = {
+  def setup(response: UpdateVatSubscriptionResponse): UpdatePPOBService = {
     mockUpdateVatSubscriptionResponse(response)
-    new UpdateEmailService(mockUpdateVatSubscriptionConnector)
+    new UpdatePPOBService(mockUpdateVatSubscriptionConnector)
   }
 
-  "Calling .updateEmail" when {
+  "Calling .updatePPOB" when {
 
     "connector call is successful" should {
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateEmail(ppobModelEmailMaxPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -48,7 +48,7 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateEmail(ppobModelEmailMaxPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -56,19 +56,17 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
 
   "Calling .constructPPOBUpdateModel" when {
 
-    val service = new UpdateEmailService(mockUpdateVatSubscriptionConnector)
-    val updatedPPOB = PPOBPost(ppobModelEmailMaxPost.address, Some(ppobModelEmailMaxPost.contactDetails),
-      ppobModelEmailMaxPost.websiteAddress, None)
+    val service = new UpdatePPOBService(mockUpdateVatSubscriptionConnector)
 
     "user is not an Agent" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = false)(testUser)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangePPOB,
         organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing()),
@@ -82,16 +80,17 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
 
     "user is an Agent" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = false)(testAgentUser)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPostAgent, welshIndicator = false)(testAgentUser)
+      val agentContactDetails = Some(ContactDetails(None, None, None, Some("agent@emailaddress.com"), None))
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangePPOB,
         organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPostAgent)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing()),
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing()),
         commsPreference = None
       )
 
@@ -102,13 +101,13 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
 
     "user has a welshIndicator" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = true)(testUser)
+      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = true)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
         requestedChanges = ChangePPOB,
         organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing()),

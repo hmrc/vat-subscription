@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package service.mocks
+package services.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -22,19 +22,19 @@ import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.User
-import models.updateVatSubscription.request.deregistration.DeregistrationInfo
+import models.{ReturnPeriod, User}
 import services._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockDeregistrationRequestService extends MockitoSugar {
+trait MockUpdateReturnPeriodService extends MockitoSugar {
   self: Suite =>
 
-  val mockDeregistrationRequestService: RequestDeregistrationService = mock[RequestDeregistrationService]
+  val mockUpdateReturnPeriodService: UpdateReturnPeriodService = mock[UpdateReturnPeriodService]
 
-  def mockDeregister(deregInfo: DeregistrationInfo)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
-    when(mockDeregistrationRequestService.deregister(ArgumentMatchers.eq(deregInfo), ArgumentMatchers.any[Boolean])(
+  def mockUpdateReturnPeriod(newPeriod: ReturnPeriod)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+    when(mockUpdateReturnPeriodService
+      .updateReturnPeriod(ArgumentMatchers.eq(newPeriod),ArgumentMatchers.any[Boolean])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

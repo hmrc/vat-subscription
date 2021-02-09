@@ -25,7 +25,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
-import service.mocks.{MockUpdateOrganisationDetailsService, MockVatCustomerDetailsRetrievalService}
+import services.mocks.{MockUpdateOrganisationDetailsService, MockVatCustomerDetailsRetrievalService}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import helpers.OrganisationDetailsTestConstants._
 import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}

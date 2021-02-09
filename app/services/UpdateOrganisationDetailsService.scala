@@ -62,7 +62,7 @@ class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector:
     )
 }
 
-  private[service] def tradingName(newTradingName: TradingName, details: CustomerDetails): String = {
+  private[services] def tradingName(newTradingName: TradingName, details: CustomerDetails): String = {
     newTradingName.tradingName.fold {
       details.organisationName match {
         case Some(businessName) => businessName

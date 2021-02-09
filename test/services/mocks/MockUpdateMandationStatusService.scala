@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package service.mocks
+package services.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -22,20 +22,20 @@ import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.post.PPOBPost
+import models.post.MandationStatusPost
 import models.User
 import services._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockUpdatePPOBService extends MockitoSugar {
+trait MockUpdateMandationStatusService extends MockitoSugar {
   self: Suite =>
 
-  val mockUpdatePPOBService: UpdatePPOBService = mock[UpdatePPOBService]
+  val mockUpdateMandationStatusService: UpdateMandationStatusService = mock[UpdateMandationStatusService]
 
-  def mockUpdatePPOB(newPPOB: PPOBPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
-    when(mockUpdatePPOBService
-      .updatePPOB(ArgumentMatchers.eq(newPPOB),ArgumentMatchers.any[Boolean])(
+  def mockUpdateMandationStatus(newMandationStatus: MandationStatusPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+    when(mockUpdateMandationStatusService
+      .updateMandationStatus(ArgumentMatchers.eq(newMandationStatus), ArgumentMatchers.any[Boolean])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

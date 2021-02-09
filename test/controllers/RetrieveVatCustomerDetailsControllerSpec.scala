@@ -27,7 +27,7 @@ import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants._
 import helpers.CustomerDetailsTestConstants._
 import helpers.CustomerInformationTestConstants._
-import service.mocks.MockVatCustomerDetailsRetrievalService
+import services.mocks.MockVatCustomerDetailsRetrievalService
 
 import scala.concurrent.Future
 

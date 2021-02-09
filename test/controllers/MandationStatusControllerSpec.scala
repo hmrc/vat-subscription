@@ -24,7 +24,7 @@ import connectors.mocks.MockAuthConnector
 import helpers.BaseTestConstants._
 import connectors.{Forbidden, InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
 import models.MTDfBMandated
-import service.mocks.MockMandationStatusService
+import services.mocks.MockMandationStatusService
 
 import scala.concurrent.Future
 

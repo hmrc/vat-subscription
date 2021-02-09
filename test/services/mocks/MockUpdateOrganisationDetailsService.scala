@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package service.mocks
+package services.mocks
 
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.{BusinessName, CustomerDetails, TradingName, User}

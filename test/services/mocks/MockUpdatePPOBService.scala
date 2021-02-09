@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package service.mocks
+package services.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -22,30 +22,20 @@ import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.{User, VatCustomerInformation}
-import models.post.CommsPreferencePost
-import services.UpdateContactPreferenceService
+import models.post.PPOBPost
+import models.User
+import services._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockUpdateContactPreferenceService extends MockitoSugar {
+trait MockUpdatePPOBService extends MockitoSugar {
   self: Suite =>
 
-  val mockUpdateContactPreferenceService: UpdateContactPreferenceService = mock[UpdateContactPreferenceService]
+  val mockUpdatePPOBService: UpdatePPOBService = mock[UpdatePPOBService]
 
-  def mockUpdateContactPreference(newContactPref: CommsPreferencePost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
-    when(mockUpdateContactPreferenceService
-    .updateContactPreference(ArgumentMatchers.eq(newContactPref), ArgumentMatchers.any[Boolean])(
-      ArgumentMatchers.any[User[_]],
-      ArgumentMatchers.any[HeaderCarrier],
-      ArgumentMatchers.any[ExecutionContext]
-    )
-    ).thenReturn(response)
-  }
-
-  def mockUpdatePreferenceAndEmail()(response: Future[UpdateVatSubscriptionResponse]): Unit = {
-    when(mockUpdateContactPreferenceService
-      .updatePreferenceAndEmail(ArgumentMatchers.any[String], ArgumentMatchers.any[VatCustomerInformation])(
+  def mockUpdatePPOB(newPPOB: PPOBPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+    when(mockUpdatePPOBService
+      .updatePPOB(ArgumentMatchers.eq(newPPOB),ArgumentMatchers.any[Boolean])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

@@ -14,31 +14,27 @@
  * limitations under the License.
  */
 
-package service.mocks
+package services.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.{ReturnPeriod, User}
+import services.VatKnownFactsRetrievalService.VatKnownFactRetrievalServiceResponse
 import services._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-trait MockUpdateReturnPeriodService extends MockitoSugar {
+trait MockVatKnownFactsRetrievalService extends MockitoSugar {
   self: Suite =>
 
-  val mockUpdateReturnPeriodService: UpdateReturnPeriodService = mock[UpdateReturnPeriodService]
+  val mockVatKnownFactsRetrievalService: VatKnownFactsRetrievalService = mock[VatKnownFactsRetrievalService]
 
-  def mockUpdateReturnPeriod(newPeriod: ReturnPeriod)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
-    when(mockUpdateReturnPeriodService
-      .updateReturnPeriod(ArgumentMatchers.eq(newPeriod),ArgumentMatchers.any[Boolean])(
-        ArgumentMatchers.any[User[_]],
-        ArgumentMatchers.any[HeaderCarrier],
-        ArgumentMatchers.any[ExecutionContext]
-      )
-    ).thenReturn(response)
+  def mockRetrieveVatKnownFacts(vatNumber: String)
+                               (response: Future[VatKnownFactRetrievalServiceResponse]): Unit = {
+    when(mockVatKnownFactsRetrievalService.retrieveVatKnownFacts(ArgumentMatchers.eq(vatNumber))
+    (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
   }
+
 }

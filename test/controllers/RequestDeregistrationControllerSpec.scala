@@ -28,7 +28,7 @@ import helpers.BaseTestConstants.testVatNumber
 import helpers.DeregistrationInfoTestConstants
 import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
-import service.mocks.{MockDeregistrationRequestService, MockVatCustomerDetailsRetrievalService}
+import services.mocks.{MockDeregistrationRequestService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package service
+package services
 
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier

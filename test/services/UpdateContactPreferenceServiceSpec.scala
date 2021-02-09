@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package service
+package services
 
 import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
