@@ -26,7 +26,7 @@ If there is a need to implement upcoming functionality that would not work yet i
 
 ["enableNewStatusIndicators"]
 When on this will use the following mandation statuses:
-"Exempt", "MTDfb", "Non MTDfb" or "Non Digital"
+"MTDfB Exempt", "MTDfB", "Non MTDfB" or "Non Digital"
 
 ## Endpoints
 
@@ -47,7 +47,7 @@ Where:
 }
 ```
 Where:
-* **mandationStatus** can be "MTDfB Mandated", "MTDfB Voluntary", "Non MTDfB" or "Non Digital"
+* **mandationStatus** can be "MTDfB Exempt", "MTDfB", "Non MTDfB" or "Non Digital"
 
 #### Error Responses
 
