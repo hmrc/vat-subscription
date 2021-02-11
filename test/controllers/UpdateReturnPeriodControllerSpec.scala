@@ -28,7 +28,7 @@ import helpers.BaseTestConstants.testVatNumber
 import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import models._
 import models.updateVatSubscription.response.ErrorModel
-import service.mocks.{MockUpdateReturnPeriodService, MockVatCustomerDetailsRetrievalService}
+import services.mocks.{MockUpdateReturnPeriodService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 

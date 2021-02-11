@@ -62,12 +62,29 @@ object CustomerDetailsTestConstants {
     nameIsReadOnly = Some(false)
   )
 
+  val customerDetailsModelMaxWithTrueWelsh: CustomerDetails = customerDetailsModelMax.copy(welshIndicator = Some(true))
+
   val customerDetailsModelMaxWithTrueOverseas: CustomerDetails = customerDetailsModelMax.copy(overseasIndicator = true)
 
   val customerDetailsModelMaxWithFRS: CustomerDetails =
     customerDetailsModelMax.copy(hasFlatRateScheme = true, welshIndicator = Some(true))
 
   val customerDetailsModelNoWelshIndicator: CustomerDetails = customerDetailsModelMax.copy(welshIndicator = None)
+
+  val customerDetailsModelNoOrgName: CustomerDetails = customerDetailsModelMax.copy(organisationName = None)
+
+  val customerDetailsModel1Name: CustomerDetails = customerDetailsModelMax.copy(
+    organisationName = None,
+    middleName = None,
+    lastName = None
+  )
+
+  val customerDetailsModel2Names: CustomerDetails = customerDetailsModelMax.copy(
+    organisationName = None,
+    lastName = None
+  )
+
+  val customerDetailsOrgNameOnly: CustomerDetails = customerDetailsModelMin.copy(organisationName = Some(orgName))
 
   val customerDetailsJsonMaxWithFRS: JsValue = Json.obj(
     "title" -> title,

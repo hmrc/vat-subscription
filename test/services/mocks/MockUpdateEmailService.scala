@@ -14,27 +14,32 @@
  * limitations under the License.
  */
 
-package service.mocks
+package services.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import services.VatKnownFactsRetrievalService.VatKnownFactRetrievalServiceResponse
+import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
+import models.post.EmailPost
+import models.User
 import services._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-trait MockVatKnownFactsRetrievalService extends MockitoSugar {
+trait MockUpdateEmailService extends MockitoSugar {
   self: Suite =>
 
-  val mockVatKnownFactsRetrievalService: VatKnownFactsRetrievalService = mock[VatKnownFactsRetrievalService]
+  val mockUpdateEmailService: UpdateEmailService = mock[UpdateEmailService]
 
-  def mockRetrieveVatKnownFacts(vatNumber: String)
-                               (response: Future[VatKnownFactRetrievalServiceResponse]): Unit = {
-    when(mockVatKnownFactsRetrievalService.retrieveVatKnownFacts(ArgumentMatchers.eq(vatNumber))
-    (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+  def mockUpdateEmail(newPPOBEmail: EmailPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
+    when(mockUpdateEmailService
+      .updateEmail(ArgumentMatchers.eq(newPPOBEmail),ArgumentMatchers.any[Boolean])(
+        ArgumentMatchers.any[User[_]],
+        ArgumentMatchers.any[HeaderCarrier],
+        ArgumentMatchers.any[ExecutionContext]
+      )
+    ).thenReturn(response)
   }
-
 }

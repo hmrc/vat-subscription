@@ -18,10 +18,9 @@ package services
 
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-
 import javax.inject.{Inject, Singleton}
-import models.{BusinessName, ContactDetails, CustomerDetails, TradingName, User}
 import models.updateVatSubscription.request._
+import models._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -30,14 +29,17 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
 
-  def updateTradingName(updatedTradingName: TradingName, welshIndicator: Boolean)
+  def updateTradingName(updatedTradingName: TradingName, customerDetails: CustomerDetails)
                        (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
-    val subscriptionModel = constructTradingNameUpdateModel(updatedTradingName, welshIndicator)
-    Logger.debug(s"[UpdateOrganisationDetailsService][updateTradingName]: updating trading name for user with vrn - ${user.vrn}")
+    val subscriptionModel = constructTradingNameUpdateModel(updatedTradingName,
+                                                            customerDetails)
+    Logger.debug(s"[UpdateOrganisationDetailsService][updateTradingName]: updating trading name for user " +
+      s"with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructTradingNameUpdateModel(updatedTradingName: TradingName, welshIndicator: Boolean)
+  def constructTradingNameUpdateModel(updatedTradingName: TradingName,
+                                      customerDetails: CustomerDetails)
                                       (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentContactDetails: Option[ContactDetails] =
@@ -49,18 +51,28 @@ class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector:
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, agentContactDetails))
 
     UpdateVatSubscription(
-      controlInformation = ControlInformation(welshIndicator),
+      controlInformation = ControlInformation(customerDetails.welshIndicator.contains(true)),
       requestedChanges = ChangeOrganisationDetailsRequest,
-      organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(removedNameIsEmpty(updatedTradingName.tradingName)))),
+      organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(tradingName(updatedTradingName, customerDetails)))),
       updatedPPOB = None,
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(agentOrCapacitor, Signing()),
       commsPreference = None
     )
-  }
+}
 
-  private def removedNameIsEmpty(newTradingName: Option[String]): String = newTradingName.fold("")(name => name)
+  private[services] def tradingName(newTradingName: TradingName, details: CustomerDetails): String = {
+    newTradingName.tradingName.fold {
+      details.organisationName match {
+        case Some(businessName) => businessName
+        case _ =>
+          (details.firstName.fold("")(name => name + " ") +
+          details.middleName.fold("")(name => name + " ") +
+          details.lastName.getOrElse("")).trim
+      }
+    } (name => name)
+  }
 
   def updateBusinessName(updatedBusinessName: BusinessName, approvedDetails: CustomerDetails)
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {

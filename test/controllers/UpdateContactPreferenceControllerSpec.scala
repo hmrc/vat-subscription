@@ -29,7 +29,7 @@ import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSu
 import models.post.CommsPreferencePost
 import models.updateVatSubscription.response.ErrorModel
 import models.{DigitalPreference, PaperPreference}
-import service.mocks.{MockUpdateContactPreferenceService, MockVatCustomerDetailsRetrievalService}
+import services.mocks.{MockUpdateContactPreferenceService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 

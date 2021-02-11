@@ -16,13 +16,15 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
-import models.{BusinessName, TradingName}
+import javax.inject.{Inject, Singleton}
+import models.updateVatSubscription.response.ErrorModel
+import models.{BusinessName, CustomerDetails, TradingName, User}
+import play.api.Logger
 import play.api.libs.json.Json
 import services.{UpdateOrganisationDetailsService, VatCustomerDetailsRetrievalService}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,25 +33,41 @@ class UpdateOrganisationDetailsController @Inject()(VatAuthorised: VatAuthorised
                                                     updateOrganisationDetailsService: UpdateOrganisationDetailsService,
                                                     vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
                                                     cc: ControllerComponents)
-                                                   (implicit ec: ExecutionContext)extends BackendController(cc)
+                                                   (implicit ec: ExecutionContext) extends BackendController(cc)
                                            with MicroserviceBaseController {
 
   def updateTradingName(vrn:String): Action[AnyContent] = VatAuthorised.async(vrn) {
     implicit user =>
       parseJsonBody[TradingName] match {
         case Right(tradingName) =>
-          vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
-            case Right(welshIndicator) =>
-              updateOrganisationDetailsService.updateTradingName(tradingName, welshIndicator).map {
-                case Right(success) => Ok(Json.toJson(success))
-                case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
-                case Left(error) => InternalServerError(Json.toJson(error))
-              }
-            case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
-          }
+          handleCustomerInfoCall(vrn, tradingName)
         case Left(error) =>
           Future.successful(BadRequest(Json.toJson(error)))
       }
+  }
+
+  def handleCustomerInfoCall(vrn: String, tradingName: TradingName)(implicit user: User[_]): Future[Result] = {
+    vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vrn).flatMap {
+      case Right(customerInfo) if noNamesDefined(customerInfo) =>
+        Logger.warn("[UpdateOrganisationDetailsController][updateTradingName] CustomerDetails were returned, but " +
+          "the user has no individual or org names defined")
+        Future.successful(InternalServerError(Json.toJson(ErrorModel("INTERNAL_SERVER_ERROR", "The service returned " +
+          "CustomerDetails with no defined individual or org names"))))
+      case Right(customerInfo) =>
+        updateOrganisationDetailsService.updateTradingName(tradingName, customerInfo).map {
+          case Right(success) => Ok(Json.toJson(success))
+          case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
+          case Left(error) => InternalServerError(Json.toJson(error))
+        }
+      case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
+    }
+  }
+
+  def noNamesDefined(info: CustomerDetails): Boolean = {
+    info.organisationName.isEmpty &&
+      info.firstName.isEmpty &&
+      info.middleName.isEmpty &&
+      info.lastName.isEmpty
   }
 
   def updateBusinessName(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {

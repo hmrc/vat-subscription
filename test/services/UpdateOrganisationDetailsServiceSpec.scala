@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package service
+package services
 
 import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
-import helpers.BaseTestConstants.{firstName, lastName, middleName, testAgentUser, testArn, testUser, title}
-import helpers.CustomerDetailsTestConstants.{customerDetailsModelMax, customerDetailsModelMaxWithFRS}
+import helpers.BaseTestConstants.{concatNames, firstName, lastName, middleName, orgName, testAgentUser, testArn, testUser, title}
+import helpers.CustomerDetailsTestConstants._
 import helpers.OrganisationDetailsTestConstants._
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.ContactDetails
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import services.UpdateOrganisationDetailsService
 
 class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
@@ -40,7 +39,7 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateTradingName(tradingNameModel, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateTradingName(tradingNameModel, customerDetailsModelMax.copy(welshIndicator = Some(true)))(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -49,7 +48,7 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateTradingName(tradingNameModel, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateTradingName(tradingNameModel, customerDetailsModelMax)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -61,7 +60,9 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
 
     "user is not an Agent" should {
 
-      val result = service.constructTradingNameUpdateModel(tradingNameModel, welshIndicator = false)(testUser)
+      val result = service.constructTradingNameUpdateModel(
+        tradingNameModel,
+        customerDetailsModelMax)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
@@ -81,12 +82,10 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
 
     "user has removed their trading name" should {
 
-      val result = service.constructTradingNameUpdateModel(removedTradingNameModel, welshIndicator = false)(testUser)
-
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
         requestedChanges = ChangeOrganisationDetailsRequest,
-        organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(""))),
+        organisationDetails = Some(UpdatedOrganisationDetails(None, None, Some(orgName))),
         updatedPPOB = None,
         updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
@@ -94,14 +93,21 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
         commsPreference = None
       )
 
-      "return a correct UpdateVatSubscription model" in {
+      val result = service.constructTradingNameUpdateModel(
+        removedTradingNameModel,
+        customerDetailsModelMax)(testUser)
+
+      "return a correct UpdateVatSubscription model with the business name as the trading name" in {
         result shouldEqual expectedResult
       }
+
     }
 
     "user is an Agent" should {
 
-      val result = service.constructTradingNameUpdateModel(tradingNameModelAgent, welshIndicator = false)(testAgentUser)
+      val result = service.constructTradingNameUpdateModel(
+        tradingNameModelAgent,
+        customerDetailsModelMax)(testAgentUser)
       val agentContactDetails = Some(ContactDetails(None, None, None, Some("agent@emailaddress.com"), None))
 
       val expectedResult = UpdateVatSubscription(
@@ -122,7 +128,9 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
 
     "user has a welshIndicator" should {
 
-      val result = service.constructTradingNameUpdateModel(tradingNameModel, welshIndicator = true)(testUser)
+      val result = service.constructTradingNameUpdateModel(
+        tradingNameModel,
+        customerDetailsModelMaxWithTrueWelsh)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = true),
@@ -137,6 +145,64 @@ class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSu
 
       "return a correct UpdateVatSubscription model" in {
         result shouldEqual expectedResult
+      }
+    }
+  }
+
+  "Calling .tradingName" when {
+
+    val service = setup(Right(SuccessModel("12345")))
+
+    "the customerDetails has a trading name" should {
+
+      "return the trading name" in {
+
+        val expectedResult = tradingName
+
+        val result = service.tradingName(tradingNameModel, customerDetailsModelMax)
+        result shouldBe expectedResult
+
+      }
+    }
+
+    "the customerDetails has no trading name" when {
+
+      "the customerDetails has a business name" should {
+
+        "return the business name" in {
+
+          val result = service.tradingName(removedTradingNameModel, customerDetailsOrgNameOnly)
+          result shouldBe orgName
+
+        }
+      }
+
+      "the customerDetails has no business name" should {
+
+        "return the correctly formatted user's name(s) for a user with 3 names" in {
+          val result = service.tradingName(removedTradingNameModel, customerDetailsModelNoOrgName)
+          result shouldBe concatNames
+        }
+
+        "return the correctly formatted user's name for a user with just a first name" in {
+          val result = service.tradingName(removedTradingNameModel, customerDetailsModel1Name)
+          result shouldBe firstName
+        }
+
+        "return the correctly formatted user's name for a user with just a first and middle name" in {
+          val result = service.tradingName(removedTradingNameModel, customerDetailsModel2Names)
+          result shouldBe firstName + " " + middleName
+        }
+      }
+
+      "there are no individual or business names in the customerDetails" should {
+
+          "return an empty string" in {
+
+            val result = service.tradingName(removedTradingNameModel, customerDetailsModelMin)
+            result shouldBe ""
+
+          }
       }
     }
   }

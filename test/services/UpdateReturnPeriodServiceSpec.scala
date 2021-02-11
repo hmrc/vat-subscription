@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-package service
+package services
 
 import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
-import helpers.PPOBTestConstants.{ppobModelMaxPost, ppobModelMaxPostAgent}
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.ContactDetails
+import models.{ContactDetails, MAReturnPeriod}
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import services.UpdatePPOBService
+import services.UpdateReturnPeriodService
 
-class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
+class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
-  def setup(response: UpdateVatSubscriptionResponse): UpdatePPOBService = {
+  def setup(response: UpdateVatSubscriptionResponse): UpdateReturnPeriodService = {
     mockUpdateVatSubscriptionResponse(response)
-    new UpdatePPOBService(mockUpdateVatSubscriptionConnector)
+    new UpdateReturnPeriodService(mockUpdateVatSubscriptionConnector)
   }
 
-  "Calling .updatePPOB" when {
+  "Calling .updateReturnPeriod" when {
 
     "connector call is successful" should {
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateReturnPeriod(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -48,26 +47,46 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateReturnPeriod(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
   }
 
-  "Calling .constructPPOBUpdateModel" when {
+  "Calling .constructReturnPeriodUpdateModel" when {
 
-    val service = new UpdatePPOBService(mockUpdateVatSubscriptionConnector)
+    val service = new UpdateReturnPeriodService(mockUpdateVatSubscriptionConnector)
 
     "user is not an Agent" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = false)(testUser)
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangePPOB,
+        requestedChanges = ChangeReturnPeriod,
         organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
-        updatedReturnPeriod = None,
+        updatedPPOB = None,
+        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
+        updateDeregistrationInfo = None,
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
+      )
+
+      "return a correct UpdateVatSubscription model" in {
+        result shouldEqual expectedResult
+      }
+    }
+
+    "user has a welshIndicator" should {
+
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(None, None, None), welshIndicator = true)(testUser)
+
+      val expectedResult = UpdateVatSubscription(
+        controlInformation = ControlInformation(welshIndicator = true),
+        requestedChanges = ChangeReturnPeriod,
+        organisationDetails = None,
+        updatedPPOB = None,
+        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
         updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing()),
         commsPreference = None
@@ -80,41 +99,22 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
     "user is an Agent" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPostAgent, welshIndicator = false)(testAgentUser)
-      val agentContactDetails = Some(ContactDetails(None, None, None, Some("agent@emailaddress.com"), None))
+      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(Some("agent@emailaddress.com"), None, None),
+        welshIndicator = false)(testAgentUser)
 
       val expectedResult = UpdateVatSubscription(
         controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangePPOB,
+        requestedChanges = ChangeReturnPeriod,
         organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPostAgent)),
-        updatedReturnPeriod = None,
+        updatedPPOB = None,
+        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress.com"), None, None))),
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing()),
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, Some(ContactDetails(None, None, None,
+          Some("agent@emailaddress.com"), None)))), Signing()),
         commsPreference = None
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
-        result shouldEqual expectedResult
-      }
-    }
-
-    "user has a welshIndicator" should {
-
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = true)(testUser)
-
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = true),
-        requestedChanges = ChangePPOB,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = None
-      )
-
-      "return a correct UpdateVatSubscription model" in {
         result shouldEqual expectedResult
       }
     }

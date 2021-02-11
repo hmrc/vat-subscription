@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants._
 import helpers.VatKnownFactsTestConstants._
-import service.mocks.MockVatKnownFactsRetrievalService
+import services.mocks.MockVatKnownFactsRetrievalService
 import services.VatKnownFactsRetrievalService._
 
 import scala.concurrent.Future

@@ -14,31 +14,32 @@
  * limitations under the License.
  */
 
-package service
+package services
 
 import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
+import helpers.MandationStatusTestConstants._
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.{ContactDetails, MAReturnPeriod}
+import models.ContactDetails
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import services.UpdateReturnPeriodService
+import services.UpdateMandationStatusService
 
-class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
+class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 
-  def setup(response: UpdateVatSubscriptionResponse): UpdateReturnPeriodService = {
+  def setup(response: UpdateVatSubscriptionResponse): UpdateMandationStatusService = {
     mockUpdateVatSubscriptionResponse(response)
-    new UpdateReturnPeriodService(mockUpdateVatSubscriptionConnector)
+    new UpdateMandationStatusService(mockUpdateVatSubscriptionConnector)
   }
 
-  "Calling .updateReturnPeriod" when {
+  "Calling .updateMandationStatus" when {
 
     "connector call is successful" should {
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateReturnPeriod(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateMandationStatus(mandationStatusPost, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -47,46 +48,27 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateReturnPeriod(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateMandationStatus(mandationStatusPost, welshIndicator = false)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
   }
 
-  "Calling .constructReturnPeriodUpdateModel" when {
+  "Calling .constructMandationStatusUpdateModel" when {
 
-    val service = new UpdateReturnPeriodService(mockUpdateVatSubscriptionConnector)
+    val service = new UpdateMandationStatusService(mockUpdateVatSubscriptionConnector)
 
     "user is not an Agent" should {
 
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(None, None, None), welshIndicator = false)(testUser)
+      val result = service.constructMandationStatusUpdateModel(mandationStatusPost, welshIndicator = false)(testUser)
 
       val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangeReturnPeriod,
+        controlInformation =
+          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = false),
+        requestedChanges = ChangeMandationStatus,
         organisationDetails = None,
         updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = None
-      )
-
-      "return a correct UpdateVatSubscription model" in {
-        result shouldEqual expectedResult
-      }
-    }
-
-    "user has a welshIndicator" should {
-
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(None, None, None), welshIndicator = true)(testUser)
-
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = true),
-        requestedChanges = ChangeReturnPeriod,
-        organisationDetails = None,
-        updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(None, None, None))),
+        updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
         declaration = Declaration(None, Signing()),
         commsPreference = None
@@ -99,22 +81,43 @@ class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscript
 
     "user is an Agent" should {
 
-      val result = service.constructReturnPeriodUpdateModel(MAReturnPeriod(Some("agent@emailaddress.com"), None, None),
-        welshIndicator = false)(testAgentUser)
+      val result = service.constructMandationStatusUpdateModel(mandationStatusPostAgent, welshIndicator = false)(testAgentUser)
+      val agentContactDetails = Some(ContactDetails(None, None, None, Some("test@test.com"), None))
 
       val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangeReturnPeriod,
+        controlInformation =
+          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = false),
+        requestedChanges = ChangeMandationStatus,
         organisationDetails = None,
         updatedPPOB = None,
-        updatedReturnPeriod = Some(UpdatedReturnPeriod(MAReturnPeriod(Some("agent@emailaddress.com"), None, None))),
+        updatedReturnPeriod = None,
         updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, Some(ContactDetails(None, None, None,
-          Some("agent@emailaddress.com"), None)))), Signing()),
+        declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing()),
         commsPreference = None
       )
 
       "return an UpdateVatSubscription model containing agentOrCapacitor" in {
+        result shouldEqual expectedResult
+      }
+    }
+
+    "user has a welshIndicator" should {
+
+      val result = service.constructMandationStatusUpdateModel(mandationStatusPost, welshIndicator = true)(testUser)
+
+      val expectedResult = UpdateVatSubscription(
+        controlInformation =
+          ControlInformation(mandationStatus = Some(mandationStatusPost.mandationStatus), welshIndicator = true),
+        requestedChanges = ChangeMandationStatus,
+        organisationDetails = None,
+        updatedPPOB = None,
+        updatedReturnPeriod = None,
+        updateDeregistrationInfo = None,
+        declaration = Declaration(None, Signing()),
+        commsPreference = None
+      )
+
+      "return a correct UpdateVatSubscription model" in {
         result shouldEqual expectedResult
       }
     }

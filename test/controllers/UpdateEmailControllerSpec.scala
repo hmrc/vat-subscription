@@ -28,7 +28,7 @@ import helpers.BaseTestConstants.testVatNumber
 import helpers.PPOBTestConstants.{ppobModelEmailMaxPost, ppobModelMax}
 import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
-import service.mocks.{MockUpdateEmailService, MockVatCustomerDetailsRetrievalService}
+import services.mocks.{MockUpdateEmailService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
 
