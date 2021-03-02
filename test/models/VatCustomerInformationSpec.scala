@@ -19,7 +19,7 @@ package models
 import assets.TestUtil
 import play.api.libs.json.Json
 import helpers.BankDetailsTestConstants.bankDetailsModelMax
-import helpers.BaseTestConstants.tradingName
+import helpers.BaseTestConstants.{orgName, tradingName}
 import helpers.CustomerInformationTestConstants._
 import helpers.PPOBTestConstants.{email, mobileNumber, phoneNumber, ppobModelMax}
 
@@ -130,7 +130,8 @@ class VatCustomerInformationSpec extends TestUtil {
           Some(MCReturnPeriod(None, None, None)),
           Some(MTDfBVoluntary),
           Some(DigitalPreference),
-          Some(tradingName)
+          Some(tradingName),
+          Some(orgName)
         ))
       )
 

@@ -258,7 +258,8 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(MCReturnPeriod(None, None, None)),
             Some(MTDfB),
             Some(DigitalPreference),
-            Some(tradingName)
+            Some(tradingName),
+            Some(orgName)
           )),
           Some(UKCompanyType),
           primaryMainCode = "00001",

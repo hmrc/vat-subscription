@@ -19,7 +19,7 @@ package models
 import assets.TestUtil
 import play.api.libs.json.{JsError, Json}
 import helpers.BankDetailsTestConstants.bankDetailsModelMax
-import helpers.BaseTestConstants.tradingName
+import helpers.BaseTestConstants.{orgName, tradingName}
 import helpers.CustomerInformationTestConstants._
 import helpers.PPOBTestConstants.ppobModelMax
 
@@ -34,14 +34,19 @@ class PendingChangesSpec extends TestUtil {
         val model = PendingChanges(
           Some(ppobModelMax),
           Some(bankDetailsModelMax),
-          Some(MAReturnPeriod(None, None, None)),
+          Some(MCReturnPeriod(None, None, None)),
           Some(MTDfB),
           Some(DigitalPreference),
-          Some(tradingName)
+          Some(tradingName),
+          Some(orgName)
         )
 
-        "parse the json correctly" in {
-          PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldEqual model
+        "read from JSON" in {
+          PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldBe model
+        }
+
+        "write to JSON" in {
+          PendingChanges.writes.writes(model) shouldBe pendingChangesOutputMax
         }
       }
 
@@ -50,23 +55,30 @@ class PendingChangesSpec extends TestUtil {
         val model = PendingChanges(
           Some(ppobModelMax),
           Some(bankDetailsModelMax),
-          Some(MAReturnPeriod(None, None, None)),
+          Some(MCReturnPeriod(None, None, None)),
           Some(MTDfBVoluntary),
           Some(DigitalPreference),
-          Some(tradingName)
+          Some(tradingName),
+          Some(orgName)
         )
 
-        "parse the json correctly" in {
+        "read from JSON" in {
           mockAppConfig.features.newStatusIndicators(false)
-          PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldEqual model
+          PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldBe model
         }
       }
     }
 
     "no optional fields are populated" should {
 
-      "parse the json correctly" in {
-        PendingChanges.reads(mockAppConfig).reads(Json.obj()).get shouldEqual PendingChanges(None, None, None, None, None, None)
+      val model = PendingChanges(None, None, None, None, None, None, None)
+
+      "read from JSON" in {
+        PendingChanges.reads(mockAppConfig).reads(Json.obj()).get shouldBe model
+      }
+
+      "write to JSON" in {
+        PendingChanges.writes.writes(model) shouldBe Json.obj()
       }
     }
 
