@@ -33,6 +33,38 @@ object CustomerInformationTestConstants {
   val effectiveDate = "1967-08-13"
   val startDate = "1967-08-13"
 
+  val pendingChangesOutputMax: JsObject = Json.obj(
+    "PPOBDetails" -> Json.obj(
+      "address" -> Json.obj(
+        "line1" -> addLine1,
+        "line2" -> addLine2,
+        "line3" -> addLine3,
+        "line4" -> addLine4,
+        "line5" -> addLine5,
+        "postCode" -> postcode,
+        "countryCode" -> countryCode
+      ),
+      "contactDetails" -> Json.obj(
+        "primaryPhoneNumber" -> phoneNumber,
+        "mobileNumber" -> mobileNumber,
+        "faxNumber" -> faxNumber,
+        "emailAddress" -> email,
+        "emailVerified" -> emailVerified
+      ),
+      "websiteAddress" -> website
+    ),
+    "bankDetails" -> Json.obj(
+      "accountHolderName" -> accName,
+      "bankAccountNumber" -> accNum,
+      "sortCode" -> accSort
+    ),
+    "returnPeriod" -> returnPeriodMCJson,
+    "mandationStatus" -> "MTDfB",
+    "commsPreference" -> "DIGITAL",
+    "tradingName" -> tradingName,
+    "organisationName" -> orgName
+  )
+
   val customerInformationDESJsonMaxWithFRS: JsValue = Json.obj(
     "approvedInformation" -> Json.obj(
       "customerDetails" -> Json.obj(
@@ -145,7 +177,8 @@ object CustomerInformationTestConstants {
           "commsPreference" -> "ZEL"
         ),
         "organisationDetails" -> Json.obj(
-          "tradingName" -> tradingName
+          "tradingName" -> tradingName,
+          "organisationName" -> orgName
         )
       )
     )
@@ -295,36 +328,7 @@ object CustomerInformationTestConstants {
       "deregister" -> true,
       "annualAccounting" -> true
     ),
-    "pendingChanges" -> Json.obj(
-      "PPOBDetails" -> Json.obj(
-        "address" -> Json.obj(
-          "line1" -> addLine1,
-          "line2" -> addLine2,
-          "line3" -> addLine3,
-          "line4" -> addLine4,
-          "line5" -> addLine5,
-          "postCode" -> postcode,
-          "countryCode" -> countryCode
-        ),
-        "contactDetails" -> Json.obj(
-          "primaryPhoneNumber" -> phoneNumber,
-          "mobileNumber" -> mobileNumber,
-          "faxNumber" -> faxNumber,
-          "emailAddress" -> email,
-          "emailVerified" -> emailVerified
-        ),
-        "websiteAddress" -> website
-      ),
-      "bankDetails" -> Json.obj(
-        "accountHolderName" -> accName,
-        "bankAccountNumber" -> accNum,
-        "sortCode" -> accSort
-      ),
-      "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> MTDfB.value,
-      "commsPreference" -> DigitalPreference.mdtpValue,
-      "tradingName" -> tradingName
-    ),
+    "pendingChanges" -> pendingChangesOutputMax,
     "partyType" -> partyType,
     "primaryMainCode" -> "00004",
     "missingTrader" -> true,
@@ -372,36 +376,7 @@ object CustomerInformationTestConstants {
       "deregister" -> true,
       "annualAccounting" -> true
     ),
-    "pendingChanges" -> Json.obj(
-      "PPOBDetails" -> Json.obj(
-        "address" -> Json.obj(
-          "line1" -> addLine1,
-          "line2" -> addLine2,
-          "line3" -> addLine3,
-          "line4" -> addLine4,
-          "line5" -> addLine5,
-          "postCode" -> postcode,
-          "countryCode" -> countryCode
-        ),
-        "contactDetails" -> Json.obj(
-          "primaryPhoneNumber" -> phoneNumber,
-          "mobileNumber" -> mobileNumber,
-          "faxNumber" -> faxNumber,
-          "emailAddress" -> email,
-          "emailVerified" -> emailVerified
-        ),
-        "websiteAddress" -> website
-      ),
-      "bankDetails" -> Json.obj(
-        "accountHolderName" -> accName,
-        "bankAccountNumber" -> accNum,
-        "sortCode" -> accSort
-      ),
-      "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> MTDfB.value,
-      "commsPreference" -> DigitalPreference.mdtpValue,
-      "tradingName" -> tradingName
-    ),
+    "pendingChanges" -> pendingChangesOutputMax,
     "primaryMainCode" -> "00005",
     "missingTrader" -> true,
     "commsPreference" -> DigitalPreference.mdtpValue
@@ -448,36 +423,7 @@ object CustomerInformationTestConstants {
       "deregister" -> true,
       "annualAccounting" -> true
     ),
-    "pendingChanges" -> Json.obj(
-      "PPOBDetails" -> Json.obj(
-        "address" -> Json.obj(
-          "line1" -> addLine1,
-          "line2" -> addLine2,
-          "line3" -> addLine3,
-          "line4" -> addLine4,
-          "line5" -> addLine5,
-          "postCode" -> postcode,
-          "countryCode" -> countryCode
-        ),
-        "contactDetails" -> Json.obj(
-          "primaryPhoneNumber" -> phoneNumber,
-          "mobileNumber" -> mobileNumber,
-          "faxNumber" -> faxNumber,
-          "emailAddress" -> email,
-          "emailVerified" -> emailVerified
-        ),
-        "websiteAddress" -> website
-      ),
-      "bankDetails" -> Json.obj(
-        "accountHolderName" -> accName,
-        "bankAccountNumber" -> accNum,
-        "sortCode" -> accSort
-      ),
-      "returnPeriod" -> returnPeriodMCJson,
-      "mandationStatus" -> MTDfB.value,
-      "commsPreference" -> DigitalPreference.mdtpValue,
-      "tradingName" -> tradingName
-    ),
+    "pendingChanges" -> pendingChangesOutputMax,
     "primaryMainCode" -> "00006",
     "missingTrader" -> true,
     "commsPreference" -> DigitalPreference.mdtpValue
@@ -527,7 +473,8 @@ object CustomerInformationTestConstants {
       Some(MCReturnPeriod(None, None, None)),
       Some(MTDfB),
       Some(DigitalPreference),
-      Some(tradingName)
+      Some(tradingName),
+      Some(orgName)
     )),
     Some(UKCompanyType),
     "00004",
@@ -585,7 +532,8 @@ object CustomerInformationTestConstants {
       Some(MCReturnPeriod(None, None, None)),
       Some(MTDfB),
       Some(DigitalPreference),
-      Some(tradingName)
+      Some(tradingName),
+      Some(orgName)
     )),
     None,
     "00005",
@@ -615,7 +563,8 @@ object CustomerInformationTestConstants {
       Some(MCReturnPeriod(None, None, None)),
       Some(MTDfB),
       Some(DigitalPreference),
-      Some(tradingName)
+      Some(tradingName),
+      Some(orgName)
     )),
     None,
     "00006",
@@ -677,7 +626,7 @@ object CustomerInformationTestConstants {
       "bankAccountNumber" -> accNum,
       "sortCode" -> accSort
     ),
-    "returnPeriod" -> inflightReturnPeriodMAJson,
+    "returnPeriod" -> inflightReturnPeriodMCJson,
     "mandationStatus" -> Json.obj(
       "mandationStatus" -> mandationStatusCode
     ),
@@ -685,7 +634,8 @@ object CustomerInformationTestConstants {
       "commsPreference" -> "ZEL"
     ),
     "organisationDetails" -> Json.obj(
-      "tradingName" -> tradingName
+      "tradingName" -> tradingName,
+      "organisationName" -> orgName
     )
   )
 

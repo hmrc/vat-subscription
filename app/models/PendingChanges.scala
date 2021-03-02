@@ -28,7 +28,8 @@ case class PendingChanges(ppob: Option[PPOBGet],
                           returnPeriod: Option[ReturnPeriod],
                           mandationStatus: Option[MandationStatus],
                           commsPreference: Option[CommsPreference],
-                          tradingName: Option[String])
+                          tradingName: Option[String],
+                          organisationName: Option[String])
 
 object PendingChanges {
 
@@ -38,6 +39,7 @@ object PendingChanges {
   private val mandationStatusDesPath = __ \ "mandationStatus" \ "mandationStatus"
   private val commsPreferenceDesPath = __ \ "commsPreference" \ "commsPreference"
   private val tradingNamePath = __ \ "organisationDetails" \ "tradingName"
+  private val organisationNamePath = __ \ "organisationDetails" \ "organisationName"
 
   val reads: AppConfig => Reads[PendingChanges] = conf => for {
     ppob <- ppobPath.readNullable[PPOBGet]
@@ -48,18 +50,21 @@ object PendingChanges {
     ).orElse(Reads.pure(None))
     commsPref <- commsPreferenceDesPath.readNullable[CommsPreference].orElse(Reads.pure(None))
     tradingName <- tradingNamePath.readNullable[String].orElse(Reads.pure(None))
+    organisationName <- organisationNamePath.readNullable[String].orElse(Reads.pure(None))
   } yield PendingChanges(
     ppob,
     bankDetails,
     filterReturnPeriod(returnPeriod, conf),
     mandationStatus,
     commsPref,
-    tradingName
+    tradingName,
+    organisationName
   )
 
   private val mandationStatusWritesPath = __ \ "mandationStatus"
   private val commsPreferenceWritesPath = __ \ "commsPreference"
   private val tradingNameWritesPath = __ \ "tradingName"
+  private val organisationNameWritesPath = __ \ "organisationName"
 
   implicit val writes: Writes[PendingChanges] = (
     ppobPath.writeNullable[PPOBGet] and
@@ -67,6 +72,7 @@ object PendingChanges {
     returnPeriodPath.writeNullable[ReturnPeriod] and
     mandationStatusWritesPath.writeNullable[MandationStatus](MandationStatus.writer) and
     commsPreferenceWritesPath.writeNullable[CommsPreference](CommsPreference.writes) and
-    tradingNameWritesPath.writeNullable[String]
+    tradingNameWritesPath.writeNullable[String] and
+    organisationNameWritesPath.writeNullable[String]
   )(unlift(PendingChanges.unapply))
 }

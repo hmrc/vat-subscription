@@ -124,6 +124,8 @@ Where:
         "firstName": "Frank",
         "middleName": "Andrew",
         "lastName": "Grimes",
+        "organisationName": "Example Business Name",
+        "tradingName": "Example Trading Name",
         "vatRegistrationDate": "2018-01-01",
         "customerMigratedToETMPDate": "2018-01-01",
         "hybridToFullMigrationDate": "2018-01-01",
@@ -184,17 +186,45 @@ Where:
         }
     },
     "changeIndicators": {
-        "organisationDetails": false,
-        "PPOBDetails": false,
-        "bankDetails": false,
+        "organisationDetails": true,
+        "PPOBDetails": true,
+        "bankDetails": true,
         "returnPeriod": true,
         "deregister": false,
         "annualAccounting": false
     },
     "pendingChanges": {
+        "PPOBDetails": {
+            "address": {
+                "line1": "New Add Line 1",
+                "line2": "New Add Line 2",
+                "line3": "New Add Line 3",
+                "line4": "New Add Line 4",
+                "line5": "New Add Line 5",
+                "postCode": "NE33WER",
+                "countryCode": "GB"
+            },
+            "contactDetails": {
+                "primaryPhoneNumber": "112345678902",
+                "mobileNumber": "112345678903",
+                "faxNumber": "112345678904",
+                "emailAddress": "testuser234@test.com",
+                "emailVerified": true
+            },
+            "websiteAddress": "www.site.biz"
+        },
+        "bankDetails": {
+            "accountHolderName": "Monty Mole",
+            "bankAccountNumber": "****9999",
+            "sortCode": "99****"
+        },
         "returnPeriod": {
-            "stdReturnPeriod": "MB"
-        }
+            "stdReturnPeriod": "MM"
+        },
+        "mandationStatus": "MTDfB Exempt",
+        "commsPreference": "PAPER",
+        "tradingName": "New Trading Name",
+        "organisationName": "New Business Name"
     },
     "partyType": "50",
     "primaryMainCode": "10410",
@@ -210,7 +240,7 @@ Where:
 * **bankDetails** is optional and its elements are also all optional.
 * **returnPeriod** is optional and its elements are also all optional.
 * **changeIndicators** is optional and consists of mandatory boolean values to denote which sections of data have pending changes.
-* **pendingChanges** is optional and consists of optional elements "ppob", "bankDetails", "returnPeriod", "mandationStatus", "commsPreference" and "tradingName".
+* **pendingChanges** is optional and consists of optional elements "ppob", "bankDetails", "returnPeriod", "mandationStatus", "commsPreference", "tradingName" and "organisationName".
 * **partyType** is optional.
 * **primaryMainCode** is mandatory.
 * **missingTrader** is mandatory.
