@@ -103,7 +103,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
             res should have(
               httpStatus(OK),
               jsonBodyAs(Json.obj(
-                "vatRegistrationDate" -> effectiveDate,
+                "effectiveRegistrationDate" -> effectiveDate,
                 "businessPostCode" -> postcode,
                 "isOverseas" -> false
               ))
@@ -123,7 +123,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
             res should have(
               httpStatus(OK),
               jsonBodyAs(Json.obj(
-                "vatRegistrationDate" -> effectiveDate,
+                "effectiveRegistrationDate" -> effectiveDate,
                 "isOverseas" -> true
               ))
             )

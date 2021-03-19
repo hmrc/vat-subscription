@@ -44,7 +44,7 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
           lastName = vatCustomerInformation.customerDetails.lastName,
           organisationName = vatCustomerInformation.customerDetails.organisationName,
           tradingName = vatCustomerInformation.customerDetails.tradingName,
-          vatRegistrationDate = vatCustomerInformation.customerDetails.vatRegistrationDate,
+          effectiveRegistrationDate = vatCustomerInformation.customerDetails.effectiveRegistrationDate,
           hasFlatRateScheme = vatCustomerInformation.flatRateScheme.isDefined,
           welshIndicator = vatCustomerInformation.customerDetails.welshIndicator,
           isPartialMigration = vatCustomerInformation.customerDetails.isPartialMigration,

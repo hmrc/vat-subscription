@@ -26,12 +26,12 @@ object VatKnownFactsTestConstants {
   def vatKnownFacts(isOverseas: Boolean): VatKnownFacts = VatKnownFacts(effectiveDate, if (isOverseas) None else Some(postcode), isOverseas)
 
   val vatKnownFactsOverseasJson: JsObject = Json.obj(
-    "vatRegistrationDate" -> effectiveDate,
+    "effectiveRegistrationDate" -> effectiveDate,
     "isOverseas" -> true
   )
 
   val vatKnownFactsJson: JsObject = Json.obj(
-    "vatRegistrationDate" -> effectiveDate,
+    "effectiveRegistrationDate" -> effectiveDate,
     "businessPostCode" -> postcode,
     "isOverseas" -> false
   )
