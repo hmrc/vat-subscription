@@ -39,7 +39,7 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
         (vatCustomerInformation.customerDetails.effectiveRegistrationDate, vatCustomerInformation.ppob.address.postCode) match {
           case (Some(date), optPostcode) => Right(
             VatKnownFacts(
-              effectiveRegistrationDate = date,
+              vatRegistrationDate = date,
               businessPostCode = optPostcode,
               isOverseas = vatCustomerInformation.customerDetails.overseasIndicator
             )
@@ -64,7 +64,7 @@ object VatKnownFactsRetrievalService {
 
   case object DeregisteredUser extends GetVatKnownFactsSuccess
 
-  case class VatKnownFacts(effectiveRegistrationDate: String, businessPostCode: Option[String], isOverseas: Boolean) extends GetVatKnownFactsSuccess
+  case class VatKnownFacts(vatRegistrationDate: String, businessPostCode: Option[String], isOverseas: Boolean) extends GetVatKnownFactsSuccess
 
   object VatKnownFacts {
     implicit val format: OFormat[VatKnownFacts] = Json.format[VatKnownFacts]
