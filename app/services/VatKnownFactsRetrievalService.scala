@@ -36,7 +36,7 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
       case Right(vatCustomerInformation) if vatCustomerInformation.deregistration.isDefined =>
         Right(DeregisteredUser)
       case Right(vatCustomerInformation) =>
-        (vatCustomerInformation.customerDetails.vatRegistrationDate, vatCustomerInformation.ppob.address.postCode) match {
+        (vatCustomerInformation.customerDetails.effectiveRegistrationDate, vatCustomerInformation.ppob.address.postCode) match {
           case (Some(date), optPostcode) => Right(
             VatKnownFacts(
               vatRegistrationDate = date,

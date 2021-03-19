@@ -25,7 +25,7 @@ case class CustomerDetails(title: Option[String],
                            lastName: Option[String],
                            organisationName: Option[String],
                            tradingName: Option[String],
-                           vatRegistrationDate: Option[String],
+                           effectiveRegistrationDate: Option[String],
                            customerMigratedToETMPDate: Option[String],
                            hybridToFullMigrationDate: Option[String],
                            hasFlatRateScheme: Boolean = false,
@@ -46,7 +46,7 @@ object CustomerDetails extends JsonObjectSugar {
   private val lastNamePath = JsPath \ "lastName"
   private val organisationNamePath = JsPath \ "organisationName"
   private val tradingNamePath = JsPath \ "tradingName"
-  private val vatRegistrationDatePath = JsPath \ "vatRegistrationDate"
+  private val effectiveRegistrationDatePath = JsPath \ "effectiveRegistrationDate"
   private val customerMigratedToETMPDatePath = JsPath \ "customerMigratedToETMPDate"
   private val hybridToFullMigrationDate = JsPath \ "hybridToFullMigrationDate"
   private val hasFlatRateSchemePath = JsPath \ "hasFlatRateScheme"
@@ -66,7 +66,7 @@ object CustomerDetails extends JsonObjectSugar {
     lastName <- lastNamePath.readNullable[String]
     organisationName <- organisationNamePath.readNullable[String]
     tradingName <- tradingNamePath.readNullable[String]
-    vatRegistrationDate <- vatRegistrationDatePath.readNullable[String]
+    effectiveRegistrationDate <- effectiveRegistrationDatePath.readNullable[String]
     customerMigratedToETMPDate <- customerMigratedToETMPDatePath.readNullable[String]
     hybridToFullMigrationDate <- hybridToFullMigrationDate.readNullable[String]
     hasFlatRateScheme <- hasFlatRateSchemePath.read[Boolean]
@@ -85,7 +85,7 @@ object CustomerDetails extends JsonObjectSugar {
     lastName,
     organisationName,
     tradingName,
-    vatRegistrationDate,
+    effectiveRegistrationDate,
     customerMigratedToETMPDate,
     hybridToFullMigrationDate,
     hasFlatRateScheme,
@@ -107,7 +107,7 @@ object CustomerDetails extends JsonObjectSugar {
         "lastName" -> model.lastName,
         "organisationName" -> model.organisationName,
         "tradingName" -> model.tradingName,
-        "vatRegistrationDate" -> model.vatRegistrationDate,
+        "effectiveRegistrationDate" -> model.effectiveRegistrationDate,
         "customerMigratedToETMPDate" -> model.customerMigratedToETMPDate,
         "hybridToFullMigrationDate" -> model.hybridToFullMigrationDate,
         "hasFlatRateScheme" -> model.hasFlatRateScheme,
