@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import models.VatCustomerInformation
 import play.api.Logger
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
-import play.api.libs.json.JsSuccess
+import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 @Singleton
@@ -42,8 +42,8 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) {
             case JsSuccess(vatCustomerInformation, _) =>
               Logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
               Right(vatCustomerInformation)
-            case _ =>
-              logUnexpectedResponse(response, "Invalid Success Response Json")
+            case JsError(errors) =>
+              Logger.warn(s"Invalid Success Response Json. Error: $errors")
               Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
           }
         case _ => handleErrorResponse(response)
