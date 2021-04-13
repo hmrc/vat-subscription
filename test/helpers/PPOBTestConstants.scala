@@ -83,7 +83,7 @@ object PPOBTestConstants {
 
   val contactDetailsModelMin = ContactDetails(None, None, None, None, None)
 
-  val ppobModelMin = PPOBGet(ppobAddressModelMax, None, None)
+  val ppobModelMin = PPOBGet(ppobAddressModelMin.copy(line1 = Some(addLine1), countryCode = Some(countryCode)), None, None)
   val ppobModelOverseas = PPOBGet(ppobAddressModelMax.copy(postCode = None), None, None)
   val ppobModelMax = PPOBGet(ppobAddressModelMax, Some(contactDetailsModelMax), Some(website))
 

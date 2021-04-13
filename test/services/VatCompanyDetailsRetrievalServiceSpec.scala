@@ -25,7 +25,6 @@ import connectors.mocks.MockGetVatCustomerInformationConnector
 import helpers.BaseTestConstants._
 import helpers.CustomerDetailsTestConstants._
 import helpers.CustomerInformationTestConstants._
-import services._
 
 import scala.concurrent.Future
 

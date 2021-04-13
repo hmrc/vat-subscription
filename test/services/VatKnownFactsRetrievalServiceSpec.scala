@@ -25,7 +25,6 @@ import helpers.BaseTestConstants._
 import helpers.CustomerInformationTestConstants._
 import helpers.VatKnownFactsTestConstants._
 import services.VatKnownFactsRetrievalService._
-import services._
 
 import scala.concurrent.Future
 
@@ -47,7 +46,8 @@ class VatKnownFactsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomer
 
     "return the VatKnownFacts model" when {
       "the known facts exist in the vat customers details" in {
-        mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMinWithFRS)))
+        mockGetVatCustomerInformationConnector(testVatNumber)(
+          Future.successful(Right(customerInformationModelMaxWithFRS.copy(deregistration = None))))
         val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)
         await(res) shouldBe Right(vatKnownFacts(isOverseas = false))
       }

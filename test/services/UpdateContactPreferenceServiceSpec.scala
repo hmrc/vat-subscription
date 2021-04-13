@@ -27,7 +27,6 @@ import models.get.PPOBGet
 import models.post.{CommsPreferencePost, PPOBAddressPost, PPOBPost}
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import services.UpdateContactPreferenceService
 
 class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 

@@ -33,7 +33,7 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   changeIndicators: Option[ChangeIndicators],
                                   pendingChanges: Option[PendingChanges],
                                   partyType: Option[PartyType] = None,
-                                  primaryMainCode: String,
+                                  primaryMainCode: Option[String],
                                   missingTrader: Boolean = false,
                                   commsPreference: Option[CommsPreference]
                                  ) {
@@ -133,7 +133,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(conf))
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.reads)
-    primaryMainCode <- primaryMainCodePath.read[String]
+    primaryMainCode <- primaryMainCodePath.readNullable[String].orElse(Reads.pure(None))
     rlsType <- rlsTypePath.readOpt[String]
     commsPreference <- approvedCommsPreferencePath.readOpt[CommsPreference]
   } yield VatCustomerInformation(
