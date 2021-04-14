@@ -242,7 +242,7 @@ Where:
 * **changeIndicators** is optional and consists of mandatory boolean values to denote which sections of data have pending changes.
 * **pendingChanges** is optional and consists of optional elements "ppob", "bankDetails", "returnPeriod", "mandationStatus", "commsPreference", "tradingName" and "organisationName".
 * **partyType** is optional.
-* **primaryMainCode** is mandatory.
+* **primaryMainCode** is optional.
 * **missingTrader** is mandatory.
 * **commsPreference** is optional.
 

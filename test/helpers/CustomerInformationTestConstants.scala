@@ -281,6 +281,24 @@ object CustomerInformationTestConstants {
     )
   )
 
+  val customerInformationDESJsonMin: JsValue = Json.obj(
+    "approvedInformation" -> Json.obj(
+      "customerDetails" -> Json.obj(
+        "dataOrigin" -> "0001",
+        "mandationStatus" -> mandationStatusCode,
+        "isPartialMigration" -> false,
+        "overseasIndicator" -> false,
+        "isInsolvent" -> false
+      ),
+      "PPOB" -> Json.obj(
+        "address" -> Json.obj(
+          "line1" -> addLine1,
+          "countryCode" -> countryCode
+        )
+      )
+    )
+  )
+
   val customerInformationOutputJsonMaxWithFRS: JsValue = Json.obj(
     "bankDetails" -> Json.obj(
       "accountHolderName" -> accName,
@@ -435,15 +453,9 @@ object CustomerInformationTestConstants {
     "ppob" -> Json.obj(
       "address" -> Json.obj(
         "line1" -> addLine1,
-        "line2" -> addLine2,
-        "line3" -> addLine3,
-        "line4" -> addLine4,
-        "line5" -> addLine5,
-        "postCode" -> postcode,
         "countryCode" -> countryCode
       )
     ),
-    "primaryMainCode" -> "00010",
     "missingTrader" -> false
   )
 
@@ -477,7 +489,7 @@ object CustomerInformationTestConstants {
       Some(orgName)
     )),
     Some(UKCompanyType),
-    "00004",
+    Some("00004"),
     missingTrader = true,
     Some(DigitalPreference)
   )
@@ -492,7 +504,7 @@ object CustomerInformationTestConstants {
     deregistration = None,
     changeIndicators = None,
     pendingChanges = None,
-    primaryMainCode = "00010",
+    primaryMainCode = None,
     commsPreference = None
   )
 
@@ -506,7 +518,7 @@ object CustomerInformationTestConstants {
     deregistration = None,
     changeIndicators = None,
     pendingChanges = None,
-    primaryMainCode = "00010",
+    primaryMainCode = None,
     commsPreference = None
   )
 
@@ -536,7 +548,7 @@ object CustomerInformationTestConstants {
       Some(orgName)
     )),
     None,
-    "00005",
+    Some("00005"),
     missingTrader = true,
     commsPreference = Some(DigitalPreference)
   )
@@ -567,7 +579,7 @@ object CustomerInformationTestConstants {
       Some(orgName)
     )),
     None,
-    "00006",
+    Some("00006"),
     missingTrader = true,
     commsPreference = Some(DigitalPreference)
   )
@@ -582,7 +594,7 @@ object CustomerInformationTestConstants {
     deregistration = None,
     changeIndicators = None,
     pendingChanges = None,
-    primaryMainCode = "00009",
+    primaryMainCode = None,
     missingTrader = true,
     commsPreference = None
   )
@@ -597,7 +609,7 @@ object CustomerInformationTestConstants {
     deregistration = None,
     changeIndicators = None,
     pendingChanges = None,
-    primaryMainCode = "00010",
+    primaryMainCode = None,
     commsPreference = None
   )
 

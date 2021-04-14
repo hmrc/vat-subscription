@@ -33,7 +33,7 @@ object CustomerDetailsTestConstants {
     welshIndicator = None,
     isPartialMigration = false,
     customerMigratedToETMPDate = None,
-    isInsolvent = None,
+    isInsolvent = Some(false),
     insolvencyType = None,
     insolvencyDate = None,
     continueToTrade = None,
@@ -146,7 +146,8 @@ object CustomerDetailsTestConstants {
   val customerDetailsJsonMin: JsObject = Json.obj(
     "hasFlatRateScheme" -> false,
     "isPartialMigration" -> false,
-    "overseasIndicator" -> false
+    "overseasIndicator" -> false,
+    "isInsolvent" -> false
   )
 
   val customerDetailsJsonMaxWithTrueOverseas: JsObject = Json.obj(

@@ -16,17 +16,12 @@
 
 package services
 
-
 import org.scalatest.EitherValues
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import connectors.mocks.MockGetVatCustomerInformationConnector
 import helpers.BaseTestConstants._
 import connectors.{Forbidden, InvalidVatNumber, Migration}
-import helpers.CustomerDetailsTestConstants.customerDetailsModelMin
-import helpers.PPOBTestConstants.ppobModelMax
-import models.{MTDfBMandated, VatCustomerInformation}
-import services.MandationStatusService
+import helpers.CustomerInformationTestConstants.customerInformationModelMin
 
 import scala.concurrent.Future
 
@@ -37,29 +32,12 @@ class MandationStatusServiceSpec extends UnitSpec with EitherValues
     mockConnector
   )
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   "getMandationStatus" should {
 
     "return the mandation status if successful" in {
-      val testSuccessfulResponse =
-        VatCustomerInformation(
-          mandationStatus = MTDfBMandated,
-          customerDetails = customerDetailsModelMin,
-          flatRateScheme = None,
-          ppob = ppobModelMax,
-          bankDetails = None,
-          returnPeriod = None,
-          deregistration = None,
-          changeIndicators = None,
-          pendingChanges = None,
-          primaryMainCode = "00011",
-          commsPreference = None
-        )
+      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMin)))
 
-      mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(testSuccessfulResponse)))
-
-      await(TestMandationStatusService.getMandationStatus(testVatNumber)) shouldBe Right(testSuccessfulResponse.mandationStatus)
+      await(TestMandationStatusService.getMandationStatus(testVatNumber)) shouldBe Right(customerInformationModelMin.mandationStatus)
     }
 
     "return a Forbidden if forbidden returned" in {

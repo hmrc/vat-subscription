@@ -262,7 +262,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(orgName)
           )),
           Some(UKCompanyType),
-          primaryMainCode = "00001",
+          primaryMainCode = Some("00001"),
           missingTrader = true,
           commsPreference = Some(DigitalPreference)
         )

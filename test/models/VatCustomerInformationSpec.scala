@@ -114,9 +114,14 @@ class VatCustomerInformationSpec extends TestUtil {
 
     "the newStatusIndicators feature is on" should {
 
-      "parse the json correctly" in {
+      "parse the json correctly when all fields are present" in {
         VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMaxWithFRS).get shouldBe
           customerInformationModelMaxWithFRS
+      }
+
+      "parse the json correctly when there is the minimum number of fields present" in {
+        VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMin).get shouldBe
+          customerInformationModelMin
       }
     }
 
