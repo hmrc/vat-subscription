@@ -51,13 +51,13 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-26"  % "2.25.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-26"  % "5.3.0",
   "org.typelevel"     %% "cats-core"                  % "1.6.0",
   "com.typesafe.play" %% "play-json-joda"             % "2.7.4"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"              %% "hmrctest"              % "3.10.0-play-26"      % scope,
+  "uk.gov.hmrc"              %% "hmrctest"              % "3.10.0-play-26"     % scope,
   "org.scalatest"            %% "scalatest"             % "3.0.9"              % scope,
   "org.pegdown"              %  "pegdown"               % "1.6.0"              % scope,
   "com.typesafe.play"        %% "play-test"             % PlayVersion.current  % scope,
@@ -67,7 +67,7 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
 )
 
 lazy val root = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
@@ -89,9 +89,4 @@ lazy val root = Project(appName, file("."))
     javaOptions in IntegrationTest += "-Dlogger.resource=logback-test.xml",
     addTestReportOption(IntegrationTest, "int-test-reports"),
     parallelExecution in IntegrationTest := false
-  )
-  .settings(
-    resolvers ++= Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
-      Resolver.jcenterRepo)
   )

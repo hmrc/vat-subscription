@@ -24,7 +24,6 @@ import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.ContactDetails
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import services.UpdateMandationStatusService
 
 class UpdateMandationStatusServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 

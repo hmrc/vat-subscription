@@ -24,7 +24,6 @@ import helpers.DeregistrationInfoTestConstants
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import services.RequestDeregistrationService
 
 class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 

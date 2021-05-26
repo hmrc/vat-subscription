@@ -18,7 +18,7 @@ package services
 
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
 import connectors.{InvalidVatNumber, VatNumberNotFound}
 import connectors.mocks.MockGetVatCustomerInformationConnector
@@ -34,7 +34,7 @@ class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCust
     mockConnector
   )
 
-  implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeRequest().headers)
+  implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(FakeRequest())
 
   "retrieveVatCustomerDetails" should {
 
