@@ -20,16 +20,16 @@ import assets.TestUtil
 import connectors.VatNumberNotFound
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
-import helpers.CustomerDetailsTestConstants.{customerDetailsModelMax, customerDetailsModelMin, customerDetailsModelNoOrgName}
+import helpers.CustomerDetailsTestConstants.{customerDetailsModelMax, customerDetailsModelMin}
+import helpers.OrganisationDetailsTestConstants._
+import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
+import models.updateVatSubscription.response.ErrorModel
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import services.mocks.{MockUpdateOrganisationDetailsService, MockVatCustomerDetailsRetrievalService}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import helpers.OrganisationDetailsTestConstants._
-import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
-import models.updateVatSubscription.response.ErrorModel
 
 import scala.concurrent.Future
 

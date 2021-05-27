@@ -23,30 +23,33 @@ import play.api.Logger
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, NOT_FOUND, PRECONDITION_FAILED}
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.http.logging.Authorization
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
-                                                   val applicationConfig: AppConfig,
+                                                   val appConfig: AppConfig,
                                                    val httpParser: GetVatCustomerInformationHttpParser) {
 
   import httpParser.GetVatCustomerInformationHttpParserResponse
 
-  private def url(vatNumber: String) = s"${applicationConfig.desUrl}/vat/customer/vrn/$vatNumber/information"
+  private def url(vatNumber: String) = s"${appConfig.desUrl}/vat/customer/vrn/$vatNumber/information"
+
+  val desHeaders = Seq(
+    "Authorization" -> appConfig.desAuthorisationToken,
+    appConfig.desEnvironmentHeader
+  )
 
   def getInformation(vatNumber: String)
                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetVatCustomerInformationHttpParserResponse] = {
-    val headerCarrier = hc
-      .withExtraHeaders(applicationConfig.desEnvironmentHeader)
-      .copy(authorization = Some(Authorization(applicationConfig.desAuthorisationToken)))
+    val headerCarrier = hc.copy(authorization = None)
 
     Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
-    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: ${headerCarrier.headers}")
+    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: $desHeaders")
 
     http.GET[GetVatCustomerInformationHttpParserResponse](
-      url = url(vatNumber)
+      url = url(vatNumber),
+      headers = desHeaders
     )(
       httpParser.GetVatCustomerInformationHttpReads,
       headerCarrier,
