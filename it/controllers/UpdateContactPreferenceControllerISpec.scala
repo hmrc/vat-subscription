@@ -39,7 +39,7 @@ class UpdateContactPreferenceControllerISpec extends ComponentSpecBase with Cust
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson))
+        val res = put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -57,7 +57,7 @@ class UpdateContactPreferenceControllerISpec extends ComponentSpecBase with Cust
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson))
+          val res = put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson)
 
           res should have(
             httpStatus(OK),
@@ -74,7 +74,7 @@ class UpdateContactPreferenceControllerISpec extends ComponentSpecBase with Cust
           stubGetInformation(testVatNumber)(OK,testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST,  testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson))
+          val res = put(s"/$testVatNumber/contact-preference")(validContactPreferenceJson)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),

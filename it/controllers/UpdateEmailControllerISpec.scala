@@ -52,7 +52,7 @@ class UpdateEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEa
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/email-address")(validEmailPost))
+        val res = put(s"/$testVatNumber/email-address")(validEmailPost)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -70,7 +70,7 @@ class UpdateEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEa
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/email-address")(Json.toJson(ppobModelMax)))
+          val res = put(s"/$testVatNumber/email-address")(Json.toJson(ppobModelMax))
 
           res should have(
             httpStatus(OK),
@@ -87,7 +87,7 @@ class UpdateEmailControllerISpec extends ComponentSpecBase with BeforeAndAfterEa
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/email-address")(Json.toJson(ppobModelMax)))
+          val res = put(s"/$testVatNumber/email-address")(Json.toJson(ppobModelMax))
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),

@@ -42,7 +42,7 @@ class UpdatePPOBControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/ppob")(validPPOBJson))
+        val res = put(s"/$testVatNumber/ppob")(validPPOBJson)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -60,7 +60,7 @@ class UpdatePPOBControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax)))
+          val res = put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax))
 
           res should have(
             httpStatus(OK),
@@ -77,7 +77,7 @@ class UpdatePPOBControllerISpec extends ComponentSpecBase with BeforeAndAfterEac
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax)))
+          val res = put(s"/$testVatNumber/ppob")(Json.toJson(ppobModelMax))
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),

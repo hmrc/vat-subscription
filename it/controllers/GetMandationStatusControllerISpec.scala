@@ -61,7 +61,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(OK, testSuccessResponse)
 
-        val res = await(get(s"/$testVatNumber/mandation-status"))
+        val res = get(s"/$testVatNumber/mandation-status")
 
         res should have(
           httpStatus(OK),
@@ -75,7 +75,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/mandation-status"))
+        val res = get(s"/$testVatNumber/mandation-status")
 
         res should have(
           httpStatus(BAD_REQUEST)
@@ -88,7 +88,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/mandation-status"))
+        val res = get(s"/$testVatNumber/mandation-status")
 
         res should have(
           httpStatus(NOT_FOUND)
@@ -101,7 +101,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(FORBIDDEN, testMigrationResponse)
 
-        val res = await(get(s"/$testVatNumber/mandation-status"))
+        val res = get(s"/$testVatNumber/mandation-status")
 
         res should have(
           httpStatus(PRECONDITION_FAILED)
@@ -114,7 +114,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(FORBIDDEN, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/mandation-status"))
+        val res = get(s"/$testVatNumber/mandation-status")
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -127,7 +127,7 @@ class GetMandationStatusControllerISpec extends ComponentSpecBase with BeforeAnd
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/mandation-status"))
+        val res = get(s"/$testVatNumber/mandation-status")
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)

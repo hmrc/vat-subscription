@@ -40,7 +40,7 @@ class UpdateContactPreferenceAndEmailControllerISpec extends ComponentSpecBase w
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/contact-preference/email")(validEmailJson))
+        val res = put(s"/$testVatNumber/contact-preference/email")(validEmailJson)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -58,7 +58,7 @@ class UpdateContactPreferenceAndEmailControllerISpec extends ComponentSpecBase w
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/contact-preference/email")(validEmailJson))
+          val res = put(s"/$testVatNumber/contact-preference/email")(validEmailJson)
 
           res should have(
             httpStatus(OK),
@@ -75,7 +75,7 @@ class UpdateContactPreferenceAndEmailControllerISpec extends ComponentSpecBase w
           stubGetInformation(testVatNumber)(OK,testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST,  testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/contact-preference/email")(validEmailJson))
+          val res = put(s"/$testVatNumber/contact-preference/email")(validEmailJson)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),

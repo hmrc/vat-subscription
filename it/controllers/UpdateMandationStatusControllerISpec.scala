@@ -39,7 +39,7 @@ class UpdateMandationStatusControllerISpec extends ComponentSpecBase with Custom
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/mandation-status")(validMandationStatusPost))
+        val res = put(s"/$testVatNumber/mandation-status")(validMandationStatusPost)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -57,7 +57,7 @@ class UpdateMandationStatusControllerISpec extends ComponentSpecBase with Custom
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/mandation-status")(validMandationStatusPost))
+          val res = put(s"/$testVatNumber/mandation-status")(validMandationStatusPost)
 
           res should have(
             httpStatus(OK),
@@ -74,7 +74,7 @@ class UpdateMandationStatusControllerISpec extends ComponentSpecBase with Custom
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/mandation-status")(validMandationStatusPost))
+          val res = put(s"/$testVatNumber/mandation-status")(validMandationStatusPost)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),
