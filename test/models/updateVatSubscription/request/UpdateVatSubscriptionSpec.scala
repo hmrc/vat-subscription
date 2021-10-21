@@ -16,11 +16,10 @@
 
 package models.updateVatSubscription.request
 
-import assets.TestUtil
 import play.api.libs.json.{JsValue, Json}
 import helpers.UpdateVatSubscriptionTestConstants._
-import helpers.{DeclarationTestConstants, DeregistrationInfoTestConstants}
-import models.{CommsPreference, MTDfBExempt, MTDfBMandated, PaperPreference}
+import helpers.{DeclarationTestConstants, DeregistrationInfoTestConstants, TestUtil}
+import models.{MTDfBExempt, MTDfBMandated, PaperPreference}
 
 class UpdateVatSubscriptionSpec extends TestUtil {
 
@@ -33,13 +32,13 @@ class UpdateVatSubscriptionSpec extends TestUtil {
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "deregistrationInfo" -> DeregistrationInfoTestConstants.deregInfoCeasedTradingDESJson,
     "declaration" -> DeclarationTestConstants.declarationDESJsonAgent,
-    "commsPreference" -> Json.toJson(PaperPreference)(CommsPreference.updatePreferenceWrites)
+    "commsPreference" -> PaperPreference.desValue
   )
 
   val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(welshIndicator = false),
-    "requestedChange" -> Json.toJson(ChangeReturnPeriod)(RequestedChanges.DESApi1365Writes(mockAppConfig)),
+    "requestedChange" -> Json.toJson(RequestedChanges(returnPeriod = true))(RequestedChanges.DESApi1365Writes(mockAppConfig)),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
   )

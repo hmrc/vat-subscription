@@ -16,14 +16,14 @@
 
 package services
 
-import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
 import helpers.DeclarationTestConstants.agentContactDetails
-import helpers.DeregistrationInfoTestConstants
+import helpers.{DeregistrationInfoTestConstants, TestUtil}
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class RequestDeregistrationServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 

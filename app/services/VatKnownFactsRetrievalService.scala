@@ -18,20 +18,19 @@ package services
 
 import connectors.GetVatCustomerInformationConnector
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.HeaderCarrier
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVatCustomerInformationConnector)
-                                             (implicit ec: ExecutionContext) {
+                                             (implicit ec: ExecutionContext) extends LoggerUtil {
 
   import services.VatKnownFactsRetrievalService._
 
   def retrieveVatKnownFacts(vatNumber: String)(implicit hc: HeaderCarrier): Future[VatKnownFactRetrievalServiceResponse] = {
-    Logger.debug(s"[VatKnownFactsRetrievalService][retrieveVatKnownFacts]: retrieving Vat known facts for vat number - $vatNumber")
+    logger.debug(s"[VatKnownFactsRetrievalService][retrieveVatKnownFacts]: retrieving Vat known facts for vat number - $vatNumber")
     vatCustomerDetailsConnector.getInformation(vatNumber) map {
       case Right(vatCustomerInformation) if vatCustomerInformation.deregistration.isDefined =>
         Right(DeregisteredUser)
@@ -53,7 +52,6 @@ class VatKnownFactsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVa
       case Left(connectors.UnexpectedGetVatCustomerInformationFailure(status, body)) => Left(UnexpectedGetVatCustomerInformationFailure(status, body))
     }
   }
-
 }
 
 object VatKnownFactsRetrievalService {

@@ -16,12 +16,12 @@
 
 package models
 
-import assets.TestUtil
 import play.api.libs.json.Json
 import helpers.BankDetailsTestConstants.bankDetailsModelMax
 import helpers.BaseTestConstants.{orgName, tradingName}
 import helpers.CustomerInformationTestConstants._
 import helpers.PPOBTestConstants.{email, mobileNumber, phoneNumber, ppobModelMax}
+import helpers.TestUtil
 
 class VatCustomerInformationSpec extends TestUtil {
 

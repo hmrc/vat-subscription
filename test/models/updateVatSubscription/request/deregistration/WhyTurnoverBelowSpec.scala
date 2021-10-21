@@ -17,10 +17,11 @@
 package models.updateVatSubscription.request.deregistration
 
 import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 import helpers.WhyTurnoverBelowTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class WhyTurnoverBelowSpec extends UnitSpec {
+class WhyTurnoverBelowSpec extends AnyWordSpecLike with Matchers {
 
   "WhyTurnoverBelow" when {
 

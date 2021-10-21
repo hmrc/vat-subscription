@@ -17,11 +17,12 @@
 package models.updateVatSubscription.request.deregistration
 
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 import helpers.DeregistrationInfoTestConstants._
 import helpers.{TurnoverBelowThresholdTestConstants, ZeroRatedExmpApplicationConstants}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class DeregistrationInfoSpec extends UnitSpec {
+class DeregistrationInfoSpec extends AnyWordSpecLike with Matchers {
 
   val invalidDeregInfo = DeregistrationInfo(
     deregReason = CeasedTrading,

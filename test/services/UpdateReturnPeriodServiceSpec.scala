@@ -16,13 +16,14 @@
 
 package services
 
-import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
+import helpers.TestUtil
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import models.{ContactDetails, MAReturnPeriod}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class UpdateReturnPeriodServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 

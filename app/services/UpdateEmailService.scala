@@ -17,24 +17,23 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.User
 import models.post.{EmailPost, PPOBPost}
 import models.updateVatSubscription.request._
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateEmailService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
+class UpdateEmailService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
 
   def updateEmail(updatedEmail: EmailPost, welshIndicator: Boolean)
                  (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructPPOBUpdateModel(updatedEmail, welshIndicator)
-    Logger.debug(s"[UpdateVatSubscriptionService][updateEmail]: updating Email for user with vrn - ${user.vrn}")
+    logger.debug(s"[UpdateVatSubscriptionService][updateEmail]: updating Email for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 

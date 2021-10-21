@@ -16,15 +16,14 @@
 
 package testOnly.controllers
 
-import assets.TestUtil
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import config.featureSwitch._
+import helpers.TestUtil
 import testonly.controllers.FeatureSwitchController
-
 import scala.concurrent.Future
 
 class FeatureSwitchControllerSpec extends TestUtil {
@@ -44,7 +43,7 @@ class FeatureSwitchControllerSpec extends TestUtil {
     }
 
     "return feature switch configuration" in {
-      await(jsonBodyOf(result)) shouldEqual Json.toJson(
+      contentAsJson(result) shouldEqual Json.toJson(
         FeatureSwitchModel(
           Api1365Version = Api1365Latest,
           Api1363Version = Api1363Latest,
@@ -72,7 +71,7 @@ class FeatureSwitchControllerSpec extends TestUtil {
     }
 
     "return new feature switch configuration" in {
-      await(jsonBodyOf(result)) shouldEqual body
+      contentAsJson(result) shouldEqual body
     }
   }
 }

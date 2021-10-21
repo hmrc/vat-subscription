@@ -21,19 +21,18 @@ import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import javax.inject.{Inject, Singleton}
 import models.updateVatSubscription.request._
 import models._
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
+class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
 
   def updateTradingName(updatedTradingName: TradingName, customerDetails: CustomerDetails)
                        (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructTradingNameUpdateModel(updatedTradingName,
                                                             customerDetails)
-    Logger.debug(s"[UpdateOrganisationDetailsService][updateTradingName]: updating trading name for user " +
+    logger.debug(s"[UpdateOrganisationDetailsService][updateTradingName]: updating trading name for user " +
       s"with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
@@ -77,7 +76,7 @@ class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector:
   def updateBusinessName(updatedBusinessName: BusinessName, approvedDetails: CustomerDetails)
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructBusinessNameUpdateModel(updatedBusinessName, approvedDetails)
-    Logger.debug(s"[UpdateOrganisationDetailsService][updateBusinessName]: updating business name for user with vrn - ${user.vrn}")
+    logger.debug(s"[UpdateOrganisationDetailsService][updateBusinessName]: updating business name for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 

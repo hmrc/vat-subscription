@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -25,9 +24,10 @@ import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import connectors.VatNumberNotFound
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
-import helpers.DeregistrationInfoTestConstants
-import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
+import helpers.{DeregistrationInfoTestConstants, TestUtil}
+import helpers.UpdateVatSubscriptionTestConstants.{updateErrorModel, updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
+import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockDeregistrationRequestService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
@@ -51,7 +51,7 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
         val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(deregRequest))
-        status(res) shouldBe FORBIDDEN
+        status(Future.successful(res)) shouldBe FORBIDDEN
       }
     }
 
@@ -67,8 +67,8 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
 
           val res: Result = await(TestRequestDeregistrationController.deregister(testVatNumber)(deregRequest))
 
-          status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+          status(Future.successful(res)) shouldBe OK
+          contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -81,11 +81,12 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            status(res) shouldBe BAD_REQUEST
+            status(Future.successful(res)) shouldBe BAD_REQUEST
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${unknownReturnPeriodRequest.body}"))
+            contentAsJson(Future.successful(res)) shouldBe
+              Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${unknownReturnPeriodRequest.body}"))
           }
         }
 
@@ -97,11 +98,11 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future.successful(Right(false)))
             mockDeregister(DeregistrationInfoTestConstants.deregInfoCeasedTradingModel)(Future.successful(Left(updateErrorResponse)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
@@ -112,11 +113,11 @@ class RequestDeregistrationControllerSpec extends TestUtil with MockVatAuthorise
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorModel)
           }
         }
       }

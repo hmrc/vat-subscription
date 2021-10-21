@@ -16,10 +16,11 @@
 
 package models.updateVatSubscription.response
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 
-class ErrorModelSpec extends UnitSpec {
+class ErrorModelSpec extends AnyWordSpecLike with Matchers {
 
   "ErrorModel Writes" should {
 

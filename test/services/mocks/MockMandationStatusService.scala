@@ -18,13 +18,12 @@ package services.mocks
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.GetVatCustomerInformationFailure
 import models.MandationStatus
+import org.scalatestplus.mockito.MockitoSugar
 import services.MandationStatusService
-
 import scala.concurrent.Future
 
 

@@ -19,13 +19,12 @@ package services.mocks
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.User
 import models.updateVatSubscription.request.deregistration.DeregistrationInfo
+import org.scalatestplus.mockito.MockitoSugar
 import services._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockDeregistrationRequestService extends MockitoSugar {

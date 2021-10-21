@@ -17,19 +17,18 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import services.VatKnownFactsRetrievalService.{Migration, Forbidden => ForbiddenResponse, _}
 import services._
-
+import utils.LoggerUtil
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class RetrieveVatKnownFactsController @Inject()(vatKnownFactsRetrievalService: VatKnownFactsRetrievalService,
                                                 cc: ControllerComponents)
-                                               (implicit ec: ExecutionContext) extends BackendController(cc) {
+                                               (implicit ec: ExecutionContext) extends BackendController(cc) with LoggerUtil {
 
   def retrieveVatKnownFacts(vatNumber: String): Action[AnyContent] = Action.async {
     implicit user =>
@@ -39,22 +38,22 @@ class RetrieveVatKnownFactsController @Inject()(vatKnownFactsRetrievalService: V
         case Right(knownFacts: VatKnownFacts) =>
           Ok(Json.toJson(knownFacts))
         case Left(InvalidVatNumber) =>
-          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest
         case Left(VatNumberNotFound) =>
-          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
           NotFound
         case Left(InvalidVatKnownFacts) =>
-          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: InvalidVatKnownFacts returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: InvalidVatKnownFacts returned from CustomerDetailsRetrieval Service")
           BadGateway
         case Left(ForbiddenResponse) =>
-          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: Forbidden returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: Forbidden returned from CustomerDetailsRetrieval Service")
           Forbidden
         case Left(Migration) =>
-          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: Forbidden (Migration) returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: Forbidden (Migration) returned from CustomerDetailsRetrieval Service")
           PreconditionFailed
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
-          Logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: " +
+          logger.debug(s"[RetrieveVatKnownFactsController][retrieveVatKnownFacts]: " +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
           Status(status)(Json.obj("status" -> status, "body" -> body))
       }

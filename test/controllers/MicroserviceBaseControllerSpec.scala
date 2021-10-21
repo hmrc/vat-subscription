@@ -16,10 +16,10 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import helpers.PPOBTestConstants.{ppobPostExample, ppobPostExampleJson}
+import helpers.TestUtil
 import models.User
 import models.post.PPOBPost
 import models.updateVatSubscription.response.ErrorModel
@@ -37,7 +37,7 @@ class MicroserviceBaseControllerSpec extends TestUtil {
 
         val goodUser = User("123", None, "")(fakeRequest.withJsonBody(ppobPostExampleJson))
 
-        val res = await(TestMicroserviceBaseController.parseJsonBody[PPOBPost](goodUser, Json.format[PPOBPost]))
+        val res = TestMicroserviceBaseController.parseJsonBody[PPOBPost](goodUser, Json.format[PPOBPost])
         res shouldBe Right(ppobPostExample)
       }
 
@@ -45,7 +45,7 @@ class MicroserviceBaseControllerSpec extends TestUtil {
 
         val badUser = User("123", None, "")(fakeRequest.withJsonBody(Json.obj()))
 
-        val res = await(TestMicroserviceBaseController.parseJsonBody[PPOBPost](badUser, Json.format[PPOBPost]))
+        val res = TestMicroserviceBaseController.parseJsonBody[PPOBPost](badUser, Json.format[PPOBPost])
         res shouldBe Left(ErrorModel("INVALID_JSON", s"Json received, but did not validate"))
       }
 
@@ -53,7 +53,7 @@ class MicroserviceBaseControllerSpec extends TestUtil {
 
         val badUser = User("123", None, "")(fakeRequest.withBody("badThings"))
 
-        val res = await(TestMicroserviceBaseController.parseJsonBody[PPOBPost](badUser, Json.format[PPOBPost]))
+        val res = TestMicroserviceBaseController.parseJsonBody[PPOBPost](badUser, Json.format[PPOBPost])
         res shouldBe Left(ErrorModel("INVALID_JSON", s"Body of request was not JSON, badThings"))
       }
     }

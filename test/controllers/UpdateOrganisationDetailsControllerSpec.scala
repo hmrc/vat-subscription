@@ -16,18 +16,19 @@
 
 package controllers
 
-import assets.TestUtil
 import connectors.VatNumberNotFound
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
 import helpers.CustomerDetailsTestConstants.{customerDetailsModelMax, customerDetailsModelMin}
 import helpers.OrganisationDetailsTestConstants._
-import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
+import helpers.TestUtil
+import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorModel, updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockUpdateOrganisationDetailsService, MockVatCustomerDetailsRetrievalService}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 
@@ -55,7 +56,7 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
         val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
-        status(res) shouldBe FORBIDDEN
+        status(Future.successful(res)) shouldBe FORBIDDEN
       }
     }
 
@@ -71,8 +72,8 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
 
           val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
 
-          status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+          status(Future.successful(res)) shouldBe OK
+          contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -87,11 +88,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
           val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
 
           "return status INTERNAL_SERVER_ERROR" in {
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INTERNAL_SERVER_ERROR", "The service returned " +
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(ErrorModel("INTERNAL_SERVER_ERROR", "The service returned " +
             "CustomerDetails with no defined individual or org names"))
           }
         }
@@ -103,11 +104,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            status(res) shouldBe BAD_REQUEST
+            status(Future.successful(res)) shouldBe BAD_REQUEST
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
           }
         }
 
@@ -119,11 +120,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
             mockUpdateTradingName(tradingNameModel, customerDetailsModelMax)(Future.successful(Left(updateConflictResponse)))
-            status(res) shouldBe CONFLICT
+            status(Future.successful(res)) shouldBe CONFLICT
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateConflictResponse)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateConflictResponse)
           }
         }
 
@@ -135,11 +136,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
             mockUpdateTradingName(tradingNameModel, customerDetailsModelMax)(Future.successful(Left(updateErrorResponse)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
@@ -151,11 +152,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
             mockUpdateTradingName(tradingNameModel, customerDetailsModelMax)(Future(Left(updateErrorResponse)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorModel)
           }
         }
       }
@@ -170,7 +171,7 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
         val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
-        status(res) shouldBe FORBIDDEN
+        status(Future.successful(res)) shouldBe FORBIDDEN
       }
     }
 
@@ -186,8 +187,8 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
 
           val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
 
-          status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+          status(Future.successful(res)) shouldBe OK
+          contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -200,11 +201,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            status(res) shouldBe BAD_REQUEST
+            status(Future.successful(res)) shouldBe BAD_REQUEST
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
           }
         }
 
@@ -216,11 +217,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
             mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateConflictResponse)))
-            status(res) shouldBe CONFLICT
+            status(Future.successful(res)) shouldBe CONFLICT
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateConflictResponse)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateConflictResponse)
           }
         }
 
@@ -232,11 +233,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
             mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateErrorResponse)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
@@ -248,11 +249,11 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
             mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateErrorResponse)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorModel)
           }
         }
       }

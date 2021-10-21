@@ -17,10 +17,11 @@
 package models.updateVatSubscription.request
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 import models.ContactDetails
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class AgentOrCapacitorSpec extends UnitSpec {
+class AgentOrCapacitorSpec extends AnyWordSpecLike with Matchers {
 
   "AgentOrCapacitor Writes" should {
 

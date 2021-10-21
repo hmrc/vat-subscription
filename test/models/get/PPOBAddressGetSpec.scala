@@ -17,10 +17,11 @@
 package models.get
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 import helpers.PPOBTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class PPOBAddressGetSpec extends UnitSpec {
+class PPOBAddressGetSpec extends AnyWordSpecLike with Matchers {
 
   "PPOBAddressGet Reads" should {
     "parse the json correctly" in {

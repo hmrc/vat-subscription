@@ -16,16 +16,16 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import connectors.mocks.MockAuthConnector
 import helpers.BaseTestConstants._
 import connectors.{Forbidden, InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound}
+import helpers.TestUtil
 import models.MTDfBMandated
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.MockMandationStatusService
-
 import scala.concurrent.Future
 
 class MandationStatusControllerSpec extends TestUtil
@@ -44,8 +44,7 @@ class MandationStatusControllerSpec extends TestUtil
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe OK
-
-      jsonBodyOf(await(res)) shouldBe Json.obj(TestMandationStatusController.mandationStatusKey -> testStatus.value)
+      contentAsJson(res) shouldBe Json.obj(TestMandationStatusController.mandationStatusKey -> testStatus.value)
     }
 
     "return the BAD_REQUEST when InvalidVatNumber" in {
@@ -55,7 +54,6 @@ class MandationStatusControllerSpec extends TestUtil
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe BAD_REQUEST
-      jsonBodyOf(await(res)) shouldBe Json.toJson(InvalidVatNumber)
     }
 
     "return the NOT_FOUND when VatNumberNotFound" in {
@@ -65,7 +63,6 @@ class MandationStatusControllerSpec extends TestUtil
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe NOT_FOUND
-      jsonBodyOf(await(res)) shouldBe Json.toJson(VatNumberNotFound)
     }
 
     "return the FORBIDDEN when Forbidden with no json body" in {
@@ -75,7 +72,6 @@ class MandationStatusControllerSpec extends TestUtil
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe FORBIDDEN
-      jsonBodyOf(await(res)) shouldBe Json.toJson(Forbidden)
     }
 
     "return the PRECONDITION_FAILED when Forbidden with MIGRATION code in json body" in {
@@ -85,7 +81,6 @@ class MandationStatusControllerSpec extends TestUtil
 
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe PRECONDITION_FAILED
-      jsonBodyOf(await(res)) shouldBe Json.toJson(Migration)
     }
 
     "return the INTERNAL_SERVER_ERROR and the error when failed unexpectedly" in {
@@ -96,7 +91,7 @@ class MandationStatusControllerSpec extends TestUtil
       val res = TestMandationStatusController.getMandationStatus(testVatNumber)(FakeRequest())
       status(res) shouldBe INTERNAL_SERVER_ERROR
 
-      jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR.toString, "body" -> "failure")
+      contentAsJson(res) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR.toString, "body" -> "failure")
     }
   }
 

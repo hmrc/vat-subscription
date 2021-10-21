@@ -17,10 +17,9 @@
 package models
 
 import java.time.LocalDate
-
-import assets.TestUtil
 import play.api.libs.json.{JsObject, Json}
 import helpers.ReturnPeriodTestConstants._
+import helpers.TestUtil
 
 class ReturnPeriodSpec extends TestUtil {
 
@@ -97,67 +96,67 @@ class ReturnPeriodSpec extends TestUtil {
     "the minimum number of fields are present" should {
 
       "output correctly formatted JSON for a MAReturnPeriod" in {
-        Json.toJson(MAReturnPeriod(None, None, None)) shouldBe returnPeriodMAJson
+        Json.toJson(MAReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodMAJson
       }
 
       "output correctly formatted JSON for a MBReturnPeriod" in {
-        Json.toJson(MBReturnPeriod(None, None, None)) shouldBe returnPeriodMBJson
+        Json.toJson(MBReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodMBJson
       }
 
       "output correctly formatted JSON for a MCReturnPeriod" in {
-        Json.toJson(MCReturnPeriod(None, None, None)) shouldBe returnPeriodMCJson
+        Json.toJson(MCReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodMCJson
       }
 
       "output correctly formatted JSON for a MMReturnPeriod" in {
-        Json.toJson(MMReturnPeriod(None, None, None)) shouldBe returnPeriodMMJson
+        Json.toJson(MMReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodMMJson
       }
 
       "output correctly formatted JSON for a YAReturnPeriod" in {
-        Json.toJson(YAReturnPeriod(None, None, None)) shouldBe returnPeriodYAJson
+        Json.toJson(YAReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYAJson
       }
 
       "output correctly formatted JSON for a YBReturnPeriod" in {
-        Json.toJson(YBReturnPeriod(None, None, None)) shouldBe returnPeriodYBJson
+        Json.toJson(YBReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYBJson
       }
 
       "output correctly formatted JSON for a YCReturnPeriod" in {
-        Json.toJson(YCReturnPeriod(None, None, None)) shouldBe returnPeriodYCJson
+        Json.toJson(YCReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYCJson
       }
 
       "output correctly formatted JSON for a YDReturnPeriod" in {
-        Json.toJson(YDReturnPeriod(None, None, None)) shouldBe returnPeriodYDJson
+        Json.toJson(YDReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYDJson
       }
 
       "output correctly formatted JSON for a YEReturnPeriod" in {
-        Json.toJson(YEReturnPeriod(None, None, None)) shouldBe returnPeriodYEJson
+        Json.toJson(YEReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYEJson
       }
 
       "output correctly formatted JSON for a YFReturnPeriod" in {
-        Json.toJson(YFReturnPeriod(None, None, None)) shouldBe returnPeriodYFJson
+        Json.toJson(YFReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYFJson
       }
 
       "output correctly formatted JSON for a YGReturnPeriod" in {
-        Json.toJson(YGReturnPeriod(None, None, None)) shouldBe returnPeriodYGJson
+        Json.toJson(YGReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYGJson
       }
 
       "output correctly formatted JSON for a YHReturnPeriod" in {
-        Json.toJson(YHReturnPeriod(None, None, None)) shouldBe returnPeriodYHJson
+        Json.toJson(YHReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYHJson
       }
 
       "output correctly formatted JSON for a YIReturnPeriod" in {
-        Json.toJson(YIReturnPeriod(None, None, None)) shouldBe returnPeriodYIJson
+        Json.toJson(YIReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYIJson
       }
 
       "output correctly formatted JSON for a YJReturnPeriod" in {
-        Json.toJson(YJReturnPeriod(None, None, None)) shouldBe returnPeriodYJJson
+        Json.toJson(YJReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYJJson
       }
 
       "output correctly formatted JSON for a YKReturnPeriod" in {
-        Json.toJson(YKReturnPeriod(None, None, None)) shouldBe returnPeriodYKJson
+        Json.toJson(YKReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYKJson
       }
 
       "output correctly formatted JSON for a YLReturnPeriod" in {
-        Json.toJson(YLReturnPeriod(None, None, None)) shouldBe returnPeriodYLJson
+        Json.toJson(YLReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYLJson
       }
     }
   }

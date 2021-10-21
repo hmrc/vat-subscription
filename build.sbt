@@ -41,7 +41,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimum := 95,
+    ScoverageKeys.coverageMinimumStmtTotal := 95,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -51,19 +51,20 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-26"  % "5.3.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "5.15.0",
   "org.typelevel"     %% "cats-core"                  % "1.6.0",
   "com.typesafe.play" %% "play-json-joda"             % "2.7.4"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"              %% "hmrctest"              % "3.10.0-play-26"     % scope,
-  "org.scalatest"            %% "scalatest"             % "3.0.9"              % scope,
-  "org.pegdown"              %  "pegdown"               % "1.6.0"              % scope,
-  "com.typesafe.play"        %% "play-test"             % PlayVersion.current  % scope,
-  "org.scalatestplus.play"   %% "scalatestplus-play"    % "3.1.3"              % scope,
-  "com.github.tomakehurst"   %  "wiremock-jre8"         % "2.27.2"             % scope,
-  "org.mockito"              %  "mockito-core"          % "3.5.15"             % scope
+  "org.scalatest"           %% "scalatest"                  % "3.1.4"             % scope,
+  "org.pegdown"             % "pegdown"                     % "1.6.0"             % scope,
+  "org.scalatestplus.play"  %% "scalatestplus-play"         % "5.1.0"             % scope,
+  "com.typesafe.play"       %% "play-test"                  % PlayVersion.current % scope,
+  "org.mockito"             % "mockito-core"                % "3.5.15"            % scope,
+  "com.github.tomakehurst"  % "wiremock-jre8"               % "2.26.3"            % scope,
+  "com.vladsch.flexmark"    % "flexmark-all"                % "0.36.8"            % scope,
+  "org.scalatestplus"       %% "scalatestplus-mockito"      % "1.0.0-M2"          % scope
 )
 
 lazy val root = Project(appName, file("."))
@@ -74,7 +75,7 @@ lazy val root = Project(appName, file("."))
   .settings(coverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
-    scalaVersion := "2.12.11",
+    scalaVersion := "2.12.14",
     majorVersion := 0,
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,

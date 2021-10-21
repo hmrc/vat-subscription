@@ -17,15 +17,16 @@
 package services
 
 import org.scalatest.EitherValues
-import uk.gov.hmrc.play.test.UnitSpec
 import connectors.mocks.MockGetVatCustomerInformationConnector
 import helpers.BaseTestConstants._
 import connectors.{Forbidden, InvalidVatNumber, Migration}
 import helpers.CustomerInformationTestConstants.customerInformationModelMin
-
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import scala.concurrent.Future
 
-class MandationStatusServiceSpec extends UnitSpec with EitherValues
+class MandationStatusServiceSpec extends AnyWordSpecLike with Matchers with EitherValues
   with MockGetVatCustomerInformationConnector {
 
   object TestMandationStatusService extends MandationStatusService(

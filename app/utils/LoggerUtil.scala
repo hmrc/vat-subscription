@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package utils
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.libs.json.JsString
+import org.slf4j.{Logger, LoggerFactory}
+import play.api.LoggerLike
 
-class CommsPreferenceModelSpec extends AnyWordSpecLike with Matchers {
-
-  "CommsPreference" should {
-
-    "correctly parse from json for DigitalPreference" in {
-      JsString(DigitalPreference.desValue).as[CommsPreference] shouldBe DigitalPreference
-    }
-
-    "correctly parse from json for PaperPreference" in {
-      JsString(PaperPreference.desValue).as[CommsPreference] shouldBe PaperPreference
-    }
-  }
-
+trait LoggerUtil extends LoggerLike {
+  override val logger: Logger = LoggerFactory.getLogger("application")
 }

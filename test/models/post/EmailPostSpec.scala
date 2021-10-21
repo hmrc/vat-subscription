@@ -17,10 +17,11 @@
 package models.post
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 import helpers.PPOBTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class EmailPostSpec extends UnitSpec {
+class EmailPostSpec extends AnyWordSpecLike with Matchers {
 
   "EmailPost Reads" should {
     "parse the json correctly" in {

@@ -16,10 +16,11 @@
 
 package models
 
-import uk.gov.hmrc.play.test.UnitSpec
 import helpers.FlatRateSchemeTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class FlatRateSchemeSpec extends UnitSpec {
+class FlatRateSchemeSpec extends AnyWordSpecLike with Matchers {
 
   "FlatRateScheme Reads" should {
     "parse the json correctly when all optional fields are populated" in {

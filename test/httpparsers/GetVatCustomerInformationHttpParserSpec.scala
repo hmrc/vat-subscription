@@ -16,10 +16,10 @@
 
 package httpparsers
 
-import assets.TestUtil
 import config.featureSwitch.Api1363Latest
 import connectors._
 import helpers.CustomerInformationTestConstants._
+import helpers.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse

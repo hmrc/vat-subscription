@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -26,8 +25,10 @@ import connectors.VatNumberNotFound
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
 import helpers.PPOBTestConstants.{ppobModelEmailMaxPost, ppobModelMax}
-import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
+import helpers.TestUtil
+import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorModel, updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
+import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockUpdateEmailService, MockVatCustomerDetailsRetrievalService}
 
 import scala.concurrent.Future
@@ -50,7 +51,7 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
         val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
-        status(res) shouldBe FORBIDDEN
+        status(Future.successful(res)) shouldBe FORBIDDEN
       }
     }
 
@@ -66,8 +67,8 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
 
           val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
 
-          status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+          status(Future.successful(res)) shouldBe OK
+          contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -81,11 +82,12 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-            status(res) shouldBe BAD_REQUEST
+            status(Future.successful(res)) shouldBe BAD_REQUEST
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyUpdateEmailRequest.body}"))
+            contentAsJson(Future.successful(res)) shouldBe
+              Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyUpdateEmailRequest.body}"))
           }
         }
 
@@ -97,11 +99,11 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
             mockUpdateEmail(ppobModelEmailMaxPost)(Future.successful(Left(updateConflictResponse)))
-            status(res) shouldBe CONFLICT
+            status(Future.successful(res)) shouldBe CONFLICT
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateConflictResponse)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateConflictResponse)
           }
         }
 
@@ -113,11 +115,11 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
             mockUpdateEmail(ppobModelEmailMaxPost)(Future.successful(Left(updateErrorResponse)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
@@ -130,11 +132,11 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Left(VatNumberNotFound)))
             mockUpdateEmail(ppobModelEmailMaxPost)(Future.successful(Left(updateErrorResponse)))
-            status(res) shouldBe INTERNAL_SERVER_ERROR
+            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorModel)
           }
         }
       }

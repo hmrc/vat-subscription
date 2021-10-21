@@ -17,23 +17,22 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.updateVatSubscription.request._
 import models.{ContactDetails, ReturnPeriod, User}
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
+class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
 
   def updateReturnPeriod(updatedReturnPeriod: ReturnPeriod, welshIndicator: Boolean)
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod, welshIndicator)
-    Logger.debug(s"[UpdateReturnPeriodService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
+    logger.debug(s"[UpdateReturnPeriodService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 

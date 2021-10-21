@@ -16,12 +16,12 @@
 
 package httpparsers
 
-import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
+import utils.LoggerUtil
 
-object UpdateVatSubscriptionHttpParser {
+object UpdateVatSubscriptionHttpParser extends LoggerUtil {
 
   type UpdateVatSubscriptionResponse = Either[ErrorModel, SuccessModel]
 
@@ -31,19 +31,19 @@ object UpdateVatSubscriptionHttpParser {
 
       response.status match {
         case OK =>
-          Logger.debug("[UpdateVatSubscriptionHttpParser][read]: Status OK")
+          logger.debug("[UpdateVatSubscriptionHttpParser][read]: Status OK")
           response.json.validate[SuccessModel].fold(
             _ => {
-              Logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Success Response Json")
+              logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Success Response Json")
               Left(ErrorModel("INTERNAL_SERVER_ERROR", "Invalid Json returned in Success response."))
             },
             valid => Right(valid)
           )
         case status =>
-          Logger.warn(s"[UpdateVatSubscriptionReads][read]: Unexpected response, status $status returned. Body: ${response.body}")
+          logger.warn(s"[UpdateVatSubscriptionReads][read]: Unexpected response, status $status returned. Body: ${response.body}")
           response.json.validate[ErrorModel].fold(
             invalid => {
-              Logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Error Response Json - $invalid")
+              logger.warn(s"[UpdateVatSubscriptionHttpParser][read]: Invalid Error Response Json - $invalid")
               Left(ErrorModel("INTERNAL_SERVER_ERROR", s"Invalid Json returned in Error response. Status $status returned"))
             },
             valid => Left(valid)

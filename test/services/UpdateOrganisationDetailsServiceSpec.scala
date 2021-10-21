@@ -16,15 +16,16 @@
 
 package services
 
-import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.{concatNames, firstName, lastName, middleName, orgName, testAgentUser, testArn, testUser, title}
 import helpers.CustomerDetailsTestConstants._
 import helpers.OrganisationDetailsTestConstants._
+import helpers.TestUtil
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.ContactDetails
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class UpdateOrganisationDetailsServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 

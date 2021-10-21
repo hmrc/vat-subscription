@@ -22,15 +22,14 @@ import javax.inject.{Inject, Singleton}
 import models.User
 import models.updateVatSubscription.request.UpdateVatSubscription
 import models.updateVatSubscription.request.UpdateVatSubscription._
-import play.api.Logger
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
-                                               val appConfig: AppConfig) {
+                                               val appConfig: AppConfig) extends LoggerUtil {
 
   private[connectors] val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
 
@@ -47,9 +46,9 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
 
     val headerCarrier: HeaderCarrier = hc.copy(authorization = None)
 
-    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] URL: ${url(user.vrn)}")
-    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Headers: ${desHeaders(user)}")
-    Logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Body: \n\n"
+    logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] URL: ${url(user.vrn)}")
+    logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Headers: ${desHeaders(user)}")
+    logger.debug(s"[UpdateVatSubscriptionConnector][updateVatSubscription] Body: \n\n"
       + s"${Json.toJson(vatSubscriptionModel).toString}")
 
     http.PUT[UpdateVatSubscription, UpdateVatSubscriptionResponse](

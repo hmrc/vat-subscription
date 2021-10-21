@@ -17,7 +17,6 @@
 package controllers.actions
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.{Retrievals => retrieve}
@@ -25,14 +24,14 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import config.{AppConfig, Constants}
 import models.User
 import uk.gov.hmrc.auth.core.retrieve.~
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VatAuthorised @Inject()(val authConnector: AuthConnector,
                               cc: ControllerComponents,
                               implicit val appConfig: AppConfig)
-                              extends BackendController(cc) with AuthorisedFunctions {
+                              extends BackendController(cc) with AuthorisedFunctions with LoggerUtil {
 
   private def delegatedAuthRule(vrn: String): Enrolment =
     Enrolment(Constants.MtdVatEnrolmentKey)
@@ -49,11 +48,11 @@ class VatAuthorised @Inject()(val authConnector: AuthConnector,
         case  enrolments ~ Some(credentials) =>
           f(User(vrn, arn(enrolments), credentials.providerId)(request))
         case _ =>
-          Logger.warn(s"[VatAuthorised][async] - Unable to retrieve Credentials.providerId from auth profile")
+          logger.warn(s"[VatAuthorised][async] - Unable to retrieve Credentials.providerId from auth profile")
           Future(Forbidden)
       } recover {
         case _: AuthorisationException =>
-          Logger.debug(s"[VatAuthorised][async] - User is not authorised to access the service")
+          logger.debug(s"[VatAuthorised][async] - User is not authorised to access the service")
           Forbidden
       }
   }

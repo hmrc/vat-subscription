@@ -19,16 +19,18 @@ package services
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.play.test.UnitSpec
 import connectors.{InvalidVatNumber, VatNumberNotFound}
 import connectors.mocks.MockGetVatCustomerInformationConnector
 import helpers.BaseTestConstants._
 import helpers.CustomerDetailsTestConstants._
 import helpers.CustomerInformationTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.Future
 
-class VatCompanyDetailsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomerInformationConnector {
+class VatCompanyDetailsRetrievalServiceSpec extends AnyWordSpecLike with Matchers with MockGetVatCustomerInformationConnector {
 
   object TestVatCompanyDetailsRetrievalService extends VatCustomerDetailsRetrievalService(
     mockConnector

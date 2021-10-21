@@ -24,6 +24,8 @@ import helpers.servicemocks.AuthStub.{mtdVatEnrolment, stubAuth, stubAuthFailure
 import helpers.servicemocks.GetVatCustomerInformationStub.stubGetInformation
 import helpers.servicemocks.UpdateVatCustomerSubscriptionStub.stubUpdateSubscription
 import helpers.{ComponentSpecBase, CustomMatchers}
+import play.api.test.Helpers.await
+
 
 class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAndAfterEach with CustomMatchers {
 

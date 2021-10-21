@@ -16,10 +16,11 @@
 
 package models.updateVatSubscription.request.deregistration
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 
-class DeregistrationReasonSpec extends UnitSpec {
+class DeregistrationReasonSpec extends AnyWordSpecLike with Matchers {
 
   "DeregistrationReason" when {
 
@@ -49,19 +50,19 @@ class DeregistrationReasonSpec extends UnitSpec {
     "serializing to JSON" should {
 
       "for CeasedTrading output '0003'" in {
-        Json.toJson(CeasedTrading) shouldBe JsString("0003")
+        Json.toJson(CeasedTrading.desValue) shouldBe JsString("0003")
       }
 
       "for ReducedTurnover output '0010'" in {
-        Json.toJson(ReducedTurnover) shouldBe JsString("0010")
+        Json.toJson(ReducedTurnover.desValue) shouldBe JsString("0010")
       }
 
       "for ZeroRated output '0006'" in {
-        Json.toJson(ZeroRated) shouldBe JsString("0006")
+        Json.toJson(ZeroRated.desValue) shouldBe JsString("0006")
       }
 
       "for ExemptOnly output '0014'" in {
-        Json.toJson(ExemptOnly) shouldBe JsString("0014")
+        Json.toJson(ExemptOnly.desValue) shouldBe JsString("0014")
       }
     }
   }

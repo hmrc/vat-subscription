@@ -17,14 +17,12 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
 import models.post.CommsPreferenceEmailPost
 import services.{UpdateContactPreferenceService, VatCustomerDetailsRetrievalService}
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -44,17 +42,17 @@ class UpdateContactPreferenceAndEmailController @Inject()(VatAuthorised: VatAuth
               updateContactPreferenceService.updatePreferenceAndEmail(model.emailAddress, details).map {
                 case Right(success) => Ok(Json.toJson(success))
                 case Left(error) =>
-                  Logger.warn("[UpdateContactPreferenceAndEmailController][update] Error occurred when updating " +
+                  logger.warn("[UpdateContactPreferenceAndEmailController][update] Error occurred when updating " +
                     "contact preference and email address")
                   InternalServerError(Json.toJson(error))
               }
             case Left(error) =>
-              Logger.warn("[UpdateContactPreferenceAndEmailController][update] Error retrieved when retrieving " +
+              logger.warn("[UpdateContactPreferenceAndEmailController][update] Error retrieved when retrieving " +
                 "current user details")
               Future.successful(InternalServerError(Json.toJson(error)))
           }
         case Left(error) =>
-          Logger.warn("[UpdateContactPreferenceAndEmailController][update] Email address not valid in request")
+          logger.warn("[UpdateContactPreferenceAndEmailController][update] Email address not valid in request")
           Future.successful(BadRequest(Json.toJson(error)))
       }
   }

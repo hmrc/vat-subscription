@@ -17,24 +17,23 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.post.MandationStatusPost
 import models.{ContactDetails, User}
 import models.updateVatSubscription.request._
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateMandationStatusService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
+class UpdateMandationStatusService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
 
   def updateMandationStatus(updatedMandationStatus: MandationStatusPost, welshIndicator: Boolean)
                  (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructMandationStatusUpdateModel(updatedMandationStatus, welshIndicator)
-    Logger.debug(s"[UpdateMandationStatusService][updateMandationStatus]: updating Mandation Status for user with vrn - ${user.vrn}")
+    logger.debug(s"[UpdateMandationStatusService][updateMandationStatus]: updating Mandation Status for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 

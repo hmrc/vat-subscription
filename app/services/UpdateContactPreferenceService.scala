@@ -17,7 +17,6 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
@@ -25,11 +24,11 @@ import models.get.PPOBGet
 import models.{ContactDetails, DigitalPreference, User, VatCustomerInformation}
 import models.post.{CommsPreferencePost, PPOBAddressPost, PPOBPost}
 import models.updateVatSubscription.request._
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) {
+class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
 
   def updateContactPreference(updatedContactPreference: CommsPreferencePost,
                               welshIndicator: Boolean)
@@ -37,7 +36,7 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructContactPreferenceModel(updatedContactPreference, welshIndicator)
-    Logger.debug("[UpdateContactPreferenceService][updateContactPreference]: " +
+    logger.debug("[UpdateContactPreferenceService][updateContactPreference]: " +
       s"updating contact preference for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
@@ -46,7 +45,7 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
                                currentDetails: VatCustomerInformation)
                               (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructContactPreferenceAndEmailModel(newEmail, currentDetails.customerDetails.welshIndicator, currentDetails.ppob)
-    Logger.debug("[UpdateContactPreferenceService][updatePreferenceAndEmail]: updating contact preference " +
+    logger.debug("[UpdateContactPreferenceService][updatePreferenceAndEmail]: updating contact preference " +
       s"and email for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }

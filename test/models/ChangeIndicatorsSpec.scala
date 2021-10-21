@@ -16,10 +16,11 @@
 
 package models
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 
-class ChangeIndicatorsSpec extends UnitSpec {
+class ChangeIndicatorsSpec extends AnyWordSpecLike with Matchers {
 
   "ChangeIndicators .reads" when {
 

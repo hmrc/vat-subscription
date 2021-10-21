@@ -19,17 +19,16 @@ package connectors
 import config.AppConfig
 import httpparsers.GetVatCustomerInformationHttpParser
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, NOT_FOUND, PRECONDITION_FAILED}
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
                                                    val appConfig: AppConfig,
-                                                   val httpParser: GetVatCustomerInformationHttpParser) {
+                                                   val httpParser: GetVatCustomerInformationHttpParser) extends LoggerUtil {
 
   import httpParser.GetVatCustomerInformationHttpParserResponse
 
@@ -44,8 +43,8 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetVatCustomerInformationHttpParserResponse] = {
     val headerCarrier = hc.copy(authorization = None)
 
-    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
-    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: $desHeaders")
+    logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
+    logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: $desHeaders")
 
     http.GET[GetVatCustomerInformationHttpParserResponse](
       url = url(vatNumber),
@@ -60,34 +59,34 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
 
 sealed trait GetVatCustomerInformationFailure {
   val status: Int
-  val body: String
+  val message: String
 }
 
 object GetVatCustomerInformationFailure {
   implicit val writes: Writes[GetVatCustomerInformationFailure] = Writes {
-    error => Json.obj("status" -> error.status.toString, "body" -> error.body)
+    error => Json.obj("status" -> error.status.toString, "message" -> error.message)
   }
 }
 
 case object InvalidVatNumber extends GetVatCustomerInformationFailure {
   override val status: Int = BAD_REQUEST
-  override val body = "Bad request"
+  override val message = "Bad request"
 }
 
 case object VatNumberNotFound extends GetVatCustomerInformationFailure {
   override val status: Int = NOT_FOUND
-  override val body = "Not found"
+  override val message = "Not found"
 }
 
 case object Forbidden extends GetVatCustomerInformationFailure {
   override val status: Int = FORBIDDEN
-  override val body: String = "Forbidden"
+  override val message: String = "Forbidden"
 }
 
 case object Migration extends GetVatCustomerInformationFailure {
   override val status: Int = PRECONDITION_FAILED
-  override val body: String = "Migration"
+  override val message: String = "Migration"
 }
 
-case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val body: String)
+case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val message: String)
   extends GetVatCustomerInformationFailure

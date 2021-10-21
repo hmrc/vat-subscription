@@ -23,7 +23,6 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
 import models.post.EmailPost
 import services.{UpdateEmailService, VatCustomerDetailsRetrievalService}
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

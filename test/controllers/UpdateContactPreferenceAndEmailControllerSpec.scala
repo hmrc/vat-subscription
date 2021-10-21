@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsJson
@@ -26,9 +25,10 @@ import connectors.UnexpectedGetVatCustomerInformationFailure
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
 import helpers.CustomerInformationTestConstants.customerInformationModelMax
+import helpers.TestUtil
 import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
+import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockUpdateContactPreferenceService, MockVatCustomerDetailsRetrievalService}
-
 import scala.concurrent.Future
 
 class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
@@ -53,7 +53,7 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
         lazy val result = await(TestController.update(testVatNumber)(FakeRequest()))
 
-        status(result) shouldBe FORBIDDEN
+        status(Future(result)) shouldBe FORBIDDEN
       }
     }
 
@@ -72,8 +72,8 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
 
               lazy val result = await(TestController.update(testVatNumber)(request))
 
-              status(result) shouldBe OK
-              jsonBodyOf(result) shouldBe Json.toJson(updateSuccessResponse)
+              status(Future.successful(result)) shouldBe OK
+              contentAsJson(Future.successful(result)) shouldBe Json.toJson(updateSuccessResponse)
             }
           }
 
@@ -87,8 +87,8 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
 
               lazy val result = await(TestController.update(testVatNumber)(request))
 
-              status(result) shouldBe INTERNAL_SERVER_ERROR
-              jsonBodyOf(result) shouldBe Json.toJson(updateErrorResponse)
+              status(Future.successful(result)) shouldBe INTERNAL_SERVER_ERROR
+              contentAsJson(Future.successful(result)) shouldBe Json.toJson(updateErrorResponse)
             }
           }
         }
@@ -101,8 +101,8 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
 
             lazy val result = await(TestController.update(testVatNumber)(request))
 
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-            jsonBodyOf(result) shouldBe Json.obj("status" -> "500", "body" -> "")
+            status(Future.successful(result)) shouldBe INTERNAL_SERVER_ERROR
+            contentAsJson(Future.successful(result)) shouldBe Json.obj("status" -> "500", "message" -> "")
           }
         }
       }
@@ -117,8 +117,8 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
             FakeRequest().withJsonBody(Json.obj("blah" -> "blah")))
           )
 
-          status(result) shouldBe BAD_REQUEST
-          jsonBodyOf(result) shouldBe Json.obj("status" -> "INVALID_JSON", "message" -> "Json received, but did not validate")
+          status(Future.successful(result)) shouldBe BAD_REQUEST
+          contentAsJson(Future.successful(result)) shouldBe Json.obj("status" -> "INVALID_JSON", "message" -> "Json received, but did not validate")
         }
       }
     }
