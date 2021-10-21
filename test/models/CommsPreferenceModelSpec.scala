@@ -16,9 +16,10 @@
 
 package models
 
+import models.VatCustomerInformation.commsPreferenceWrites
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, Json}
 
 class CommsPreferenceModelSpec extends AnyWordSpecLike with Matchers {
 
@@ -30,6 +31,21 @@ class CommsPreferenceModelSpec extends AnyWordSpecLike with Matchers {
 
     "correctly parse from json for PaperPreference" in {
       JsString(PaperPreference.desValue).as[CommsPreference] shouldBe PaperPreference
+    }
+
+    "correctly parse to json for DigitalPreference to frontends" in {
+      Json.toJson(DigitalPreference.asInstanceOf[CommsPreference]) shouldBe JsString(DigitalPreference.mdtpValue)
+    }
+    "correctly parse to json for PaperPreference to frontends" in {
+      Json.toJson(PaperPreference.asInstanceOf[CommsPreference]) shouldBe JsString(PaperPreference.mdtpValue)
+    }
+
+    "correctly parse to json for DigitalPreference to DES" in {
+      Json.toJson(DigitalPreference.asInstanceOf[CommsPreference])(CommsPreference.updatePreferenceWrites) shouldBe JsString(DigitalPreference.desValue)
+    }
+
+    "correctly parse to json for PaperPreference to DES" in {
+      Json.toJson(PaperPreference.asInstanceOf[CommsPreference])(CommsPreference.updatePreferenceWrites) shouldBe JsString(PaperPreference.desValue)
     }
   }
 

@@ -40,18 +40,18 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
         case Right(customerDetails) => Ok(Json.toJson(customerDetails))
         case Left(InvalidVatNumber) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
-          BadRequest(Json.toJson(InvalidVatNumber.status))
+          BadRequest(Json.toJson(InvalidVatNumber))
         case Left(VatNumberNotFound) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
-          NotFound(Json.toJson(VatNumberNotFound.status))
+          NotFound(Json.toJson(VatNumberNotFound))
         case Left(ForbiddenResult) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
             s"Forbidden returned from CustomerDetailsRetrieval Service")
-          Forbidden(Json.toJson(ForbiddenResult.status))
+          Forbidden(Json.toJson(ForbiddenResult))
         case Left(Migration) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
             s"Forbidden (MIGRATION) returned from CustomerDetailsRetrieval Service")
-          PreconditionFailed(Json.toJson(Migration.status))
+          PreconditionFailed(Json.toJson(Migration))
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
@@ -68,18 +68,18 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
           Ok(Json.toJson(vatInformation))
         case Left(InvalidVatNumber) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
-          BadRequest(Json.toJson(InvalidVatNumber.status))
+          BadRequest(Json.toJson(InvalidVatNumber))
         case Left(VatNumberNotFound) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
-          NotFound(Json.toJson(VatNumberNotFound.status))
+          NotFound(Json.toJson(VatNumberNotFound))
         case Left(ForbiddenResult) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
             s"Forbidden returned from CustomerDetailsRetrieval Service")
-          Forbidden(Json.toJson(ForbiddenResult.status))
+          Forbidden(Json.toJson(ForbiddenResult))
         case Left(Migration) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
             s"Forbidden (MIGRATION) returned from CustomerDetailsRetrieval Service")
-          PreconditionFailed(Json.toJson(Migration.status))
+          PreconditionFailed(Json.toJson(Migration))
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
           logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")

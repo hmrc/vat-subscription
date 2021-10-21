@@ -22,16 +22,15 @@ import helpers.BaseTestConstants.testVatNumber
 import helpers.CustomerDetailsTestConstants.{customerDetailsModelMax, customerDetailsModelMin}
 import helpers.OrganisationDetailsTestConstants._
 import helpers.TestUtil
-import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorModel, updateErrorResponse, updateSuccessResponse}
+import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockUpdateOrganisationDetailsService, MockVatCustomerDetailsRetrievalService}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
-
 import scala.concurrent.Future
 
 class UpdateOrganisationDetailsControllerSpec extends TestUtil
@@ -55,8 +54,8 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
 
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
-        status(Future.successful(res)) shouldBe FORBIDDEN
+        val res: Future[Result] = TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest)
+        status(res) shouldBe FORBIDDEN
       }
     }
 
@@ -70,10 +69,10 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
           mockUpdateTradingName(tradingNameModel, customerDetailsModelMax)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
+          val res: Future[Result] = TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest)
 
-          status(Future.successful(res)) shouldBe OK
-          contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateSuccessResponse)
+          status(res) shouldBe OK
+          contentAsJson(res) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -85,14 +84,14 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMin)))
           mockUpdateTradingName(tradingNameModel, customerDetailsModelMin)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
+          val res: Future[Result] = TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest)
 
           "return status INTERNAL_SERVER_ERROR" in {
-            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
+            status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(ErrorModel("INTERNAL_SERVER_ERROR", "The service returned " +
+            contentAsJson(res) shouldBe Json.toJson(ErrorModel("INTERNAL_SERVER_ERROR", "The service returned " +
             "CustomerDetails with no defined individual or org names"))
           }
         }
@@ -100,63 +99,63 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
         "no json body is supplied for the PUT" should {
 
           val emptyRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(emptyRequest))
+          lazy val res: Future[Result] = TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(emptyRequest)
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            status(Future.successful(res)) shouldBe BAD_REQUEST
+            status(res) shouldBe BAD_REQUEST
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
+            contentAsJson(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
           }
         }
 
         "a valid TradingName is supplied but a Conflict error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
+          lazy val res: Future[Result] = TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest)
 
           "return status CONFLICT (409)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
             mockUpdateTradingName(tradingNameModel, customerDetailsModelMax)(Future.successful(Left(updateConflictResponse)))
-            status(Future.successful(res)) shouldBe CONFLICT
+            status(res) shouldBe CONFLICT
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateConflictResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateConflictResponse)
           }
         }
 
         "a valid TradingName is supplied but an error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
+          lazy val res: Future[Result] = TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
             mockUpdateTradingName(tradingNameModel, customerDetailsModelMax)(Future.successful(Left(updateErrorResponse)))
-            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
+            status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
         "a valid TradingName is supplied but a VatNumberNotFound error is returned" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest))
+          lazy val res: Future[Result] = TestUpdateOrganisationDetailsController.updateTradingName(testVatNumber)(tradingNamePostRequest)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
             mockUpdateTradingName(tradingNameModel, customerDetailsModelMax)(Future(Left(updateErrorResponse)))
-            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
+            status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorModel)
+            contentAsJson(res) shouldBe Json.toJson(VatNumberNotFound)
           }
         }
       }
@@ -170,8 +169,8 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
 
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
-        status(Future.successful(res)) shouldBe FORBIDDEN
+        val res: Future[Result] = TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest)
+        status(res) shouldBe FORBIDDEN
       }
     }
 
@@ -185,10 +184,10 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
           mockUpdateBusinessName(businessNameModel)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+          val res: Future[Result] = TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest)
 
-          status(Future.successful(res)) shouldBe OK
-          contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateSuccessResponse)
+          status(res) shouldBe OK
+          contentAsJson(res) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -197,63 +196,63 @@ class UpdateOrganisationDetailsControllerSpec extends TestUtil
         "no json body is supplied for the PUT" should {
 
           val emptyRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(emptyRequest))
+          lazy val res: Future[Result] = TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(emptyRequest)
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
-            status(Future.successful(res)) shouldBe BAD_REQUEST
+            status(res) shouldBe BAD_REQUEST
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
+            contentAsJson(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyRequest.body}"))
           }
         }
 
         "a valid BusinessName is supplied but a Conflict error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+          lazy val res: Future[Result] = TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest)
 
           "return status CONFLICT (409)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
             mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateConflictResponse)))
-            status(Future.successful(res)) shouldBe CONFLICT
+            status(res) shouldBe CONFLICT
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateConflictResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateConflictResponse)
           }
         }
 
         "a valid BusinessName is supplied but an error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+          lazy val res: Future[Result] = TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
             mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateErrorResponse)))
-            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
+            status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
         "a valid BusinessName is supplied but an error is returned instead of customer details" should {
 
-          lazy val res: Result = await(TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest))
+          lazy val res: Future[Result] = TestUpdateOrganisationDetailsController.updateBusinessName(testVatNumber)(businessNamePostRequest)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
             mockUpdateBusinessName(businessNameModel)(Future.successful(Left(updateErrorResponse)))
-            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
+            status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorModel)
+            contentAsJson(res) shouldBe Json.toJson(VatNumberNotFound)
           }
         }
       }

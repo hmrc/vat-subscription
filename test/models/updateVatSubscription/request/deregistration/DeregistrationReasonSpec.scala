@@ -50,19 +50,19 @@ class DeregistrationReasonSpec extends AnyWordSpecLike with Matchers {
     "serializing to JSON" should {
 
       "for CeasedTrading output '0003'" in {
-        Json.toJson(CeasedTrading.desValue) shouldBe JsString("0003")
+        Json.toJson(CeasedTrading.asInstanceOf[DeregistrationReason]) shouldBe JsString("0003")
       }
 
       "for ReducedTurnover output '0010'" in {
-        Json.toJson(ReducedTurnover.desValue) shouldBe JsString("0010")
+        Json.toJson(ReducedTurnover.asInstanceOf[DeregistrationReason]) shouldBe JsString("0010")
       }
 
       "for ZeroRated output '0006'" in {
-        Json.toJson(ZeroRated.desValue) shouldBe JsString("0006")
+        Json.toJson(ZeroRated.asInstanceOf[DeregistrationReason]) shouldBe JsString("0006")
       }
 
       "for ExemptOnly output '0014'" in {
-        Json.toJson(ExemptOnly.desValue) shouldBe JsString("0014")
+        Json.toJson(ExemptOnly.asInstanceOf[DeregistrationReason]) shouldBe JsString("0014")
       }
     }
   }

@@ -42,11 +42,11 @@ class BelowThresholdSpec extends AnyWordSpecLike with Matchers {
     "serializing to JSON" should {
 
       "for BelowPast12Months output '3'" in {
-        Json.toJson(BelowPast12Months.desValue) shouldBe JsString("3")
+        Json.toJson(BelowPast12Months.asInstanceOf[BelowThreshold]) shouldBe JsString("3")
       }
 
       "for BelowNext12Months output '2'" in {
-        Json.toJson(BelowNext12Months.desValue) shouldBe JsString("2")
+        Json.toJson(BelowNext12Months.asInstanceOf[BelowThreshold]) shouldBe JsString("2")
       }
     }
   }

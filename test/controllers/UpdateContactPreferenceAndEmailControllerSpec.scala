@@ -102,7 +102,7 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
             lazy val result = await(TestController.update(testVatNumber)(request))
 
             status(Future.successful(result)) shouldBe INTERNAL_SERVER_ERROR
-            contentAsJson(Future.successful(result)) shouldBe Json.obj("status" -> "500", "message" -> "")
+            contentAsJson(Future.successful(result)) shouldBe Json.obj("status" -> "500", "body" -> "")
           }
         }
       }

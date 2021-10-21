@@ -42,16 +42,16 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
           case Right(status) => Ok(Json.obj(mandationStatusKey -> status.value))
           case Left(InvalidVatNumber) =>
             logger.debug(s"[MandationStatusController][getMandationStatus]: InvalidVatNumber returned from MandationStatusService")
-            BadRequest(Json.toJson(InvalidVatNumber.status))
+            BadRequest(Json.toJson(InvalidVatNumber))
           case Left(VatNumberNotFound) =>
             logger.debug(s"[MandationStatusController][getMandationStatus]: VatNumberNotFound returned from MandationStatusService")
-            NotFound(Json.toJson(VatNumberNotFound.status))
+            NotFound(Json.toJson(VatNumberNotFound))
           case Left(ForbiddenResponse) =>
             logger.debug(s"[MandationStatusController][getMandationStatus]: Forbidden returned from MandationStatusService")
-            Forbidden(Json.toJson(ForbiddenResponse.status))
+            Forbidden(Json.toJson(ForbiddenResponse))
           case Left(Migration) =>
             logger.debug(s"[MandationStatusController][getMandationStatus]: Migration returned from MandationStatusService")
-            PreconditionFailed(Json.toJson(Migration.status))
+            PreconditionFailed(Json.toJson(Migration))
           case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
             logger.debug(s"[MandationStatusController][getMandationStatus]: Unexpected Failure returned from MandationStatusService, status - $status")
             Status(status)(Json.obj("status" -> status.toString, "body" -> body))

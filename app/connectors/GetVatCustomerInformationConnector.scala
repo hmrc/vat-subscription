@@ -59,34 +59,46 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
 
 sealed trait GetVatCustomerInformationFailure {
   val status: Int
-  val message: String
+  val body: String
 }
 
 object GetVatCustomerInformationFailure {
   implicit val writes: Writes[GetVatCustomerInformationFailure] = Writes {
-    error => Json.obj("status" -> error.status.toString, "message" -> error.message)
+    error => Json.obj("status" -> error.status.toString, "body" -> error.body)
   }
 }
 
 case object InvalidVatNumber extends GetVatCustomerInformationFailure {
   override val status: Int = BAD_REQUEST
-  override val message = "Bad request"
+  override val body = "Bad request"
+  implicit val writes: Writes[InvalidVatNumber.type] = Writes {
+    _ => Json.obj("status" -> BAD_REQUEST.toString, "body" -> "Bad request")
+  }
 }
 
 case object VatNumberNotFound extends GetVatCustomerInformationFailure {
   override val status: Int = NOT_FOUND
-  override val message = "Not found"
+  override val body = "Not found"
+  implicit val writes: Writes[VatNumberNotFound.type] = Writes {
+    _ => Json.obj("status" -> NOT_FOUND.toString, "body" -> "Not found")
+  }
 }
 
 case object Forbidden extends GetVatCustomerInformationFailure {
   override val status: Int = FORBIDDEN
-  override val message: String = "Forbidden"
+  override val body: String = "Forbidden"
+  implicit val writes: Writes[Forbidden.type] = Writes {
+    _ => Json.obj("status" -> FORBIDDEN.toString, "body" -> "Forbidden")
+  }
 }
 
 case object Migration extends GetVatCustomerInformationFailure {
   override val status: Int = PRECONDITION_FAILED
-  override val message: String = "Migration"
+  override val body: String = "Migration"
+  implicit val writes: Writes[Migration.type] = Writes {
+    _ => Json.obj("status" -> PRECONDITION_FAILED.toString, "body" -> "Migration")
+  }
 }
 
-case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val message: String)
+case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val body: String)
   extends GetVatCustomerInformationFailure

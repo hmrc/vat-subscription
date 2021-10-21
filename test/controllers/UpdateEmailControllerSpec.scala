@@ -26,11 +26,10 @@ import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
 import helpers.PPOBTestConstants.{ppobModelEmailMaxPost, ppobModelMax}
 import helpers.TestUtil
-import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorModel, updateErrorResponse, updateSuccessResponse}
+import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
-import play.api.test.Helpers.{await, contentAsJson, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockUpdateEmailService, MockVatCustomerDetailsRetrievalService}
-
 import scala.concurrent.Future
 
 class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with MockUpdateEmailService
@@ -50,8 +49,8 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
 
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
-        status(Future.successful(res)) shouldBe FORBIDDEN
+        val res: Future[Result] = TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest)
+        status(res) shouldBe FORBIDDEN
       }
     }
 
@@ -65,10 +64,10 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
           mockUpdateEmail(ppobModelEmailMaxPost)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
+          val res: Future[Result] = TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest)
 
-          status(Future.successful(res)) shouldBe OK
-          contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateSuccessResponse)
+          status(res) shouldBe OK
+          contentAsJson(res) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -77,66 +76,66 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
         "no json body is supplied for the PUT" should {
 
           val emptyUpdateEmailRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          lazy val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(emptyUpdateEmailRequest))
+          lazy val res: Future[Result] = TestUpdateEmailController.updateEmail(testVatNumber)(emptyUpdateEmailRequest)
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
-            status(Future.successful(res)) shouldBe BAD_REQUEST
+            status(res) shouldBe BAD_REQUEST
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe
+            contentAsJson(res) shouldBe
               Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyUpdateEmailRequest.body}"))
           }
         }
 
         "a valid EmailPost is supplied but a Conflict error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
+          lazy val res: Future[Result] = TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest)
 
           "return status CONFLICT (409)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
             mockUpdateEmail(ppobModelEmailMaxPost)(Future.successful(Left(updateConflictResponse)))
-            status(Future.successful(res)) shouldBe CONFLICT
+            status(res) shouldBe CONFLICT
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateConflictResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateConflictResponse)
           }
         }
 
         "a valid EmailPost is supplied but an unexpected error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
+          lazy val res: Future[Result] = TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
             mockUpdateEmail(ppobModelEmailMaxPost)(Future.successful(Left(updateErrorResponse)))
-            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
+            status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
 
         "a valid EmailPost is supplied but an error is returned instead of a welsh indicator" should {
 
-          lazy val res: Result = await(TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest))
+          lazy val res: Future[Result] = TestUpdateEmailController.updateEmail(testVatNumber)(ppobPostRequest)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockExtractWelshIndicator(testVatNumber)(Future(Left(VatNumberNotFound)))
             mockUpdateEmail(ppobModelEmailMaxPost)(Future.successful(Left(updateErrorResponse)))
-            status(Future.successful(res)) shouldBe INTERNAL_SERVER_ERROR
+            status(res) shouldBe INTERNAL_SERVER_ERROR
           }
 
           "return the expected error model" in {
-            contentAsJson(Future.successful(res)) shouldBe Json.toJson(updateErrorModel)
+            contentAsJson(res) shouldBe Json.toJson(VatNumberNotFound)
           }
         }
       }
