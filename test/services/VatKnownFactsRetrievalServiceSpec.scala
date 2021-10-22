@@ -19,16 +19,18 @@ package services
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.play.test.UnitSpec
 import connectors.mocks.MockGetVatCustomerInformationConnector
 import helpers.BaseTestConstants._
 import helpers.CustomerInformationTestConstants._
 import helpers.VatKnownFactsTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.VatKnownFactsRetrievalService._
-
 import scala.concurrent.Future
 
-class VatKnownFactsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomerInformationConnector {
+
+class VatKnownFactsRetrievalServiceSpec extends AnyWordSpecLike with Matchers with MockGetVatCustomerInformationConnector {
 
   object TestVatKnownFactsRetrievalService extends VatKnownFactsRetrievalService(mockConnector)
 
@@ -37,6 +39,7 @@ class VatKnownFactsRetrievalServiceSpec extends UnitSpec with MockGetVatCustomer
   "getVatKnownFacts" should {
 
     "return DeregisteredUser" when {
+
       "the deregistration object exists in the json supplied by GetVatCustomerInformation" in {
         mockGetVatCustomerInformationConnector(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
         val res = TestVatKnownFactsRetrievalService.retrieveVatKnownFacts(testVatNumber)

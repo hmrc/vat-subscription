@@ -20,12 +20,10 @@ import controllers.actions.VatAuthorised
 import javax.inject.{Inject, Singleton}
 import models.updateVatSubscription.response.ErrorModel
 import models.{BusinessName, CustomerDetails, TradingName, User}
-import play.api.Logger
 import play.api.libs.json.Json
 import services.{UpdateOrganisationDetailsService, VatCustomerDetailsRetrievalService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -49,7 +47,7 @@ class UpdateOrganisationDetailsController @Inject()(VatAuthorised: VatAuthorised
   def handleCustomerInfoCall(vrn: String, tradingName: TradingName)(implicit user: User[_]): Future[Result] = {
     vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vrn).flatMap {
       case Right(customerInfo) if noNamesDefined(customerInfo) =>
-        Logger.warn("[UpdateOrganisationDetailsController][updateTradingName] CustomerDetails were returned, but " +
+        logger.warn("[UpdateOrganisationDetailsController][updateTradingName] CustomerDetails were returned, but " +
           "the user has no individual or org names defined")
         Future.successful(InternalServerError(Json.toJson(ErrorModel("INTERNAL_SERVER_ERROR", "The service returned " +
           "CustomerDetails with no defined individual or org names"))))

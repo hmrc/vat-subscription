@@ -19,11 +19,12 @@ package httpparsers
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.test.UnitSpec
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionReads
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class UpdateVatSubscriptionHttpParserSpec extends UnitSpec {
+class UpdateVatSubscriptionHttpParserSpec extends AnyWordSpecLike with Matchers {
 
   "UpdateVatSubscriptionReads .read" when {
 

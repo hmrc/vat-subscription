@@ -43,7 +43,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
+        val res = put(s"/$testVatNumber/return-period")(validReturnPeriodJson)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -59,7 +59,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
         stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
         stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-        val res = await(put(s"/$testVatNumber/return-period")(invalidReturnPeriodJson))
+        val res = put(s"/$testVatNumber/return-period")(invalidReturnPeriodJson)
 
         res should have(
           httpStatus(BAD_REQUEST),
@@ -73,7 +73,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
         stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
         stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-        val res = await(put(s"/$testVatNumber/return-period")(invalidJson))
+        val res = put(s"/$testVatNumber/return-period")(invalidJson)
 
         res should have(
           httpStatus(BAD_REQUEST),
@@ -89,7 +89,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
+          val res = put(s"/$testVatNumber/return-period")(validReturnPeriodJson)
 
           res should have(
             httpStatus(OK),
@@ -106,7 +106,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/return-period")(validReturnPeriodJson))
+          val res = put(s"/$testVatNumber/return-period")(validReturnPeriodJson)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),

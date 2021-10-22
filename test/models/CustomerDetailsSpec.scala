@@ -16,10 +16,11 @@
 
 package models
 
-import uk.gov.hmrc.play.test.UnitSpec
 import helpers.CustomerDetailsTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class CustomerDetailsSpec extends UnitSpec {
+class CustomerDetailsSpec extends AnyWordSpecLike with Matchers {
 
   "CustomerDetails Reads" should {
     "parse the json correctly when all optional fields are populated for the latest release" in {

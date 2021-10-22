@@ -14,25 +14,11 @@
  * limitations under the License.
  */
 
-package models.get
+package utils
 
-import play.api.libs.json.Json
-import helpers.PPOBTestConstants._
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.slf4j.{Logger, LoggerFactory}
+import play.api.LoggerLike
 
-class PPOBAddressGetSpec extends AnyWordSpecLike with Matchers {
-
-  "PPOBAddressGet Reads" should {
-    "parse the json correctly" in {
-      ppobAddressGetJson.as[PPOBAddressGet] shouldBe ppobAddressGetValue
-    }
-  }
-
-  "PPOBAddressGet Writes" should {
-    "output a populated PPOBAddressGet model" in {
-      Json.toJson(ppobAddressGetValue) shouldBe ppobAddressGetJson
-    }
-  }
-
+trait LoggerUtil extends LoggerLike {
+  override val logger: Logger = LoggerFactory.getLogger("application")
 }

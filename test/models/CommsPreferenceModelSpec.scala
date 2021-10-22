@@ -16,12 +16,14 @@
 
 package models
 
+import models.VatCustomerInformation.commsPreferenceWrites
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 
-class CommsPreferenceModelSpec extends UnitSpec {
+class CommsPreferenceModelSpec extends AnyWordSpecLike with Matchers {
 
-  "CommsPreferenceModel" should {
+  "CommsPreference" should {
 
     "correctly parse from json for DigitalPreference" in {
       JsString(DigitalPreference.desValue).as[CommsPreference] shouldBe DigitalPreference
@@ -32,21 +34,19 @@ class CommsPreferenceModelSpec extends UnitSpec {
     }
 
     "correctly parse to json for DigitalPreference to frontends" in {
-      Json.toJson(DigitalPreference)(CommsPreference.writes) shouldBe JsString(DigitalPreference.mdtpValue)
+      Json.toJson(DigitalPreference.asInstanceOf[CommsPreference]) shouldBe JsString(DigitalPreference.mdtpValue)
     }
-
     "correctly parse to json for PaperPreference to frontends" in {
-      Json.toJson(PaperPreference)(CommsPreference.writes) shouldBe JsString(PaperPreference.mdtpValue)
+      Json.toJson(PaperPreference.asInstanceOf[CommsPreference]) shouldBe JsString(PaperPreference.mdtpValue)
     }
 
     "correctly parse to json for DigitalPreference to DES" in {
-      Json.toJson(DigitalPreference)(CommsPreference.updatePreferenceWrites) shouldBe JsString(DigitalPreference.desValue)
+      Json.toJson(DigitalPreference.asInstanceOf[CommsPreference])(CommsPreference.updatePreferenceWrites) shouldBe JsString(DigitalPreference.desValue)
     }
 
     "correctly parse to json for PaperPreference to DES" in {
-      Json.toJson(PaperPreference)(CommsPreference.updatePreferenceWrites) shouldBe JsString(PaperPreference.desValue)
+      Json.toJson(PaperPreference.asInstanceOf[CommsPreference])(CommsPreference.updatePreferenceWrites) shouldBe JsString(PaperPreference.desValue)
     }
-
   }
 
 }

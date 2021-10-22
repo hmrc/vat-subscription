@@ -17,7 +17,6 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -25,7 +24,7 @@ import config.AppConfig
 import controllers.actions.VatAuthorised
 import connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResult}
 import services._
-
+import utils.LoggerUtil
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -33,28 +32,28 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
                                                      vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
                                                      appConfig: AppConfig,
                                                      cc: ControllerComponents)
-                                                    (implicit ec: ExecutionContext) extends BackendController(cc) {
+                                                    (implicit ec: ExecutionContext) extends BackendController(cc) with LoggerUtil {
 
   def retrieveVatCustomerDetails(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
     implicit user =>
       vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vatNumber) map {
         case Right(customerDetails) => Ok(Json.toJson(customerDetails))
         case Left(InvalidVatNumber) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest(Json.toJson(InvalidVatNumber))
         case Left(VatNumberNotFound) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
           NotFound(Json.toJson(VatNumberNotFound))
         case Left(ForbiddenResult) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
             s"Forbidden returned from CustomerDetailsRetrieval Service")
           Forbidden(Json.toJson(ForbiddenResult))
         case Left(Migration) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
             s"Forbidden (MIGRATION) returned from CustomerDetailsRetrieval Service")
           PreconditionFailed(Json.toJson(Migration))
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatCustomerDetails]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
           Status(status)(Json.obj("status" -> status.toString, "body" -> body))
       }
@@ -65,24 +64,24 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
         case Right(vatInformation) =>
           if (vatInformation.changeIndicators.isEmpty)
-            Logger.debug("[RetrieveVatCustomerDetailsController][retrieveVatInformation]: No changeIndicators object returned from GetCustomerInformation")
+            logger.debug("[RetrieveVatCustomerDetailsController][retrieveVatInformation]: No changeIndicators object returned from GetCustomerInformation")
           Ok(Json.toJson(vatInformation))
         case Left(InvalidVatNumber) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
           BadRequest(Json.toJson(InvalidVatNumber))
         case Left(VatNumberNotFound) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: VatNumberNotFound returned from CustomerDetailsRetrieval Service")
           NotFound(Json.toJson(VatNumberNotFound))
         case Left(ForbiddenResult) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
             s"Forbidden returned from CustomerDetailsRetrieval Service")
           Forbidden(Json.toJson(ForbiddenResult))
         case Left(Migration) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
             s"Forbidden (MIGRATION) returned from CustomerDetailsRetrieval Service")
           PreconditionFailed(Json.toJson(Migration))
         case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
-          Logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
+          logger.debug(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]:" +
             s"Unexpected Failure returned from CustomerDetailsRetrieval Service, status - $status")
           Status(status)(Json.obj("status" -> status.toString, "body" -> body))
       }

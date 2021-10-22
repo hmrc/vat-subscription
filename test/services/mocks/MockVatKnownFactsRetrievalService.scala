@@ -23,7 +23,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import services.VatKnownFactsRetrievalService.VatKnownFactRetrievalServiceResponse
 import services._
-
 import scala.concurrent.Future
 
 trait MockVatKnownFactsRetrievalService extends MockitoSugar {

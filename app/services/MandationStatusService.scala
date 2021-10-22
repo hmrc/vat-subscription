@@ -19,18 +19,18 @@ package services
 import javax.inject.{Inject, Singleton}
 import cats.data._
 import cats.implicits._
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{GetVatCustomerInformationConnector, GetVatCustomerInformationFailure}
 import models.MandationStatus
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MandationStatusService @Inject()(getVatCustomerInformationConnector: GetVatCustomerInformationConnector)(implicit ec: ExecutionContext) {
+class MandationStatusService @Inject()(getVatCustomerInformationConnector: GetVatCustomerInformationConnector)
+                                      (implicit ec: ExecutionContext) extends LoggerUtil {
 
   def getMandationStatus(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, MandationStatus]] = {
-    Logger.debug(s"[MandationStatusService][getMandationStatus]: retrieving mandation status from connector for vat number - $vatNumber")
+    logger.debug(s"[MandationStatusService][getMandationStatus]: retrieving mandation status from connector for vat number - $vatNumber")
     EitherT(getVatCustomerInformationConnector.getInformation(vatNumber)).map(_.mandationStatus).value
   }
 }

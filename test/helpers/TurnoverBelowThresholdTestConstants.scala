@@ -43,7 +43,7 @@ object TurnoverBelowThresholdTestConstants {
   val turnoverBelowThresholdDESJsonMin: JsValue = Json.obj(
     "aboveBelowThreshold" -> BelowPast12Months.desValue,
     "taxableSuppliesValue" -> nextTwelveMonthsTurnoverAmt,
-    "reason" -> TurnoverAlreadyBelow
+    "reason" -> "Already below the threshold"
   )
 
   val turnoverBelowThresholdModelMax: TurnoverBelowThreshold = TurnoverBelowThreshold(

@@ -19,12 +19,11 @@ package services.mocks
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.GetVatCustomerInformationFailure
 import models.{CustomerDetails, VatCustomerInformation}
+import org.scalatestplus.mockito.MockitoSugar
 import services._
-
 import scala.concurrent.Future
 
 trait MockVatCustomerDetailsRetrievalService extends MockitoSugar {

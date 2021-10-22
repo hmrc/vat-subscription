@@ -16,9 +16,10 @@
 
 package models
 
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class MandationStatusSpec extends UnitSpec {
+class MandationStatusSpec extends AnyWordSpecLike with Matchers {
 
   "MandationStatus" when {
 

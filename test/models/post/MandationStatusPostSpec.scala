@@ -16,10 +16,11 @@
 
 package models.post
 
-import uk.gov.hmrc.play.test.UnitSpec
 import helpers.MandationStatusTestConstants._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class MandationStatusPostSpec extends UnitSpec {
+class MandationStatusPostSpec extends AnyWordSpecLike with Matchers {
 
   "MandationStatusPost reads" should {
 

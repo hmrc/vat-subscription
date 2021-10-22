@@ -16,15 +16,17 @@
 
 package helpers
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.{Application, Environment, Mode}
 import play.api.libs.json.Writes
 import play.api.libs.ws.{WSClient, WSResponse}
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
-trait ComponentSpecBase extends UnitSpec with GuiceOneServerPerSuite with WiremockHelper
+trait ComponentSpecBase extends AnyWordSpecLike with Matchers with GuiceOneServerPerSuite with WiremockHelper
   with BeforeAndAfterAll with BeforeAndAfterEach {
   lazy val ws = app.injector.instanceOf[WSClient]
 

@@ -17,15 +17,13 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure,
-  VatNumberNotFound, Forbidden => ForbiddenResponse}
+import connectors.{InvalidVatNumber, Migration, UnexpectedGetVatCustomerInformationFailure, VatNumberNotFound, Forbidden => ForbiddenResponse}
 import services.MandationStatusService
-
+import utils.LoggerUtil
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -33,7 +31,7 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
                                           mandationStatusService: MandationStatusService,
                                           cc: ControllerComponents)
                                          (implicit ec: ExecutionContext)
-  extends BackendController(cc) with AuthorisedFunctions {
+  extends BackendController(cc) with AuthorisedFunctions with LoggerUtil {
 
   val mandationStatusKey = "mandationStatus"
 
@@ -43,19 +41,19 @@ class MandationStatusController @Inject()(val authConnector: AuthConnector,
         mandationStatusService.getMandationStatus(vatNumber) map {
           case Right(status) => Ok(Json.obj(mandationStatusKey -> status.value))
           case Left(InvalidVatNumber) =>
-            Logger.debug(s"[MandationStatusController][getMandationStatus]: InvalidVatNumber returned from MandationStatusService")
+            logger.debug(s"[MandationStatusController][getMandationStatus]: InvalidVatNumber returned from MandationStatusService")
             BadRequest(Json.toJson(InvalidVatNumber))
           case Left(VatNumberNotFound) =>
-            Logger.debug(s"[MandationStatusController][getMandationStatus]: VatNumberNotFound returned from MandationStatusService")
+            logger.debug(s"[MandationStatusController][getMandationStatus]: VatNumberNotFound returned from MandationStatusService")
             NotFound(Json.toJson(VatNumberNotFound))
           case Left(ForbiddenResponse) =>
-            Logger.debug(s"[MandationStatusController][getMandationStatus]: Forbidden returned from MandationStatusService")
+            logger.debug(s"[MandationStatusController][getMandationStatus]: Forbidden returned from MandationStatusService")
             Forbidden(Json.toJson(ForbiddenResponse))
           case Left(Migration) =>
-            Logger.debug(s"[MandationStatusController][getMandationStatus]: Migration returned from MandationStatusService")
+            logger.debug(s"[MandationStatusController][getMandationStatus]: Migration returned from MandationStatusService")
             PreconditionFailed(Json.toJson(Migration))
           case Left(UnexpectedGetVatCustomerInformationFailure(status, body)) =>
-            Logger.debug(s"[MandationStatusController][getMandationStatus]: Unexpected Failure returned from MandationStatusService, status - $status")
+            logger.debug(s"[MandationStatusController][getMandationStatus]: Unexpected Failure returned from MandationStatusService, status - $status")
             Status(status)(Json.obj("status" -> status.toString, "body" -> body))
         }
       }

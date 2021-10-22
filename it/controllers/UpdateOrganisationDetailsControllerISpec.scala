@@ -41,7 +41,7 @@ class UpdateOrganisationDetailsControllerISpec extends ComponentSpecBase with Be
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/trading-name")(validTradingNameJson))
+        val res = put(s"/$testVatNumber/trading-name")(validTradingNameJson)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -59,7 +59,7 @@ class UpdateOrganisationDetailsControllerISpec extends ComponentSpecBase with Be
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/trading-name")(validTradingNameJson))
+          val res = put(s"/$testVatNumber/trading-name")(validTradingNameJson)
 
           res should have(
             httpStatus(OK),
@@ -76,7 +76,7 @@ class UpdateOrganisationDetailsControllerISpec extends ComponentSpecBase with Be
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/trading-name")(validTradingNameJson))
+          val res = put(s"/$testVatNumber/trading-name")(validTradingNameJson)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),
@@ -94,7 +94,7 @@ class UpdateOrganisationDetailsControllerISpec extends ComponentSpecBase with Be
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/business-name")(validBusinessNameJson))
+        val res = put(s"/$testVatNumber/business-name")(validBusinessNameJson)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -112,7 +112,7 @@ class UpdateOrganisationDetailsControllerISpec extends ComponentSpecBase with Be
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/business-name")(validBusinessNameJson))
+          val res = put(s"/$testVatNumber/business-name")(validBusinessNameJson)
 
           res should have(
             httpStatus(OK),
@@ -129,7 +129,7 @@ class UpdateOrganisationDetailsControllerISpec extends ComponentSpecBase with Be
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/business-name")(validBusinessNameJson))
+          val res = put(s"/$testVatNumber/business-name")(validBusinessNameJson)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),

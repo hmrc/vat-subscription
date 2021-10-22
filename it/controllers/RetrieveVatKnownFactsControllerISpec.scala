@@ -84,7 +84,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(OK, testSuccessDesResponse(isOverseas = false, isDeregistered = true))
 
-        val res = await(get(s"/$testVatNumber/known-facts"))
+        val res = get(s"/$testVatNumber/known-facts")
 
         res should have(
           httpStatus(OK),
@@ -98,7 +98,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
             stubAuth(OK, successfulAuthResponse())
             stubGetInformation(testVatNumber)(OK, testSuccessDesResponse(isOverseas = false))
 
-            val res = await(get(s"/$testVatNumber/known-facts"))
+            val res = get(s"/$testVatNumber/known-facts")
 
             res should have(
               httpStatus(OK),
@@ -118,7 +118,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
             stubAuth(OK, successfulAuthResponse())
             stubGetInformation(testVatNumber)(OK, testSuccessDesResponse(isOverseas = true))
 
-            val res = await(get(s"/$testVatNumber/known-facts"))
+            val res = get(s"/$testVatNumber/known-facts")
 
             res should have(
               httpStatus(OK),
@@ -136,7 +136,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
           stubAuth(OK, successfulAuthResponse())
           stubGetInformation(testVatNumber)(BAD_GATEWAY, testMinDesResponse)
 
-          val res = await(get(s"/$testVatNumber/known-facts"))
+          val res = get(s"/$testVatNumber/known-facts")
 
           res should have(
             httpStatus(BAD_GATEWAY)
@@ -150,7 +150,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/known-facts"))
+        val res = get(s"/$testVatNumber/known-facts")
 
         res should have(
           httpStatus(NOT_FOUND)
@@ -163,7 +163,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/known-facts"))
+        val res = get(s"/$testVatNumber/known-facts")
 
         res should have(
           httpStatus(BAD_REQUEST)
@@ -176,7 +176,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(FORBIDDEN, migrationResponse)
 
-        val res = await(get(s"/$testVatNumber/known-facts"))
+        val res = get(s"/$testVatNumber/known-facts")
 
         res should have(
           httpStatus(PRECONDITION_FAILED)
@@ -189,7 +189,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(FORBIDDEN, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/known-facts"))
+        val res = get(s"/$testVatNumber/known-facts")
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -202,7 +202,7 @@ class RetrieveVatKnownFactsControllerISpec extends ComponentSpecBase with Before
         stubAuth(OK, successfulAuthResponse())
         stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/known-facts"))
+        val res = get(s"/$testVatNumber/known-facts")
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR),

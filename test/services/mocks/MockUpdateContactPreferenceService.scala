@@ -19,13 +19,12 @@ package services.mocks
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.{User, VatCustomerInformation}
 import models.post.CommsPreferencePost
+import org.scalatestplus.mockito.MockitoSugar
 import services.UpdateContactPreferenceService
-
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockUpdateContactPreferenceService extends MockitoSugar {

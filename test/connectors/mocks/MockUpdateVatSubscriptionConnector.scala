@@ -21,15 +21,15 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import connectors.UpdateVatSubscriptionConnector
 import models.User
 import models.updateVatSubscription.request.UpdateVatSubscription
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockUpdateVatSubscriptionConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockUpdateVatSubscriptionConnector extends AnyWordSpecLike with Matchers with MockitoSugar with BeforeAndAfterEach {
 
   val mockUpdateVatSubscriptionConnector: UpdateVatSubscriptionConnector = mock[UpdateVatSubscriptionConnector]
 

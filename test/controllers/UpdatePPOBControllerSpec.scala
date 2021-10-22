@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Result}
@@ -26,10 +25,11 @@ import connectors.VatNumberNotFound
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
 import helpers.PPOBTestConstants.{ppobModelMax, ppobModelMaxPost}
+import helpers.TestUtil
 import helpers.UpdateVatSubscriptionTestConstants.{updateConflictResponse, updateErrorResponse, updateSuccessResponse}
 import models.updateVatSubscription.response.ErrorModel
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockUpdatePPOBService, MockVatCustomerDetailsRetrievalService}
-
 import scala.concurrent.Future
 
 class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
@@ -49,7 +49,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
 
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+        val res: Future[Result] = TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest)
         status(res) shouldBe FORBIDDEN
       }
     }
@@ -64,10 +64,10 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
           mockUpdatePPOB(ppobModelMaxPost)(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+          val res: Future[Result] = TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest)
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+          contentAsJson(res) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -76,7 +76,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
         "no json body is supplied for the PUT" should {
 
           val emptyPPOBRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          lazy val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(emptyPPOBRequest))
+          lazy val res: Future[Result] = TestUpdatePPOBController.updatePPOB(testVatNumber)(emptyPPOBRequest)
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -85,13 +85,13 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyPPOBRequest.body}"))
+            contentAsJson(res) shouldBe Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${emptyPPOBRequest.body}"))
           }
         }
 
         "a valid PPOB is supplied but a Conflict error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+          lazy val res: Future[Result] = TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest)
 
           "return status CONFLICT (409)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -101,13 +101,13 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateConflictResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateConflictResponse)
           }
         }
 
         "a valid PPOB is supplied but an error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+          lazy val res: Future[Result] = TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -117,13 +117,13 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
         "a valid PPOB is supplied but an error is returned instead of a welsh indicator" should {
 
-          lazy val res: Result = await(TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest))
+          lazy val res: Future[Result] = TestUpdatePPOBController.updatePPOB(testVatNumber)(ppobPostRequest)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -133,7 +133,7 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+            contentAsJson(res) shouldBe Json.toJson(VatNumberNotFound)
           }
         }
       }

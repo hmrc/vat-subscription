@@ -23,7 +23,6 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
 import models.ReturnPeriod
 import services.{UpdateReturnPeriodService, VatCustomerDetailsRetrievalService}
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

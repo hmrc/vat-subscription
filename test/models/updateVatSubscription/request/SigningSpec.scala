@@ -16,10 +16,11 @@
 
 package models.updateVatSubscription.request
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 
-class SigningSpec extends UnitSpec {
+class SigningSpec extends AnyWordSpecLike with Matchers {
 
   "Signing Writes" should {
 

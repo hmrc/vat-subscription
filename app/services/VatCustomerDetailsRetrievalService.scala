@@ -17,24 +17,22 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-
 import cats.data.EitherT
 import cats.instances.future._
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.GetVatCustomerInformationConnector
 import connectors.GetVatCustomerInformationFailure
 import models._
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
 class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVatCustomerInformationConnector)
-                                                  (implicit ec: ExecutionContext) {
+                                                  (implicit ec: ExecutionContext) extends LoggerUtil {
 
   def retrieveVatCustomerDetails(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, CustomerDetails]] = {
-    Logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer details for vat number - $vatNumber")
+    logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer details for vat number - $vatNumber")
     (EitherT(vatCustomerDetailsConnector.getInformation(vatNumber)) map {
       vatCustomerInformation =>
         CustomerDetails(
@@ -65,7 +63,7 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
       case Right(details) =>
         Right(details.welshIndicator.contains(true))
       case Left(error) =>
-        Logger.debug(s"[VatCustomerDetailsRetrievalService][extractWelshIndicator]: " +
+        logger.debug(s"[VatCustomerDetailsRetrievalService][extractWelshIndicator]: " +
           s"vatCustomerDetailsConnector returned an error retrieving welshIndicator - $error")
         Left(error)
     }
@@ -73,7 +71,7 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
 
   def retrieveCircumstanceInformation(vatNumber: String)
                                      (implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]] = {
-    Logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer circumstances for vat number - $vatNumber")
+    logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer circumstances for vat number - $vatNumber")
     vatCustomerDetailsConnector.getInformation(vatNumber)
   }
 

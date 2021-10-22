@@ -16,19 +16,19 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsJson
+import play.api.mvc.{AnyContentAsJson, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import connectors.UnexpectedGetVatCustomerInformationFailure
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
 import helpers.CustomerInformationTestConstants.customerInformationModelMax
+import helpers.TestUtil
 import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockUpdateContactPreferenceService, MockVatCustomerDetailsRetrievalService}
-
 import scala.concurrent.Future
 
 class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
@@ -51,7 +51,7 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
 
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        lazy val result = await(TestController.update(testVatNumber)(FakeRequest()))
+        lazy val result: Future[Result] = TestController.update(testVatNumber)(FakeRequest())
 
         status(result) shouldBe FORBIDDEN
       }
@@ -70,10 +70,10 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
               mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
               mockUpdatePreferenceAndEmail()(Future.successful(Right(updateSuccessResponse)))
 
-              lazy val result = await(TestController.update(testVatNumber)(request))
+              lazy val result: Future[Result] = TestController.update(testVatNumber)(request)
 
               status(result) shouldBe OK
-              jsonBodyOf(result) shouldBe Json.toJson(updateSuccessResponse)
+              contentAsJson(result) shouldBe Json.toJson(updateSuccessResponse)
             }
           }
 
@@ -85,10 +85,10 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
               mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
               mockUpdatePreferenceAndEmail()(Future.successful(Left(updateErrorResponse)))
 
-              lazy val result = await(TestController.update(testVatNumber)(request))
+              lazy val result: Future[Result] = TestController.update(testVatNumber)(request)
 
               status(result) shouldBe INTERNAL_SERVER_ERROR
-              jsonBodyOf(result) shouldBe Json.toJson(updateErrorResponse)
+              contentAsJson(result) shouldBe Json.toJson(updateErrorResponse)
             }
           }
         }
@@ -99,10 +99,10 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, ""))))
 
-            lazy val result = await(TestController.update(testVatNumber)(request))
+            lazy val result: Future[Result] = TestController.update(testVatNumber)(request)
 
             status(result) shouldBe INTERNAL_SERVER_ERROR
-            jsonBodyOf(result) shouldBe Json.obj("status" -> "500", "body" -> "")
+            contentAsJson(result) shouldBe Json.obj("status" -> "500", "body" -> "")
           }
         }
       }
@@ -113,12 +113,12 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
 
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
 
-          lazy val result = await(TestController.update(testVatNumber)(
-            FakeRequest().withJsonBody(Json.obj("blah" -> "blah")))
+          lazy val result: Future[Result] = TestController.update(testVatNumber)(
+            FakeRequest().withJsonBody(Json.obj("blah" -> "blah"))
           )
 
           status(result) shouldBe BAD_REQUEST
-          jsonBodyOf(result) shouldBe Json.obj("status" -> "INVALID_JSON", "message" -> "Json received, but did not validate")
+          contentAsJson(result) shouldBe Json.obj("status" -> "INVALID_JSON", "message" -> "Json received, but did not validate")
         }
       }
     }

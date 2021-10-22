@@ -37,7 +37,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       "return FORBIDDEN" in {
         stubAuthFailure()
 
-        val res = await(get(s"/$testVatNumber/customer-details"))
+        val res = get(s"/$testVatNumber/customer-details")
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -72,7 +72,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
 
-        val res = await(get(s"/$testVatNumber/customer-details"))
+        val res = get(s"/$testVatNumber/customer-details")
 
         res should have(
           httpStatus(OK),
@@ -86,7 +86,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/customer-details"))
+        val res = get(s"/$testVatNumber/customer-details")
 
         res should have(
           httpStatus(BAD_REQUEST)
@@ -99,7 +99,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/customer-details"))
+        val res = get(s"/$testVatNumber/customer-details")
 
         res should have(
           httpStatus(NOT_FOUND)
@@ -112,7 +112,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(FORBIDDEN, migrationResponse)
 
-        val res = await(get(s"/$testVatNumber/customer-details"))
+        val res = get(s"/$testVatNumber/customer-details")
 
         res should have(
           httpStatus(PRECONDITION_FAILED)
@@ -125,7 +125,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(FORBIDDEN, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/customer-details"))
+        val res = get(s"/$testVatNumber/customer-details")
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -138,7 +138,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/customer-details"))
+        val res = get(s"/$testVatNumber/customer-details")
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -153,7 +153,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
       "return FORBIDDEN" in {
         stubAuthFailure()
 
-        val res = await(get(s"/$testVatNumber/full-information"))
+        val res = get(s"/$testVatNumber/full-information")
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -270,7 +270,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
 
-        val res = await(get(s"/$testVatNumber/full-information"))
+        val res = get(s"/$testVatNumber/full-information")
 
         res should have(
           httpStatus(OK),
@@ -284,7 +284,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(BAD_REQUEST, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/full-information"))
+        val res = get(s"/$testVatNumber/full-information")
 
         res should have(
           httpStatus(BAD_REQUEST)
@@ -297,7 +297,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(NOT_FOUND, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/full-information"))
+        val res = get(s"/$testVatNumber/full-information")
 
         res should have(
           httpStatus(NOT_FOUND)
@@ -310,7 +310,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(FORBIDDEN, migrationResponse)
 
-        val res = await(get(s"/$testVatNumber/full-information"))
+        val res = get(s"/$testVatNumber/full-information")
 
         res should have(
           httpStatus(PRECONDITION_FAILED)
@@ -323,7 +323,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(FORBIDDEN, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/full-information"))
+        val res = get(s"/$testVatNumber/full-information")
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -336,7 +336,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(INTERNAL_SERVER_ERROR, Json.obj())
 
-        val res = await(get(s"/$testVatNumber/full-information"))
+        val res = get(s"/$testVatNumber/full-information")
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)

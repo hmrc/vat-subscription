@@ -16,15 +16,15 @@
 
 package connectors
 
-import assets.{MockHttpClient, TestUtil}
 import config.featureSwitch.Api1365Latest
 import helpers.BaseTestConstants.testUser
 import helpers.DeclarationTestConstants._
 import helpers.UpdateVatSubscriptionTestConstants._
+import helpers.{MockHttpClient, TestUtil}
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.updateVatSubscription.request.{ChangeReturnPeriod, ControlInformation, UpdateVatSubscription}
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import scala.concurrent.Future
 
 class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {

@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -27,8 +26,9 @@ import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants._
 import helpers.CustomerDetailsTestConstants._
 import helpers.CustomerInformationTestConstants._
+import helpers.TestUtil
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.MockVatCustomerDetailsRetrievalService
-
 import scala.concurrent.Future
 
 class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
@@ -47,7 +47,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
       "return FORBIDDEN" in {
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
 
-        val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+        val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
         status(res) shouldBe FORBIDDEN
       }
@@ -60,29 +60,29 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMax)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe customerDetailsJsonMax
+          contentAsJson(res) shouldBe customerDetailsJsonMax
         }
 
         "the customer details and flat rate scheme are populated" in {
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMaxWithFRS)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe customerDetailsJsonMaxWithFRS
+          contentAsJson(res) shouldBe customerDetailsJsonMaxWithFRS
         }
         "the customer details are empty" in {
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Right(customerDetailsModelMin)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe customerDetailsJsonMin
+          contentAsJson(res) shouldBe customerDetailsJsonMin
         }
       }
     }
@@ -93,10 +93,10 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
           status(res) shouldBe BAD_REQUEST
-          jsonBodyOf(res) shouldBe Json.toJson(InvalidVatNumber)
+          contentAsJson(res) shouldBe Json.toJson(InvalidVatNumber)
         }
       }
 
@@ -105,10 +105,10 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
           status(res) shouldBe NOT_FOUND
-          jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+          contentAsJson(res) shouldBe Json.toJson(VatNumberNotFound)
         }
       }
 
@@ -117,10 +117,10 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(Forbidden)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
           status(res) shouldBe FORBIDDEN
-          jsonBodyOf(res) shouldBe Json.toJson(Forbidden)
+          contentAsJson(res) shouldBe Json.toJson(Forbidden)
         }
       }
 
@@ -129,10 +129,10 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatCustomerDetails(testVatNumber)(Future.successful(Left(Migration)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
           status(res) shouldBe PRECONDITION_FAILED
-          jsonBodyOf(res) shouldBe Json.toJson(Migration)
+          contentAsJson(res) shouldBe Json.toJson(Migration)
         }
 
 
@@ -146,10 +146,10 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
               UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody)
             )))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest()))
+            val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(testVatNumber)(FakeRequest())
 
             status(res) shouldBe INTERNAL_SERVER_ERROR
-            jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR.toString, "body" -> responseBody)
+            contentAsJson(res) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR.toString, "body" -> responseBody)
           }
         }
       }
@@ -161,7 +161,7 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
         "return FORBIDDEN" in {
           mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
 
           status(res) shouldBe FORBIDDEN
         }
@@ -173,38 +173,38 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMax)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+            val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
 
             status(res) shouldBe OK
-            jsonBodyOf(res) shouldBe customerInformationOutputJsonMax
+            contentAsJson(res) shouldBe customerInformationOutputJsonMax
           }
           "the customer details are populated, with true overseas indicator" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithTrueOverseas)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+            val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
 
             status(res) shouldBe OK
-            jsonBodyOf(res) shouldBe customerInformationOutputJsonMaxWithTrueOverseas
+            contentAsJson(res) shouldBe customerInformationOutputJsonMaxWithTrueOverseas
           }
 
           "the customer details and flat rate scheme are populated" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMaxWithFRS)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+            val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
 
             status(res) shouldBe OK
-            jsonBodyOf(res) shouldBe customerInformationOutputJsonMaxWithFRS
+            contentAsJson(res) shouldBe customerInformationOutputJsonMaxWithFRS
           }
           "the customer details are empty" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Right(customerInformationModelMin)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+            val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
 
             status(res) shouldBe OK
-            jsonBodyOf(res) shouldBe customerInformationOutputJsonMin
+            contentAsJson(res) shouldBe customerInformationOutputJsonMin
           }
         }
       }
@@ -215,9 +215,9 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
             mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
-            val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+            val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
             status(res) shouldBe BAD_REQUEST
-            jsonBodyOf(res) shouldBe Json.toJson(InvalidVatNumber)
+            contentAsJson(res) shouldBe Json.toJson(InvalidVatNumber)
           }
         }
       }
@@ -227,9 +227,9 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
           status(res) shouldBe NOT_FOUND
-          jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+          contentAsJson(res) shouldBe Json.toJson(VatNumberNotFound)
         }
       }
 
@@ -238,9 +238,9 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(Forbidden)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
           status(res) shouldBe FORBIDDEN
-          jsonBodyOf(res) shouldBe Json.toJson(Forbidden)
+          contentAsJson(res) shouldBe Json.toJson(Forbidden)
         }
       }
 
@@ -249,9 +249,9 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
           mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(Migration)))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
           status(res) shouldBe PRECONDITION_FAILED
-          jsonBodyOf(res) shouldBe Json.toJson(Migration)
+          contentAsJson(res) shouldBe Json.toJson(Migration)
         }
       }
 
@@ -263,10 +263,10 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
 
           mockRetrieveVatInformation(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody))))
 
-          val res: Result = await(TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatCustomerDetailsController.retrieveVatInformation(testVatNumber)(FakeRequest())
 
           status(res) shouldBe INTERNAL_SERVER_ERROR
-          jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR.toString, "body" -> responseBody)
+          contentAsJson(res) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR.toString, "body" -> responseBody)
         }
       }
     }

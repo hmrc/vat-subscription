@@ -16,17 +16,18 @@
 
 package services
 
-import assets.TestUtil
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.testUser
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.{ContactDetails, DigitalPreference, PaperPreference}
 import helpers.PPOBTestConstants._
 import helpers.CustomerInformationTestConstants._
+import helpers.TestUtil
 import models.get.PPOBGet
 import models.post.{CommsPreferencePost, PPOBAddressPost, PPOBPost}
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubscriptionConnector {
 

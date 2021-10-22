@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsJson, Result}
@@ -25,12 +24,13 @@ import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import connectors.VatNumberNotFound
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants.testVatNumber
+import helpers.TestUtil
 import helpers.UpdateVatSubscriptionTestConstants.{updateErrorResponse, updateSuccessResponse}
 import models.post.CommsPreferencePost
 import models.updateVatSubscription.response.ErrorModel
 import models.{DigitalPreference, PaperPreference}
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.{MockUpdateContactPreferenceService, MockVatCustomerDetailsRetrievalService}
-
 import scala.concurrent.Future
 
 class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthorised
@@ -53,7 +53,7 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
       "return FORBIDDEN" in {
 
         mockAuthorise(vatAuthPredicate, retrievals)(Future.failed(InsufficientEnrolments()))
-        val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
+        val res: Future[Result] = TestCommsPreference.updateContactPreference(testVatNumber)(paperPref)
         status(res) shouldBe FORBIDDEN
       }
     }
@@ -68,10 +68,10 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
           mockUpdateContactPreference(CommsPreferencePost(PaperPreference))(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
+          val res: Future[Result] = TestCommsPreference.updateContactPreference(testVatNumber)(paperPref)
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+          contentAsJson(res) shouldBe Json.toJson(updateSuccessResponse)
         }
 
         "Digital Preference is supplied and the response from the UpdateVatSubscription service is successful" in {
@@ -80,10 +80,10 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           mockExtractWelshIndicator(testVatNumber)(Future(Right(false)))
           mockUpdateContactPreference(CommsPreferencePost(DigitalPreference))(Future.successful(Right(updateSuccessResponse)))
 
-          val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(digitalPref))
+          val res: Future[Result] = TestCommsPreference.updateContactPreference(testVatNumber)(digitalPref)
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe Json.toJson(updateSuccessResponse)
+          contentAsJson(res) shouldBe Json.toJson(updateSuccessResponse)
         }
       }
 
@@ -91,7 +91,7 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
 
         "no JSON body is supplied" should {
 
-          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(fakeRequest))
+          lazy val res: Future[Result] = TestCommsPreference.updateContactPreference(testVatNumber)(fakeRequest)
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -99,14 +99,14 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe
+            contentAsJson(res) shouldBe
               Json.toJson(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${fakeRequest.body}"))
           }
         }
 
         "an invalid JSON body is supplied" should {
 
-          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(invalidPref))
+          lazy val res: Future[Result] = TestCommsPreference.updateContactPreference(testVatNumber)(invalidPref)
 
           "return status BAD_REQUEST (400)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -114,14 +114,14 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe
+            contentAsJson(res) shouldBe
               Json.toJson(ErrorModel("INVALID_JSON", s"Json received, but did not validate"))
           }
         }
 
         "a valid result is supplied but an error is returned from the UpdateVatSubscription Service" should {
 
-          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
+          lazy val res: Future[Result] = TestCommsPreference.updateContactPreference(testVatNumber)(paperPref)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -131,13 +131,13 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(updateErrorResponse)
+            contentAsJson(res) shouldBe Json.toJson(updateErrorResponse)
           }
         }
 
         "a valid result is supplied but an error is returned instead of a welshIndicator" should {
 
-          lazy val res: Result = await(TestCommsPreference.updateContactPreference(testVatNumber)(paperPref))
+          lazy val res: Future[Result] = TestCommsPreference.updateContactPreference(testVatNumber)(paperPref)
 
           "return status INTERNAL_SERVER_ERROR (500)" in {
             mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
@@ -146,7 +146,7 @@ class UpdateContactPreferenceControllerSpec extends TestUtil with MockVatAuthori
           }
 
           "return the expected error model" in {
-            jsonBodyOf(res) shouldBe Json.toJson(VatNumberNotFound)
+            contentAsJson(res) shouldBe Json.toJson(VatNumberNotFound)
           }
         }
       }

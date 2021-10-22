@@ -16,10 +16,11 @@
 
 package models.updateVatSubscription.request.deregistration
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 
-class BelowThresholdSpec extends UnitSpec {
+class BelowThresholdSpec extends AnyWordSpecLike with Matchers {
 
   "BelowThreshold" when {
 
@@ -41,11 +42,11 @@ class BelowThresholdSpec extends UnitSpec {
     "serializing to JSON" should {
 
       "for BelowPast12Months output '3'" in {
-        Json.toJson(BelowPast12Months) shouldBe JsString("3")
+        Json.toJson(BelowPast12Months.asInstanceOf[BelowThreshold]) shouldBe JsString("3")
       }
 
       "for BelowNext12Months output '2'" in {
-        Json.toJson(BelowNext12Months) shouldBe JsString("2")
+        Json.toJson(BelowNext12Months.asInstanceOf[BelowThreshold]) shouldBe JsString("2")
       }
     }
   }

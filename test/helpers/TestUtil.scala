@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package assets
+package helpers
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import config.AppConfig
 import config.featureSwitch.{Api1363Latest, Api1365Latest}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.Injector
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.play.test.UnitSpec
-
 import scala.concurrent.ExecutionContext
 
-class TestUtil extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
+trait TestUtil extends AnyWordSpecLike with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

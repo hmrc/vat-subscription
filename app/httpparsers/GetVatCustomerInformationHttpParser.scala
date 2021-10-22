@@ -20,13 +20,13 @@ import config.AppConfig
 import connectors._
 import javax.inject.{Inject, Singleton}
 import models.VatCustomerInformation
-import play.api.Logger
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.LoggerUtil
 
 @Singleton
-class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) {
+class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extends LoggerUtil {
 
   type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
 
@@ -34,16 +34,16 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) {
     override def read(method: String, url: String, response: HttpResponse): GetVatCustomerInformationHttpParserResponse =
       response.status match {
         case OK =>
-          Logger.debug("[CustomerCircumstancesHttpParser][read]: Status OK")
+          logger.debug("[CustomerCircumstancesHttpParser][read]: Status OK")
           response.json.validate(
             VatCustomerInformation.reads(appConfig)
 
           ) match {
             case JsSuccess(vatCustomerInformation, _) =>
-              Logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
+              logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
               Right(vatCustomerInformation)
             case JsError(errors) =>
-              Logger.warn(s"Invalid Success Response Json. Error: $errors")
+              logger.warn(s"Invalid Success Response Json. Error: $errors")
               Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
           }
         case _ => handleErrorResponse(response)
@@ -57,11 +57,11 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) {
         logUnexpectedResponse(response, logBody = true)
         Left(InvalidVatNumber)
       case NOT_FOUND =>
-        Logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
+        logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
           s"NOT FOUND returned - Subscription not found. Status: $NOT_FOUND. Body: ${response.body}")
         Left(VatNumberNotFound)
       case FORBIDDEN if response.body.contains("MIGRATION") =>
-        Logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
+        logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
           "FORBIDDEN returned with MIGRATION - Migration in progress.")
         Left(Migration)
       case FORBIDDEN =>
@@ -74,7 +74,7 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) {
   }
 
   def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response", logBody: Boolean = false): Unit = {
-    Logger.warn(
+    logger.warn(
       s"[CustomerCircumstancesHttpParser][logUnexpectedResponse]: $message. " +
         s"Status: ${response.status}. " +
         s"${ if(logBody) s"Body: ${response.body} " else "" } " +

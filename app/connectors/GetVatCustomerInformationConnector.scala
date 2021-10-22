@@ -19,17 +19,16 @@ package connectors
 import config.AppConfig
 import httpparsers.GetVatCustomerInformationHttpParser
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, NOT_FOUND, PRECONDITION_FAILED}
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-
+import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
                                                    val appConfig: AppConfig,
-                                                   val httpParser: GetVatCustomerInformationHttpParser) {
+                                                   val httpParser: GetVatCustomerInformationHttpParser) extends LoggerUtil {
 
   import httpParser.GetVatCustomerInformationHttpParserResponse
 
@@ -44,8 +43,8 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetVatCustomerInformationHttpParserResponse] = {
     val headerCarrier = hc.copy(authorization = None)
 
-    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
-    Logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: $desHeaders")
+    logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
+    logger.debug(s"[GetVatCustomerInformationConnector][getInformation] Headers: $desHeaders")
 
     http.GET[GetVatCustomerInformationHttpParserResponse](
       url = url(vatNumber),
@@ -72,21 +71,33 @@ object GetVatCustomerInformationFailure {
 case object InvalidVatNumber extends GetVatCustomerInformationFailure {
   override val status: Int = BAD_REQUEST
   override val body = "Bad request"
+  implicit val writes: Writes[InvalidVatNumber.type] = Writes {
+    _ => Json.obj("status" -> status.toString, "body" -> body)
+  }
 }
 
 case object VatNumberNotFound extends GetVatCustomerInformationFailure {
   override val status: Int = NOT_FOUND
   override val body = "Not found"
+  implicit val writes: Writes[VatNumberNotFound.type] = Writes {
+    _ => Json.obj("status" -> status.toString, "body" -> body)
+  }
 }
 
 case object Forbidden extends GetVatCustomerInformationFailure {
   override val status: Int = FORBIDDEN
   override val body: String = "Forbidden"
+  implicit val writes: Writes[Forbidden.type] = Writes {
+    _ => Json.obj("status" -> status.toString, "body" -> body)
+  }
 }
 
 case object Migration extends GetVatCustomerInformationFailure {
   override val status: Int = PRECONDITION_FAILED
   override val body: String = "Migration"
+  implicit val writes: Writes[Migration.type] = Writes {
+    _ => Json.obj("status" -> status.toString, "body" -> body)
+  }
 }
 
 case class UnexpectedGetVatCustomerInformationFailure(override val status: Int, override val body: String)

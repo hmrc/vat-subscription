@@ -16,17 +16,17 @@
 
 package controllers
 
-import assets.TestUtil
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import controllers.actions.mocks.MockVatAuthorised
 import helpers.BaseTestConstants._
+import helpers.TestUtil
 import helpers.VatKnownFactsTestConstants._
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import services.mocks.MockVatKnownFactsRetrievalService
 import services.VatKnownFactsRetrievalService._
-
 import scala.concurrent.Future
 
 class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorised with MockVatKnownFactsRetrievalService {
@@ -41,10 +41,10 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
         mockAuthorise()(Future.successful(Unit))
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(DeregisteredUser)))
 
-        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+        val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
 
         status(res) shouldBe OK
-        jsonBodyOf(res) shouldBe testJson
+        contentAsJson(res) shouldBe testJson
       }
     }
 
@@ -55,10 +55,10 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
           mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(vatKnownFacts(isOverseas = false))))
 
-          val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe vatKnownFactsJson
+          contentAsJson(res) shouldBe vatKnownFactsJson
         }
 
         "the user is overseas" in {
@@ -66,10 +66,10 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
           mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(vatKnownFacts(isOverseas = true))))
 
-          val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+          val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
 
           status(res) shouldBe OK
-          jsonBodyOf(res) shouldBe vatKnownFactsOverseasJson
+          contentAsJson(res) shouldBe vatKnownFactsOverseasJson
         }
       }
     }
@@ -81,7 +81,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
-        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+        val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
 
         status(res) shouldBe BAD_REQUEST
       }
@@ -93,7 +93,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
-        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+        val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
 
         status(res) shouldBe NOT_FOUND
       }
@@ -105,7 +105,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(Forbidden)))
 
-        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+        val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
 
         status(res) shouldBe FORBIDDEN
       }
@@ -118,7 +118,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(Migration)))
 
-        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+        val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
         status(res) shouldBe PRECONDITION_FAILED
       }
     }
@@ -130,7 +130,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(InvalidVatKnownFacts)))
 
-        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+        val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
 
         status(res) shouldBe BAD_GATEWAY
       }
@@ -144,10 +144,10 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody))))
 
-        val res: Result = await(TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest()))
+        val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
 
         status(res) shouldBe INTERNAL_SERVER_ERROR
-        jsonBodyOf(await(res)) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
+        contentAsJson(res) shouldBe Json.obj("status" -> INTERNAL_SERVER_ERROR, "body" -> responseBody)
       }
     }
   }

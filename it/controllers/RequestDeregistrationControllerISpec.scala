@@ -52,7 +52,7 @@ class RequestDeregistrationControllerISpec extends ComponentSpecBase with Before
 
         stubAuthFailure()
 
-        val res = await(put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson))
+        val res = put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson)
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -70,7 +70,7 @@ class RequestDeregistrationControllerISpec extends ComponentSpecBase with Before
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(OK, testSuccessDesResponse)
 
-          val res = await(put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson))
+          val res = put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson)
 
           res should have(
             httpStatus(OK),
@@ -87,7 +87,7 @@ class RequestDeregistrationControllerISpec extends ComponentSpecBase with Before
           stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
           stubUpdateSubscription(testVatNumber)(BAD_REQUEST, testErrorDesResponse)
 
-          val res = await(put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson))
+          val res = put(s"/$testVatNumber/deregister")(validDeregistrationRequestJson)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),

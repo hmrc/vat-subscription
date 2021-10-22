@@ -16,26 +16,26 @@
 
 package controllers
 
-import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, Reads}
 import play.api.mvc.AnyContentAsJson
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import models.User
 import models.updateVatSubscription.response.ErrorModel
+import utils.LoggerUtil
 
 
-trait MicroserviceBaseController extends BackendController {
+trait MicroserviceBaseController extends BackendController with LoggerUtil {
 
   def parseJsonBody[T](implicit user: User[_], rds: Reads[T]): Either[ErrorModel, T] = user.body match {
     case body: AnyContentAsJson => body.json.validate[T] match {
       case e: JsError =>
-        Logger.debug(s"[MicroserviceBaseController][parseJsonBody] Json received, but did not validate. Errors: $e")
-        Logger.warn("[MicroserviceBaseController][parseJsonBody] Json received, but did not validate")
+        logger.debug(s"[MicroserviceBaseController][parseJsonBody] Json received, but did not validate. Errors: $e")
+        logger.warn("[MicroserviceBaseController][parseJsonBody] Json received, but did not validate")
         Left(ErrorModel("INVALID_JSON", s"Json received, but did not validate"))
       case s: JsSuccess[T] => Right(s.value)
     }
     case _ =>
-      Logger.warn("[MicroserviceBaseController][parseJsonBody] Body of request was not JSON")
+      logger.warn("[MicroserviceBaseController][parseJsonBody] Body of request was not JSON")
       Left(ErrorModel("INVALID_JSON", s"Body of request was not JSON, ${user.body}"))
   }
 

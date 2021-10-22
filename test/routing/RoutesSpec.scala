@@ -16,9 +16,9 @@
 
 package routing
 
-import assets.TestUtil
 import controllers.routes._
 import helpers.BaseTestConstants.testVatNumber
+import helpers.TestUtil
 
 class RoutesSpec extends TestUtil {
 

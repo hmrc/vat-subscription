@@ -16,8 +16,8 @@
 
 package models
 
-import play.api.libs.json._
 import play.api.Logger
+import play.api.libs.json._
 
 sealed trait PartyType {
   val value: String
