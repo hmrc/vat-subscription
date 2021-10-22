@@ -72,7 +72,7 @@ case object InvalidVatNumber extends GetVatCustomerInformationFailure {
   override val status: Int = BAD_REQUEST
   override val body = "Bad request"
   implicit val writes: Writes[InvalidVatNumber.type] = Writes {
-    _ => Json.obj("status" -> BAD_REQUEST.toString, "body" -> "Bad request")
+    _ => Json.obj("status" -> status.toString, "body" -> body)
   }
 }
 
@@ -80,7 +80,7 @@ case object VatNumberNotFound extends GetVatCustomerInformationFailure {
   override val status: Int = NOT_FOUND
   override val body = "Not found"
   implicit val writes: Writes[VatNumberNotFound.type] = Writes {
-    _ => Json.obj("status" -> NOT_FOUND.toString, "body" -> "Not found")
+    _ => Json.obj("status" -> status.toString, "body" -> body)
   }
 }
 
@@ -88,7 +88,7 @@ case object Forbidden extends GetVatCustomerInformationFailure {
   override val status: Int = FORBIDDEN
   override val body: String = "Forbidden"
   implicit val writes: Writes[Forbidden.type] = Writes {
-    _ => Json.obj("status" -> FORBIDDEN.toString, "body" -> "Forbidden")
+    _ => Json.obj("status" -> status.toString, "body" -> body)
   }
 }
 
@@ -96,7 +96,7 @@ case object Migration extends GetVatCustomerInformationFailure {
   override val status: Int = PRECONDITION_FAILED
   override val body: String = "Migration"
   implicit val writes: Writes[Migration.type] = Writes {
-    _ => Json.obj("status" -> PRECONDITION_FAILED.toString, "body" -> "Migration")
+    _ => Json.obj("status" -> status.toString, "body" -> body)
   }
 }
 
