@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json._
 import config.AppConfig
-import models.MandationStatus.{desReader, desReaderOld}
+import models.MandationStatus.desReader
 import models.ReturnPeriod.filterReturnPeriod
 import models.get.{PPOBAddressGet, PPOBGet}
 import utils.{JsonObjectSugar, JsonReadUtil}
@@ -114,9 +114,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     effectiveRegistrationDate <- (customerDetailsPath \ effectiveRegistrationDateKey).readOpt[String]
     customerMigratedToETMPDate <- (customerDetailsPath \ customerMigratedToETMPDateKey).readOpt[String]
     hybridToFullMigrationDate <- (customerDetailsPath \ hybridToFullMigrationDateKey).readOpt[String]
-    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus](
-      if (conf.features.newStatusIndicators()) desReader else desReaderOld
-    )
+    mandationStatus <- (customerDetailsPath \ mandationStatusKey).read[MandationStatus](desReader)
     welshIndicator <- (customerDetailsPath \ welshIndicatorKey).readOpt[Boolean]
     isPartialMigration <- (customerDetailsPath \ isPartialMigrationKey).readOpt[Boolean]
     flatRateScheme <- flatRateSchemePath.readOpt[FlatRateScheme]

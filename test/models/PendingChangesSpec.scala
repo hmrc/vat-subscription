@@ -27,45 +27,24 @@ class PendingChangesSpec extends TestUtil {
 
   "PendingChanges" when {
 
-    "all optional fields are populated" when {
+    "all optional fields are populated" should {
 
-      "the newStatusIndicators feature is on" should {
+      val model = PendingChanges(
+        Some(ppobModelMax),
+        Some(bankDetailsModelMax),
+        Some(MCReturnPeriod(None, None, None)),
+        Some(MTDfB),
+        Some(DigitalPreference),
+        Some(tradingName),
+        Some(orgName)
+      )
 
-        val model = PendingChanges(
-          Some(ppobModelMax),
-          Some(bankDetailsModelMax),
-          Some(MCReturnPeriod(None, None, None)),
-          Some(MTDfB),
-          Some(DigitalPreference),
-          Some(tradingName),
-          Some(orgName)
-        )
-
-        "read from JSON" in {
-          PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldBe model
-        }
-
-        "write to JSON" in {
-          PendingChanges.writes.writes(model) shouldBe pendingChangesOutputMax
-        }
+      "read from JSON" in {
+        PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldBe model
       }
 
-      "the newStatusIndicators feature is off" should {
-
-        val model = PendingChanges(
-          Some(ppobModelMax),
-          Some(bankDetailsModelMax),
-          Some(MCReturnPeriod(None, None, None)),
-          Some(MTDfBVoluntary),
-          Some(DigitalPreference),
-          Some(tradingName),
-          Some(orgName)
-        )
-
-        "read from JSON" in {
-          mockAppConfig.features.newStatusIndicators(false)
-          PendingChanges.reads(mockAppConfig).reads(inFlightChanges).get shouldBe model
-        }
+      "write to JSON" in {
+        PendingChanges.writes.writes(model) shouldBe pendingChangesOutputMax
       }
     }
 

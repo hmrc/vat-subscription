@@ -110,41 +110,16 @@ class VatCustomerInformationSpec extends TestUtil {
     }
   }
 
-  "the latest release reads" when {
+  "the latest release reads" should {
 
-    "the newStatusIndicators feature is on" should {
-
-      "parse the json correctly when all fields are present" in {
-        VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMaxWithFRS).get shouldBe
-          customerInformationModelMaxWithFRS
-      }
-
-      "parse the json correctly when there is the minimum number of fields present" in {
-        VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMin).get shouldBe
-          customerInformationModelMin
-      }
+    "parse the json correctly when all fields are present" in {
+      VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMaxWithFRS).get shouldBe
+        customerInformationModelMaxWithFRS
     }
 
-    "the newStatusIndicators feature is off" should {
-
-      val model = customerInformationModelMaxWithFRS.copy(
-        mandationStatus = MTDfBVoluntary,
-        pendingChanges = Some(PendingChanges(
-          Some(ppobModelMax),
-          Some(bankDetailsModelMax),
-          Some(MCReturnPeriod(None, None, None)),
-          Some(MTDfBVoluntary),
-          Some(DigitalPreference),
-          Some(tradingName),
-          Some(orgName)
-        ))
-      )
-
-      "parse the json correctly" in {
-        mockAppConfig.features.newStatusIndicators(false)
-        VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMaxWithFRS).get shouldBe
-          model
-      }
+    "parse the json correctly when there is the minimum number of fields present" in {
+      VatCustomerInformation.reads(mockAppConfig).reads(customerInformationDESJsonMin).get shouldBe
+        customerInformationModelMin
     }
   }
 
@@ -160,5 +135,4 @@ class VatCustomerInformationSpec extends TestUtil {
         customerInformationOutputJsonMin
     }
   }
-
 }

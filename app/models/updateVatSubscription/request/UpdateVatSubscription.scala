@@ -19,7 +19,7 @@ package models.updateVatSubscription.request
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import config.AppConfig
-import models.MandationStatus.{desReader, desReaderOld, desWriter}
+import models.MandationStatus.{desReader, desWriter}
 import models.updateVatSubscription.request.deregistration.DeregistrationInfo
 import models.{CommsPreference, MandationStatus}
 
@@ -62,9 +62,7 @@ object ControlInformation {
   implicit val reads: AppConfig => Reads[ControlInformation] = conf => for {
     welshIndicator <- welshIndicatorPath.read[Boolean]
     source <- sourcePath.read[String]
-    mandationStatus <- mandationStatusPath.readNullable[MandationStatus](
-      if (conf.features.newStatusIndicators()) desReader else desReaderOld
-    )
+    mandationStatus <- mandationStatusPath.readNullable[MandationStatus](desReader)
   } yield ControlInformation(welshIndicator, source, mandationStatus)
 
   implicit val writes: Writes[ControlInformation] = (

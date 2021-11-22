@@ -78,24 +78,13 @@ class UpdateVatSubscriptionSpec extends TestUtil {
 
     "reading from JSON" should {
 
-      "Output the correct model with all optional values from the provided JSON" when {
+      "Output the correct model with all optional values from the provided JSON" in {
 
-        "the newStatusIndicators feature is on" in {
-          ControlInformation.reads(mockAppConfig).reads(controlInformationJsonMax).get shouldBe
-            ControlInformation(
-              welshIndicator = true,
-              mandationStatus = Some(MTDfBExempt)
-            )
-        }
-
-        "the newStatusIndicators feature is off" in {
-          mockAppConfig.features.newStatusIndicators(false)
-          ControlInformation.reads(mockAppConfig).reads(controlInformationJsonMax).get shouldBe
-            ControlInformation(
-              welshIndicator = true,
-              mandationStatus = Some(MTDfBMandated)
-            )
-        }
+        ControlInformation.reads(mockAppConfig).reads(controlInformationJsonMax).get shouldBe
+          ControlInformation(
+            welshIndicator = true,
+            mandationStatus = Some(MTDfBExempt)
+          )
       }
 
       "Output the correct model with no optional values from the provided JSON" in {

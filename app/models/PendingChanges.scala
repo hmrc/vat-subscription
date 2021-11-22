@@ -19,7 +19,7 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, Writes, __}
 import config.AppConfig
-import models.MandationStatus.{desReader, desReaderOld}
+import models.MandationStatus.desReader
 import models.ReturnPeriod.filterReturnPeriod
 import models.get.PPOBGet
 
@@ -45,9 +45,7 @@ object PendingChanges {
     ppob <- ppobPath.readNullable[PPOBGet]
     bankDetails <- bankDetailsPath.readNullable[BankDetails]
     returnPeriod <- returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.inFlightReads)
-    mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus](
-      if (conf.features.newStatusIndicators()) desReader else desReaderOld
-    ).orElse(Reads.pure(None))
+    mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus](desReader).orElse(Reads.pure(None))
     commsPref <- commsPreferenceDesPath.readNullable[CommsPreference].orElse(Reads.pure(None))
     tradingName <- tradingNamePath.readNullable[String].orElse(Reads.pure(None))
     organisationName <- organisationNamePath.readNullable[String].orElse(Reads.pure(None))
