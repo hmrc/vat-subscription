@@ -17,7 +17,6 @@
 package models
 
 import play.api.libs.json._
-import config.AppConfig
 import utils.JsonObjectSugar
 
 abstract class ReturnPeriod(transOrCapEmail: Option[String],
@@ -192,14 +191,12 @@ object ReturnPeriod extends JsonObjectSugar {
     )
   )
 
-  def filterReturnPeriod(returnPeriod: Option[ReturnPeriod], appConf: AppConfig): Option[ReturnPeriod] = {
-    if(!appConf.features.enableAnnualAccounting()){
-      returnPeriod.filter(period =>
-        period.isInstanceOf[MAReturnPeriod] ||
-          period.isInstanceOf[MBReturnPeriod] ||
-          period.isInstanceOf[MCReturnPeriod] ||
-          period.isInstanceOf[MMReturnPeriod]
-      )
-    } else returnPeriod
+  def filterReturnPeriod(returnPeriod: Option[ReturnPeriod]): Option[ReturnPeriod] = {
+    returnPeriod.filter(period =>
+      period.isInstanceOf[MAReturnPeriod] ||
+        period.isInstanceOf[MBReturnPeriod] ||
+        period.isInstanceOf[MCReturnPeriod] ||
+        period.isInstanceOf[MMReturnPeriod]
+    )
   }
 }

@@ -25,6 +25,4 @@ class Features @Inject()(implicit config: Configuration) extends BaseFeature {
   private val featureSwitch: String = "feature-switch"
   lazy val api1365Version = new Api1365VersionFeature(s"$featureSwitch.Api1365Version")
   lazy val api1363Version = new Api1363VersionFeature(s"$featureSwitch.Api1363Version")
-  lazy val enableAnnualAccounting = new Feature(s"$featureSwitch.enableAnnualAccounting")
-
 }

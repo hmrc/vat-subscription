@@ -159,7 +159,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     flatRateScheme,
     ppob,
     bankDetails,
-    filterReturnPeriod(returnPeriod, conf),
+    filterReturnPeriod(returnPeriod),
     deregistration,
     changeIndicators,
     pendingChanges,

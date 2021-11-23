@@ -52,7 +52,7 @@ object PendingChanges {
   } yield PendingChanges(
     ppob,
     bankDetails,
-    filterReturnPeriod(returnPeriod, conf),
+    filterReturnPeriod(returnPeriod),
     mandationStatus,
     commsPref,
     tradingName,
