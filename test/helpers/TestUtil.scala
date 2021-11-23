@@ -38,7 +38,6 @@ trait TestUtil extends AnyWordSpecLike with Matchers with GuiceOneAppPerSuite wi
     mockAppConfig.features.api1365Version(Api1365Latest)
     mockAppConfig.features.api1363Version(Api1363Latest)
     mockAppConfig.features.enableAnnualAccounting(true)
-    mockAppConfig.features.newStatusIndicators(true)
   }
 
   lazy val injector: Injector = app.injector

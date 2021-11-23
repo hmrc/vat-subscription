@@ -56,13 +56,6 @@ case object MTDfB extends MandationStatus {
 
 object MandationStatus {
 
-  val desReaderOld: Reads[MandationStatus] = JsPath.read[String].map {
-    case MTDfBMandated.`desValue` => MTDfBMandated
-    case MTDfBVoluntary.`desValue` => MTDfBVoluntary
-    case NonMTDfB.`desValue` => NonMTDfB
-    case NonDigital.`desValue` => NonDigital
-  }
-
   val desReader: Reads[MandationStatus] = JsPath.read[String].map {
     case MTDfBExempt.`desValue` => MTDfBExempt
     case MTDfB.`desValue` => MTDfB

@@ -20,8 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class FeatureSwitchModel(Api1365Version: Api1365Version,
                               Api1363Version: Api1363Version,
-                              enableAnnualAccounting: Boolean,
-                              newStatusIndicators: Boolean)
+                              enableAnnualAccounting: Boolean)
 
 object FeatureSwitchModel {
   implicit val format: OFormat[FeatureSwitchModel] = Json.format[FeatureSwitchModel]
