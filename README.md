@@ -24,10 +24,6 @@ Change Feature Switches:
 The API version features are set to "Latest" when they are working correctly against the most recent DES spec.
 If there is a need to implement upcoming functionality that would not work yet in Production, the old version can be referred to as "Pre-release".
 
-["enableNewStatusIndicators"]
-When on this will use the following mandation statuses:
-"MTDfB Exempt", "MTDfB", "Non MTDfB" or "Non Digital"
-
 ## Endpoints
 
 ### GET /vat-subscription/:vatNumber/mandation-status
@@ -43,7 +39,7 @@ Where:
 **Example HTTP Response Body**:
 ```
 {
-   "mandationStatus": "MTDfB Mandated"
+   "mandationStatus": "MTDfB Exempt"
 }
 ```
 Where:
