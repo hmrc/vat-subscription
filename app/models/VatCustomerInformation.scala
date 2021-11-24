@@ -19,7 +19,6 @@ package models
 import play.api.libs.json._
 import config.AppConfig
 import models.MandationStatus.desReader
-import models.ReturnPeriod.filterReturnPeriod
 import models.get.{PPOBAddressGet, PPOBGet}
 import utils.{JsonObjectSugar, JsonReadUtil}
 
@@ -159,7 +158,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     flatRateScheme,
     ppob,
     bankDetails,
-    filterReturnPeriod(returnPeriod),
+    returnPeriod,
     deregistration,
     changeIndicators,
     pendingChanges,

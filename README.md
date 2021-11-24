@@ -273,7 +273,7 @@ The request takes a body of the form:
 ```
 Where:
 
-* **stdReturnPeriod** is mandatory and can take values "MA", "MB", "MC" or "MM".
+* **stdReturnPeriod** is mandatory and can take values "MA", "MB", "MC" or "MM", "YA", "YB", "YC", "YD", "YE", "YF", "YG", "YH", "YI", "YJ", "YK", "YL".
 
 
 #### Success Response

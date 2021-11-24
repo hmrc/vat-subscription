@@ -160,37 +160,4 @@ class ReturnPeriodSpec extends TestUtil {
       }
     }
   }
-
-  "ReturnPeriod .filterReturnPeriod" should {
-
-    val returnPeriods: List[ReturnPeriod] = List(
-      MAReturnPeriod(None, None, None),
-      MBReturnPeriod(None, None, None),
-      MCReturnPeriod(None, None, None),
-      MMReturnPeriod(None, None, None),
-      YAReturnPeriod(None, None, None),
-      YBReturnPeriod(None, None, None),
-      YCReturnPeriod(None, None, None),
-      YDReturnPeriod(None, None, None),
-      YEReturnPeriod(None, None, None),
-      YFReturnPeriod(None, None, None),
-      YGReturnPeriod(None, None, None),
-      YHReturnPeriod(None, None, None),
-      YIReturnPeriod(None, None, None),
-      YJReturnPeriod(None, None, None),
-      YKReturnPeriod(None, None, None),
-      YLReturnPeriod(None, None, None)
-    )
-
-    "return the same return periods back for all returnPeriods" in {
-      for(rp <- returnPeriods){ReturnPeriod.filterReturnPeriod(Some(rp)) shouldBe Some(rp)}
-    }
-
-    "not supplied with a return period" should {
-
-      "return None" in {
-        ReturnPeriod.filterReturnPeriod(None) shouldBe None
-      }
-    }
-  }
 }

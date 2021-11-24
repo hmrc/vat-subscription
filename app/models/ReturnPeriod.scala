@@ -190,13 +190,4 @@ object ReturnPeriod extends JsonObjectSugar {
       "firstNonNSTPPeriod" -> period.firstNonNSTPTaxPeriod
     )
   )
-
-  def filterReturnPeriod(returnPeriod: Option[ReturnPeriod]): Option[ReturnPeriod] = {
-    returnPeriod.filter(period =>
-      period.isInstanceOf[MAReturnPeriod] ||
-        period.isInstanceOf[MBReturnPeriod] ||
-        period.isInstanceOf[MCReturnPeriod] ||
-        period.isInstanceOf[MMReturnPeriod]
-    )
-  }
 }

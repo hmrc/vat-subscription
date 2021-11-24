@@ -20,7 +20,6 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{Reads, Writes, __}
 import config.AppConfig
 import models.MandationStatus.desReader
-import models.ReturnPeriod.filterReturnPeriod
 import models.get.PPOBGet
 
 case class PendingChanges(ppob: Option[PPOBGet],
@@ -52,7 +51,7 @@ object PendingChanges {
   } yield PendingChanges(
     ppob,
     bankDetails,
-    filterReturnPeriod(returnPeriod),
+    returnPeriod,
     mandationStatus,
     commsPref,
     tradingName,
