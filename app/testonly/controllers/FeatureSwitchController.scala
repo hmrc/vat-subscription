@@ -31,15 +31,13 @@ class FeatureSwitchController @Inject()(appConfig: AppConfig,
   lazy val update: Action[FeatureSwitchModel] = Action(parse.json[FeatureSwitchModel]) { req =>
     appConfig.features.api1365Version(req.body.Api1365Version)
     appConfig.features.api1363Version(req.body.Api1363Version)
-    appConfig.features.enableAnnualAccounting(req.body.enableAnnualAccounting)
     result
   }
 
   def result: Result = {
     Ok(Json.toJson(FeatureSwitchModel(
       Api1365Version = appConfig.features.api1365Version(),
-      Api1363Version = appConfig.features.api1363Version(),
-      enableAnnualAccounting = appConfig.features.enableAnnualAccounting()
+      Api1363Version = appConfig.features.api1363Version()
     )))
   }
 }
