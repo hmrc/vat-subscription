@@ -55,12 +55,14 @@ class ReturnPeriodSpec extends TestUtil {
     }
 
     "the minimum number of fields are present" should {
-      val json = Json.obj("stdReturnPeriod" -> "MA")
 
-      val model: ReturnPeriod = MAReturnPeriod(None, None, None)
-
-      "output a correctly formatted ReturnPeriod json with no email address" in {
-        ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
+      periods.foreach { period =>
+        val std = period.period.stdReturnPeriod
+        s"output a correctly formatted ReturnPeriod json with no email address for $std period" in {
+          val json = Json.obj("stdReturnPeriod" -> period.period.stdReturnPeriod)
+          val model: ReturnPeriod = period.period
+          ReturnPeriod.currentDesReads.reads(json).get shouldEqual model
+        }
       }
     }
   }
@@ -95,68 +97,10 @@ class ReturnPeriodSpec extends TestUtil {
 
     "the minimum number of fields are present" should {
 
-      "output correctly formatted JSON for a MAReturnPeriod" in {
-        Json.toJson(MAReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodMAJson
-      }
-
-      "output correctly formatted JSON for a MBReturnPeriod" in {
-        Json.toJson(MBReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodMBJson
-      }
-
-      "output correctly formatted JSON for a MCReturnPeriod" in {
-        Json.toJson(MCReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodMCJson
-      }
-
-      "output correctly formatted JSON for a MMReturnPeriod" in {
-        Json.toJson(MMReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodMMJson
-      }
-
-      "output correctly formatted JSON for a YAReturnPeriod" in {
-        Json.toJson(YAReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYAJson
-      }
-
-      "output correctly formatted JSON for a YBReturnPeriod" in {
-        Json.toJson(YBReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYBJson
-      }
-
-      "output correctly formatted JSON for a YCReturnPeriod" in {
-        Json.toJson(YCReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYCJson
-      }
-
-      "output correctly formatted JSON for a YDReturnPeriod" in {
-        Json.toJson(YDReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYDJson
-      }
-
-      "output correctly formatted JSON for a YEReturnPeriod" in {
-        Json.toJson(YEReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYEJson
-      }
-
-      "output correctly formatted JSON for a YFReturnPeriod" in {
-        Json.toJson(YFReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYFJson
-      }
-
-      "output correctly formatted JSON for a YGReturnPeriod" in {
-        Json.toJson(YGReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYGJson
-      }
-
-      "output correctly formatted JSON for a YHReturnPeriod" in {
-        Json.toJson(YHReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYHJson
-      }
-
-      "output correctly formatted JSON for a YIReturnPeriod" in {
-        Json.toJson(YIReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYIJson
-      }
-
-      "output correctly formatted JSON for a YJReturnPeriod" in {
-        Json.toJson(YJReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYJJson
-      }
-
-      "output correctly formatted JSON for a YKReturnPeriod" in {
-        Json.toJson(YKReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYKJson
-      }
-
-      "output correctly formatted JSON for a YLReturnPeriod" in {
-        Json.toJson(YLReturnPeriod(None, None, None).asInstanceOf[ReturnPeriod]) shouldBe returnPeriodYLJson
+      periods.foreach { period =>
+        s"output correctly formatted JSON for ${period.period.stdReturnPeriod} period" in {
+          Json.toJson(period.period) shouldBe period.json
+        }
       }
     }
   }

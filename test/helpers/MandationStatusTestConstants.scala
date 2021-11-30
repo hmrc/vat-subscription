@@ -31,6 +31,6 @@ object MandationStatusTestConstants {
     "transactorOrCapacitorEmail" -> "test@test.com"
   )
 
-  val mandationStatusPost = MandationStatusPost(NonMTDfB, None)
-  val mandationStatusPostAgent = MandationStatusPost(NonMTDfB, Some("test@test.com"))
+  val mandationStatusPost: MandationStatusPost = MandationStatusPost(NonMTDfB, None)
+  val mandationStatusPostAgent: MandationStatusPost = MandationStatusPost(NonMTDfB, Some("test@test.com"))
 }

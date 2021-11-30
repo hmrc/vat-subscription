@@ -21,7 +21,7 @@ import play.api.libs.json.{JsPath, Reads}
 trait JsonReadUtil {
 
   implicit class JsonReadUtil(jsPath: JsPath) {
-    def readOpt[T](implicit reads: Reads[T]): Reads[Option[T]] = jsPath.readNullable[T].orElse(Reads.pure(None))
+    def readOpt[T](implicit reads: Reads[T]): Reads[Option[T]] = jsPath.readNullable[T]
   }
 
 }

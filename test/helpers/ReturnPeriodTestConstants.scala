@@ -16,6 +16,7 @@
 
 package helpers
 
+import models._
 import play.api.libs.json.{JsValue, Json}
 
 object ReturnPeriodTestConstants {
@@ -74,5 +75,26 @@ object ReturnPeriodTestConstants {
   val inflightReturnPeriodYKJson: JsValue = Json.obj("returnPeriod" -> ykReturnPeriod)
   val inflightReturnPeriodYLJson: JsValue = Json.obj("returnPeriod" -> ylReturnPeriod)
   val invalidInflightReturnPeriod: JsValue = Json.obj("returnPeriod" -> "invalid")
+
+  case class PeriodWithJson(period: ReturnPeriod, json: JsValue)
+
+  def periods: Set[PeriodWithJson] = Set(
+    PeriodWithJson(MAReturnPeriod(None, None, None), returnPeriodMAJson),
+    PeriodWithJson(MBReturnPeriod(None, None, None), returnPeriodMBJson),
+    PeriodWithJson(MCReturnPeriod(None, None, None), returnPeriodMCJson),
+    PeriodWithJson(MMReturnPeriod(None, None, None), returnPeriodMMJson),
+    PeriodWithJson(YAReturnPeriod(None, None, None), returnPeriodYAJson),
+    PeriodWithJson(YBReturnPeriod(None, None, None), returnPeriodYBJson),
+    PeriodWithJson(YCReturnPeriod(None, None, None), returnPeriodYCJson),
+    PeriodWithJson(YDReturnPeriod(None, None, None), returnPeriodYDJson),
+    PeriodWithJson(YEReturnPeriod(None, None, None), returnPeriodYEJson),
+    PeriodWithJson(YFReturnPeriod(None, None, None), returnPeriodYFJson),
+    PeriodWithJson(YGReturnPeriod(None, None, None), returnPeriodYGJson),
+    PeriodWithJson(YHReturnPeriod(None, None, None), returnPeriodYHJson),
+    PeriodWithJson(YIReturnPeriod(None, None, None), returnPeriodYIJson),
+    PeriodWithJson(YJReturnPeriod(None, None, None), returnPeriodYJJson),
+    PeriodWithJson(YKReturnPeriod(None, None, None), returnPeriodYKJson),
+    PeriodWithJson(YLReturnPeriod(None, None, None), returnPeriodYLJson)
+  )
 
 }
