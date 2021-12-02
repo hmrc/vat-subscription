@@ -23,10 +23,6 @@ sealed trait PartyType {
   val value: String
 }
 
-case object IndividualType extends PartyType {
-  override val value: String = "0"
-}
-
 case object SoleTraderType extends PartyType {
   override val value: String = "1"
 }
@@ -79,10 +75,6 @@ case object UKCompanyType extends PartyType {
   override val value: String = "50"
 }
 
-case object NonUKCompanyType extends PartyType {
-  override val value: String = "51"
-}
-
 case object NonUkCompWithUKEstablishmentType extends PartyType {
   override val value: String = "51"
 }
@@ -95,16 +87,8 @@ case object CharitableIncorpOrgType extends PartyType {
   override val value: String = "53"
 }
 
-case object CommunityBenefitSocietyType extends PartyType {
-  override val value: String = "54"
-}
-
 case object RegisteredSocietyType extends PartyType {
   override val value: String = "54"
-}
-
-case object CoopSocietyType extends PartyType {
-  override val value: String = "55"
 }
 
 case object NonUkCompNoUKEstabType extends PartyType {
@@ -113,10 +97,6 @@ case object NonUkCompNoUKEstabType extends PartyType {
 
 case object GovernmentOrgType extends PartyType {
   override val value: String = "56"
-}
-
-case object CorportationSoleType extends PartyType {
-  override val value: String = "57"
 }
 
 case object ScottishPartnershipType extends PartyType {
@@ -179,7 +159,6 @@ object PartyType {
     RegisteredSocietyType,
     NonUkCompNoUKEstabType,
     GovernmentOrgType,
-    CorportationSoleType,
     ScottishPartnershipType,
     ScottishLimitedPartnershipType,
     TrustType,
@@ -198,17 +177,6 @@ object PartyType {
   }
 
   def unapply(arg: PartyType): String = arg.value
-
-  def isValidPartyType(input: String, typeOfParty: Set[PartyType]): Boolean = {
-    try {
-      PartyType.apply(typeOfParty)(input)
-      true
-    } catch {
-      case t: IllegalArgumentException =>
-        logger.info(s"""Invalid Party Type - Received "$input"""", t)
-        false
-    }
-  }
 
   val reads: Reads[PartyType] = __.read[String].map(apply(partyTypes))
 

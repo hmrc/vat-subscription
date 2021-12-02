@@ -130,7 +130,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(conf))
     partyType <- (customerDetailsPath \ partyTypeKey).readOpt[PartyType](PartyType.reads)
-    primaryMainCode <- primaryMainCodePath.readNullable[String].orElse(Reads.pure(None))
+    primaryMainCode <- primaryMainCodePath.readNullable[String]
     rlsType <- rlsTypePath.readOpt[String]
     commsPreference <- approvedCommsPreferencePath.readOpt[CommsPreference]
   } yield VatCustomerInformation(

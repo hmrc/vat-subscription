@@ -44,10 +44,10 @@ object PendingChanges {
     ppob <- ppobPath.readNullable[PPOBGet]
     bankDetails <- bankDetailsPath.readNullable[BankDetails]
     returnPeriod <- returnPeriodPath.readNullable[ReturnPeriod](ReturnPeriod.inFlightReads)
-    mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus](desReader).orElse(Reads.pure(None))
-    commsPref <- commsPreferenceDesPath.readNullable[CommsPreference].orElse(Reads.pure(None))
-    tradingName <- tradingNamePath.readNullable[String].orElse(Reads.pure(None))
-    organisationName <- organisationNamePath.readNullable[String].orElse(Reads.pure(None))
+    mandationStatus <- mandationStatusDesPath.readNullable[MandationStatus](desReader)
+    commsPref <- commsPreferenceDesPath.readNullable[CommsPreference]
+    tradingName <- tradingNamePath.readNullable[String]
+    organisationName <- organisationNamePath.readNullable[String]
   } yield PendingChanges(
     ppob,
     bankDetails,

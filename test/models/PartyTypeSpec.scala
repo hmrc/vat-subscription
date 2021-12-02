@@ -54,21 +54,4 @@ class PartyTypeSpec extends AnyWordSpecLike with Matchers {
       }
     }
   }
-
-  "Party Type .isValidPartyType" when {
-
-    "given an invalid charge type" should {
-
-      "return false" in {
-        PartyType.isValidPartyType("Z123456", PartyType.partyTypes) shouldBe false
-      }
-    }
-
-    "given a valid charge type" should {
-
-      "return true" in {
-        PartyType.isValidPartyType("Z1", PartyType.partyTypes) shouldBe true
-      }
-    }
-  }
 }

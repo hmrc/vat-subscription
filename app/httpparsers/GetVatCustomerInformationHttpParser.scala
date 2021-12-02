@@ -54,7 +54,7 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extend
 
     response.status match {
       case BAD_REQUEST =>
-        logUnexpectedResponse(response, logBody = true)
+        logUnexpectedResponse(response)
         Left(InvalidVatNumber)
       case NOT_FOUND =>
         logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
@@ -65,19 +65,19 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extend
           "FORBIDDEN returned with MIGRATION - Migration in progress.")
         Left(Migration)
       case FORBIDDEN =>
-        logUnexpectedResponse(response, logBody = true)
+        logUnexpectedResponse(response)
         Left(Forbidden)
       case status =>
-        logUnexpectedResponse(response, logBody = true)
+        logUnexpectedResponse(response)
         Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
     }
   }
 
-  def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response", logBody: Boolean = false): Unit = {
+  def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response"): Unit = {
     logger.warn(
       s"[CustomerCircumstancesHttpParser][logUnexpectedResponse]: $message. " +
         s"Status: ${response.status}. " +
-        s"${ if(logBody) s"Body: ${response.body} " else "" } " +
+        s"Body: ${response.body} " +
         s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}"
     )
   }

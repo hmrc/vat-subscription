@@ -124,6 +124,7 @@ case class YLReturnPeriod(transOrCapEmail: Option[String],
   override val stdReturnPeriod: String = "YL"
 }
 
+
 object ReturnPeriod extends JsonObjectSugar {
 
   val frontendRds: Reads[ReturnPeriod] = readReturnPeriod("stdReturnPeriod")
