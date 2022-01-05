@@ -30,8 +30,6 @@ lazy val coverageSettings: Seq[Setting[_]] = {
   val excludedPackages = Seq(
     "<empty>",
     ".*Reverse.*",
-    ".*standardError*.*",
-    "uk.gov.hmrc.BuildInfo",
     "app.*",
     "prod.*",
     "config.*",
@@ -51,7 +49,7 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "5.16.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "5.18.0",
   "org.typelevel"     %% "cats-core"                  % "1.6.0",
   "com.typesafe.play" %% "play-json-joda"             % "2.9.2"
 )
