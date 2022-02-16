@@ -49,16 +49,14 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "5.18.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "5.20.0",
   "org.typelevel"     %% "cats-core"                  % "1.6.0",
   "com.typesafe.play" %% "play-json-joda"             % "2.9.2"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "org.scalatest"           %% "scalatest"                  % "3.1.4"             % scope,
+  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.20.0"            %scope,
   "org.pegdown"             % "pegdown"                     % "1.6.0"             % scope,
-  "org.scalatestplus.play"  %% "scalatestplus-play"         % "5.1.0"             % scope,
-  "com.typesafe.play"       %% "play-test"                  % PlayVersion.current % scope,
   "com.github.tomakehurst"  % "wiremock-jre8"               % "2.26.3"            % scope,
   "com.vladsch.flexmark"    % "flexmark-all"                % "0.36.8"            % scope,
   "org.scalatestplus"       %% "mockito-3-3"                % "3.1.2.0"           % scope
@@ -72,11 +70,10 @@ lazy val root = Project(appName, file("."))
   .settings(coverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
-    scalaVersion := "2.12.14",
+    scalaVersion := "2.12.15",
     majorVersion := 0,
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     PlayKeys.playDefaultPort := 9567
   )
   .configs(IntegrationTest)
