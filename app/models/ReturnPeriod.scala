@@ -124,7 +124,7 @@ case class YLReturnPeriod(transOrCapEmail: Option[String],
   override val stdReturnPeriod: Option[String] = Some("YL")
 }
 
-case class noReturnPeriod(transOrCapEmail: Option[String],
+case class NoReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
   override val stdReturnPeriod: Option[String] = None
