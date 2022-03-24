@@ -185,7 +185,7 @@ object ReturnPeriod extends JsonObjectSugar {
         case Some("YL") =>
           JsSuccess(YLReturnPeriod(transactorOrCapacitorEmail, nonStandardTaxPeriods, firstNonNSTPPeriod))
         case None =>
-          JsSuccess(noReturnPeriod(transactorOrCapacitorEmail, nonStandardTaxPeriods, firstNonNSTPPeriod))
+          JsSuccess(NoReturnPeriod(transactorOrCapacitorEmail, nonStandardTaxPeriods, firstNonNSTPPeriod))
         case _ => JsError("Invalid Return Period supplied")
       }
     }
