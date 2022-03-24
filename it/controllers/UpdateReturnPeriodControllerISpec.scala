@@ -67,7 +67,7 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
         )
       }
 
-      "return BAD_REQUEST if the JSON is invalid" in {
+      "return a 200 if the return period json object is empty" in {
 
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailsDesResponse)
@@ -76,8 +76,8 @@ class UpdateReturnPeriodControllerISpec extends ComponentSpecBase with BeforeAnd
         val res = put(s"/$testVatNumber/return-period")(invalidJson)
 
         res should have(
-          httpStatus(BAD_REQUEST),
-          jsonBodyAs(invalidReturnPeriodResponse)
+          httpStatus(OK),
+          jsonBodyAs(testSuccessDesResponse)
         )
       }
 
