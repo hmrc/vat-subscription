@@ -22,7 +22,7 @@ import utils.JsonObjectSugar
 abstract class ReturnPeriod(transOrCapEmail: Option[String],
                             nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                             firstNonNSTPPeriod: Option[TaxPeriod]) {
-  def stdReturnPeriod: String
+  def stdReturnPeriod: Option[String]
   val transactorOrCapacitorEmail: Option[String] = transOrCapEmail
   val nonStandardTaxPeriods: Option[Seq[TaxPeriod]] = nonStdTaxPeriods
   val firstNonNSTPTaxPeriod: Option[TaxPeriod] = firstNonNSTPPeriod
@@ -31,97 +31,103 @@ abstract class ReturnPeriod(transOrCapEmail: Option[String],
 case class MAReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "MA"
+  override val stdReturnPeriod: Option[String] = Some("MA")
 }
 
 case class MBReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "MB"
+  override val stdReturnPeriod: Option[String] = Some("MB")
 }
 
 case class MCReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "MC"
+  override val stdReturnPeriod: Option[String] = Some("MC")
 }
 
 case class MMReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "MM"
+  override val stdReturnPeriod: Option[String] = Some("MM")
 }
 
 case class YAReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YA"
+  override val stdReturnPeriod: Option[String] = Some("YA")
 }
 
 case class YBReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YB"
+  override val stdReturnPeriod: Option[String] = Some("YB")
 }
 
 case class YCReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YC"
+  override val stdReturnPeriod: Option[String] = Some("YC")
 }
 
 case class YDReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YD"
+  override val stdReturnPeriod: Option[String] = Some("YD")
 }
 
 case class YEReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YE"
+  override val stdReturnPeriod: Option[String] = Some("YE")
 }
 
 case class YFReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YF"
+  override val stdReturnPeriod: Option[String] = Some("YF")
 }
 
 case class YGReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YG"
+  override val stdReturnPeriod: Option[String] = Some("YG")
 }
 
 case class YHReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YH"
+  override val stdReturnPeriod: Option[String] = Some("YH")
 }
 
 case class YIReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YI"
+  override val stdReturnPeriod: Option[String] = Some("YI")
 }
 
 case class YJReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YJ"
+  override val stdReturnPeriod: Option[String] = Some("YJ")
 }
 
 case class YKReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YK"
+  override val stdReturnPeriod: Option[String] = Some("YK")
 }
 
 case class YLReturnPeriod(transOrCapEmail: Option[String],
                           nonStdTaxPeriods: Option[Seq[TaxPeriod]],
                           firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
-  override val stdReturnPeriod: String = "YL"
+  override val stdReturnPeriod: Option[String] = Some("YL")
+}
+
+case class noReturnPeriod(transOrCapEmail: Option[String],
+                          nonStdTaxPeriods: Option[Seq[TaxPeriod]],
+                          firstNonNSTPPeriod: Option[TaxPeriod]) extends ReturnPeriod(transOrCapEmail, nonStdTaxPeriods, firstNonNSTPPeriod) {
+  override val stdReturnPeriod: Option[String] = None
 }
 
 
@@ -178,12 +184,14 @@ object ReturnPeriod extends JsonObjectSugar {
           JsSuccess(YKReturnPeriod(transactorOrCapacitorEmail, nonStandardTaxPeriods, firstNonNSTPPeriod))
         case Some("YL") =>
           JsSuccess(YLReturnPeriod(transactorOrCapacitorEmail, nonStandardTaxPeriods, firstNonNSTPPeriod))
+        case None =>
+          JsSuccess(noReturnPeriod(transactorOrCapacitorEmail, nonStandardTaxPeriods, firstNonNSTPPeriod))
         case _ => JsError("Invalid Return Period supplied")
       }
     }
   }
-  //scalastyle:on
 
+  //scalastyle:on
   implicit val returnPeriodWriter: Writes[ReturnPeriod] = Writes (
     period => jsonObjNoNulls(
       "stdReturnPeriod" -> period.stdReturnPeriod,
