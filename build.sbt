@@ -49,13 +49,13 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "5.20.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "5.24.0",
   "org.typelevel"     %% "cats-core"                  % "1.6.0",
   "com.typesafe.play" %% "play-json-joda"             % "2.9.2"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.20.0"            %scope,
+  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.24.0"            %scope,
   "org.pegdown"             % "pegdown"                     % "1.6.0"             % scope,
   "com.github.tomakehurst"  % "wiremock-jre8"               % "2.26.3"            % scope,
   "com.vladsch.flexmark"    % "flexmark-all"                % "0.36.8"            % scope,

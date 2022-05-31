@@ -23,7 +23,7 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.{Application, Environment, Mode}
 import play.api.libs.json.Writes
-import play.api.libs.ws.{WSClient, WSResponse}
+import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 trait ComponentSpecBase extends AnyWordSpecLike with Matchers with GuiceOneServerPerSuite with WiremockHelper
@@ -74,14 +74,17 @@ trait ComponentSpecBase extends AnyWordSpecLike with Matchers with GuiceOneServe
   def put[T](uri: String)(body: T)(implicit writes: Writes[T]): WSResponse = {
     await(
       buildClient(uri)
-        .withHttpHeaders(
-          "Content-Type" -> "application/json",
-          "X-Session-ID" -> "123456-session"
-        )
         .put(writes.writes(body).toString())
     )
   }
 
-  def buildClient(path: String) = ws.url(s"http://localhost:$port/vat-subscription$path").withFollowRedirects(false)
+  def buildClient(path: String): WSRequest =
+    ws.url(s"http://localhost:$port/vat-subscription$path")
+      .withHttpHeaders(
+        "Content-Type" -> "application/json",
+        "X-Session-ID" -> "123456-session",
+        "Authorization" -> "localToken"
+      )
+      .withFollowRedirects(false)
 
 }
