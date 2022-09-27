@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import play.core.PlayVersion
 import play.sbt.routes.RoutesKeys
 import sbt.Keys.{javaOptions, retrieveManaged, scalaVersion}
 import uk.gov.hmrc.DefaultBuildSettings._
@@ -49,13 +48,13 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "5.24.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.4.0",
   "org.typelevel"     %% "cats-core"                  % "1.6.0",
-  "com.typesafe.play" %% "play-json-joda"             % "2.9.2"
+  "com.typesafe.play" %% "play-json-joda"             % "2.10.0-RC6"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.24.0"            %scope,
+  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.4.0"             %scope,
   "org.pegdown"             % "pegdown"                     % "1.6.0"             % scope,
   "com.github.tomakehurst"  % "wiremock-jre8"               % "2.26.3"            % scope,
   "com.vladsch.flexmark"    % "flexmark-all"                % "0.36.8"            % scope,
@@ -70,7 +69,7 @@ lazy val root = Project(appName, file("."))
   .settings(coverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
-    scalaVersion := "2.12.15",
+    scalaVersion := "2.12.16",
     majorVersion := 0,
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
@@ -79,9 +78,9 @@ lazy val root = Project(appName, file("."))
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
-    Keys.fork in IntegrationTest := true,
-    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value,
-    javaOptions in IntegrationTest += "-Dlogger.resource=logback-test.xml",
+    IntegrationTest / Keys.fork := true,
+    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "it")).value,
+    IntegrationTest / javaOptions += "-Dlogger.resource=logback-test.xml",
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    parallelExecution in IntegrationTest := false
+    IntegrationTest / parallelExecution := false
   )
