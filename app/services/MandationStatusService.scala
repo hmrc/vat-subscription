@@ -17,8 +17,6 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import cats.data._
-import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{GetVatCustomerInformationConnector, GetVatCustomerInformationFailure}
 import models.MandationStatus
@@ -31,6 +29,11 @@ class MandationStatusService @Inject()(getVatCustomerInformationConnector: GetVa
 
   def getMandationStatus(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, MandationStatus]] = {
     logger.debug(s"[MandationStatusService][getMandationStatus]: retrieving mandation status from connector for vat number - $vatNumber")
-    EitherT(getVatCustomerInformationConnector.getInformation(vatNumber)).map(_.mandationStatus).value
+      getVatCustomerInformationConnector.getInformation(vatNumber) map {
+        case Right(details) =>
+          Right(details.mandationStatus)
+        case Left(error) =>
+          Left(error)
+      }
   }
 }

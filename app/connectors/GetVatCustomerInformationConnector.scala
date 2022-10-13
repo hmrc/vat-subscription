@@ -19,7 +19,7 @@ package connectors
 import config.AppConfig
 import httpparsers.GetVatCustomerInformationHttpParser
 import javax.inject.{Inject, Singleton}
-import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, NOT_FOUND, PRECONDITION_FAILED}
+import play.api.http.Status._
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil

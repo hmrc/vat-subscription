@@ -17,8 +17,6 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import cats.data.EitherT
-import cats.instances.future._
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.GetVatCustomerInformationConnector
 import connectors.GetVatCustomerInformationFailure
@@ -33,29 +31,12 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
 
   def retrieveVatCustomerDetails(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, CustomerDetails]] = {
     logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer details for vat number - $vatNumber")
-    (EitherT(vatCustomerDetailsConnector.getInformation(vatNumber)) map {
-      vatCustomerInformation =>
-        CustomerDetails(
-          title = vatCustomerInformation.customerDetails.title,
-          firstName = vatCustomerInformation.customerDetails.firstName,
-          middleName = vatCustomerInformation.customerDetails.middleName,
-          lastName = vatCustomerInformation.customerDetails.lastName,
-          organisationName = vatCustomerInformation.customerDetails.organisationName,
-          tradingName = vatCustomerInformation.customerDetails.tradingName,
-          effectiveRegistrationDate = vatCustomerInformation.customerDetails.effectiveRegistrationDate,
-          hasFlatRateScheme = vatCustomerInformation.flatRateScheme.isDefined,
-          welshIndicator = vatCustomerInformation.customerDetails.welshIndicator,
-          isPartialMigration = vatCustomerInformation.customerDetails.isPartialMigration,
-          customerMigratedToETMPDate = vatCustomerInformation.customerDetails.customerMigratedToETMPDate,
-          isInsolvent = vatCustomerInformation.customerDetails.isInsolvent,
-          insolvencyType = vatCustomerInformation.customerDetails.insolvencyType,
-          insolvencyDate = vatCustomerInformation.customerDetails.insolvencyDate,
-          continueToTrade = vatCustomerInformation.customerDetails.continueToTrade,
-          hybridToFullMigrationDate = vatCustomerInformation.customerDetails.hybridToFullMigrationDate,
-          overseasIndicator = vatCustomerInformation.customerDetails.overseasIndicator,
-          nameIsReadOnly = vatCustomerInformation.customerDetails.nameIsReadOnly
-        )
-    }).value
+    vatCustomerDetailsConnector.getInformation(vatNumber).map {
+      case Right(details) =>
+        Right(details.customerDetails)
+      case Left(error) =>
+        Left(error)
+    }
   }
 
   def extractWelshIndicator(vrn: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure,Boolean]] = {
