@@ -33,7 +33,7 @@ trait ComponentSpecBase extends AnyWordSpecLike with Matchers with GuiceOneServe
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .configure(config)
-    .build
+    .build()
   val mockHost = WiremockHelper.wiremockHost
   val mockPort = WiremockHelper.wiremockPort.toString
   val mockUrl = s"http://$mockHost:$mockPort"
@@ -56,7 +56,7 @@ trait ComponentSpecBase extends AnyWordSpecLike with Matchers with GuiceOneServe
 
   def get[T](uri: String): WSResponse = {
     await(
-      buildClient(uri).get
+      buildClient(uri).get()
     )
   }
 

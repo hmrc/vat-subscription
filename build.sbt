@@ -48,12 +48,12 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.4.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.11.0",
   "com.typesafe.play" %% "play-json-joda"             % "2.10.0-RC6"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.4.0"             %scope,
+  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.11.0"             %scope,
   "org.pegdown"             % "pegdown"                     % "1.6.0"             % scope,
   "com.github.tomakehurst"  % "wiremock-jre8"               % "2.26.3"            % scope,
   "com.vladsch.flexmark"    % "flexmark-all"                % "0.36.8"            % scope,
@@ -68,7 +68,7 @@ lazy val root = Project(appName, file("."))
   .settings(coverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
-    scalaVersion := "2.12.16",
+    scalaVersion := "2.13.8",
     majorVersion := 0,
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,

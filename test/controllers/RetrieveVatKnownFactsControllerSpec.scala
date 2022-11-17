@@ -38,7 +38,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
     "return OK and Deregistered" when {
       "the deregistered object is returned from GetVatCustomerInformation" in {
         val testJson = Json.obj("deregistered" -> true)
-        mockAuthorise()(Future.successful(Unit))
+        mockAuthorise()(Future.successful(()))
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(DeregisteredUser)))
 
         val res: Future[Result] = TestRetrieveVatKnownFactsController.retrieveVatKnownFacts(testVatNumber)(FakeRequest())
@@ -51,7 +51,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
     "return OK and the known facts" when {
       "the known facts is returned from the VatKnownFactsRetrievalService" when {
         "the user is not overseas" in {
-          mockAuthorise()(Future.successful(Unit))
+          mockAuthorise()(Future.successful(()))
 
           mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(vatKnownFacts(isOverseas = false))))
 
@@ -62,7 +62,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
         }
 
         "the user is overseas" in {
-          mockAuthorise()(Future.successful(Unit))
+          mockAuthorise()(Future.successful(()))
 
           mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Right(vatKnownFacts(isOverseas = true))))
 
@@ -77,7 +77,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
     "return BAD_REQUEST" when {
       "InvalidVatNumber is returned from the VatKnownFactsRetrievalService" in {
 
-        mockAuthorise()(Future.successful(Unit))
+        mockAuthorise()(Future.successful(()))
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
@@ -89,7 +89,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
     "return NOT_FOUND" when {
       "VatNumberNotFound is returned from the VatKnownFactsRetrievalService" in {
 
-        mockAuthorise()(Future.successful(Unit))
+        mockAuthorise()(Future.successful(()))
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
@@ -101,7 +101,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
 
     "return FORBIDDEN" when {
       "Forbidden with no json body is returned from the from VatKnownFactsRetrievalService" in {
-        mockAuthorise()(Future.successful(Unit))
+        mockAuthorise()(Future.successful(()))
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(Forbidden)))
 
@@ -114,7 +114,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
     "return PRECONDITION_FAILED" when {
       "Forbidden with MIGRATION code in json body is returned from VatKnownFactsRetrievalService" in {
 
-        mockAuthorise()(Future.successful(Unit))
+        mockAuthorise()(Future.successful(()))
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(Migration)))
 
@@ -126,7 +126,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
     "return BAD_GATEWAY" when {
       "InvalidVatKnownFacts is returned from the VatKnownFactsRetrievalService" in {
 
-        mockAuthorise()(Future.successful(Unit))
+        mockAuthorise()(Future.successful(()))
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(InvalidVatKnownFacts)))
 
@@ -140,7 +140,7 @@ class RetrieveVatKnownFactsControllerSpec extends TestUtil with MockVatAuthorise
       "UnexpectedGetVatCustomerInformationFailure is returned from the VatKnownFactsRetrievalService" in {
         val responseBody = "error"
 
-        mockAuthorise()(Future.successful(Unit))
+        mockAuthorise()(Future.successful(()))
 
         mockRetrieveVatKnownFacts(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody))))
 
