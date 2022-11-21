@@ -37,7 +37,7 @@ class MandationStatusControllerSpec extends TestUtil
 
   "getMandationStatus" should {
     "return OK when successful" in {
-      mockAuthorise()(Future.successful(Unit))
+      mockAuthorise()(Future.successful(()))
 
       val testStatus = MTDfBMandated
       mockGetMandationStatus(testVatNumber)(Future.successful(Right(testStatus)))
@@ -48,7 +48,7 @@ class MandationStatusControllerSpec extends TestUtil
     }
 
     "return the BAD_REQUEST when InvalidVatNumber" in {
-      mockAuthorise()(Future.successful(Unit))
+      mockAuthorise()(Future.successful(()))
 
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(InvalidVatNumber)))
 
@@ -57,7 +57,7 @@ class MandationStatusControllerSpec extends TestUtil
     }
 
     "return the NOT_FOUND when VatNumberNotFound" in {
-      mockAuthorise()(Future.successful(Unit))
+      mockAuthorise()(Future.successful(()))
 
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(VatNumberNotFound)))
 
@@ -67,7 +67,7 @@ class MandationStatusControllerSpec extends TestUtil
     }
 
     "return the FORBIDDEN when Forbidden with no json body" in {
-      mockAuthorise()(Future.successful(Unit))
+      mockAuthorise()(Future.successful(()))
 
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(Forbidden)))
 
@@ -77,7 +77,7 @@ class MandationStatusControllerSpec extends TestUtil
     }
 
     "return the PRECONDITION_FAILED when Forbidden with MIGRATION code in json body" in {
-      mockAuthorise()(Future.successful(Unit))
+      mockAuthorise()(Future.successful(()))
 
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(Migration)))
 
@@ -87,7 +87,7 @@ class MandationStatusControllerSpec extends TestUtil
     }
 
     "return the INTERNAL_SERVER_ERROR and the error when failed unexpectedly" in {
-      mockAuthorise()(Future.successful(Unit))
+      mockAuthorise()(Future.successful(()))
 
       mockGetMandationStatus(testVatNumber)(Future.successful(Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "failure"))))
 
