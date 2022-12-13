@@ -6,9 +6,8 @@
 This is the backend service which retrieves customer information for all VATVC services.
 
 ## Running
-`sbt "run 9567 -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"`
 
-or alternatively:
+In order to run this microservice, you must have SBT installed. You should be able to start the application using:
 
 `./run.sh`
 
