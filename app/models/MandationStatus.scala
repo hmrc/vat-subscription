@@ -58,9 +58,9 @@ object MandationStatus {
 
   val desReader: Reads[MandationStatus] = JsPath.read[String].map {
     case MTDfBExempt.`desValue` => MTDfBExempt
-    case MTDfB.`desValue` => MTDfB
     case NonMTDfB.`desValue` => NonMTDfB
     case NonDigital.`desValue` => NonDigital
+    case _ => MTDfB
   }
 
   val writer: Writes[MandationStatus] = Writes(
