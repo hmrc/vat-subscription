@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,12 +48,12 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.11.0",
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.12.0",
   "com.typesafe.play" %% "play-json-joda"             % "2.10.0-RC6"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.11.0"             %scope,
+  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.12.0"             %scope,
   "org.pegdown"             % "pegdown"                     % "1.6.0"             % scope,
   "com.github.tomakehurst"  % "wiremock-jre8"               % "2.27.2"            % scope,
   "com.vladsch.flexmark"    % "flexmark-all"                % "0.36.8"            % scope,
