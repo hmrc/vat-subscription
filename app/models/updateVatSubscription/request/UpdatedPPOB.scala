@@ -19,7 +19,20 @@ package models.updateVatSubscription.request
 import play.api.libs.json.{Json, Writes}
 import models.post.PPOBPost
 
-case class UpdatedPPOB(updatedPPOB: PPOBPost)
+case class UpdatedPPOB(updatedPPOB: PPOBPost) {
+
+  def convertUKCountryCodes: UpdatedPPOB = {
+
+    val currentLandline = updatedPPOB.contactDetails.flatMap(_.phoneNumber)
+    val currentMobile = updatedPPOB.contactDetails.flatMap(_.mobileNumber)
+    val countryCodeReplace = updatedPPOB.contactDetails.map(_.copy(
+      phoneNumber = currentLandline.map(_.replace("+44", "0")),
+      mobileNumber = currentMobile.map(_.replace("+44", "0"))
+    ))
+
+    UpdatedPPOB(updatedPPOB.copy(contactDetails = countryCodeReplace))
+  }
+}
 
 object UpdatedPPOB {
 

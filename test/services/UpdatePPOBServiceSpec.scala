@@ -18,7 +18,7 @@ package services
 
 import connectors.mocks.MockUpdateVatSubscriptionConnector
 import helpers.BaseTestConstants.{testAgentUser, testArn, testUser}
-import helpers.PPOBTestConstants.{ppobModelMaxPost, ppobModelMaxPostAgent}
+import helpers.PPOBTestConstants.{invalidPhoneDetails, ppobModelMaxPost, ppobModelMaxPostAgent}
 import helpers.TestUtil
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.ContactDetails
@@ -116,6 +116,18 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
       "return a correct UpdateVatSubscription model" in {
         result shouldEqual expectedResult
+      }
+    }
+
+    "the phone numbers contain +44" should {
+
+      val ppobPost = ppobModelMaxPost.copy(contactDetails = Some(invalidPhoneDetails))
+      val result = service.constructPPOBUpdateModel(ppobPost, welshIndicator = false)(testUser)
+      val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
+
+      "convert them to 0 as part of building the model" in {
+        contactDetails.flatMap(_.phoneNumber) shouldBe Some("01613334444")
+        contactDetails.flatMap(_.mobileNumber) shouldBe Some("07707707712")
       }
     }
   }

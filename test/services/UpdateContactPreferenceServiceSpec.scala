@@ -187,6 +187,18 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
         result shouldBe expectedResult
       }
     }
+
+    "the phone numbers contain +44" should {
+
+      val ppob = ppobModelMax.copy(contactDetails = Some(invalidPhoneDetails))
+      val result = service.constructContactPreferenceAndEmailModel("newemail@email.com", welshIndicator = None, ppob)
+      val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
+
+      "convert them to 0 as part of building the model" in {
+        contactDetails.flatMap(_.phoneNumber) shouldBe Some("01613334444")
+        contactDetails.flatMap(_.mobileNumber) shouldBe Some("07707707712")
+      }
+    }
   }
 
   "Calling .updatePreferenceAndEmail" when {

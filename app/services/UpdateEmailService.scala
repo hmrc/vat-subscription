@@ -49,7 +49,7 @@ class UpdateEmailService @Inject()(updateVatSubscriptionConnector: UpdateVatSubs
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangePPOB,
       organisationDetails = None,
-      updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+      updatedPPOB = Some(UpdatedPPOB(updatedPPOB).convertUKCountryCodes),
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(agentOrCapacitor, Signing()),
