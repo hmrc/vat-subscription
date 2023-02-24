@@ -17,7 +17,6 @@
 import play.sbt.routes.RoutesKeys
 import sbt.Keys.{javaOptions, retrieveManaged, scalaVersion}
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 RoutesKeys.routesImport := Seq.empty
 
@@ -48,15 +47,11 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.12.0",
-  "com.typesafe.play" %% "play-json-joda"             % "2.10.0-RC6"
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.13.0"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.12.0"             %scope,
-  "org.pegdown"             % "pegdown"                     % "1.6.0"             % scope,
-  "com.github.tomakehurst"  % "wiremock-jre8"               % "2.27.2"            % scope,
-  "com.vladsch.flexmark"    % "flexmark-all"                % "0.36.8"            % scope,
+  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.13.0"            % scope,
   "org.scalatestplus"       %% "mockito-3-3"                % "3.2.2.0"           % scope
 )
 
@@ -64,7 +59,6 @@ lazy val root = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(scalaSettings: _*)
-  .settings(publishingSettings: _*)
   .settings(coverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
