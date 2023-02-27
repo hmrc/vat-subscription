@@ -92,7 +92,7 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
         contactDetails = Some(updatedContactDetails),
         websiteAddress = currentContactDetails.websiteAddress,
         transactorOrCapacitorEmail = None
-      ))),
+      )).convertUKCountryCodes),
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(None, Signing()),

@@ -37,8 +37,7 @@ class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubsc
     updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
   }
 
-  def constructPPOBUpdateModel(updatedPPOB: PPOBPost,
-                               welshIndicator: Boolean)
+  def constructPPOBUpdateModel(updatedPPOB: PPOBPost, welshIndicator: Boolean)
                               (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentContactDetails: Option[ContactDetails] =
@@ -53,7 +52,7 @@ class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubsc
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangePPOB,
       organisationDetails = None,
-      updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+      updatedPPOB = Some(UpdatedPPOB(updatedPPOB).convertUKCountryCodes),
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(agentOrCapacitor, Signing()),
