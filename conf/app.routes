@@ -2,8 +2,6 @@
 
 GET    /:vatNumber/mandation-status           @controllers.MandationStatusController.getMandationStatus(vatNumber: String)
 
-GET    /:vatNumber/known-facts                @controllers.RetrieveVatKnownFactsController.retrieveVatKnownFacts(vatNumber: String)
-
 GET    /:vatNumber/customer-details           @controllers.RetrieveVatCustomerDetailsController.retrieveVatCustomerDetails(vatNumber: String)
 
 GET    /:vatNumber/full-information           @controllers.RetrieveVatCustomerDetailsController.retrieveVatInformation(vatNumber: String)

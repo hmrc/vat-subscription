@@ -47,11 +47,11 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.13.0"
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.15.0"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.13.0"            % scope,
+  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.15.0"            % scope,
   "org.scalatestplus"       %% "mockito-3-3"                % "3.2.2.0"           % scope
 )
 
