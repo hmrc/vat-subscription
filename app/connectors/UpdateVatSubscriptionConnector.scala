@@ -18,13 +18,15 @@ package connectors
 
 import config.AppConfig
 import httpparsers.UpdateVatSubscriptionHttpParser._
-import javax.inject.{Inject, Singleton}
 import models.User
 import models.updateVatSubscription.request.UpdateVatSubscription
 import models.updateVatSubscription.request.UpdateVatSubscription._
+import models.updateVatSubscription.response.ErrorModel
 import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -53,6 +55,10 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
 
     http.PUT[UpdateVatSubscription, UpdateVatSubscriptionResponse](
       url(user.vrn), vatSubscriptionModel, desHeaders(user)
-    )(writes, UpdateVatSubscriptionReads, headerCarrier, ec)
+    )(writes, UpdateVatSubscriptionReads, headerCarrier, ec).recover {
+      case ex: HttpException =>
+        logger.warn(s"[UpdateVatSubscriptionConnector][updateVatSubscription] - HTTP exception received: ${ex.message}")
+        Left(ErrorModel("BAD_GATEWAY", ex.message))
+    }
   }
 }

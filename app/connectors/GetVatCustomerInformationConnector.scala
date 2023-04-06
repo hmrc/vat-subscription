@@ -18,11 +18,13 @@ package connectors
 
 import config.AppConfig
 import httpparsers.GetVatCustomerInformationHttpParser
+
 import javax.inject.{Inject, Singleton}
 import play.api.http.Status._
 import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -34,7 +36,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
 
   private def url(vatNumber: String) = s"${appConfig.desUrl}/vat/customer/vrn/$vatNumber/information"
 
-  val desHeaders = Seq(
+  val desHeaders: Seq[(String, String)] = Seq(
     "Authorization" -> appConfig.desAuthorisationToken,
     appConfig.desEnvironmentHeader
   )
@@ -53,7 +55,11 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
       httpParser.GetVatCustomerInformationHttpReads,
       headerCarrier,
       implicitly[ExecutionContext]
-    )
+    ).recover {
+      case ex: HttpException =>
+        logger.warn(s"[GetVatCustomerInformationConnector][getInformation] - HTTP exception received: ${ex.message}")
+        Left(UnexpectedGetVatCustomerInformationFailure(BAD_GATEWAY, ex.message))
+    }
   }
 }
 
