@@ -24,6 +24,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockHttpClient extends AnyWordSpecLike with Matchers with MockitoSugar with BeforeAndAfterEach {
@@ -35,10 +36,15 @@ trait MockHttpClient extends AnyWordSpecLike with Matchers with MockitoSugar wit
     reset(mockHttpClient)
   }
 
-  def mockHttpPut[I, O](response: O): Unit = {
+  def mockHttpGet[I](response: Future[I]): Unit =
+    when(mockHttpClient.GET[I]
+      (any[String](), any[Seq[(String, String)]], any[Seq[(String, String)]])
+      (any[HttpReads[I]], any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(response)
+
+  def mockHttpPut[I, O](response: Future[O]): Unit =
     when(mockHttpClient.PUT[I, O]
       (any[String](), any[I](), any[Seq[(String, String)]]())
       (any[Writes[I]](), any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
-      .thenReturn(Future.successful(response))
-  }
+      .thenReturn(response)
 }

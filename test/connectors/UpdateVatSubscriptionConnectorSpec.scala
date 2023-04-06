@@ -25,6 +25,8 @@ import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.updateVatSubscription.request.{ChangeReturnPeriod, ControlInformation, UpdateVatSubscription}
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.RequestTimeoutException
+
 import scala.concurrent.Future
 
 class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
@@ -51,7 +53,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
       commsPreference = None
     )
 
-    def setup(response: UpdateVatSubscriptionResponse): UpdateVatSubscriptionConnector = {
+    def setup(response: Future[UpdateVatSubscriptionResponse]): UpdateVatSubscriptionConnector = {
       mockHttpPut[UpdateVatSubscription, UpdateVatSubscriptionResponse](response)
       new UpdateVatSubscriptionConnector(mockHttpClient, mockAppConfig)
     }
@@ -62,7 +64,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
 
         mockAppConfig.features.api1365Version(Api1365Latest)
 
-        val connector = setup(Right(SuccessModel("12345")))
+        val connector = setup(Future.successful(Right(SuccessModel("12345"))))
         val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
 
         await(result) shouldBe Right(SuccessModel("12345"))
@@ -75,10 +77,21 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
 
       "return successful UpdateVatSubscriptionResponse model" in {
 
-        val connector = setup(Left(ErrorModel("BAD_REQUEST", "REASON")))
+        val connector = setup(Future.successful(Left(ErrorModel("BAD_REQUEST", "REASON"))))
         val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
 
-        await(result) shouldEqual Left(ErrorModel("BAD_REQUEST", "REASON"))
+        await(result) shouldBe Left(ErrorModel("BAD_REQUEST", "REASON"))
+      }
+    }
+
+    "there is a HTTP exception" should {
+
+      "return an ErrorModel" in {
+        val exception = new RequestTimeoutException("Request timed out!!!")
+        val connector = setup(Future.failed(exception))
+        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+
+        await(result) shouldBe Left(ErrorModel("BAD_GATEWAY", exception.message))
       }
     }
   }
