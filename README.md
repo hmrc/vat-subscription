@@ -301,9 +301,13 @@ The request takes a body of the form:
     },
     "contactDetails": {
         "phoneNumber": "07712345678",
-        "mobileNumber": "07712345679"
+        "mobileNumber": "07712345679",
+        "faxNumber": "07712345680",
+        "emailAddress": "test@testemail.com",
+        "emailVerified": "true"
     },
-    "websiteAddress": "www.internet.com"
+    "websiteAddress": "www.internet.com",
+    "transactorOrCapacitorEmail": "testAgent@testemail.com"
 }
 ```
 Where:
@@ -311,6 +315,7 @@ Where:
 * **address** is mandatory and consists of mandatory fields "line1" and "line2" and optional "line3", "line4", "postCode" and "nonUkCountryCode" fields.
 * **contactDetails** is optional and consists of all optional fields; "phoneNumber", "mobileNumber", "faxNumber", "emailAddress" and "emailVerified".
 * **websiteAddress** is optional.
+* **transactorOrCapacitorEmail** is optional.
 
 #### Success Response
 
@@ -393,7 +398,117 @@ Where:
    "formBundle": "12345"
 }
 ```
+### PUT /vat-subscription/:vatNumber/email-address
 
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+The request takes a body of the form:
+```
+{
+    "address": {
+        "line1": "21 Jump Street",
+        "line2": "JMP STRT"
+    },
+    "contactDetails": {
+        "phoneNumber": "07712345678",
+        "mobileNumber": "07712345679",
+        "faxNumber": "07712345680",
+        "emailAddress": "test@testemail.com",
+        "emailVerified": "false"
+    },
+    "websiteAddress": "www.internet.com"
+}
+```
+Where:
+
+* **address** is mandatory and consists of mandatory fields "line1" and "line2" and optional "line3", "line4", "postCode" and "nonUkCountryCode" fields.
+* **contactDetails** is optional and consists of all optional fields; "phoneNumber", "mobileNumber", "faxNumber", "emailAddress" and "emailVerified".
+* **websiteAddress** is optional.
+
+### PUT /vat-subscription/:vatNumber/contact-preference
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+The request takes a body of the form:
+```
+{
+   "commsPreference": "DIGITAL"
+}
+```
+Where:
+* **commsPreference** can be "PAPER" or "DIGITAL"
+
+### PUT /vat-subscription/:vatNumber/contact-preference/email
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+The request takes a body of the form:
+```
+{
+   "emailAddress": "test@test.email.com"
+}
+```
+Where:
+* **emailAddress** can be a new valid email address
+
+### PUT /vat-subscription/:vatNumber/mandation-status
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+The request takes a body of the form:
+```
+{
+   "mandationStatus": "3",
+   "transactorOrCapacitorEmail: = "testAgent@test.com"
+}
+```
+Where:
+* **mandationStatus** can be "1", "2", "3" or "4"
+* **transactorOrCapacitorEmail** is optional.
+
+### PUT /vat-subscription/:vatNumber/trading-name
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+The request takes a body of the form:
+```
+{
+   "transactorOrCapacitorEmail: = "testAgent@test.com",
+   "tradingName": "MyTradingName"
+}
+
+```
+Where:
+* **transactorOrCapacitorEmail** is optional.
+* **tradingName** is optional.
+
+### PUT /vat-subscription/:vatNumber/business-name
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+The request takes a body of the form:
+```
+{
+   "transactorOrCapacitorEmail: = "testAgent@test.com",
+   "organisationName": "MyOrgName"
+}
+
+```
+Where:
+* **transactorOrCapacitorEmail** is optional.
+* **organisationName** is optional.
 
 ### License
 
