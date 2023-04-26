@@ -59,7 +59,7 @@ object ControlInformation {
   private val sourcePath = JsPath \ "source"
   private val mandationStatusPath = JsPath \ "mandationStatus"
 
-  implicit val reads: AppConfig => Reads[ControlInformation] = conf => for {
+  implicit val reads: AppConfig => Reads[ControlInformation] = _ => for {
     welshIndicator <- welshIndicatorPath.read[Boolean]
     source <- sourcePath.read[String]
     mandationStatus <- mandationStatusPath.readNullable[MandationStatus](desReader)

@@ -47,7 +47,7 @@ class UpdateVatSubscriptionSpec extends TestUtil {
 
     "serializing to JSON" should {
 
-      "for the latest DES API1365 writes" should {
+      "for the DES API1365 writes" should {
 
         "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
           UpdateVatSubscription.DESApi1365Writes(mockAppConfig).writes(updateVatSubscriptionModelMax) shouldBe

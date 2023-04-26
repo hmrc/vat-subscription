@@ -16,7 +16,6 @@
 
 package httpparsers
 
-import config.featureSwitch.Api1363Latest
 import connectors._
 import helpers.CustomerInformationTestConstants._
 import helpers.TestUtil
@@ -35,9 +34,7 @@ class GetVatCustomerInformationHttpParserSpec extends TestUtil {
 
     "read" should {
 
-      "parse an OK response with a valid json as a VatCustomerInformation the latest release" in {
-
-        mockAppConfig.features.api1363Version(Api1363Latest)
+      "parse an OK response with a valid json as a VatCustomerInformation" in {
 
         val httpResponse = HttpResponse(OK, customerInformationDESJsonMaxWithFRS.toString)
 

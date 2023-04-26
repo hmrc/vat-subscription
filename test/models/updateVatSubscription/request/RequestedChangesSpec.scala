@@ -17,14 +17,11 @@
 package models.updateVatSubscription.request
 
 import play.api.libs.json.Json
-import config.featureSwitch.{Api1365Latest, Api1365PreRelease}
 import helpers.TestUtil
 
 class RequestedChangesSpec extends TestUtil {
 
-  "RequestedChanges Writes" when {
-
-    "the API1365 version is Latest" should {
+  "RequestedChanges Writes" should {
 
       val model: RequestedChanges = RequestedChanges(
         ppobDetails = true,
@@ -32,7 +29,7 @@ class RequestedChangesSpec extends TestUtil {
         deregInfo = true
       )
 
-      "output a correctly formatted RequestedChanges json for the latest DES API1365 writes" in {
+      "output a correctly formatted RequestedChanges json for the DES API1365 writes" in {
         val result = Json.obj(
           "PPOBDetails" -> true,
           "returnPeriod" -> true,
@@ -46,35 +43,8 @@ class RequestedChangesSpec extends TestUtil {
           "commsPreference" -> false
         )
 
-        mockAppConfig.features.api1365Version(Api1365Latest)
         RequestedChanges.DESApi1365Writes(mockAppConfig).writes(model) shouldBe result
       }
-    }
 
-    "the API1365 version is Pre-release" should {
-
-      val model: RequestedChanges = RequestedChanges(
-        correspDetails = true,
-        mandationStatus = true,
-        deregInfo = true
-      )
-
-      "output correctly formatted RequestedChanges json which omits the commsPreference field" in {
-        val result = Json.obj(
-          "PPOBDetails" -> false,
-          "returnPeriod" -> false,
-          "deregInfo" -> true,
-          "repaymentBankDetails" -> false,
-          "businessActivities" -> false,
-          "flatRateScheme" -> false,
-          "organisationDetails" -> false,
-          "correspDetails" -> true,
-          "mandationStatus" -> true
-        )
-
-        mockAppConfig.features.api1365Version(Api1365PreRelease)
-        RequestedChanges.DESApi1365Writes(mockAppConfig).writes(model) shouldBe result
-      }
-    }
   }
 }

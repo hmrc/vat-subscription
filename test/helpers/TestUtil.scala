@@ -19,7 +19,6 @@ package helpers
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import config.AppConfig
-import config.featureSwitch.{Api1363Latest, Api1365Latest}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -35,8 +34,6 @@ trait TestUtil extends AnyWordSpecLike with Matchers with GuiceOneAppPerSuite wi
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    mockAppConfig.features.api1365Version(Api1365Latest)
-    mockAppConfig.features.api1363Version(Api1363Latest)
   }
 
   lazy val injector: Injector = app.injector

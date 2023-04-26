@@ -19,7 +19,6 @@ package config
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import config.featureSwitch.Features
 
 @Singleton
 class AppConfig @Inject()(implicit val configuration: Configuration, servicesConfig: ServicesConfig){
@@ -34,7 +33,5 @@ class AppConfig @Inject()(implicit val configuration: Configuration, servicesCon
   lazy val desAuthorisationToken: String = s"Bearer ${getString("microservice.services.des.authorisation-token")}"
   lazy val desEnvironmentHeader: (String, String) =
     "Environment" -> getString("microservice.services.des.environment")
-
-  lazy val features = new Features
 
 }

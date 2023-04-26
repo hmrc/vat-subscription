@@ -30,9 +30,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
     ".*Reverse.*",
     "app.*",
     "prod.*",
-    "config.*",
-    "testOnlyDoNotUseInAppConf.*",
-    "testonly.*"
+    "config.*"
   )
 
   Seq(
