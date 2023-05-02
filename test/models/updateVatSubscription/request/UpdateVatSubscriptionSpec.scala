@@ -26,7 +26,7 @@ class UpdateVatSubscriptionSpec extends TestUtil {
   val updateVatSubscriptionLatestDESApi1365JsonMax: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(welshIndicator = false, mandationStatus = Some(MTDfBMandated)),
-    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365Writes(mockAppConfig)),
+    "requestedChange" -> Json.toJson(changeAll)(RequestedChanges.DESApi1365Writes),
     "organisationDetails" -> Json.toJson(updatedTradingName),
     "contactDetails" -> Json.toJson(updatedPPOB),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
@@ -38,7 +38,7 @@ class UpdateVatSubscriptionSpec extends TestUtil {
   val updateVatSubscriptionLatestDESApi1365JsonMin: JsValue = Json.obj(
     "messageType" -> messageType,
     "controlInformation" -> ControlInformation(welshIndicator = false),
-    "requestedChange" -> Json.toJson(RequestedChanges(returnPeriod = true))(RequestedChanges.DESApi1365Writes(mockAppConfig)),
+    "requestedChange" -> Json.toJson(RequestedChanges(returnPeriod = true))(RequestedChanges.DESApi1365Writes),
     "returnPeriods" -> Json.toJson(updatedReturnPeriod),
     "declaration" -> DeclarationTestConstants.declarationDESJsonlNonAgent
   )
@@ -47,15 +47,15 @@ class UpdateVatSubscriptionSpec extends TestUtil {
 
     "serializing to JSON" should {
 
-      "for the latest DES API1365 writes" should {
+      "for the DES API1365 writes" should {
 
         "Output the correct JSON for UpdateVatSubscriptionModelMax" in {
-          UpdateVatSubscription.DESApi1365Writes(mockAppConfig).writes(updateVatSubscriptionModelMax) shouldBe
+          UpdateVatSubscription.DESApi1365Writes.writes(updateVatSubscriptionModelMax) shouldBe
             updateVatSubscriptionLatestDESApi1365JsonMax
         }
 
         "Output the correct JSON for UpdateVatSubscriptionModelMin" in {
-          UpdateVatSubscription.DESApi1365Writes(mockAppConfig).writes(updateVatSubscriptionModelMin) shouldBe
+          UpdateVatSubscription.DESApi1365Writes.writes(updateVatSubscriptionModelMin) shouldBe
             updateVatSubscriptionLatestDESApi1365JsonMin
         }
       }
@@ -80,7 +80,7 @@ class UpdateVatSubscriptionSpec extends TestUtil {
 
       "Output the correct model with all optional values from the provided JSON" in {
 
-        ControlInformation.reads(mockAppConfig).reads(controlInformationJsonMax).get shouldBe
+        ControlInformation.reads.reads(controlInformationJsonMax).get shouldBe
           ControlInformation(
             welshIndicator = true,
             mandationStatus = Some(MTDfBExempt)
@@ -88,7 +88,7 @@ class UpdateVatSubscriptionSpec extends TestUtil {
       }
 
       "Output the correct model with no optional values from the provided JSON" in {
-        ControlInformation.reads(mockAppConfig).reads(controlInformationJsonMin).get shouldBe
+        ControlInformation.reads.reads(controlInformationJsonMin).get shouldBe
           ControlInformation(welshIndicator = true)
       }
     }

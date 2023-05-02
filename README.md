@@ -11,18 +11,6 @@ In order to run this microservice, you must have SBT installed. You should be ab
 
 `./run.sh`
 
-## Feature Switches
-
-Get Current State of Switches:
-`curl -X GET http://localhost:9567/vat-subscription/test-only/feature-switch`
-
-Change Feature Switches:
-`curl -X POST http://localhost:9567/vat-subscription/test-only/feature-switch -H 'content-type: application/json' -d '{ "latestApi1363Version": false, "latestApi1365Version": false}'`
-
-[API1363Version & API1365Version]
-The API version features are set to "Latest" when they are working correctly against the most recent DES spec.
-If there is a need to implement upcoming functionality that would not work yet in Production, the old version can be referred to as "Pre-release".
-
 ## Endpoints
 
 ### GET /vat-subscription/:vatNumber/mandation-status

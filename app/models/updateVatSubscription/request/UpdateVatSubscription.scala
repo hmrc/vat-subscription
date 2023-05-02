@@ -18,7 +18,6 @@ package models.updateVatSubscription.request
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import config.AppConfig
 import models.MandationStatus.{desReader, desWriter}
 import models.updateVatSubscription.request.deregistration.DeregistrationInfo
 import models.{CommsPreference, MandationStatus}
@@ -35,7 +34,7 @@ case class UpdateVatSubscription(messageType: String = "SubscriptionUpdate",
 
 object UpdateVatSubscription {
 
-  val DESApi1365Writes: AppConfig => Writes[UpdateVatSubscription] = appConfig => writes(RequestedChanges.DESApi1365Writes(appConfig))
+  val DESApi1365Writes: Writes[UpdateVatSubscription] = writes(RequestedChanges.DESApi1365Writes)
 
   def writes(requestedChangesWrites: Writes[RequestedChanges]): Writes[UpdateVatSubscription] = (
     (__ \ "messageType").write[String] and
@@ -59,7 +58,7 @@ object ControlInformation {
   private val sourcePath = JsPath \ "source"
   private val mandationStatusPath = JsPath \ "mandationStatus"
 
-  implicit val reads: AppConfig => Reads[ControlInformation] = conf => for {
+  implicit val reads: Reads[ControlInformation] = for {
     welshIndicator <- welshIndicatorPath.read[Boolean]
     source <- sourcePath.read[String]
     mandationStatus <- mandationStatusPath.readNullable[MandationStatus](desReader)

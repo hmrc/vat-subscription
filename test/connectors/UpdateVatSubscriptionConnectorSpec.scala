@@ -16,7 +16,6 @@
 
 package connectors
 
-import config.featureSwitch.Api1365Latest
 import helpers.BaseTestConstants.testUser
 import helpers.DeclarationTestConstants._
 import helpers.UpdateVatSubscriptionTestConstants._
@@ -60,9 +59,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
 
     "http PUT is successful" should {
 
-      "return successful UpdateVatSubscriptionResponse model when using the latest API version" in {
-
-        mockAppConfig.features.api1365Version(Api1365Latest)
+      "return successful UpdateVatSubscriptionResponse model" in {
 
         val connector = setup(Future.successful(Right(SuccessModel("12345"))))
         val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)

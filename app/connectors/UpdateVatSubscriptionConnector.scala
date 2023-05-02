@@ -35,7 +35,7 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
 
   private[connectors] val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
 
-  implicit val writes: Writes[UpdateVatSubscription] = DESApi1365Writes(appConfig)
+  implicit val writes: Writes[UpdateVatSubscription] = DESApi1365Writes
 
   def desHeaders(user: User[_]): Seq[(String, String)] = Seq(
     "Authorization" -> appConfig.desAuthorisationToken,

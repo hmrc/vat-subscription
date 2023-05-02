@@ -17,8 +17,6 @@
 package models.updateVatSubscription.request
 
 import play.api.libs.json._
-import config.AppConfig
-import config.featureSwitch.{Api1365Latest, Api1365PreRelease}
 
 case class RequestedChanges(ppobDetails: Boolean = false,
                             returnPeriod: Boolean = false,
@@ -42,7 +40,7 @@ object ChangeCommsPreferenceAndEmail extends RequestedChanges(commsPreference = 
 
 object RequestedChanges {
 
-  val DESApi1365Writes: AppConfig => Writes[RequestedChanges] = appConfig => Writes { model =>
+  val DESApi1365Writes: Writes[RequestedChanges] = Writes { model =>
     Json.obj(
       "PPOBDetails" -> model.ppobDetails,
       "returnPeriod" -> model.returnPeriod,
@@ -52,10 +50,8 @@ object RequestedChanges {
       "flatRateScheme" -> model.flatRateScheme,
       "correspDetails" -> model.correspDetails,
       "organisationDetails" -> model.organisationDetails,
-      "mandationStatus" -> model.mandationStatus
-    ) ++ (appConfig.features.api1365Version() match {
-      case Api1365Latest => Json.obj("commsPreference" -> model.commsPreference)
-      case Api1365PreRelease => Json.obj()
-    })
+      "mandationStatus" -> model.mandationStatus,
+      "commsPreference" -> model.commsPreference
+    )
   }
 }
