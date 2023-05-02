@@ -43,7 +43,7 @@ class RequestedChangesSpec extends TestUtil {
           "commsPreference" -> false
         )
 
-        RequestedChanges.DESApi1365Writes(mockAppConfig).writes(model) shouldBe result
+        RequestedChanges.DESApi1365Writes.writes(model) shouldBe result
       }
 
   }

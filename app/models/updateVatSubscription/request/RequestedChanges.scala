@@ -17,7 +17,6 @@
 package models.updateVatSubscription.request
 
 import play.api.libs.json._
-import config.AppConfig
 
 case class RequestedChanges(ppobDetails: Boolean = false,
                             returnPeriod: Boolean = false,
@@ -41,7 +40,7 @@ object ChangeCommsPreferenceAndEmail extends RequestedChanges(commsPreference = 
 
 object RequestedChanges {
 
-  val DESApi1365Writes: AppConfig => Writes[RequestedChanges] = _ => Writes { model =>
+  val DESApi1365Writes: Writes[RequestedChanges] = Writes { model =>
     Json.obj(
       "PPOBDetails" -> model.ppobDetails,
       "returnPeriod" -> model.returnPeriod,
