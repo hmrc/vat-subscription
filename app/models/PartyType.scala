@@ -16,7 +16,6 @@
 
 package models
 
-import play.api.Logger
 import play.api.libs.json._
 
 sealed trait PartyType {
@@ -99,6 +98,10 @@ case object GovernmentOrgType extends PartyType {
   override val value: String = "56"
 }
 
+case object CorporationSole extends PartyType {
+  override val value: String = "57"
+}
+
 case object ScottishPartnershipType extends PartyType {
   override val value: String = "58"
 }
@@ -137,8 +140,6 @@ case object VATGroupType extends PartyType {
 
 object PartyType {
 
-  val logger = Logger(getClass.getSimpleName)
-
   val partyTypes: Set[PartyType] = Set(
     SoleTraderType,
     LLPType,
@@ -159,6 +160,7 @@ object PartyType {
     RegisteredSocietyType,
     NonUkCompNoUKEstabType,
     GovernmentOrgType,
+    CorporationSole,
     ScottishPartnershipType,
     ScottishLimitedPartnershipType,
     TrustType,
