@@ -42,17 +42,17 @@ class UpdateContactPreferenceAndEmailController @Inject()(VatAuthorised: VatAuth
               updateContactPreferenceService.updatePreferenceAndEmail(model.emailAddress, details).map {
                 case Right(success) => Ok(Json.toJson(success))
                 case Left(error) =>
-                  logger.warn("[UpdateContactPreferenceAndEmailController][update] Error occurred when updating " +
+                  warnLog("[UpdateContactPreferenceAndEmailController][update] Error occurred when updating " +
                     "contact preference and email address")
                   InternalServerError(Json.toJson(error))
               }
             case Left(error) =>
-              logger.warn("[UpdateContactPreferenceAndEmailController][update] Error retrieved when retrieving " +
+              warnLog("[UpdateContactPreferenceAndEmailController][update] Error retrieved when retrieving " +
                 "current user details")
               Future.successful(InternalServerError(Json.toJson(error)))
           }
         case Left(error) =>
-          logger.warn("[UpdateContactPreferenceAndEmailController][update] Email address not valid in request")
+          warnLog("[UpdateContactPreferenceAndEmailController][update] Email address not valid in request")
           Future.successful(BadRequest(Json.toJson(error)))
       }
   }

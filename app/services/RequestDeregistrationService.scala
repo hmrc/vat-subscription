@@ -16,25 +16,26 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.{ContactDetails, User}
 import models.updateVatSubscription.request._
 import models.updateVatSubscription.request.deregistration.DeregistrationInfo
-import utils.LoggerUtil
+import models.{ContactDetails, User}
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.LoggingUtil
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RequestDeregistrationService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
+class RequestDeregistrationService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggingUtil {
 
   def deregister(deregistration: DeregistrationInfo, welshIndicator: Boolean)
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructDeregistrationModel(deregistration, welshIndicator)
-    logger.debug(s"[RequestDeregistrationService][deregister] Submitting Deregistration Request for user with vrn - ${user.vrn}")
-    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+    infoLog(s"[RequestDeregistrationService][deregister] Submitting Deregistration Request for user with vrn - ${user.vrn}")
+    updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
   def constructDeregistrationModel(deregistration: DeregistrationInfo, welshIndicator: Boolean)

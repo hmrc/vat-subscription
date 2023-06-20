@@ -16,24 +16,25 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.updateVatSubscription.request._
 import models.{ContactDetails, ReturnPeriod, User}
-import utils.LoggerUtil
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.LoggingUtil
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
+class UpdateReturnPeriodService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggingUtil {
 
   def updateReturnPeriod(updatedReturnPeriod: ReturnPeriod, welshIndicator: Boolean)
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructReturnPeriodUpdateModel(updatedReturnPeriod, welshIndicator)
-    logger.debug(s"[UpdateReturnPeriodService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
-    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+    infoLog(s"[UpdateReturnPeriodService][updateReturnPeriod]: updating return period for user with vrn - ${user.vrn}")
+    updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
 

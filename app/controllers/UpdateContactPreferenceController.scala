@@ -27,7 +27,7 @@ import services.{UpdateContactPreferenceService, VatCustomerDetailsRetrievalServ
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateContactPreferenceController @Inject()(VatAuthorised: VatAuthorised,
+class UpdateContactPreferenceController @Inject()(val VatAuthorised: VatAuthorised,
                                                   updatedContactPreferenceService: UpdateContactPreferenceService,
                                                   vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
                                                   cc: ControllerComponents)
@@ -42,11 +42,14 @@ class UpdateContactPreferenceController @Inject()(VatAuthorised: VatAuthorised,
             case Right(welshIndicator) =>
               updatedContactPreferenceService.updateContactPreference(updatedCommsPreference, welshIndicator).map {
                 case Right(success) => Ok(Json.toJson(success))
-                case Left(error) => InternalServerError(Json.toJson(error))
+                case Left(error) =>
+                  warnLog(s"[UpdateContactPreferenceController][updateContactPreference] Failed with updating contact preferences: ${error.reason}")
+                  InternalServerError(Json.toJson(error))
               }
             case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
           }
         case Left(error) =>
+          warnLog(s"[UpdateContactPreferenceController][updateContactPreference] Failed trying welsh indicator: ${error.reason}")
           Future.successful(BadRequest(Json.toJson(error)))
       }
   }

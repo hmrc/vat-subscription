@@ -24,6 +24,7 @@ import connectors.mocks.MockGetVatCustomerInformationConnector
 import helpers.BaseTestConstants._
 import helpers.CustomerDetailsTestConstants._
 import helpers.CustomerInformationTestConstants._
+import models.User
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -36,6 +37,7 @@ class VatCompanyDetailsRetrievalServiceSpec extends AnyWordSpecLike with Matcher
     mockConnector
   )
 
+  implicit  val testUser: User[_] = User(testVatNumber, None, testCredentials.providerId)(fakeRequest)
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(FakeRequest())
 
   "retrieveVatCustomerDetails" should {

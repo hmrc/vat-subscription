@@ -40,11 +40,17 @@ class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
               case Right(welshIndicator) => {
                 updatePPOBService.updatePPOB(updatedPPOB, welshIndicator).map {
                   case Right(success) => Ok(Json.toJson(success))
-                  case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
-                  case Left(error) => InternalServerError(Json.toJson(error))
+                  case Left(error) if error.code == "CONFLICT" =>
+                    warnLog(s"[UpdatePPOBController][updatePPOB] Failed to update PPOB conflict: ${error.reason}")
+                    Conflict(Json.toJson(error))
+                  case Left(error) =>
+                    warnLog(s"[UpdatePPOBController][updatePPOB] Failed to update PPOB: ${error.reason}")
+                    InternalServerError(Json.toJson(error))
                 }
               }
-              case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
+              case Left(error) =>
+                warnLog(s"[UpdatePPOBController][updatePPOB] Failed trying to get welsh indicator: ${error}")
+                Future.successful(InternalServerError(Json.toJson(error)))
             }
           case Left(error) =>
             Future.successful(BadRequest(Json.toJson(error)))

@@ -21,9 +21,10 @@ import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.GetVatCustomerInformationFailure
-import models.MandationStatus
+import models.{MandationStatus, User}
 import org.scalatestplus.mockito.MockitoSugar
 import services.MandationStatusService
+
 import scala.concurrent.Future
 
 
@@ -41,7 +42,7 @@ trait MockMandationStatusService extends MockitoSugar with BeforeAndAfterEach {
                             )(response: Future[Either[GetVatCustomerInformationFailure, MandationStatus]]): Unit = {
     when(mockMandationStatusService.getMandationStatus(
       ArgumentMatchers.eq(vatNumber)
-    )(ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+    )(ArgumentMatchers.any[HeaderCarrier], ArgumentMatchers.any[User[_]])) thenReturn response
   }
 
 }

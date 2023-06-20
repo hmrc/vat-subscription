@@ -24,14 +24,14 @@ import models.updateVatSubscription.request.UpdateVatSubscription._
 import models.updateVatSubscription.response.ErrorModel
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
-import utils.LoggerUtil
+import utils.LoggingUtil
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
-                                               val appConfig: AppConfig) extends LoggerUtil {
+                                               val appConfig: AppConfig) extends LoggingUtil {
 
   private[connectors] val url: String => String = vrn => s"${appConfig.desUrl}/vat/subscription/vrn/$vrn"
 
@@ -43,8 +43,8 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
     "Credential-Id" -> user.credId
   )
 
-  def updateVatSubscription(user: User[_], vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
-                           (implicit ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
+  def updateVatSubscription(vatSubscriptionModel: UpdateVatSubscription, hc: HeaderCarrier)
+                           (implicit ec: ExecutionContext, user: User[_]): Future[UpdateVatSubscriptionResponse] = {
 
     val headerCarrier: HeaderCarrier = hc.copy(authorization = None)
 
@@ -57,7 +57,7 @@ class UpdateVatSubscriptionConnector @Inject()(val http: HttpClient,
       url(user.vrn), vatSubscriptionModel, desHeaders(user)
     )(writes, UpdateVatSubscriptionReads, headerCarrier, ec).recover {
       case ex: HttpException =>
-        logger.warn(s"[UpdateVatSubscriptionConnector][updateVatSubscription] - HTTP exception received: ${ex.message}")
+        warnLog(s"[UpdateVatSubscriptionConnector][updateVatSubscription] - HTTP exception received: ${ex.message}")
         Left(ErrorModel("BAD_GATEWAY", ex.message))
     }
   }

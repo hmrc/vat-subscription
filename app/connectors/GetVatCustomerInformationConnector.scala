@@ -22,15 +22,16 @@ import httpparsers.GetVatCustomerInformationHttpParser
 import javax.inject.{Inject, Singleton}
 import play.api.http.Status._
 import play.api.libs.json.{Json, Writes}
+import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
-import utils.LoggerUtil
+import utils.LoggingUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
                                                    val appConfig: AppConfig,
-                                                   val httpParser: GetVatCustomerInformationHttpParser) extends LoggerUtil {
+                                                   val httpParser: GetVatCustomerInformationHttpParser) extends LoggingUtil {
 
   import httpParser.GetVatCustomerInformationHttpParserResponse
 
@@ -42,7 +43,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
   )
 
   def getInformation(vatNumber: String)
-                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GetVatCustomerInformationHttpParserResponse] = {
+                    (implicit hc: HeaderCarrier, ec: ExecutionContext, user: Request[_]): Future[GetVatCustomerInformationHttpParserResponse] = {
     val headerCarrier = hc.copy(authorization = None)
 
     logger.debug(s"[GetVatCustomerInformationConnector][getInformation] URL: ${url(vatNumber)}")
@@ -57,7 +58,7 @@ class GetVatCustomerInformationConnector @Inject()(val http: HttpClient,
       implicitly[ExecutionContext]
     ).recover {
       case ex: HttpException =>
-        logger.warn(s"[GetVatCustomerInformationConnector][getInformation] - HTTP exception received: ${ex.message}")
+        warnLog(s"[GetVatCustomerInformationConnector][getInformation] - HTTP exception received: ${ex.message}")
         Left(UnexpectedGetVatCustomerInformationFailure(BAD_GATEWAY, ex.message))
     }
   }

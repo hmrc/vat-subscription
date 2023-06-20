@@ -38,7 +38,6 @@ class RetrieveVatCustomerDetailsControllerSpec extends TestUtil
   object TestRetrieveVatCustomerDetailsController
     extends RetrieveVatCustomerDetailsController(mockVatAuthorised,
                                                 mockVatCustomerDetailsRetrievalService,
-                                                mockAppConfig,
                                                 controllerComponents)
 
   "the retrieveVatCustomerDetails method" when {

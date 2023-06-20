@@ -47,17 +47,23 @@ class UpdateOrganisationDetailsController @Inject()(VatAuthorised: VatAuthorised
   def handleCustomerInfoCall(vrn: String, tradingName: TradingName)(implicit user: User[_]): Future[Result] = {
     vatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(vrn).flatMap {
       case Right(customerInfo) if noNamesDefined(customerInfo) =>
-        logger.warn("[UpdateOrganisationDetailsController][updateTradingName] CustomerDetails were returned, but " +
+        warnLog("[UpdateOrganisationDetailsController][updateTradingName] CustomerDetails were returned, but " +
           "the user has no individual or org names defined")
         Future.successful(InternalServerError(Json.toJson(ErrorModel("INTERNAL_SERVER_ERROR", "The service returned " +
           "CustomerDetails with no defined individual or org names"))))
       case Right(customerInfo) =>
         updateOrganisationDetailsService.updateTradingName(tradingName, customerInfo).map {
           case Right(success) => Ok(Json.toJson(success))
-          case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
-          case Left(error) => InternalServerError(Json.toJson(error))
+          case Left(error) if error.code == "CONFLICT" =>
+            warnLog(s"[UpdateOrganisationDetailsController][handleCustomerInfoCall] Failed to update trading name conflict: ${error.reason}")
+            Conflict(Json.toJson(error))
+          case Left(error) =>
+            warnLog(s"[UpdateOrganisationDetailsController][handleCustomerInfoCall] Failed to update trading name: ${error.reason}")
+            InternalServerError(Json.toJson(error))
         }
-      case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
+      case Left(error) =>
+        warnLog(s"[UpdateOrganisationDetailsController][handleCustomerInfoCall] Failed to retrieve vat customer details: ${error}")
+        Future.successful(InternalServerError(Json.toJson(error)))
     }
   }
 
@@ -76,12 +82,17 @@ class UpdateOrganisationDetailsController @Inject()(VatAuthorised: VatAuthorised
             case Right(details) =>
               updateOrganisationDetailsService.updateBusinessName(businessName, details).map {
                 case Right(success) => Ok(Json.toJson(success))
-                case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
-                case Left(error) => InternalServerError(Json.toJson(error))
+                case Left(error) if error.code == "CONFLICT" =>
+                  warnLog(s"[UpdateOrganisationDetailsController][updateBusinessName] Failed to update business name conflict: ${error.reason}")
+                  Conflict(Json.toJson(error))
+                case Left(error) =>
+                  warnLog(s"[UpdateOrganisationDetailsController][updateBusinessName] Failed to update business name: ${error.reason}")
+                  InternalServerError(Json.toJson(error))
               }
             case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
           }
         case Left(error) =>
+          warnLog(s"[UpdateOrganisationDetailsController][updateBusinessName] Failed to retrieve vat customer details: ${error}")
           Future.successful(BadRequest(Json.toJson(error)))
       }
   }

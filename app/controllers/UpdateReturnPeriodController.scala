@@ -41,9 +41,13 @@ class UpdateReturnPeriodController @Inject()(VatAuthorised: VatAuthorised,
             case Right(welshIndicator) =>
               updateReturnPeriodService.updateReturnPeriod(period, welshIndicator).map {
                 case Right(success) => Ok(Json.toJson(success))
-                case Left(error) => InternalServerError(Json.toJson(error))
+                case Left(error) =>
+                  warnLog(s"[UpdateReturnPeriodController][updateVatReturnPeriod] Failed to update Vat Return Period: ${error.reason}")
+                  InternalServerError(Json.toJson(error))
               }
-            case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
+            case Left(error) =>
+              warnLog(s"[UpdateReturnPeriodController][updateVatReturnPeriod] Failed trying to extract welsh indicator: ${error}")
+              Future.successful(InternalServerError(Json.toJson(error)))
           }
           case Left(error) =>
             Future.successful(BadRequest(Json.toJson(error)))
