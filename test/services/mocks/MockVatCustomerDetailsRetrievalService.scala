@@ -21,9 +21,10 @@ import org.mockito.Mockito._
 import org.scalatest.Suite
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.GetVatCustomerInformationFailure
-import models.{CustomerDetails, VatCustomerInformation}
+import models.{CustomerDetails, User, VatCustomerInformation}
 import org.scalatestplus.mockito.MockitoSugar
 import services._
+
 import scala.concurrent.Future
 
 trait MockVatCustomerDetailsRetrievalService extends MockitoSugar {
@@ -34,17 +35,19 @@ trait MockVatCustomerDetailsRetrievalService extends MockitoSugar {
   def mockRetrieveVatCustomerDetails(vatNumber: String)
                         (response: Future[Either[GetVatCustomerInformationFailure, CustomerDetails]]): Unit = {
     when(mockVatCustomerDetailsRetrievalService.retrieveVatCustomerDetails(ArgumentMatchers.eq(vatNumber))
-                                                                          (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+                                                                          (ArgumentMatchers.any[HeaderCarrier],
+                                                                            ArgumentMatchers.any[User[_]])) thenReturn response
   }
 
   def mockExtractWelshIndicator(vrn: String)(response: Future[Either[GetVatCustomerInformationFailure, Boolean]]): Unit = {
     when(mockVatCustomerDetailsRetrievalService.extractWelshIndicator(ArgumentMatchers.eq(vrn))
-                                                                     (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+                                                                     (ArgumentMatchers.any[HeaderCarrier],
+                                                                       ArgumentMatchers.any[User[_]])) thenReturn response
   }
 
   def mockRetrieveVatInformation(vatNumber: String)
                                     (response: Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]]): Unit = {
     when(mockVatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(ArgumentMatchers.eq(vatNumber))
-    (ArgumentMatchers.any[HeaderCarrier])) thenReturn response
+    (ArgumentMatchers.any[HeaderCarrier], ArgumentMatchers.any[User[_]])) thenReturn response
   }
 }

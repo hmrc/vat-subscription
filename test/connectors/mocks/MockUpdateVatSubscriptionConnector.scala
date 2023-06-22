@@ -40,8 +40,8 @@ trait MockUpdateVatSubscriptionConnector extends AnyWordSpecLike with Matchers w
 
   def mockUpdateVatSubscriptionResponse(response: Either[ErrorModel, SuccessModel]): Unit = {
     when(mockUpdateVatSubscriptionConnector.updateVatSubscription
-      (any[User[_]](), any[UpdateVatSubscription](), any[HeaderCarrier]())
-      (any[ExecutionContext]()))
+      (any[UpdateVatSubscription](), any[HeaderCarrier]())
+      (any[ExecutionContext](), any[User[_]]()))
         .thenReturn(Future.successful(response))
   }
 }

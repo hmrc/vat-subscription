@@ -18,15 +18,16 @@ package httpparsers
 
 import config.AppConfig
 import connectors._
+
 import javax.inject.{Inject, Singleton}
-import models.VatCustomerInformation
+import models.{User, VatCustomerInformation}
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.LoggerUtil
+import utils.LoggingUtil
 
 @Singleton
-class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extends LoggerUtil {
+class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extends LoggingUtil {
 
   type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
 
@@ -40,7 +41,6 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extend
 
           ) match {
             case JsSuccess(vatCustomerInformation, _) =>
-              logger.debug(s"[CustomerCircumstancesHttpParser][read]: Json Body: \n\n${response.body}")
               Right(vatCustomerInformation)
             case JsError(errors) =>
               logger.warn(s"Invalid Success Response Json. Error: $errors")

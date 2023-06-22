@@ -26,8 +26,8 @@ import services.{UpdateMandationStatusService, VatCustomerDetailsRetrievalServic
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateMandationStatusController @Inject()(VatAuthorised: VatAuthorised,
-                                                updateMandationStatusService: UpdateMandationStatusService,
+class UpdateMandationStatusController @Inject()(val VatAuthorised: VatAuthorised,
+                                                val updateMandationStatusService: UpdateMandationStatusService,
                                                 vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
                                                 cc: ControllerComponents)
                                                (implicit ec: ExecutionContext) extends BackendController(cc)
@@ -41,13 +41,18 @@ class UpdateMandationStatusController @Inject()(VatAuthorised: VatAuthorised,
             case Right(welshIndicator) =>
               updateMandationStatusService.updateMandationStatus(updatedMandationStatus, welshIndicator).map {
                 case Right(success) => Ok(Json.toJson(success))
-                case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
-                case Left(error) => InternalServerError(Json.toJson(error))
+                case Left(error) if error.code == "CONFLICT" =>
+                  warnLog(s"[UpdateMandationStatusController][updateMandationStatus] Failed to update mandation status Conflict: ${error.reason}")
+                  Conflict(Json.toJson(error))
+                case Left(error) =>
+                  warnLog(s"[UpdateMandationStatusController][updateMandationStatus] Failed to update mandation status: ${error.reason}")
+                  InternalServerError(Json.toJson(error))
               }
-            case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
+            case Left(error) =>
+              warnLog(s"[UpdateMandationStatusController][updateMandationStatus] Failed trying welsh indicator: ${error}")
+              Future.successful(InternalServerError(Json.toJson(error)))
           }
-        case Left(error) =>
-          Future.successful(BadRequest(Json.toJson(error)))
+        case Left(error) => Future.successful(BadRequest(Json.toJson(error)))
       }
   }
 }

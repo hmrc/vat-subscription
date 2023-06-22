@@ -18,23 +18,24 @@ package services
 
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import javax.inject.{Inject, Singleton}
-import models.updateVatSubscription.request._
 import models._
+import models.updateVatSubscription.request._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.LoggerUtil
+import utils.LoggingUtil
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
+class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggingUtil {
 
   def updateTradingName(updatedTradingName: TradingName, customerDetails: CustomerDetails)
                        (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructTradingNameUpdateModel(updatedTradingName,
                                                             customerDetails)
-    logger.debug(s"[UpdateOrganisationDetailsService][updateTradingName]: updating trading name for user " +
+    infoLog(s"[UpdateOrganisationDetailsService][updateTradingName]: updating trading name for user " +
       s"with vrn - ${user.vrn}")
-    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+    updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
   def constructTradingNameUpdateModel(updatedTradingName: TradingName,
@@ -77,7 +78,7 @@ class UpdateOrganisationDetailsService @Inject()(updateVatSubscriptionConnector:
                         (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructBusinessNameUpdateModel(updatedBusinessName, approvedDetails)
     logger.debug(s"[UpdateOrganisationDetailsService][updateBusinessName]: updating business name for user with vrn - ${user.vrn}")
-    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+    updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
   def constructBusinessNameUpdateModel(updatedBusinessName: BusinessName, approvedDetails: CustomerDetails)

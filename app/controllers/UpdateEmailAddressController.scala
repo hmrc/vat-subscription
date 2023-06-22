@@ -34,6 +34,7 @@ class UpdateEmailAddressController @Inject()(VatAuthorised: VatAuthorised,
                                              with MicroserviceBaseController {
 
   def updateEmail(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
+
     implicit user =>
       parseJsonBody[EmailPost] match {
         case Right(updatedEmail) =>

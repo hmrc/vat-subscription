@@ -16,13 +16,14 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
 import models.updateVatSubscription.request.deregistration.DeregistrationInfo
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.{RequestDeregistrationService, VatCustomerDetailsRetrievalService}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -41,9 +42,13 @@ class RequestDeregistrationController @Inject()(VatAuthorised: VatAuthorised,
             case Right(welshIndicator) =>
               requestDeregistrationService.deregister(period, welshIndicator).map {
                 case Right(success) => Ok(Json.toJson(success))
-                case Left(error) => InternalServerError(Json.toJson(error))
+                case Left(error) =>
+                  warnLog(s"[RequestDeregistrationController][deregister] Deregister failed trying to deregister: ${error.reason}")
+                  InternalServerError(Json.toJson(error))
               }
-            case Left(error) => Future.successful(InternalServerError(Json.toJson(error)))
+            case Left(error) =>
+              warnLog(s"[RequestDeregistrationController][deregister] Deregister failed trying to extract welsh indicator: ${error}")
+              Future.successful(InternalServerError(Json.toJson(error)))
           }
         case Left(error) =>
           Future.successful(BadRequest(Json.toJson(error)))

@@ -19,9 +19,9 @@ package httpparsers
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
-import utils.LoggerUtil
+import utils.LoggingUtil
 
-object UpdateVatSubscriptionHttpParser extends LoggerUtil {
+object UpdateVatSubscriptionHttpParser extends LoggingUtil {
 
   type UpdateVatSubscriptionResponse = Either[ErrorModel, SuccessModel]
 

@@ -16,21 +16,24 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import connectors.GetVatCustomerInformationConnector
-import connectors.GetVatCustomerInformationFailure
+import connectors.{GetVatCustomerInformationConnector, GetVatCustomerInformationFailure}
 import models._
-import utils.LoggerUtil
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.LoggingUtil
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
 class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: GetVatCustomerInformationConnector)
-                                                  (implicit ec: ExecutionContext) extends LoggerUtil {
+                                                  (implicit ec: ExecutionContext) extends LoggingUtil {
 
-  def retrieveVatCustomerDetails(vatNumber: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, CustomerDetails]] = {
-    logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer details for vat number - $vatNumber")
+  def retrieveVatCustomerDetails(vatNumber: String)
+                                (implicit hc: HeaderCarrier,
+                                 user: User[_]): Future[Either[GetVatCustomerInformationFailure, CustomerDetails]] = {
+    infoLog(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer " +
+      s"details for vat number - $vatNumber")
     vatCustomerDetailsConnector.getInformation(vatNumber).map {
       case Right(details) =>
         Right(details.customerDetails)
@@ -39,20 +42,20 @@ class VatCustomerDetailsRetrievalService @Inject()(vatCustomerDetailsConnector: 
     }
   }
 
-  def extractWelshIndicator(vrn: String)(implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure,Boolean]] = {
+  def extractWelshIndicator(vrn: String)(implicit hc: HeaderCarrier, user: User[_]): Future[Either[GetVatCustomerInformationFailure,Boolean]] = {
     retrieveVatCustomerDetails(vrn).map {
       case Right(details) =>
         Right(details.welshIndicator.contains(true))
       case Left(error) =>
-        logger.debug(s"[VatCustomerDetailsRetrievalService][extractWelshIndicator]: " +
+        infoLog(s"[VatCustomerDetailsRetrievalService][extractWelshIndicator]: " +
           s"vatCustomerDetailsConnector returned an error retrieving welshIndicator - $error")
         Left(error)
     }
   }
 
   def retrieveCircumstanceInformation(vatNumber: String)
-                                     (implicit hc: HeaderCarrier): Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]] = {
-    logger.debug(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer circumstances for vat number - $vatNumber")
+                                     (implicit hc: HeaderCarrier, user: User[_]): Future[Either[GetVatCustomerInformationFailure, VatCustomerInformation]] = {
+    infoLog(s"[VatCustomerDetailsRetrievalService][retrieveVatCustomerDetails]: retrieving customer circumstances for vat number - $vatNumber")
     vatCustomerDetailsConnector.getInformation(vatNumber)
   }
 

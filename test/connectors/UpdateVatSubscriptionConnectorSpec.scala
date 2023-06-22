@@ -16,11 +16,12 @@
 
 package connectors
 
-import helpers.BaseTestConstants.testUser
+import helpers.BaseTestConstants.{fakeRequest, testCredentials, testUser, testVatNumber}
 import helpers.DeclarationTestConstants._
 import helpers.UpdateVatSubscriptionTestConstants._
 import helpers.{MockHttpClient, TestUtil}
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
+import models.User
 import models.updateVatSubscription.request.{ChangeReturnPeriod, ControlInformation, UpdateVatSubscription}
 import models.updateVatSubscription.response.{ErrorModel, SuccessModel}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -29,6 +30,8 @@ import uk.gov.hmrc.http.RequestTimeoutException
 import scala.concurrent.Future
 
 class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
+
+  implicit val testUser: User[_] = User(testVatNumber, None, testCredentials.providerId)(fakeRequest)
 
   "UpdateVatSubscriptionConnector url()" should {
 
@@ -62,7 +65,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
       "return successful UpdateVatSubscriptionResponse model" in {
 
         val connector = setup(Future.successful(Right(SuccessModel("12345"))))
-        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(requestModel, hc)
 
         await(result) shouldBe Right(SuccessModel("12345"))
       }
@@ -75,7 +78,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
       "return successful UpdateVatSubscriptionResponse model" in {
 
         val connector = setup(Future.successful(Left(ErrorModel("BAD_REQUEST", "REASON"))))
-        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(requestModel, hc)
 
         await(result) shouldBe Left(ErrorModel("BAD_REQUEST", "REASON"))
       }
@@ -86,7 +89,7 @@ class UpdateVatSubscriptionConnectorSpec extends TestUtil with MockHttpClient {
       "return an ErrorModel" in {
         val exception = new RequestTimeoutException("Request timed out!!!")
         val connector = setup(Future.failed(exception))
-        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(testUser, requestModel, hc)
+        val result: Future[UpdateVatSubscriptionResponse] = connector.updateVatSubscription(requestModel, hc)
 
         await(result) shouldBe Left(ErrorModel("BAD_GATEWAY", exception.message))
       }

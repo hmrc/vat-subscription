@@ -24,11 +24,12 @@ import models.get.PPOBGet
 import models.{ContactDetails, DigitalPreference, User, VatCustomerInformation}
 import models.post.{CommsPreferencePost, PPOBAddressPost, PPOBPost}
 import models.updateVatSubscription.request._
-import utils.LoggerUtil
+import utils.LoggingUtil
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
+class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggingUtil {
 
   def updateContactPreference(updatedContactPreference: CommsPreferencePost,
                               welshIndicator: Boolean)
@@ -36,18 +37,18 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructContactPreferenceModel(updatedContactPreference, welshIndicator)
-    logger.debug("[UpdateContactPreferenceService][updateContactPreference]: " +
+    infoLog("[UpdateContactPreferenceService][updateContactPreference]: " +
       s"updating contact preference for user with vrn - ${user.vrn}")
-    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+    updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
   def updatePreferenceAndEmail(newEmail: String,
                                currentDetails: VatCustomerInformation)
                               (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
     val subscriptionModel = constructContactPreferenceAndEmailModel(newEmail, currentDetails.customerDetails.welshIndicator, currentDetails.ppob)
-    logger.debug("[UpdateContactPreferenceService][updatePreferenceAndEmail]: updating contact preference " +
+    infoLog("[UpdateContactPreferenceService][updatePreferenceAndEmail]: updating contact preference " +
       s"and email for user with vrn - ${user.vrn}")
-    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+    updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
   def constructContactPreferenceModel(updatedContactPreference: CommsPreferencePost,

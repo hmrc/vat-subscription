@@ -16,25 +16,26 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
-import models.{ContactDetails, User}
 import models.post.PPOBPost
 import models.updateVatSubscription.request._
-import utils.LoggerUtil
+import models.{ContactDetails, User}
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.LoggingUtil
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggerUtil {
+class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggingUtil {
 
   def updatePPOB(updatedPPOB: PPOBPost, welshIndicator: Boolean)
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
     val subscriptionModel = constructPPOBUpdateModel(updatedPPOB, welshIndicator)
-    logger.debug(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating PPOB for user with vrn - ${user.vrn}")
-    updateVatSubscriptionConnector.updateVatSubscription(user, subscriptionModel, hc)
+    infoLog(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating PPOB for user with vrn - ${user.vrn}")
+    updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
   def constructPPOBUpdateModel(updatedPPOB: PPOBPost, welshIndicator: Boolean)
