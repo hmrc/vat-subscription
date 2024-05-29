@@ -21,6 +21,9 @@ import uk.gov.hmrc.DefaultBuildSettings._
 RoutesKeys.routesImport := Seq.empty
 
 val appName = "vat-subscription"
+val bootstrapVersion = "8.4.0"
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.12"
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
@@ -45,11 +48,11 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.15.0"
+  "uk.gov.hmrc" %% "bootstrap-backend-play-30" % bootstrapVersion
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.15.0"            % scope,
+  "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % bootstrapVersion            % scope,
   "org.scalatestplus"       %% "mockito-3-3"                % "3.2.2.0"           % scope
 )
 
@@ -60,8 +63,6 @@ lazy val root = Project(appName, file("."))
   .settings(coverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
-    scalaVersion := "2.13.8",
-    majorVersion := 0,
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     PlayKeys.playDefaultPort := 9567
