@@ -17,7 +17,7 @@
 package services
 
 import connectors.{GetVatCustomerInformationConnector, GetVatCustomerInformationFailure}
-import models.{MandationStatus, User}
+import models.MandationStatus
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggingUtil

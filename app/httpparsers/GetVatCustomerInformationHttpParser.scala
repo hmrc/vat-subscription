@@ -20,7 +20,7 @@ import config.AppConfig
 import connectors._
 
 import javax.inject.{Inject, Singleton}
-import models.{User, VatCustomerInformation}
+import models.VatCustomerInformation
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}

@@ -16,7 +16,7 @@
 
 package connectors
 
-import helpers.BaseTestConstants.{fakeRequest, testCredentials, testUser, testVatNumber}
+import helpers.BaseTestConstants.{testCredentials, testVatNumber}
 import helpers.DeclarationTestConstants._
 import helpers.UpdateVatSubscriptionTestConstants._
 import helpers.{MockHttpClient, TestUtil}
