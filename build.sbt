@@ -53,7 +53,7 @@ val compile = Seq(
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % bootstrapVersion            % scope,
-  "org.scalatestplus"       %% "mockito-3-3"                % "3.2.2.0"           % scope
+  "org.scalatestplus"       %% "mockito-4-11"               % "3.2.18.0"           % scope
 )
 
 lazy val root = Project(appName, file("."))
