@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,10 @@ import uk.gov.hmrc.DefaultBuildSettings._
 RoutesKeys.routesImport := Seq.empty
 
 val appName = "vat-subscription"
+val bootstrapVersion = "8.4.0"
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.14"
+lazy val plugins: Seq[Plugins] = Seq.empty
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
@@ -45,33 +49,39 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28"  % "7.15.0"
+  "uk.gov.hmrc" %% "bootstrap-backend-play-30" % bootstrapVersion
 )
 
-def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "7.15.0"            % scope,
-  "org.scalatestplus"       %% "mockito-3-3"                % "3.2.2.0"           % scope
+def test(scope: String = "test"): Seq[ModuleID] = Seq(
+  "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % bootstrapVersion     % scope,
+  "org.scalatestplus"       %% "mockito-4-11"               % "3.2.18.0"           % scope
 )
 
-lazy val root = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
+lazy val microservice = Project(appName, file("."))
+  .enablePlugins(Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins: _*)
   .disablePlugins(JUnitXmlReportPlugin)
-  .settings(scalaSettings: _*)
-  .settings(coverageSettings: _*)
-  .settings(defaultSettings(): _*)
+  .settings(coverageSettings *)
+  .settings(scalaSettings *)
+  .settings(defaultSettings() *)
   .settings(
-    scalaVersion := "2.13.8",
-    majorVersion := 0,
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     PlayKeys.playDefaultPort := 9567
   )
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
-    IntegrationTest / Keys.fork := true,
-    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "it")).value,
-    IntegrationTest / javaOptions += "-Dlogger.resource=logback-test.xml",
-    addTestReportOption(IntegrationTest, "int-test-reports"),
-    IntegrationTest / parallelExecution := false
+    Test / Keys.fork := true,
+    Test / javaOptions += "-Dlogger.resource=logback-test.xml",
+    libraryDependencies ++= appDependencies,
+    retrieveManaged := true,
+    routesGenerator := InjectedRoutesGenerator
+  )
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test")
+  .settings(itSettings())
+  .settings(
+    fork := false,
+    addTestReportOption(Test, "int-test-reports"),
+    Test / testGrouping := oneForkedJvmPerTest((Test / definedTests).value)
   )
