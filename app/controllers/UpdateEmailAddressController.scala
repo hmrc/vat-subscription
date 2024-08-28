@@ -16,6 +16,8 @@
 
 package controllers
 
+import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -23,13 +25,15 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
 import models.post.EmailPost
 import services.{UpdateEmailService, VatCustomerDetailsRetrievalService}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdateEmailAddressController @Inject()(VatAuthorised: VatAuthorised,
                                              updateEmailService: UpdateEmailService,
                                              vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
-                                             cc: ControllerComponents)
+                                             cc: ControllerComponents,
+                                             appConfig: AppConfig)
                                             (implicit ec: ExecutionContext) extends BackendController(cc)
                                              with MicroserviceBaseController {
 
@@ -40,7 +44,7 @@ class UpdateEmailAddressController @Inject()(VatAuthorised: VatAuthorised,
         case Right(updatedEmail) =>
           vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
             case Right(welshIndicator) =>
-              updateEmailService.updateEmail(updatedEmail, welshIndicator).map {
+              updateEmailService.updateEmail(updatedEmail, welshIndicator, appConfig).map {
                 case Right(success) => Ok(Json.toJson(success))
                 case Left(error) if error.code == "CONFLICT" => Conflict(Json.toJson(error))
                 case Left(error) => InternalServerError(Json.toJson(error))

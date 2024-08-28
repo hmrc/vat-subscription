@@ -16,6 +16,7 @@
 
 package services
 
+import config.AppConfig
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.User
@@ -30,16 +31,17 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateEmailService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggingUtil {
 
-  def updateEmail(updatedEmail: EmailPost, welshIndicator: Boolean)
+  def updateEmail(updatedEmail: EmailPost, welshIndicator: Boolean, appConfig: AppConfig)
                  (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
-    val subscriptionModel = constructPPOBUpdateModel(updatedEmail, welshIndicator)
+    val subscriptionModel = constructPPOBUpdateModel(updatedEmail, welshIndicator, appConfig)
     infoLog(s"[UpdateVatSubscriptionService][updateEmail]: updating Email for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
   def constructPPOBUpdateModel(updatedEmail: EmailPost,
-                               welshIndicator: Boolean)
+                               welshIndicator: Boolean,
+                               appConfig: AppConfig)
                               (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentOrCapacitor: Option[AgentOrCapacitor] = user.arn.map(AgentOrCapacitor(_, None))
@@ -50,7 +52,8 @@ class UpdateEmailService @Inject()(updateVatSubscriptionConnector: UpdateVatSubs
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangePPOB,
       organisationDetails = None,
-      updatedPPOB = Some(UpdatedPPOB(updatedPPOB).convertUKCountryCodes),
+      updatedPPOB = if(appConfig.features.plusSignInPhoneNumbersEnabled.apply()) {
+        Some(UpdatedPPOB(updatedPPOB))} else {Some(UpdatedPPOB(updatedPPOB).convertUKCountryCodes)},
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(agentOrCapacitor, Signing()),

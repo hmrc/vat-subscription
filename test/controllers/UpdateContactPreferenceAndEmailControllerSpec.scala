@@ -40,7 +40,8 @@ class UpdateContactPreferenceAndEmailControllerSpec extends TestUtil
     mockVatAuthorised,
     mockUpdateContactPreferenceService,
     mockVatCustomerDetailsRetrievalService,
-    controllerComponents
+    controllerComponents,
+    mockAppConfig
   )
 
   val request: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.obj("emailAddress" -> "email@email.com"))

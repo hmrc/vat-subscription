@@ -16,6 +16,8 @@
 
 package controllers
 
+import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -23,13 +25,15 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
 import models.post.CommsPreferenceEmailPost
 import services.{UpdateContactPreferenceService, VatCustomerDetailsRetrievalService}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdateContactPreferenceAndEmailController @Inject()(VatAuthorised: VatAuthorised,
                                                           updateContactPreferenceService: UpdateContactPreferenceService,
                                                           vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
-                                                          cc: ControllerComponents)
+                                                          cc: ControllerComponents,
+                                                          appConfig: AppConfig)
                                                          (implicit ec: ExecutionContext) extends BackendController(cc)
                                                                                          with MicroserviceBaseController {
 
@@ -39,7 +43,7 @@ class UpdateContactPreferenceAndEmailController @Inject()(VatAuthorised: VatAuth
         case Right(model) =>
           vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vrn).flatMap {
             case Right(details) =>
-              updateContactPreferenceService.updatePreferenceAndEmail(model.emailAddress, details).map {
+              updateContactPreferenceService.updatePreferenceAndEmail(model.emailAddress, details, appConfig).map {
                 case Right(success) => Ok(Json.toJson(success))
                 case Left(error) =>
                   warnLog("[UpdateContactPreferenceAndEmailController][update] Error occurred when updating " +

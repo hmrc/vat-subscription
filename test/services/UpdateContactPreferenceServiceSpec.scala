@@ -108,95 +108,117 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
 
   "Calling .constructContactPreferenceAndEmailModel" when {
 
-    val service = new UpdateContactPreferenceService(mockUpdateVatSubscriptionConnector)
+    "the plusSignInPhoneNumbers.enabled feature switch is turned off" when {
 
-    "all optional fields in the 'PPOBGet' model are present" should {
+      val service = new UpdateContactPreferenceService(mockUpdateVatSubscriptionConnector)
 
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = true),
-        requestedChanges = ChangeCommsPreferenceAndEmail,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(PPOBPost(
-          address = PPOBAddressPost(
-            ppobAddressModelMax.line1,
-            ppobAddressModelMax.line2,
-            ppobAddressModelMax.line3,
-            ppobAddressModelMax.line4,
-            ppobAddressModelMax.line5,
-            ppobAddressModelMax.postCode,
-            ppobAddressModelMax.countryCode
-          ),
-          contactDetails = Some(ContactDetails(
-            contactDetailsModelMax.phoneNumber,
-            contactDetailsModelMax.mobileNumber,
-            contactDetailsModelMax.faxNumber,
-            Some("newemail@email.com"),
-            emailVerified = Some(true)
-          )),
-          websiteAddress = Some(website),
-          transactorOrCapacitorEmail = None
-        ))),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = Some(DigitalPreference)
-      )
+      "all optional fields in the 'PPOBGet' model are present" should {
 
-      val result = service.constructContactPreferenceAndEmailModel(
-        newEmail = "newemail@email.com",
-        welshIndicator = Some(true),
-        currentContactDetails = ppobModelMax
-      )
+        val expectedResult = UpdateVatSubscription(
+          controlInformation = ControlInformation(welshIndicator = true),
+          requestedChanges = ChangeCommsPreferenceAndEmail,
+          organisationDetails = None,
+          updatedPPOB = Some(UpdatedPPOB(PPOBPost(
+            address = PPOBAddressPost(
+              ppobAddressModelMax.line1,
+              ppobAddressModelMax.line2,
+              ppobAddressModelMax.line3,
+              ppobAddressModelMax.line4,
+              ppobAddressModelMax.line5,
+              ppobAddressModelMax.postCode,
+              ppobAddressModelMax.countryCode
+            ),
+            contactDetails = Some(ContactDetails(
+              contactDetailsModelMax.phoneNumber,
+              contactDetailsModelMax.mobileNumber,
+              contactDetailsModelMax.faxNumber,
+              Some("newemail@email.com"),
+              emailVerified = Some(true)
+            )),
+            websiteAddress = Some(website),
+            transactorOrCapacitorEmail = None
+          ))),
+          updatedReturnPeriod = None,
+          updateDeregistrationInfo = None,
+          declaration = Declaration(None, Signing()),
+          commsPreference = Some(DigitalPreference)
+        )
 
-      "return the correct UpdateVatSubscription model" in {
-        result shouldBe expectedResult
+        val result = service.constructContactPreferenceAndEmailModel(
+          newEmail = "newemail@email.com",
+          welshIndicator = Some(true),
+          currentContactDetails = ppobModelMax,
+          mockAppConfig
+        )
+
+        "return the correct UpdateVatSubscription model" in {
+          result shouldBe expectedResult
+        }
+      }
+
+      "all optional fields in the 'PPOBGet' model are not present" should {
+
+        val expectedResult = UpdateVatSubscription(
+          controlInformation = ControlInformation(welshIndicator = false),
+          requestedChanges = ChangeCommsPreferenceAndEmail,
+          organisationDetails = None,
+          updatedPPOB = Some(UpdatedPPOB(PPOBPost(
+            address = PPOBAddressPost(None, None, None, None, None, None, None),
+            contactDetails = Some(ContactDetails(
+              None,
+              None,
+              None,
+              Some("newemail@email.com"),
+              emailVerified = Some(true)
+            )),
+            websiteAddress = None,
+            transactorOrCapacitorEmail = None
+          ))),
+          updatedReturnPeriod = None,
+          updateDeregistrationInfo = None,
+          declaration = Declaration(None, Signing()),
+          commsPreference = Some(DigitalPreference)
+        )
+
+        val result = service.constructContactPreferenceAndEmailModel(
+          newEmail = "newemail@email.com",
+          welshIndicator = None,
+          currentContactDetails = PPOBGet(ppobAddressModelMin, None, None),
+          mockAppConfig
+        )
+
+        "return the correct UpdateVatSubscription model" in {
+          result shouldBe expectedResult
+        }
+      }
+
+      "the phone numbers contain +44" should {
+
+        "convert them to 0 as part of building the model" in {
+          mockAppConfig.features.plusSignInPhoneNumbersEnabled(false)
+          val ppob = ppobModelMax.copy(contactDetails = Some(invalidPhoneDetails))
+          val result = service.constructContactPreferenceAndEmailModel("newemail@email.com", welshIndicator = None, ppob, mockAppConfig)
+          val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
+          contactDetails.flatMap(_.phoneNumber) shouldBe Some("01613334444")
+          contactDetails.flatMap(_.mobileNumber) shouldBe Some("07707707712")
+        }
       }
     }
 
-    "all optional fields in the 'PPOBGet' model are not present" should {
+    "the plusSignInPhoneNumbers.enabled feature switch is turned on" when {
 
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangeCommsPreferenceAndEmail,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(PPOBPost(
-          address = PPOBAddressPost(None, None, None, None, None, None, None),
-          contactDetails = Some(ContactDetails(
-            None,
-            None,
-            None,
-            Some("newemail@email.com"),
-            emailVerified = Some(true)
-          )),
-          websiteAddress = None,
-          transactorOrCapacitorEmail = None
-        ))),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = Some(DigitalPreference)
-      )
+      val service = new UpdateContactPreferenceService(mockUpdateVatSubscriptionConnector)
 
-      val result = service.constructContactPreferenceAndEmailModel(
-        newEmail = "newemail@email.com",
-        welshIndicator = None,
-        currentContactDetails = PPOBGet(ppobAddressModelMin, None, None)
-      )
+      "the phone numbers contain +44" should {
 
-      "return the correct UpdateVatSubscription model" in {
-        result shouldBe expectedResult
-      }
-    }
-
-    "the phone numbers contain +44" should {
-
-      val ppob = ppobModelMax.copy(contactDetails = Some(invalidPhoneDetails))
-      val result = service.constructContactPreferenceAndEmailModel("newemail@email.com", welshIndicator = None, ppob)
-      val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
-
-      "convert them to 0 as part of building the model" in {
-        contactDetails.flatMap(_.phoneNumber) shouldBe Some("01613334444")
-        contactDetails.flatMap(_.mobileNumber) shouldBe Some("07707707712")
+        "not convert them to 0 as part of building the model" in {
+          mockAppConfig.features.plusSignInPhoneNumbersEnabled(true)
+          val ppob = ppobModelMax.copy(contactDetails = Some(invalidPhoneDetails))
+          val result = service.constructContactPreferenceAndEmailModel("newemail@email.com", welshIndicator = None, ppob, mockAppConfig)
+          val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
+          contactDetails.flatMap(_.phoneNumber) shouldBe Some("+441613334444")
+          contactDetails.flatMap(_.mobileNumber) shouldBe Some("+447707707712")
+        }
       }
     }
   }
@@ -206,7 +228,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
     "connector call is successful" should {
 
       lazy val service = setup(Right(SuccessModel("12345")))
-      lazy val result = service.updatePreferenceAndEmail("newemail@email.com", customerInformationModelMax)(testUser, hc, ec)
+      lazy val result = service.updatePreferenceAndEmail("newemail@email.com", customerInformationModelMax, mockAppConfig)(testUser, hc, ec)
 
       "return successful UpdateVatSubscriptionResponse model" in {
         await(result) shouldEqual Right(SuccessModel("12345"))
@@ -216,7 +238,7 @@ class UpdateContactPreferenceServiceSpec extends TestUtil with MockUpdateVatSubs
     "connector call is unsuccessful" should {
 
       lazy val service = setup(Left(ErrorModel("ERROR", "Error")))
-      lazy val result = service.updatePreferenceAndEmail("newemail@email.com", customerInformationModelMax)(testUser, hc, ec)
+      lazy val result = service.updatePreferenceAndEmail("newemail@email.com", customerInformationModelMax, mockAppConfig)(testUser, hc, ec)
 
       "return ErrorModel" in {
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
