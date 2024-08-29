@@ -16,6 +16,7 @@
 
 package services
 
+import config.AppConfig
 import connectors.UpdateVatSubscriptionConnector
 import httpparsers.UpdateVatSubscriptionHttpParser.UpdateVatSubscriptionResponse
 import models.post.PPOBPost
@@ -30,15 +31,15 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubscriptionConnector) extends LoggingUtil {
 
-  def updatePPOB(updatedPPOB: PPOBPost, welshIndicator: Boolean)
+  def updatePPOB(updatedPPOB: PPOBPost, welshIndicator: Boolean, appConfig: AppConfig)
                 (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
 
-    val subscriptionModel = constructPPOBUpdateModel(updatedPPOB, welshIndicator)
+    val subscriptionModel = constructPPOBUpdateModel(updatedPPOB, welshIndicator, appConfig)
     infoLog(s"[UpdateVatSubscriptionService][updateReturnPeriod]: updating PPOB for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
   }
 
-  def constructPPOBUpdateModel(updatedPPOB: PPOBPost, welshIndicator: Boolean)
+  def constructPPOBUpdateModel(updatedPPOB: PPOBPost, welshIndicator: Boolean, appConfig: AppConfig)
                               (implicit user: User[_]): UpdateVatSubscription = {
 
     val agentContactDetails: Option[ContactDetails] =
@@ -53,7 +54,11 @@ class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubsc
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangePPOB,
       organisationDetails = None,
-      updatedPPOB = Some(UpdatedPPOB(updatedPPOB).convertUKCountryCodes),
+      updatedPPOB = if(appConfig.features.plusSignInPhoneNumbersEnabled.apply()) {
+        Some(UpdatedPPOB(updatedPPOB))
+      } else {
+        Some(UpdatedPPOB(updatedPPOB).convertUKCountryCodes)
+      },
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(agentOrCapacitor, Signing()),

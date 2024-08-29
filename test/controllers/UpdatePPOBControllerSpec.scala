@@ -39,7 +39,8 @@ class UpdatePPOBControllerSpec extends TestUtil with MockVatAuthorised
     extends UpdatePPOBController(mockVatAuthorised,
                                 mockUpdatePPOBService,
                                 mockVatCustomerDetailsRetrievalService,
-                                controllerComponents)
+                                controllerComponents,
+                                mockAppConfig)
 
   val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
 

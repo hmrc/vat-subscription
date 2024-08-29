@@ -16,6 +16,8 @@
 
 package services
 
+import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.UpdateVatSubscriptionConnector
@@ -43,9 +45,10 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
   }
 
   def updatePreferenceAndEmail(newEmail: String,
-                               currentDetails: VatCustomerInformation)
+                               currentDetails: VatCustomerInformation,
+                               appConfig: AppConfig)
                               (implicit user: User[_], hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateVatSubscriptionResponse] = {
-    val subscriptionModel = constructContactPreferenceAndEmailModel(newEmail, currentDetails.customerDetails.welshIndicator, currentDetails.ppob)
+    val subscriptionModel = constructContactPreferenceAndEmailModel(newEmail, currentDetails.customerDetails.welshIndicator, currentDetails.ppob, appConfig)
     infoLog("[UpdateContactPreferenceService][updatePreferenceAndEmail]: updating contact preference " +
       s"and email for user with vrn - ${user.vrn}")
     updateVatSubscriptionConnector.updateVatSubscription(subscriptionModel, hc)
@@ -67,7 +70,8 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
 
   def constructContactPreferenceAndEmailModel(newEmail: String,
                                               welshIndicator: Option[Boolean],
-                                              currentContactDetails: PPOBGet): UpdateVatSubscription = {
+                                              currentContactDetails: PPOBGet,
+                                              appConfig: AppConfig): UpdateVatSubscription = {
     val currentAddress: PPOBAddressPost = PPOBAddressPost(
       line1 = currentContactDetails.address.line1,
       line2 = currentContactDetails.address.line2,
@@ -88,12 +92,19 @@ class UpdateContactPreferenceService @Inject()(updateVatSubscriptionConnector: U
       controlInformation = ControlInformation(welshIndicator.contains(true)),
       requestedChanges = ChangeCommsPreferenceAndEmail,
       organisationDetails = None,
-      updatedPPOB = Some(UpdatedPPOB(PPOBPost(
+      updatedPPOB = if(appConfig.features.plusSignInPhoneNumbersEnabled.apply()) {Some(UpdatedPPOB(PPOBPost(
         address = currentAddress,
         contactDetails = Some(updatedContactDetails),
         websiteAddress = currentContactDetails.websiteAddress,
         transactorOrCapacitorEmail = None
-      )).convertUKCountryCodes),
+      )))} else {
+        Some(UpdatedPPOB(PPOBPost(
+          address = currentAddress,
+          contactDetails = Some(updatedContactDetails),
+          websiteAddress = currentContactDetails.websiteAddress,
+          transactorOrCapacitorEmail = None
+        )).convertUKCountryCodes)
+      },
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(None, Signing()),

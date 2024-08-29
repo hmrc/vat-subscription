@@ -16,6 +16,7 @@
 
 package services.mocks
 
+import config.AppConfig
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
@@ -25,6 +26,7 @@ import models.post.EmailPost
 import models.User
 import org.scalatestplus.mockito.MockitoSugar
 import services._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockUpdateEmailService extends MockitoSugar {
@@ -34,7 +36,7 @@ trait MockUpdateEmailService extends MockitoSugar {
 
   def mockUpdateEmail(newPPOBEmail: EmailPost)(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdateEmailService
-      .updateEmail(ArgumentMatchers.eq(newPPOBEmail),ArgumentMatchers.any[Boolean])(
+      .updateEmail(ArgumentMatchers.eq(newPPOBEmail),ArgumentMatchers.any[Boolean], ArgumentMatchers.any[AppConfig])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]

@@ -18,22 +18,17 @@ package config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class AppConfig @Inject()(implicit val configuration: Configuration, servicesConfig: ServicesConfig){
+class Features @Inject()(implicit config: Configuration) {
 
-  import servicesConfig._
+  private val featureSwitch: String = "feature-switch"
+  lazy val plusSignInPhoneNumbersEnabled = new Feature(s"$featureSwitch.plusSignInPhoneNumbersEnabled")
 
-  def desUrl: String =
-    getString(
-      "microservice.services.des.url"
-    )
+  lazy val allSwitches: Seq[Feature] = Seq(
+    plusSignInPhoneNumbersEnabled
+  )
 
-  lazy val desAuthorisationToken: String = s"Bearer ${getString("microservice.services.des.authorisation-token")}"
-  lazy val desEnvironmentHeader: (String, String) =
-    "Environment" -> getString("microservice.services.des.environment")
-
-  lazy val features = new Features
+  def resetAll(): Unit = allSwitches.foreach(_.reset())
 
 }

@@ -16,24 +16,15 @@
 
 package config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-@Singleton
-class AppConfig @Inject()(implicit val configuration: Configuration, servicesConfig: ServicesConfig){
+import scala.sys.SystemProperties
 
-  import servicesConfig._
+class Feature(val key: String)(implicit config: Configuration){
 
-  def desUrl: String =
-    getString(
-      "microservice.services.des.url"
-    )
+  def apply(value: Boolean): Unit = sys.props += key -> value.toString
 
-  lazy val desAuthorisationToken: String = s"Bearer ${getString("microservice.services.des.authorisation-token")}"
-  lazy val desEnvironmentHeader: (String, String) =
-    "Environment" -> getString("microservice.services.des.environment")
+  def apply(): Boolean = sys.props.get(key).fold(config.getOptional[Boolean](key).getOrElse(false))(_.toBoolean)
 
-  lazy val features = new Features
-
+  def reset(): SystemProperties = sys.props -= key
 }

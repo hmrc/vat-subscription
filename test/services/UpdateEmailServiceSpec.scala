@@ -39,7 +39,7 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updateEmail(ppobModelEmailMaxPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateEmail(ppobModelEmailMaxPost, welshIndicator = false, mockAppConfig)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -48,7 +48,7 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updateEmail(ppobModelEmailMaxPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updateEmail(ppobModelEmailMaxPost, welshIndicator = false, mockAppConfig)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -56,79 +56,99 @@ class UpdateEmailServiceSpec extends TestUtil with MockUpdateVatSubscriptionConn
 
   "Calling .constructPPOBUpdateModel" when {
 
-    val service = new UpdateEmailService(mockUpdateVatSubscriptionConnector)
-    val updatedPPOB = PPOBPost(ppobModelEmailMaxPost.address, Some(ppobModelEmailMaxPost.contactDetails),
-      ppobModelEmailMaxPost.websiteAddress, None)
+    "the feature switch is turned off" when {
 
-    "user is not an Agent" should {
+      val service = new UpdateEmailService(mockUpdateVatSubscriptionConnector)
+      val updatedPPOB = PPOBPost(ppobModelEmailMaxPost.address, Some(ppobModelEmailMaxPost.contactDetails),
+        ppobModelEmailMaxPost.websiteAddress, None)
 
-      val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = false)(testUser)
+      "user is not an Agent" should {
 
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangePPOB,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = None
-      )
+        val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = false, mockAppConfig)(testUser)
 
-      "return a correct UpdateVatSubscription model" in {
-        result shouldEqual expectedResult
+        val expectedResult = UpdateVatSubscription(
+          controlInformation = ControlInformation(welshIndicator = false),
+          requestedChanges = ChangePPOB,
+          organisationDetails = None,
+          updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+          updatedReturnPeriod = None,
+          updateDeregistrationInfo = None,
+          declaration = Declaration(None, Signing()),
+          commsPreference = None
+        )
+
+        "return a correct UpdateVatSubscription model" in {
+          result shouldEqual expectedResult
+        }
+      }
+
+      "user is an Agent" should {
+
+        val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = false, mockAppConfig)(testAgentUser)
+
+        val expectedResult = UpdateVatSubscription(
+          controlInformation = ControlInformation(welshIndicator = false),
+          requestedChanges = ChangePPOB,
+          organisationDetails = None,
+          updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+          updatedReturnPeriod = None,
+          updateDeregistrationInfo = None,
+          declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing()),
+          commsPreference = None
+        )
+
+        "return an UpdateVatSubscription model containing agentOrCapacitor" in {
+          result shouldEqual expectedResult
+        }
+      }
+
+      "user has a welshIndicator" should {
+
+        val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = true, mockAppConfig)(testUser)
+
+        val expectedResult = UpdateVatSubscription(
+          controlInformation = ControlInformation(welshIndicator = true),
+          requestedChanges = ChangePPOB,
+          organisationDetails = None,
+          updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
+          updatedReturnPeriod = None,
+          updateDeregistrationInfo = None,
+          declaration = Declaration(None, Signing()),
+          commsPreference = None
+        )
+
+        "return a correct UpdateVatSubscription model" in {
+          result shouldEqual expectedResult
+        }
+      }
+
+      "the phone numbers contain +44" should {
+
+        "convert them to 0 as part of building the model" in {
+          mockAppConfig.features.plusSignInPhoneNumbersEnabled(false)
+          val emailPost = ppobModelEmailMaxPost.copy(contactDetails = invalidPhoneDetails)
+          val result = service.constructPPOBUpdateModel(emailPost, welshIndicator = false, mockAppConfig)(testUser)
+          val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
+          contactDetails.flatMap(_.phoneNumber) shouldBe Some("01613334444")
+          contactDetails.flatMap(_.mobileNumber) shouldBe Some("07707707712")
+        }
       }
     }
 
-    "user is an Agent" should {
+    "the feature switch is turned on" when {
 
-      val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = false)(testAgentUser)
+      "the phone numbers contain +44" should {
 
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangePPOB,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, None)), Signing()),
-        commsPreference = None
-      )
+        val service = new UpdateEmailService(mockUpdateVatSubscriptionConnector)
 
-      "return an UpdateVatSubscription model containing agentOrCapacitor" in {
-        result shouldEqual expectedResult
-      }
-    }
-
-    "user has a welshIndicator" should {
-
-      val result = service.constructPPOBUpdateModel(ppobModelEmailMaxPost, welshIndicator = true)(testUser)
-
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = true),
-        requestedChanges = ChangePPOB,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(updatedPPOB)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = None
-      )
-
-      "return a correct UpdateVatSubscription model" in {
-        result shouldEqual expectedResult
-      }
-    }
-
-    "the phone numbers contain +44" should {
-
-      val emailPost = ppobModelEmailMaxPost.copy(contactDetails = invalidPhoneDetails)
-      val result = service.constructPPOBUpdateModel(emailPost, welshIndicator = false)(testUser)
-      val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
-
-      "convert them to 0 as part of building the model" in {
-        contactDetails.flatMap(_.phoneNumber) shouldBe Some("01613334444")
-        contactDetails.flatMap(_.mobileNumber) shouldBe Some("07707707712")
+        "not convert them to 0 as part of building the model" in {
+          mockAppConfig.features.plusSignInPhoneNumbersEnabled(true)
+          val emailPost = ppobModelEmailMaxPost.copy(contactDetails = invalidPhoneDetails)
+          val result = service.constructPPOBUpdateModel(emailPost, welshIndicator = false, mockAppConfig)(testUser)
+          val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
+          contactDetails.flatMap(_.phoneNumber) shouldBe Some("+441613334444")
+          contactDetails.flatMap(_.mobileNumber) shouldBe Some("+447707707712")
+        }
       }
     }
   }

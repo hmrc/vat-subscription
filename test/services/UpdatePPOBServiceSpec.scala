@@ -39,7 +39,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Right(SuccessModel("12345")))
-        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false, mockAppConfig)(testUser, hc, ec)
         await(result) shouldEqual Right(SuccessModel("12345"))
       }
     }
@@ -48,7 +48,7 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
       "return successful UpdateVatSubscriptionResponse model" in {
         val service = setup(Left(ErrorModel("ERROR", "Error")))
-        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false)(testUser, hc, ec)
+        val result = service.updatePPOB(ppobModelMaxPost, welshIndicator = false, mockAppConfig)(testUser, hc, ec)
         await(result) shouldEqual Left(ErrorModel("ERROR", "Error"))
       }
     }
@@ -56,78 +56,97 @@ class UpdatePPOBServiceSpec extends TestUtil with MockUpdateVatSubscriptionConne
 
   "Calling .constructPPOBUpdateModel" when {
 
-    val service = new UpdatePPOBService(mockUpdateVatSubscriptionConnector)
+    "the feature switch is turned off" when {
+      val service = new UpdatePPOBService(mockUpdateVatSubscriptionConnector)
 
-    "user is not an Agent" should {
+      "user is not an Agent" should {
 
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = false)(testUser)
+        val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = false, mockAppConfig)(testUser)
 
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangePPOB,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = None
-      )
+        val expectedResult = UpdateVatSubscription(
+          controlInformation = ControlInformation(welshIndicator = false),
+          requestedChanges = ChangePPOB,
+          organisationDetails = None,
+          updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
+          updatedReturnPeriod = None,
+          updateDeregistrationInfo = None,
+          declaration = Declaration(None, Signing()),
+          commsPreference = None
+        )
 
-      "return a correct UpdateVatSubscription model" in {
-        result shouldEqual expectedResult
+        "return a correct UpdateVatSubscription model" in {
+          result shouldEqual expectedResult
+        }
+      }
+
+      "user is an Agent" should {
+
+        val result = service.constructPPOBUpdateModel(ppobModelMaxPostAgent, welshIndicator = false, mockAppConfig)(testAgentUser)
+        val agentContactDetails = Some(ContactDetails(None, None, None, Some("agent@emailaddress.com"), None))
+
+        val expectedResult = UpdateVatSubscription(
+          controlInformation = ControlInformation(welshIndicator = false),
+          requestedChanges = ChangePPOB,
+          organisationDetails = None,
+          updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPostAgent)),
+          updatedReturnPeriod = None,
+          updateDeregistrationInfo = None,
+          declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing()),
+          commsPreference = None
+        )
+
+        "return an UpdateVatSubscription model containing agentOrCapacitor" in {
+          result shouldEqual expectedResult
+        }
+      }
+
+      "user has a welshIndicator" should {
+
+        val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = true, mockAppConfig)(testUser)
+
+        val expectedResult = UpdateVatSubscription(
+          controlInformation = ControlInformation(welshIndicator = true),
+          requestedChanges = ChangePPOB,
+          organisationDetails = None,
+          updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
+          updatedReturnPeriod = None,
+          updateDeregistrationInfo = None,
+          declaration = Declaration(None, Signing()),
+          commsPreference = None
+        )
+
+        "return a correct UpdateVatSubscription model" in {
+          result shouldEqual expectedResult
+        }
+      }
+
+      "the phone numbers contain +44" should {
+
+        "convert them to 0 as part of building the model" in {
+          mockAppConfig.features.plusSignInPhoneNumbersEnabled(false)
+          val ppobPost = ppobModelMaxPost.copy(contactDetails = Some(invalidPhoneDetails))
+          val result = service.constructPPOBUpdateModel(ppobPost, welshIndicator = false, mockAppConfig)(testUser)
+          val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
+          contactDetails.flatMap(_.phoneNumber) shouldBe Some("01613334444")
+          contactDetails.flatMap(_.mobileNumber) shouldBe Some("07707707712")
+        }
       }
     }
 
-    "user is an Agent" should {
+    "the feature switch is turned on" when {
 
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPostAgent, welshIndicator = false)(testAgentUser)
-      val agentContactDetails = Some(ContactDetails(None, None, None, Some("agent@emailaddress.com"), None))
+      "the phone numbers contain +44" should {
 
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = false),
-        requestedChanges = ChangePPOB,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPostAgent)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(Some(AgentOrCapacitor(testArn, agentContactDetails)), Signing()),
-        commsPreference = None
-      )
+        val service = new UpdatePPOBService(mockUpdateVatSubscriptionConnector)
 
-      "return an UpdateVatSubscription model containing agentOrCapacitor" in {
-        result shouldEqual expectedResult
-      }
-    }
-
-    "user has a welshIndicator" should {
-
-      val result = service.constructPPOBUpdateModel(ppobModelMaxPost, welshIndicator = true)(testUser)
-
-      val expectedResult = UpdateVatSubscription(
-        controlInformation = ControlInformation(welshIndicator = true),
-        requestedChanges = ChangePPOB,
-        organisationDetails = None,
-        updatedPPOB = Some(UpdatedPPOB(ppobModelMaxPost)),
-        updatedReturnPeriod = None,
-        updateDeregistrationInfo = None,
-        declaration = Declaration(None, Signing()),
-        commsPreference = None
-      )
-
-      "return a correct UpdateVatSubscription model" in {
-        result shouldEqual expectedResult
-      }
-    }
-
-    "the phone numbers contain +44" should {
-
-      val ppobPost = ppobModelMaxPost.copy(contactDetails = Some(invalidPhoneDetails))
-      val result = service.constructPPOBUpdateModel(ppobPost, welshIndicator = false)(testUser)
-      val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
-
-      "convert them to 0 as part of building the model" in {
-        contactDetails.flatMap(_.phoneNumber) shouldBe Some("01613334444")
-        contactDetails.flatMap(_.mobileNumber) shouldBe Some("07707707712")
+        "not convert them to 0 as part of building the model" in {
+          mockAppConfig.features.plusSignInPhoneNumbersEnabled(true)
+          val ppobPost = ppobModelMaxPost.copy(contactDetails = Some(invalidPhoneDetails))
+          val result = service.constructPPOBUpdateModel(ppobPost, welshIndicator = false, mockAppConfig)(testUser)
+          val contactDetails = result.updatedPPOB.flatMap(_.updatedPPOB.contactDetails)
+          contactDetails.flatMap(_.phoneNumber) shouldBe Some("+441613334444")
+          contactDetails.flatMap(_.mobileNumber) shouldBe Some("+447707707712")
+        }
       }
     }
   }

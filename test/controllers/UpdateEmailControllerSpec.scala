@@ -39,7 +39,8 @@ class UpdateEmailControllerSpec extends TestUtil with MockVatAuthorised with Moc
     extends UpdateEmailAddressController(mockVatAuthorised,
                                         mockUpdateEmailService,
                                         mockVatCustomerDetailsRetrievalService,
-                                        controllerComponents)
+                                        controllerComponents,
+                                        mockAppConfig)
 
   val ppobPostRequest: FakeRequest[AnyContentAsJson] = FakeRequest().withJsonBody(Json.toJson(ppobModelMax))
 

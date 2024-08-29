@@ -16,6 +16,8 @@
 
 package controllers
 
+import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -23,13 +25,15 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.VatAuthorised
 import models.post.PPOBPost
 import services.{UpdatePPOBService, VatCustomerDetailsRetrievalService}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
                                      updatePPOBService: UpdatePPOBService,
                                      vatCustomerDetailsRetrievalService: VatCustomerDetailsRetrievalService,
-                                     cc: ControllerComponents)
+                                     cc: ControllerComponents,
+                                     appConfig: AppConfig)
                                     (implicit ec: ExecutionContext) extends BackendController(cc) with MicroserviceBaseController {
 
   def updatePPOB(vrn: String): Action[AnyContent] = VatAuthorised.async(vrn) {
@@ -38,7 +42,7 @@ class UpdatePPOBController @Inject()(VatAuthorised: VatAuthorised,
           case Right(updatedPPOB) =>
             vatCustomerDetailsRetrievalService.extractWelshIndicator(vrn).flatMap {
               case Right(welshIndicator) => {
-                updatePPOBService.updatePPOB(updatedPPOB, welshIndicator).map {
+                updatePPOBService.updatePPOB(updatedPPOB, welshIndicator, appConfig).map {
                   case Right(success) => Ok(Json.toJson(success))
                   case Left(error) if error.code == "CONFLICT" =>
                     warnLog(s"[UpdatePPOBController][updatePPOB] Failed to update PPOB conflict: ${error.reason}")

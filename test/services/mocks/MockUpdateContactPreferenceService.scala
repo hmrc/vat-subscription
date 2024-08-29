@@ -16,6 +16,7 @@
 
 package services.mocks
 
+import config.AppConfig
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.Suite
@@ -25,6 +26,7 @@ import models.{User, VatCustomerInformation}
 import models.post.CommsPreferencePost
 import org.scalatestplus.mockito.MockitoSugar
 import services.UpdateContactPreferenceService
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockUpdateContactPreferenceService extends MockitoSugar {
@@ -44,7 +46,7 @@ trait MockUpdateContactPreferenceService extends MockitoSugar {
 
   def mockUpdatePreferenceAndEmail()(response: Future[UpdateVatSubscriptionResponse]): Unit = {
     when(mockUpdateContactPreferenceService
-      .updatePreferenceAndEmail(ArgumentMatchers.any[String], ArgumentMatchers.any[VatCustomerInformation])(
+      .updatePreferenceAndEmail(ArgumentMatchers.any[String], ArgumentMatchers.any[VatCustomerInformation], ArgumentMatchers.any[AppConfig])(
         ArgumentMatchers.any[User[_]],
         ArgumentMatchers.any[HeaderCarrier],
         ArgumentMatchers.any[ExecutionContext]
