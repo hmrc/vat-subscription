@@ -54,11 +54,11 @@ class UpdatePPOBService @Inject()(updateVatSubscriptionConnector: UpdateVatSubsc
       controlInformation = ControlInformation(welshIndicator),
       requestedChanges = ChangePPOB,
       organisationDetails = None,
-      updatedPPOB = if(appConfig.features.plusSignInPhoneNumbersEnabled.apply()) {
+      updatedPPOB = {if(appConfig.features.plusSignInPhoneNumbersEnabled.apply()) {
         Some(UpdatedPPOB(updatedPPOB))
       } else {
         Some(UpdatedPPOB(updatedPPOB).convertUKCountryCodes)
-      },
+      }},
       updatedReturnPeriod = None,
       updateDeregistrationInfo = None,
       declaration = Declaration(agentOrCapacitor, Signing()),
