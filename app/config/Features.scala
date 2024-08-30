@@ -23,7 +23,7 @@ import play.api.Configuration
 class Features @Inject()(implicit config: Configuration) {
 
   private val featureSwitch: String = "feature-switch"
-  lazy val plusSignInPhoneNumbersEnabled = new Feature(s"$featureSwitch.plusSignInPhoneNumbersEnabled")
+  lazy val plusSignInPhoneNumbersEnabled = new Feature(s"$featureSwitch.plusSignInPhoneNumbers.enabled")
 
   lazy val allSwitches: Seq[Feature] = Seq(
     plusSignInPhoneNumbersEnabled
