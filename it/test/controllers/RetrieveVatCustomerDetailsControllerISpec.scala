@@ -217,6 +217,7 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
             Some(accSort)
           )),
           Some(MCReturnPeriod(None, None, None)),
+          None,
           Some(Deregistration(
             Some(reason),
             Some(cancellationDate),
