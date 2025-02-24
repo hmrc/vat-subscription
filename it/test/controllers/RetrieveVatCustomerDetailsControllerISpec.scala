@@ -278,6 +278,123 @@ class RetrieveVatCustomerDetailsControllerISpec extends ComponentSpecBase with B
           jsonBodyAs(Json.toJson(expectedCustomerInformationModel)(VatCustomerInformation.writes))
         )
       }
+
+      "return OK with the status and with poa active until date" in {
+
+        val expectedCustomerInformationModel = VatCustomerInformation(
+          MTDfB,
+          CustomerDetails(
+            title = Some(title),
+            firstName = Some(firstName),
+            middleName = Some(middleName),
+            lastName = Some(lastName),
+            organisationName = Some(orgName),
+            tradingName = Some(tradingName),
+            effectiveRegistrationDate = Some(effectiveDate),
+            hasFlatRateScheme = true,
+            welshIndicator = Some(true),
+            isPartialMigration = true,
+            customerMigratedToETMPDate = Some(customerMigratedToETMPDate),
+            isInsolvent = Some(false),
+            insolvencyType = Some("03"),
+            insolvencyDate = Some("2019-01-02"),
+            continueToTrade = Some(true),
+            hybridToFullMigrationDate = Some(hybridToFullMigrationDate),
+            overseasIndicator = false,
+            nameIsReadOnly = Some(true)
+          ),
+          Some(FlatRateScheme(
+            Some(frsCategory),
+            Some(frsPercent),
+            Some(frsLtdCostTrader),
+            Some(frsStartDate)
+          )),
+          PPOBGet(
+            PPOBAddressGet(
+              Some(addLine1),
+              Some(addLine2),
+              Some(addLine3),
+              Some(addLine4),
+              Some(addLine5),
+              Some(postcode),
+              Some(countryCode)
+            ),
+            Some(ContactDetails(
+              Some(phoneNumber),
+              Some(mobileNumber),
+              Some(faxNumber),
+              Some(email),
+              Some(emailVerified)
+            )),
+            Some(website)
+          ),
+          Some(BankDetails(
+            Some(accName),
+            Some(accNum),
+            Some(accSort)
+          )),
+          Some(MCReturnPeriod(None, None, None)),
+          poaActiveUntil = Some(poaActiveUntil),
+          Some(Deregistration(
+            Some(reason),
+            Some(cancellationDate),
+            Some(lastReturnDate)
+          )),
+          Some(ChangeIndicators(
+            organisationDetails = true,
+            ppob = true,
+            bankDetails = true,
+            returnPeriod = true,
+            deregister = true,
+            annualAccounting = false
+          )),
+          Some(PendingChanges(
+            Some(PPOBGet(
+              PPOBAddressGet(
+                Some(addLine1),
+                Some(addLine2),
+                Some(addLine3),
+                Some(addLine4),
+                Some(addLine5),
+                Some(postcode),
+                Some(countryCode)
+              ),
+              Some(ContactDetails(
+                Some(phoneNumber),
+                Some(mobileNumber),
+                Some(faxNumber),
+                Some(email),
+                Some(emailVerified)
+              )),
+              Some(website)
+            )),
+            Some(BankDetails(
+              Some(accName),
+              Some(accNum),
+              Some(accSort)
+            )),
+            Some(MCReturnPeriod(None, None, None)),
+            Some(MTDfB),
+            Some(DigitalPreference),
+            Some(tradingName),
+            Some(orgName)
+          )),
+          Some(UKCompanyType),
+          primaryMainCode = Some("00001"),
+          missingTrader = true,
+          commsPreference = Some(DigitalPreference)
+        )
+
+        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
+        stubGetInformation(testVatNumber)(OK, testSuccessCustomerDetailDesResponseWithPOAActiveUntil)
+
+        val res = get(s"/$testVatNumber/full-information")
+
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(Json.toJson(expectedCustomerInformationModel)(VatCustomerInformation.writes))
+        )
+      }
     }
 
     "calls to DES returned BAD_REQUEST" should {
