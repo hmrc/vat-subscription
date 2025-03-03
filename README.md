@@ -498,6 +498,216 @@ Where:
 * **transactorOrCapacitorEmail** is optional.
 * **organisationName** is optional.
 
+### GET /vat-subscription/:vatNumber/standing-request
+
+This API specification describes the data structures used in the requests and responses relating to standing requests.
+It allows the consumer of the API to view the standing requests in ETMP.
+The consumer of this API will be able to view the information by providing regime, tax payer ID type and tax payer ID value. 
+The API will then respond with the corresponding details of standing requests or an appropriate error message.
+
+Where:
+
+* **:vatNumber** is a valid VRN, for example: "999999999"
+
+#### Success Response
+
+**HTTP Status**: 200
+
+**Example HTTP Response Body**:
+```
+{
+  "processingDate": "2024-07-15T09:30:47Z",
+  "standingRequests": [
+    {
+      "requestNumber": "20000037272",
+      "requestCategory": "3",
+      "createdOn": "2023-11-30",
+      "changedOn": "2024-12-26",
+      "requestItems": [
+        {
+          "period": "1",
+          "periodKey": "24A1",
+          "startDate": "2024-02-01",
+          "endDate": "2024-04-30",
+          "dueDate": "2024-03-31",
+          "amount": 22945.23,
+          "chargeReference": "XD006411191344",
+          "postingDueDate": "2024-03-31"
+        },
+        {
+          "period": "2",
+          "periodKey": "24A1",
+          "startDate": "2024-02-01",
+          "endDate": "2024-04-30",
+          "dueDate": "2024-04-30",
+          "amount": 22945.23,
+          "chargeReference": "XD006411191345",
+          "postingDueDate": "2024-04-30"
+        },
+        {
+          "period": "3",
+          "periodKey": "24A2",
+          "startDate": "2024-05-01",
+          "endDate": "2024-07-31",
+          "dueDate": "2024-06-30",
+          "amount": 22945.23,
+          "chargeReference": "XD006411191346",
+          "postingDueDate": "2024-06-30"
+        },
+        {
+          "period": "4",
+          "periodKey": "24A2",
+          "startDate": "2024-05-01",
+          "endDate": "2024-07-31",
+          "dueDate": "2024-07-31",
+          "amount": 22945.23,
+          "chargeReference": "XD006411191347",
+          "postingDueDate": "2024-07-31"
+        },
+        {
+          "period": "5",
+          "periodKey": "24A3",
+          "startDate": "2024-08-01",
+          "endDate": "2024-10-31",
+          "dueDate": "2024-09-30",
+          "amount": 22945.23,
+          "chargeReference": "XD006411191348",
+          "postingDueDate": "2024-09-30"
+        },
+        {
+          "period": "6",
+          "periodKey": "24A3",
+          "startDate": "2024-08-01",
+          "endDate": "2024-10-31",
+          "dueDate": "2024-10-31",
+          "amount": 22945.23,
+          "chargeReference": "XD006411191349",
+          "postingDueDate": "2024-10-31"
+        },
+        {
+          "period": "7",
+          "periodKey": "24A4",
+          "startDate": "2024-11-01",
+          "endDate": "2025-01-31",
+          "dueDate": "2024-12-31",
+          "amount": 22945.23,
+          "chargeReference": "XD006411191350",
+          "postingDueDate": "2024-12-31"
+        },
+        {	"period": "8",
+          "periodKey": "24A4",
+          "startDate": "2024-11-01",
+          "endDate": "2025-01-31",
+          "dueDate": "2025-01-31",
+          "amount": 22945.23,
+          "chargeReference": "XD006411191351",
+          "postingDueDate": "2025-01-31"
+        }
+
+      ]
+    },
+    {
+      "requestNumber": "20000037277",
+      "requestCategory": "3",
+      "createdOn": "2024-11-30",
+      "changedOn": "2025-01-26",
+      "requestItems": [
+        {
+          "period": "1",
+          "periodKey": "25A1",
+          "startDate": "2025-02-01",
+          "endDate": "2025-04-30",
+          "dueDate": "2025-03-31",
+          "amount": 122945.23
+        },
+        {
+          "period": "2",
+          "periodKey": "25A1",
+          "startDate": "2025-02-01",
+          "endDate": "2025-04-30",
+          "dueDate": "2025-04-30",
+          "amount": 122945.23
+        },
+        {
+          "period": "3",
+          "periodKey": "25A2",
+          "startDate": "2025-05-01",
+          "endDate": "2025-07-31",
+          "dueDate": "2025-06-30",
+          "amount": 122945.23
+        },
+        {
+          "period": "4",
+          "periodKey": "25A2",
+          "startDate": "2025-05-01",
+          "endDate": "2025-07-31",
+          "dueDate": "2025-07-31",
+          "amount": 122945.23
+        },
+        {
+          "period": "5",
+          "periodKey": "25A3",
+          "startDate": "2025-08-01",
+          "endDate": "2025-10-31",
+          "dueDate": "2025-09-30",
+          "amount": 122945.23
+        },
+        {
+          "period": "6",
+          "periodKey": "25A3",
+          "startDate": "2025-08-01",
+          "endDate": "2025-10-31",
+          "dueDate": "2025-10-31",
+          "amount": 122945.23
+        },
+        {
+          "period": "7",
+          "periodKey": "25A4",
+          "startDate": "2025-11-01",
+          "endDate": "2026-01-31",
+          "dueDate": "2025-12-31",
+          "amount": 122945.23
+        },
+        {
+          "period": "8",
+          "periodKey": "25A4",
+          "startDate": "2025-11-01",
+          "endDate": "2026-01-31",
+          "dueDate": "2026-01-31",
+          "amount": 122945.23
+        }
+
+      ]
+    }
+  ]
+}
+```
+Where:
+* **processingDate** is processing date.
+* **standingRequests** is Standing Requests.
+* **requestNumber** is Request Number.
+* **requestCategory** Request Category, possible values: 3 - VAT POA Instalment.
+* **createdOn** Created On.
+* **changedOn** Changed On.
+* **requestItems** Request Items contained within the Request Number.
+* **period** is Period.
+* **periodKey** is Period Key.
+* **startDate** is Start Date.
+* **endDate** is End Date.
+* **dueDate** is Due Date.
+* **amount** Amount (11 Digits before Decimal and 2 after decimal).
+* **chargeReference** is Charge Reference.
+* **postingDueDate** Posting Due Date.
+
+#### Error Responses
+
+##### INVALID_VAT_NUMBER
+* **Status**: 400
+
+##### VAT_NUMBER_NOT_FOUND
+* **Status**: 404
+
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
