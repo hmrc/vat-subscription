@@ -35,15 +35,13 @@ class AppConfig @Inject()(implicit val configuration: Configuration, servicesCon
     getString(
       "microservice.services.hip.url"
     )
-  private val clientIdV1: String = getString("microservice.services.hip.clientId")
-  private val secretV1: String   = getString("microservice.services.hip.secret")
+
+  private val clientIdV1: String = getString("microservice.services.hip.client-id")
+  private val secretV1: String   = getString("microservice.services.hip.client-secret")
   def hipAuthorisationToken: String = Base64.getEncoder.encodeToString(s"$clientIdV1:$secretV1".getBytes("UTF-8"))
 
-  val hipServiceOriginatorIdKeyV1: String = getString("microservice.services.hip.originatoridkey")
-  val hipServiceOriginatorIdV1: String    = getString("microservice.services.hip.originatoridvalue")
-
-  lazy val hipEnvironmentHeader: (String, String) =
-    "Environment" -> getString("microservice.services.hip.environment")
+  val hipServiceOriginatorIdKeyV1: String = getString("microservice.services.hip.originator-id-key")
+  val hipServiceOriginatorIdV1: String    = getString("microservice.services.hip.originator-id-value")
 
   lazy val desAuthorisationToken: String = s"Bearer ${getString("microservice.services.des.authorisation-token")}"
   lazy val desEnvironmentHeader: (String, String) =

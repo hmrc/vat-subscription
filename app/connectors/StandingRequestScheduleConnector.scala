@@ -36,23 +36,18 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
   import httpParser.StandingRequestScheduleHttpParserResponse
 
-  private def url(vatNumber: String) = s"${appConfig.desUrl}/vat/standing-requests/vrn/$vatNumber"
-
-  val hipHeaders: Seq[(String, String)] = Seq(
-    "Authorization" -> appConfig.hipAuthorisationToken,
-    appConfig.hipEnvironmentHeader
-  )
+  private def url(vatNumber: String) = s"${appConfig.hipUrl}/vat/standing-requests/vrn/$vatNumber"
 
   def getSrsInformation(vatNumber: String)
                     (implicit hc: HeaderCarrier, ec: ExecutionContext, user: Request[_]): Future[StandingRequestScheduleHttpParserResponse] = {
     val headerCarrier = hc.copy(authorization = None)
 
-    logger.debug(s"[StandingRequestScheduleConnector][getInformation] URL: ${url(vatNumber)}")
-    logger.debug(s"[StandingRequestScheduleConnector][getInformation] Headers: $hipHeaders")
+    logger.debug(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
+    logger.debug(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $buildHeadersV1")
 
     http.GET[StandingRequestScheduleHttpParserResponse](
       url = url(vatNumber),
-      headers = hipHeaders
+      headers = buildHeadersV1
     )(
       httpParser.GetStandingRequestScheduleHttpReads,
       headerCarrier,
@@ -69,21 +64,21 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
   private val AUTHORIZATION_HEADER: String = "Authorization"
   private val requestIdPattern      = """.*([A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}).*""".r
 
-  private def buildHeadersV1(implicit hc: HeaderCarrier): Seq[(String, String)] =
-    Seq(
-      appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
-      CORRELATION_HEADER                  -> getCorrelationId(hc),
-      AUTHORIZATION_HEADER                -> s"Basic ${appConfig.hipAuthorisationToken}"
-    )
+  private def buildHeadersV1(implicit hc: HeaderCarrier): Seq[(String, String)] = Seq(
+    appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
+    CORRELATION_HEADER                  -> getCorrelationId(hc),
+    AUTHORIZATION_HEADER                -> s"Basic ${appConfig.hipAuthorisationToken}"
+  )
 
-  def generateNewUUID: String = randomUUID.toString
+  private def generateNewUUID: String = randomUUID.toString
 
-  def getCorrelationId(hc: HeaderCarrier): String =
+  private def getCorrelationId(hc: HeaderCarrier): String =
     hc.requestId match {
       case Some(requestId) =>
         requestId.value match {
           case requestIdPattern(prefix) =>
-            val lastTwelveChars = generateNewUUID.takeRight(12)
+            val UUID_LENGTH = 12
+            val lastTwelveChars = generateNewUUID.takeRight(UUID_LENGTH)
             prefix + "-" + lastTwelveChars
           case _                        => generateNewUUID
         }

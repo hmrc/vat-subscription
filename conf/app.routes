@@ -6,6 +6,8 @@ GET    /:vatNumber/customer-details           @controllers.RetrieveVatCustomerDe
 
 GET    /:vatNumber/full-information           @controllers.RetrieveVatCustomerDetailsController.retrieveVatInformation(vatNumber: String)
 
+GET    /:vatNumber/standing-request           @controllers.RetrieveStandingRequestScheduleController.retrieveStandingRequestScheduleDetails(vatNumber: String)
+
 PUT    /:vatNumber/return-period              @controllers.UpdateReturnPeriodController.updateVatReturnPeriod(vatNumber: String)
 
 PUT    /:vatNumber/ppob                       @controllers.UpdatePPOBController.updatePPOB(vatNumber: String)

@@ -201,6 +201,33 @@ object IntegrationTestConstants {
     )
   )
 
+  val processingDate = "2024-07-15T09:30:47Z"
+  val requestNumber = "20000037272"
+  val requestCategory = "3"
+  val createdOn = "2023-11-30"
+  val changedOn = "2024-12-26"
+
+  val testSuccessStandingRequestHipResponse: JsObject = Json.obj(
+      "processingDate" ->  processingDate,
+      "standingRequests" ->  Json.obj(
+        "requestNumber" -> requestNumber,
+        "requestCategory" ->  requestCategory,
+        "createdOn" -> createdOn,
+        "changedOn" -> changedOn,
+        "requestItems" ->  Json.obj(
+          "period" -> "1",
+          "periodKey" -> "24A1",
+          "startDate" ->  "2024-02-01",
+          "endDate" -> "2024-04-30",
+          "dueDate" -> "2024-03-31",
+          "amount" -> 22945.23,
+          "chargeReference" -> "XD006411191344",
+          "postingDueDate" -> "2024-03-31"
+        )
+      )
+  )
+
+
   val testVatNumber: String = UUID.randomUUID().toString
   val testArn: String = UUID.randomUUID().toString
 
