@@ -22,6 +22,8 @@ import models.{BusinessName, ContactDetails, DigitalPreference, TradingName}
 import models.get.{PPOBAddressGet, PPOBGet}
 import models.post.{EmailPost, PPOBAddressPost, PPOBPost}
 
+import java.time.LocalDate
+
 object IntegrationTestConstants {
 
   //Customer Details
@@ -34,7 +36,7 @@ object IntegrationTestConstants {
   val mandationStatus = "2"
   val regReason = "0001"
   val effectiveDate = "1967-08-13"
-  val poaActiveUntil = "2045-01-01"
+  val poaActiveUntil: LocalDate = LocalDate.parse("2045-01-01")
   val startDate = "1967-08-13"
   val customerMigratedToETMPDate = "2019-01-01"
   val hybridToFullMigrationDate = "2019-01-01"
