@@ -22,6 +22,8 @@ import models.{BusinessName, ContactDetails, DigitalPreference, TradingName}
 import models.get.{PPOBAddressGet, PPOBGet}
 import models.post.{EmailPost, PPOBAddressPost, PPOBPost}
 
+import java.time.LocalDate
+
 object IntegrationTestConstants {
 
   //Customer Details
@@ -34,6 +36,7 @@ object IntegrationTestConstants {
   val mandationStatus = "2"
   val regReason = "0001"
   val effectiveDate = "1967-08-13"
+  val poaActiveUntil: LocalDate = LocalDate.parse("2045-01-01")
   val startDate = "1967-08-13"
   val customerMigratedToETMPDate = "2019-01-01"
   val hybridToFullMigrationDate = "2019-01-01"
@@ -200,6 +203,131 @@ object IntegrationTestConstants {
       )
     )
   )
+
+
+  val testSuccessCustomerDetailDesResponseWithPOAActiveUntil : JsObject =
+    Json.obj(
+      "approvedInformation" -> Json.obj(
+        "customerDetails" -> Json.obj(
+          "organisationName" -> orgName,
+          "individual" -> Json.obj(
+            "title" -> title,
+            "firstName" -> firstName,
+            "middleName" -> middleName,
+            "lastName" -> lastName
+          ),
+          "tradingName" -> tradingName,
+          "mandationStatus" -> mandationStatus,
+          "registrationReason" -> regReason,
+          "effectiveRegistrationDate" -> effectiveDate,
+          "businessStartDate" -> startDate,
+          "welshIndicator" -> true,
+          "isPartialMigration" -> true,
+          "customerMigratedToETMPDate" -> customerMigratedToETMPDate,
+          "hybridToFullMigrationDate" -> hybridToFullMigrationDate,
+          "partyType" -> "50",
+          "isInsolvent" -> false,
+          "insolvencyType" -> "03",
+          "insolvencyDate" -> "2019-01-02",
+          "continueToTrade" -> true,
+          "overseasIndicator" -> false,
+          "nameIsReadOnly" -> true
+        ),
+        "PPOB" -> Json.obj(
+          "address" -> Json.obj(
+            "line1" -> addLine1,
+            "line2" -> addLine2,
+            "line3" -> addLine3,
+            "line4" -> addLine4,
+            "line5" -> addLine5,
+            "postCode" -> postcode,
+            "countryCode" -> countryCode
+          ),
+          "RLS" -> rlsIndicator,
+          "contactDetails" -> Json.obj(
+            "primaryPhoneNumber" -> phoneNumber,
+            "mobileNumber" -> mobileNumber,
+            "faxNumber" -> faxNumber,
+            "emailAddress" -> email,
+            "emailVerified" -> emailVerified
+          ),
+          "websiteAddress" -> website,
+          "commsPreference" -> DigitalPreference.desValue
+        ),
+        "flatRateScheme" -> Json.obj(
+          "FRSCategory" -> frsCategory,
+          "FRSPercentage" -> frsPercent,
+          "limitedCostTrader" -> frsLtdCostTrader,
+          "startDate" -> frsStartDate
+        ),
+        "bankDetails" -> Json.obj(
+          "accountHolderName" -> accName,
+          "bankAccountNumber" -> accNum,
+          "sortCode" -> accSort
+        ),
+        "POAActiveUntil" -> poaActiveUntil,
+        "deregistration" -> Json.obj(
+          "deregistrationReason" -> reason,
+          "effectDateOfCancellation" -> cancellationDate,
+          "lastReturnDueDate" -> lastReturnDate
+        ),
+        "returnPeriod" -> Json.obj(
+          "stdReturnPeriod" -> returnPeriod
+        ),
+        "businessActivities" -> Json.obj(
+          "primaryMainCode" -> "00001",
+          "mainCode2" -> "00002"
+        )
+      ),
+      "inFlightInformation" -> Json.obj(
+        "changeIndicators" -> Json.obj(
+          "organisationDetails" -> true,
+          "PPOBDetails" -> true,
+          "bankDetails" -> true,
+          "returnPeriod" -> true,
+          "deregister" -> true
+        ),
+        "inFlightChanges" -> Json.obj(
+          "PPOBDetails" -> Json.obj(
+            "address" -> Json.obj(
+              "line1" -> addLine1,
+              "line2" -> addLine2,
+              "line3" -> addLine3,
+              "line4" -> addLine4,
+              "line5" -> addLine5,
+              "postCode" -> postcode,
+              "countryCode" -> countryCode
+            ),
+            "contactDetails" -> Json.obj(
+              "primaryPhoneNumber" -> phoneNumber,
+              "mobileNumber" -> mobileNumber,
+              "faxNumber" -> faxNumber,
+              "emailAddress" -> email,
+              "emailVerified" -> emailVerified
+            ),
+            "websiteAddress" -> website
+          ),
+          "bankDetails" -> Json.obj(
+            "accountHolderName" -> accName,
+            "bankAccountNumber" -> accNum,
+            "sortCode" -> accSort
+          ),
+          "returnPeriod" -> Json.obj(
+            "returnPeriod" -> returnPeriod
+          ),
+          "mandationStatus" -> Json.obj(
+            "mandationStatus" -> mandationStatus
+          ),
+          "commsPreference" -> Json.obj(
+            "commsPreference" -> DigitalPreference.desValue
+          ),
+          "organisationDetails" -> Json.obj(
+            "tradingName" -> tradingName,
+            "organisationName" -> orgName
+          )
+        )
+      )
+    )
 
   val testVatNumber: String = UUID.randomUUID().toString
   val testArn: String = UUID.randomUUID().toString
