@@ -22,13 +22,15 @@ import models.MandationStatus.desReader
 import models.get.{PPOBAddressGet, PPOBGet}
 import utils.{JsonObjectSugar, JsonReadUtil}
 
+import java.time.LocalDate
+
 case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   customerDetails: CustomerDetails,
                                   flatRateScheme: Option[FlatRateScheme],
                                   ppob: PPOBGet,
                                   bankDetails: Option[BankDetails],
                                   returnPeriod: Option[ReturnPeriod],
-                                  poaActiveUntil: Option[String],
+                                  poaActiveUntil: Option[LocalDate],
                                   deregistration: Option[Deregistration],
                                   changeIndicators: Option[ChangeIndicators],
                                   pendingChanges: Option[PendingChanges],
@@ -129,7 +131,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
-    poaActiveUntil <- poaActiveUntilPath.readOpt[String]
+    poaActiveUntil <- poaActiveUntilPath.readOpt[LocalDate]
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(conf))
