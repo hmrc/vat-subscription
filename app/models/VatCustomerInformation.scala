@@ -28,6 +28,7 @@ case class VatCustomerInformation(mandationStatus: MandationStatus,
                                   ppob: PPOBGet,
                                   bankDetails: Option[BankDetails],
                                   returnPeriod: Option[ReturnPeriod],
+                                  poaActiveUntil: Option[String],
                                   deregistration: Option[Deregistration],
                                   changeIndicators: Option[ChangeIndicators],
                                   pendingChanges: Option[PendingChanges],
@@ -72,6 +73,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   val ppobKey = "PPOB"
   val bankDetailsKey = "bankDetails"
   val returnPeriodKey = "returnPeriod"
+  val poaActiveUntil = "POAActiveUntil"
   val effectiveRegistrationDateKey = "effectiveRegistrationDate"
   val customerMigratedToETMPDateKey = "customerMigratedToETMPDate"
   val hybridToFullMigrationDateKey = "hybridToFullMigrationDate"
@@ -95,6 +97,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
   private val ppobPath = path \ ppobKey
   private val bankDetailsPath = path \ bankDetailsKey
   private val returnPeriodPath = path \ returnPeriodKey
+  private val poaActiveUntilPath = path \ poaActiveUntil
   private val deregistrationPath = path \ deregistrationKey
   private val primaryMainCodePath = path \ businessActivitiesKey \ primaryMainCodeKey
   private val rlsTypePath = ppobPath \ rlsTypeKey
@@ -126,6 +129,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     ppob <- ppobPath.read[PPOBGet]
     bankDetails <- bankDetailsPath.readOpt[BankDetails]
     returnPeriod <- returnPeriodPath.readOpt[ReturnPeriod](ReturnPeriod.currentDesReads)
+    poaActiveUntil <- poaActiveUntilPath.readOpt[String]
     deregistration <- deregistrationPath.readOpt[Deregistration]
     changeIndicators <- changeIndicatorsPath.readOpt[ChangeIndicators]
     pendingChanges <- pendingChangesPath.readOpt[PendingChanges](PendingChanges.reads(conf))
@@ -159,6 +163,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
     ppob,
     bankDetails,
     returnPeriod,
+    poaActiveUntil,
     deregistration,
     changeIndicators,
     pendingChanges,
@@ -179,6 +184,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
         "ppob" -> model.ppob,
         "bankDetails" -> model.bankDetails,
         "returnPeriod" -> model.returnPeriod,
+        "poaActiveUntil" -> model.poaActiveUntil,
         "deregistration" -> model.deregistration,
         "changeIndicators" -> model.changeIndicators,
         "pendingChanges" -> model.pendingChanges,

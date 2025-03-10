@@ -23,3 +23,5 @@ PUT    /:vatNumber/contact-preference/email   @controllers.UpdateContactPreferen
 PUT    /:vatNumber/trading-name               @controllers.UpdateOrganisationDetailsController.updateTradingName(vatNumber:String)
 
 PUT    /:vatNumber/business-name              @controllers.UpdateOrganisationDetailsController.updateBusinessName(vatNumber:String)
+
+GET    /:vatNumber/standing-request           @controllers.RetrieveStandingRequestScheduleController.retrieveStandingRequestScheduleDetails(vatNumber:String)

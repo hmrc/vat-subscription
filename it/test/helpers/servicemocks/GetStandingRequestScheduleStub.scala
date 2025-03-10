@@ -20,14 +20,13 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.JsValue
 
 
-object GetVatCustomerInformationStub extends WireMockMethods {
+object GetStandingRequestScheduleStub extends WireMockMethods {
 
-  def stubGetInformation(vatNumber: String)(status: Int, body: JsValue): StubMapping =
-    when(method = GET, uri = s"/vat/customer/vrn/$vatNumber/information",
+  def stubGetStandingRequestSchedule(vatNumber: String)(status: Int, body: JsValue): StubMapping =
+    when(method = GET, uri = s"/vat/standing-requests/vrn/$vatNumber",
       headers = Map(
-        "Authorization" -> "Bearer dev",
+        "Authorization" -> "Y2xpZW50SWQ6Y2xpZW50U2VjcmV0",
         "Environment" -> "dev"
       )
     ).thenReturn(status = status, body = body)
-
 }

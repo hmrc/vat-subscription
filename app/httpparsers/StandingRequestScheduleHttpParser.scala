@@ -18,63 +18,59 @@ package httpparsers
 
 import config.AppConfig
 import connectors._
-
-import javax.inject.{Inject, Singleton}
-import models.VatCustomerInformation
+import models.{StandingRequestSchedule, VatCustomerInformation}
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggingUtil
 
+import javax.inject.{Inject, Singleton}
+
 @Singleton
-class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extends LoggingUtil {
+class StandingRequestScheduleHttpParser @Inject()(appConfig: AppConfig) extends LoggingUtil {
 
-  type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
+  type StandingRequestScheduleHttpParserResponse = Either[GetStandingRequestScheduleFailure, StandingRequestSchedule]
 
-  implicit object GetVatCustomerInformationHttpReads extends HttpReads[GetVatCustomerInformationHttpParserResponse] {
-    override def read(method: String, url: String, response: HttpResponse): GetVatCustomerInformationHttpParserResponse =
+  implicit object GetStandingRequestScheduleHttpReads extends HttpReads[StandingRequestScheduleHttpParserResponse] {
+    override def read(method: String, url: String, response: HttpResponse): StandingRequestScheduleHttpParserResponse =
       response.status match {
         case OK =>
-          logger.debug("[CustomerCircumstancesHttpParser][read]: Status OK")
+          logger.debug("[StandingRequestScheduleHttpParserResponse][read]: Status OK")
           response.json.validate(
-            VatCustomerInformation.reads(appConfig)
+            StandingRequestSchedule.reads
           ) match {
-            case JsSuccess(vatCustomerInformation, _) =>
-              Right(vatCustomerInformation)
+            case JsSuccess(standingRequestSchedule, _) =>
+              Right(standingRequestSchedule)
             case JsError(errors) =>
               logger.warn(s"Invalid Success Response Json. Error: $errors")
-              Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
+              Left(UnexpectedStandingRequestScheduleFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
           }
         case _ => handleErrorResponse(response)
       }
   }
 
-  def handleErrorResponse(response: HttpResponse): Left[GetVatCustomerInformationFailure, VatCustomerInformation] = {
+  def handleErrorResponse(response: HttpResponse): Left[GetStandingRequestScheduleFailure, StandingRequestSchedule] = {
 
     response.status match {
       case BAD_REQUEST =>
         logUnexpectedResponse(response)
-        Left(InvalidVatNumber)
+        Left(SrsInvalidVatNumber)
       case NOT_FOUND =>
-        logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
-          s"NOT FOUND returned - Subscription not found. Status: $NOT_FOUND. Body: ${response.body}")
-        Left(VatNumberNotFound)
-      case FORBIDDEN if response.body.contains("MIGRATION") =>
-        logger.debug("[CustomerCircumstancesHttpParser][handleErrorResponse] - " +
-          "FORBIDDEN returned with MIGRATION - Migration in progress.")
-        Left(Migration)
+        logger.debug("[StandingRequestScheduleHttpParser][handleErrorResponse] - " +
+          s"NOT FOUND returned - Schedule not found. Status: $NOT_FOUND. Body: ${response.body}")
+        Left(SrsVatNumberNotFound)
       case FORBIDDEN =>
         logUnexpectedResponse(response)
-        Left(Forbidden)
+        Left(SrsForbidden)
       case status =>
         logUnexpectedResponse(response)
-        Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
+        Left(UnexpectedStandingRequestScheduleFailure(status, response.body))
     }
   }
 
   def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response"): Unit = {
     logger.warn(
-      s"[CustomerCircumstancesHttpParser][logUnexpectedResponse]: $message. " +
+      s"[StandingRequestScheduleHttpParser][logUnexpectedResponse]: $message. " +
         s"Status: ${response.status}. " +
         s"Body: ${response.body} " +
         s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}"
