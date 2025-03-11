@@ -36,7 +36,7 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
   import httpParser.StandingRequestScheduleHttpParserResponse
 
-  private def url(vatNumber: String) = s"${appConfig.desUrl}/vat/standing-requests/vrn/$vatNumber"
+  private def url(vatNumber: String) = s"${appConfig.hipUrl}/RESTAdapter/VAT/standing-requests/VRN/$vatNumber"
 
   val hipHeaders: Seq[(String, String)] = Seq(
     "Authorization" -> appConfig.hipAuthorisationToken,
