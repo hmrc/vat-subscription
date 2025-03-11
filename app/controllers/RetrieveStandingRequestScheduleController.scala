@@ -37,22 +37,22 @@ class RetrieveStandingRequestScheduleController @Inject()(VatAuthorised: VatAuth
   def retrieveStandingRequestScheduleDetails(vatNumber: String): Action[AnyContent] = VatAuthorised.async(vatNumber) {
     implicit user =>
       standingRequestScheduleRetrievalService.retrieveStandingRequestSchedule(vatNumber) map {
-        case Right(customerDetails) => Ok(Json.toJson(customerDetails))
+        case Right(standingRequests) => Ok(Json.toJson(standingRequests))
         case Left(SrsInvalidVatNumber) =>
           infoLog(s"[RetrieveStandingRequestScheduleController][retrieveStandingRequestScheduleDetails]: " +
-            s"InvalidVatNumber returned from StandingRequestScheduleRetrieval Service")
+            s"InvalidVatNumber returned from StandingRequestScheduleRetrievalService")
           BadRequest(Json.toJson(InvalidVatNumber))
         case Left(SrsVatNumberNotFound) =>
           infoLog(s"[RetrieveStandingRequestScheduleController][retrieveStandingRequestScheduleDetails]: " +
-            s"VatNumberNotFound returned from StandingRequestScheduleRetrieval Service")
+            s"VatNumberNotFound returned from StandingRequestScheduleRetrievalService")
           NotFound(Json.toJson(VatNumberNotFound))
         case Left(SrsForbidden) =>
           infoLog(s"[RetrieveStandingRequestScheduleController][retrieveStandingRequestScheduleDetails]:" +
-            s"Forbidden returned from StandingRequestScheduleRetrieval Service")
+            s"Forbidden returned from StandingRequestScheduleRetrievalService")
           Forbidden(Json.toJson(ForbiddenResult))
         case Left(UnexpectedStandingRequestScheduleFailure(status, body)) =>
           warnLog(s"[RetrieveStandingRequestScheduleController][retrieveStandingRequestScheduleDetails]:" +
-            s"Unexpected Failure returned from StandingRequestScheduleRetrieval Service, status - $status")
+            s"Unexpected Failure returned from StandingRequestScheduleRetrievalService, status - $status")
           Status(status)(Json.obj("status" -> status.toString, "body" -> body))
       }
   }

@@ -25,18 +25,19 @@ import helpers.servicemocks.GetStandingRequestScheduleStub._
 import helpers.{ComponentSpecBase, CustomMatchers}
 import models._
 import models.get.{PPOBGet, PPOBAddressGet}
+import com.github.tomakehurst.wiremock.client.WireMock._
 
 class RetrieveStandingRequestScheduleControllerISpec
     extends ComponentSpecBase
     with BeforeAndAfterEach
     with CustomMatchers {
 
-  "/:vatNumber/standing-request" when {
+  "/:vatNumber/standing-requests" when {
     "the user does not have an mtd vat enrolment" should {
       "return FORBIDDEN" in {
         stubAuthFailure()
 
-        val res = get(s"/$testVatNumber/standing-request")
+        val res = get(s"/$testVatNumber/standing-requests")
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -219,10 +220,11 @@ class RetrieveStandingRequestScheduleControllerISpec
           standingRequestScheduleJson
         )
 
-        val res = get(s"/$testVatNumber/standing-request")
-        println("******")
-        println(expectedStandingRequestSchedule.toString)
-
+        val res = get(s"/$testVatNumber/standing-requests")
+        val unmatchedRequests =
+          findAll(getRequestedFor(urlMatching(".*standing-requests.*")))
+        println(s"Unmatched Requests in WireMock: ${unmatchedRequests.size()}")
+        unmatchedRequests.forEach(req => println(req))
         res should have(
           httpStatus(OK),
           jsonBodyAs(expectedStandingRequestSchedule)
@@ -281,10 +283,8 @@ class RetrieveStandingRequestScheduleControllerISpec
           standingRequestMultipleRequestCategoriesJson
         )
 
-        val res = get(s"/$testVatNumber/standing-request")
+        val res = get(s"/$testVatNumber/standing-requests")
 
-        println("******")
-        println(expectedStandingRequestRequestCategory3Only.toString)
         res should have(
           httpStatus(OK),
           jsonBodyAs(expectedStandingRequestRequestCategory3Only)
@@ -297,7 +297,7 @@ class RetrieveStandingRequestScheduleControllerISpec
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetStandingRequestSchedule(testVatNumber)(BAD_REQUEST, Json.obj())
 
-        val res = get(s"/$testVatNumber/standing-request")
+        val res = get(s"/$testVatNumber/standing-requests")
 
         res should have(
           httpStatus(BAD_REQUEST)
@@ -310,7 +310,7 @@ class RetrieveStandingRequestScheduleControllerISpec
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetStandingRequestSchedule(testVatNumber)(NOT_FOUND, Json.obj())
 
-        val res = get(s"/$testVatNumber/standing-request")
+        val res = get(s"/$testVatNumber/standing-requests")
 
         res should have(
           httpStatus(NOT_FOUND)
@@ -323,7 +323,7 @@ class RetrieveStandingRequestScheduleControllerISpec
         stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
         stubGetStandingRequestSchedule(testVatNumber)(FORBIDDEN, Json.obj())
 
-        val res = get(s"/$testVatNumber/standing-request")
+        val res = get(s"/$testVatNumber/standing-requests")
 
         res should have(
           httpStatus(FORBIDDEN)
@@ -339,7 +339,7 @@ class RetrieveStandingRequestScheduleControllerISpec
           Json.obj()
         )
 
-        val res = get(s"/$testVatNumber/standing-request")
+        val res = get(s"/$testVatNumber/standing-requests")
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)

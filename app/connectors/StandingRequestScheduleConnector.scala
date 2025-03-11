@@ -47,8 +47,8 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
                     (implicit hc: HeaderCarrier, ec: ExecutionContext, user: Request[_]): Future[StandingRequestScheduleHttpParserResponse] = {
     val headerCarrier = hc.copy(authorization = None)
 
-    logger.debug(s"[StandingRequestScheduleConnector][getInformation] URL: ${url(vatNumber)}")
-    logger.debug(s"[StandingRequestScheduleConnector][getInformation] Headers: $hipHeaders")
+    logger.debug(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
+    logger.debug(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $hipHeaders")
 
     http.GET[StandingRequestScheduleHttpParserResponse](
       url = url(vatNumber),
@@ -57,9 +57,12 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
       httpParser.GetStandingRequestScheduleHttpReads,
       headerCarrier,
       implicitly[ExecutionContext]
-    ).recover {
+    ).map { response =>
+      logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] Received response: lololo ")
+      response
+    }.recover {
       case ex: HttpException =>
-        warnLog(s"[StandingRequestScheduleConnector][getInformation] - HTTP exception received: ${ex.message}")
+        warnLog(s"[StandingRequestScheduleConnector][getSrsInformation] - HTTP exception received: ${ex.message}")
         Left(UnexpectedStandingRequestScheduleFailure(BAD_GATEWAY, ex.message))
     }
   }

@@ -36,8 +36,10 @@ class StandingRequestScheduleRetrievalService @Inject()(standingRequestScheduleC
       s"details for vat number - $vatNumber")
     standingRequestScheduleConnector.getSrsInformation(vatNumber).map {
       case Right(details) =>
+        infoLog(s"[StandingRequestScheduleRetrievalService] Response received:")
         Right(returnRequestCategory3Only(details))
       case Left(error) =>
+        warnLog(s"[StandingRequestScheduleRetrievalService] Error received: $error")
         Left(error)
     }
   }
