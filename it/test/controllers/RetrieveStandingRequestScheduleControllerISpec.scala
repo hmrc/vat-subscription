@@ -221,10 +221,7 @@ class RetrieveStandingRequestScheduleControllerISpec
         )
 
         val res = get(s"/$testVatNumber/standing-requests")
-        val unmatchedRequests =
-          findAll(getRequestedFor(urlMatching(".*standing-requests.*")))
-        println(s"Unmatched Requests in WireMock: ${unmatchedRequests.size()}")
-        unmatchedRequests.forEach(req => println(req))
+
         res should have(
           httpStatus(OK),
           jsonBodyAs(expectedStandingRequestSchedule)

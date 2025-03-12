@@ -45,9 +45,7 @@ class StandingRequestScheduleHttpParser @Inject()(appConfig: AppConfig) extends 
               logger.warn(s"Invalid Success Response Json. Error: $errors")
               Left(UnexpectedStandingRequestScheduleFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
           }
-        case _ => 
-          println("Response is not ok lol")
-          handleErrorResponse(response)
+        case _ => handleErrorResponse(response)
       }
   }
 
