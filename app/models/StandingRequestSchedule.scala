@@ -21,24 +21,25 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import utils.{JsonObjectSugar, JsonReadUtil}
+import java.time.{LocalDate, LocalDateTime, Instant, ZoneId}
 
-case class StandingRequestSchedule(processingDate: Option[String], standingRequests: List[StandingRequest] = List())
+case class StandingRequestSchedule(processingDate: Option[LocalDate], standingRequests: List[StandingRequest] = List())
 
 case class StandingRequest(requestNumber: String,
                            requestCategory: String,
-                           createdOn: Option[String],
-                           changedOn: Option[String],
+                           createdOn: Option[LocalDate],
+                           changedOn: Option[LocalDate],
                            requestItems: List[RequestItem]
                           )
 
 case class RequestItem(period: String,
                        periodKey: String,
-                       startDate: String,
-                       endDate: String,
-                       dueDate: String,
+                       startDate: LocalDate,
+                       endDate: LocalDate,
+                       dueDate: LocalDate,
                        amount: BigDecimal,
                        chargeReference: Option[String],
-                       postingDueDate: Option[String])
+                       postingDueDate: Option[LocalDate])
 
 object RequestItem extends JsonReadUtil with JsonObjectSugar {
 
@@ -54,23 +55,23 @@ object RequestItem extends JsonReadUtil with JsonObjectSugar {
   implicit val riReads: Reads[RequestItem] = (
     periodPath.read[String] and
       periodKeyPath.read[String] and
-      startDatePath.read[String] and
-      endDatePath.read[String] and
-      dueDatePath.read[String] and
+      startDatePath.read[LocalDate] and
+      endDatePath.read[LocalDate] and
+      dueDatePath.read[LocalDate] and
       amountPath.read[BigDecimal] and
       chargeReferencePath.readNullable[String] and
-      postingDueDatePath.readNullable[String]
+      postingDueDatePath.readNullable[LocalDate]
     )(RequestItem.apply _)
 
   implicit val riWrites: Writes[RequestItem] = (
     periodPath.write[String] and
       periodKeyPath.write[String] and
-      startDatePath.write[String] and
-      endDatePath.write[String] and
-      dueDatePath.write[String] and
+      startDatePath.write[LocalDate] and
+      endDatePath.write[LocalDate] and
+      dueDatePath.write[LocalDate] and
       amountPath.write[BigDecimal] and
       chargeReferencePath.writeNullable[String] and
-      postingDueDatePath.writeNullable[String]
+      postingDueDatePath.writeNullable[LocalDate]
     )(unlift(RequestItem.unapply))
 }
 
@@ -85,16 +86,16 @@ object StandingRequest extends JsonReadUtil with JsonObjectSugar {
   implicit val srReads: Reads[StandingRequest] = (
     requestNumberPath.read[String] and
       requestCategoryPath.read[String] and
-      createdOnPath.readNullable[String] and
-      changedOnPath.readNullable[String] and
+      createdOnPath.readNullable[LocalDate] and
+      changedOnPath.readNullable[LocalDate] and
       requestItemsPath.read[List[RequestItem]]
     )(StandingRequest.apply _)
 
   implicit val srWrites: Writes[StandingRequest] = (
     requestNumberPath.write[String] and
       requestCategoryPath.write[String] and
-      createdOnPath.writeNullable[String] and
-      changedOnPath.writeNullable[String] and
+      createdOnPath.writeNullable[LocalDate] and
+      changedOnPath.writeNullable[LocalDate] and
       requestItemsPath.write[List[RequestItem]]
     )(unlift(StandingRequest.unapply))
 
@@ -102,8 +103,19 @@ object StandingRequest extends JsonReadUtil with JsonObjectSugar {
 
 object StandingRequestSchedule extends JsonReadUtil with JsonObjectSugar {
 
+  implicit val localDateReads: Reads[LocalDate] = Reads { json =>
+    json.validate[String].flatMap { dateStr =>
+      try {
+        val localDate = Instant.parse(dateStr).atZone(ZoneId.systemDefault()).toLocalDate
+        JsSuccess(localDate)
+      } catch {
+        case _: Exception => JsError(s"Invalid date format: $dateStr")
+      }
+    }
+  }
+
   val reads: Reads[StandingRequestSchedule] = (
-    (JsPath \ "processingDate").readNullable[String] and
+    (JsPath \ "processingDate").readNullable[LocalDate](localDateReads) and
       (JsPath \ "standingRequests").read[List[StandingRequest]]
     )(StandingRequestSchedule.apply _)
 

@@ -38,14 +38,11 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
   private def url(vatNumber: String) = s"${appConfig.hipUrl}/RESTAdapter/VAT/standing-requests/VRN/$vatNumber"
 
-  val hipHeaders: Seq[(String, String)] = Seq(
-    "Authorization" -> appConfig.hipAuthorisationToken,
-    appConfig.hipEnvironmentHeader
-  )
-
   def getSrsInformation(vatNumber: String)
                     (implicit hc: HeaderCarrier, ec: ExecutionContext, user: Request[_]): Future[StandingRequestScheduleHttpParserResponse] = {
     val headerCarrier = hc.copy(authorization = None)
+
+    val hipHeaders = buildHeadersV1 
 
     logger.debug(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
     logger.debug(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $hipHeaders")
@@ -57,10 +54,7 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
       httpParser.GetStandingRequestScheduleHttpReads,
       headerCarrier,
       implicitly[ExecutionContext]
-    ).map { response =>
-      logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] Received response: lololo ")
-      response
-    }.recover {
+    ).recover {
       case ex: HttpException =>
         warnLog(s"[StandingRequestScheduleConnector][getSrsInformation] - HTTP exception received: ${ex.message}")
         Left(UnexpectedStandingRequestScheduleFailure(BAD_GATEWAY, ex.message))
@@ -76,7 +70,8 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
     Seq(
       appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
       CORRELATION_HEADER                  -> getCorrelationId(hc),
-      AUTHORIZATION_HEADER                -> s"Basic ${appConfig.hipAuthorisationToken}"
+      AUTHORIZATION_HEADER                -> s"Basic ${appConfig.hipAuthorisationToken}",
+      appConfig.hipEnvironmentHeader,
     )
 
   def generateNewUUID: String = randomUUID.toString

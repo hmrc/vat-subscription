@@ -48,7 +48,7 @@ class RetrieveStandingRequestScheduleControllerISpec
     "calls to HIP is successful" should {
 
       val expectedStandingRequestSchedule: JsObject = Json.obj(
-        "processingDate" -> "2024-07-15T09:30:47Z",
+        "processingDate" -> "2024-07-15",
         "standingRequests" -> Json.arr(
           Json.obj(
             "requestNumber" -> "20000037272",
@@ -231,7 +231,7 @@ class RetrieveStandingRequestScheduleControllerISpec
       "return OK with requestCategory 3 standing requests only" in {
 
         val expectedStandingRequestRequestCategory3Only: JsObject = Json.obj(
-          "processingDate" -> "2025-03-17T09:30:47Z",
+          "processingDate" -> "2025-03-17",
           "standingRequests" -> Json.arr(
             Json.obj(
               "requestNumber" -> "20000037272",

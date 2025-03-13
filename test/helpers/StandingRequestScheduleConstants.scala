@@ -21,54 +21,59 @@ import helpers.BankDetailsTestConstants._
 import helpers.BaseTestConstants._
 import models._
 import play.api.libs.json.JsArray
+import java.time.{LocalDate, LocalDateTime, Instant, ZoneId}
 
 object StandingRequestScheduleConstants {
+
+  def parseLocalTimeDate(date: String) = Instant.parse(date)
+  .atZone(ZoneId.systemDefault())
+  .toLocalDate
 
   val standingRequestEmptyModel = StandingRequestSchedule(None, Nil)
 
   val standingRequestEmptyStandingRequestsModel = StandingRequestSchedule(
-    Some("2025-03-17T09:30:47Z"),
+    Some(parseLocalTimeDate("2025-03-17T09:30:47Z")),
     Nil
   )
 
    val standingRequestNonPOACategoryModel = StandingRequestSchedule(
-    Some("2025-03-17T09:30:47Z"),
+    Some(parseLocalTimeDate("2025-03-17T09:30:47Z")),
     List(
       StandingRequest(
         "20000037277",
         "4",
-        Some("2025-12-31"),
-        Some("2026-01-26"),
+        Some(LocalDate.parse("2025-12-31")),
+        Some(LocalDate.parse("2026-01-26")),
         List(
           RequestItem(
             "1",
             "26A1",
-            "2026-01-01",
-            "2026-03-31",
-            "2026-02-28",
+            LocalDate.parse("2026-01-01"),
+            LocalDate.parse("2026-03-31"),
+            LocalDate.parse("2026-02-28"),
             22945.23,
             Some("XD006411191344"),
-            Some("2026-02-28")
+            Some(LocalDate.parse("2026-02-28"))
           ),
           RequestItem(
             "2",
             "26A1",
-            "2026-01-01",
-            "2026-03-31",
-            "2026-03-31",
+           LocalDate.parse("2026-01-01"),
+           LocalDate.parse("2026-03-31"),
+           LocalDate.parse("2026-03-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2026-03-31")
+            Some(LocalDate.parse("2026-03-31"))
           ),
           RequestItem(
             "3",
             "25A2",
-            "2026-04-01",
-            "2026-06-30",
-            "2026-05-31",
+            LocalDate.parse("2026-04-01"),
+            LocalDate.parse("2026-06-30"),
+            LocalDate.parse("2026-05-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2026-05-31")
+            Some(LocalDate.parse("2026-05-31"))
           )
         )
       )
@@ -76,81 +81,81 @@ object StandingRequestScheduleConstants {
   )
 
   val standingRequestMultipleModel = StandingRequestSchedule(
-    Some("2025-03-17T09:30:47Z"),
+    Some(parseLocalTimeDate("2025-03-17T09:30:47Z")),
     List(
       StandingRequest(
         "20000037272",
         "3",
-        Some("2025-01-05"),
-        Some("2025-02-26"),
+        Some(LocalDate.parse("2025-01-05")),
+        Some(LocalDate.parse("2025-02-26")),
         List(
           RequestItem(
             "1",
             "25A1",
-            "2025-01-01",
-            "2025-03-31",
-            "2025-03-31",
+            LocalDate.parse("2025-01-01"),
+            LocalDate.parse("2025-03-31"),
+            LocalDate.parse("2025-03-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2025-03-31")
+            Some(LocalDate.parse("2025-03-31"))
           ),
           RequestItem(
             "2",
             "25A2",
-            "2025-04-01",
-            "2025-06-30",
-            "2025-05-31",
+            LocalDate.parse("2025-04-01"),
+            LocalDate.parse("2025-06-30"),
+            LocalDate.parse("2025-05-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2025-05-31")
+            Some(LocalDate.parse("2025-05-31"))
           ),
           RequestItem(
             "3",
             "25A2",
-            "2025-04-01",
-            "2025-06-30",
-            "2025-06-30",
+            LocalDate.parse("2025-04-01"),
+            LocalDate.parse("2025-06-30"),
+            LocalDate.parse("2025-06-30"),
             22945.23,
             Some("XD006411191344"),
-            Some("2025-06-30")
+            Some(LocalDate.parse("2025-06-30"))
           )
         )
       ),
       StandingRequest(
         "20000037277",
         "4",
-        Some("2025-12-31"),
-        Some("2026-01-26"),
+        Some(LocalDate.parse("2025-12-31")),
+        Some(LocalDate.parse("2026-01-26")),
         List(
           RequestItem(
             "1",
             "26A1",
-            "2026-01-01",
-            "2026-03-31",
-            "2026-02-28",
+            LocalDate.parse("2026-01-01"),
+            LocalDate.parse("2026-03-31"),
+            LocalDate.parse("2026-02-28"),
             22945.23,
             Some("XD006411191344"),
-            Some("2026-02-28")
+            Some(LocalDate.parse("2026-02-28"))
           ),
           RequestItem(
             "2",
             "26A1",
-            "2026-01-01",
-            "2026-03-31",
-            "2026-03-31",
+            LocalDate.parse("2026-01-01"),
+            LocalDate.parse("2026-03-31"),
+            LocalDate.parse("2026-03-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2026-03-31")
+            Some(LocalDate.parse("2026-03-31"))
           ),
           RequestItem(
             "3",
             "25A2",
-            "2026-04-01",
-            "2026-06-30",
-            "2026-05-31",
+            LocalDate.parse("2026-04-01"),
+            LocalDate.parse("2026-06-30"),
+            LocalDate.parse("2026-05-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2026-05-31")
+            Some(LocalDate.parse("2026-05-31"))
           )
         )
       )
@@ -159,43 +164,43 @@ object StandingRequestScheduleConstants {
 
 
   val standingRequestCategory3ModelSingle = StandingRequestSchedule(
-    Some("2025-03-17T09:30:47Z"),
+    Some(parseLocalTimeDate("2025-03-17T09:30:47Z")),
     List(
       StandingRequest(
         "20000037272",
         "3",
-        Some("2025-01-05"),
-        Some("2025-02-26"),
+        Some(LocalDate.parse("2025-01-05")),
+        Some(LocalDate.parse("2025-02-26")),
         List(
           RequestItem(
             "1",
             "25A1",
-            "2025-01-01",
-            "2025-03-31",
-            "2025-03-31",
+            LocalDate.parse("2025-01-01"),
+            LocalDate.parse("2025-03-31"),
+            LocalDate.parse("2025-03-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2025-03-31")
+            Some(LocalDate.parse("2025-03-31"))
           ),
           RequestItem(
             "2",
             "25A2",
-            "2025-04-01",
-            "2025-06-30",
-            "2025-05-31",
+            LocalDate.parse("2025-04-01"),
+            LocalDate.parse("2025-06-30"),
+            LocalDate.parse("2025-05-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2025-05-31")
+            Some(LocalDate.parse("2025-05-31"))
           ),
           RequestItem(
             "3",
             "25A2",
-            "2025-04-01",
-            "2025-06-30",
-            "2025-06-30",
+            LocalDate.parse("2025-04-01"),
+            LocalDate.parse("2025-06-30"),
+            LocalDate.parse("2025-06-30"),
             22945.23,
             Some("XD006411191344"),
-            Some("2025-06-30")
+            Some(LocalDate.parse("2025-06-30"))
           )
         )
       )
@@ -203,108 +208,108 @@ object StandingRequestScheduleConstants {
   )
 
   val standingRequestScheduleModel = StandingRequestSchedule(
-    Some("2024-07-15T09:30:47Z"),
+    Some(parseLocalTimeDate("2024-07-15T09:30:47Z")),
     List(
       StandingRequest(
         "20000037272",
         "3",
-        Some("2023-11-30"),
-        Some("2024-12-26"),
+        Some(LocalDate.parse("2023-11-30")),
+        Some(LocalDate.parse("2024-12-26")),
         List(
           RequestItem(
             "1",
             "24A1",
-            "2024-02-01",
-            "2024-04-30",
-            "2024-03-31",
+            LocalDate.parse("2024-02-01"),
+            LocalDate.parse("2024-04-30"),
+            LocalDate.parse("2024-03-31"),
             22945.23,
             Some("XD006411191344"),
-            Some("2024-03-31")
+            Some(LocalDate.parse("2024-03-31"))
           ),
           RequestItem(
             "2",
             "24A1",
-            "2024-02-01",
-            "2024-04-30",
-            "2024-04-30",
+            LocalDate.parse("2024-02-01"),
+            LocalDate.parse("2024-04-30"),
+            LocalDate.parse("2024-04-30"),
             22945.23,
             Some("XD006411191345"),
-            Some("2024-04-30")
+            Some(LocalDate.parse("2024-04-30"))
           ),
           RequestItem(
             "3",
             "24A2",
-            "2024-05-01",
-            "2024-07-31",
-            "2024-06-30",
+            LocalDate.parse("2024-05-01"),
+            LocalDate.parse("2024-07-31"),
+            LocalDate.parse("2024-06-30"),
             22945.23,
             Some("XD006411191346"),
-            Some("2024-06-30")
+            Some(LocalDate.parse("2024-06-30"))
           ),
           RequestItem(
             "4",
             "24A2",
-            "2024-05-01",
-            "2024-07-31",
-            "2024-07-31",
+            LocalDate.parse("2024-05-01"),
+            LocalDate.parse("2024-07-31"),
+            LocalDate.parse("2024-07-31"),
             22945.23,
             Some("XD006411191347"),
-            Some("2024-07-31")
+            Some(LocalDate.parse("2024-07-31"))
           ),
           RequestItem(
             "5",
             "24A3",
-            "2024-08-01",
-            "2024-10-31",
-            "2024-09-30",
+            LocalDate.parse("2024-08-01"),
+            LocalDate.parse("2024-10-31"),
+            LocalDate.parse("2024-09-30"),
             22945.23,
             Some("XD006411191348"),
-            Some("2024-09-30")
+            Some(LocalDate.parse("2024-09-30"))
           ),
           RequestItem(
             "6",
             "24A3",
-            "2024-08-01",
-            "2024-10-31",
-            "2024-10-31",
+            LocalDate.parse("2024-08-01"),
+            LocalDate.parse("2024-10-31"),
+            LocalDate.parse("2024-10-31"),
             22945.23,
             Some("XD006411191349"),
-            Some("2024-10-31")
+            Some(LocalDate.parse("2024-10-31"))
           ),
           RequestItem(
             "7",
             "24A4",
-            "2024-11-01",
-            "2025-01-31",
-            "2024-12-31",
+            LocalDate.parse("2024-11-01"),
+            LocalDate.parse("2025-01-31"),
+            LocalDate.parse("2024-12-31"),
             22945.23,
             Some("XD006411191350"),
-            Some("2024-12-31")
+            Some(LocalDate.parse("2024-12-31"))
           ),
           RequestItem(
             "8",
             "24A4",
-            "2024-11-01",
-            "2025-01-31",
-            "2025-01-31",
+            LocalDate.parse("2024-11-01"),
+            LocalDate.parse("2025-01-31"),
+            LocalDate.parse("2025-01-31"),
             22945.23,
             Some("XD006411191351"),
-            Some("2025-01-31")
+            Some(LocalDate.parse("2025-01-31"))
           )
         )
       ),
       StandingRequest(
         "20000037277",
         "3",
-        Some("2024-11-30"),
-        Some("2025-01-26"),
+        Some(LocalDate.parse("2024-11-30")),
+        Some(LocalDate.parse("2025-01-26")),
         List(
           RequestItem(
             "1",
             "25A1",
-            "2025-02-01",
-            "2025-04-30",
-            "2025-03-31",
+            LocalDate.parse("2025-02-01"),
+            LocalDate.parse("2025-04-30"),
+            LocalDate.parse("2025-03-31"),
             122945.23,
             None,
             None
@@ -312,9 +317,9 @@ object StandingRequestScheduleConstants {
           RequestItem(
             "2",
             "25A1",
-            "2025-02-01",
-            "2025-04-30",
-            "2025-04-30",
+            LocalDate.parse("2025-02-01"),
+            LocalDate.parse("2025-04-30"),
+            LocalDate.parse("2025-04-30"),
             122945.23,
             None,
             None
@@ -322,9 +327,9 @@ object StandingRequestScheduleConstants {
           RequestItem(
             "3",
             "25A2",
-            "2025-05-01",
-            "2025-07-31",
-            "2025-06-30",
+            LocalDate.parse("2025-05-01"),
+            LocalDate.parse("2025-07-31"),
+            LocalDate.parse("2025-06-30"),
             122945.23,
             None,
             None
@@ -332,9 +337,9 @@ object StandingRequestScheduleConstants {
           RequestItem(
             "4",
             "25A2",
-            "2025-05-01",
-            "2025-07-31",
-            "2025-07-31",
+            LocalDate.parse("2025-05-01"),
+            LocalDate.parse("2025-07-31"),
+            LocalDate.parse("2025-07-31"),
             122945.23,
             None,
             None
@@ -342,9 +347,9 @@ object StandingRequestScheduleConstants {
           RequestItem(
             "5",
             "25A3",
-            "2025-08-01",
-            "2025-10-31",
-            "2025-09-30",
+            LocalDate.parse("2025-08-01"),
+            LocalDate.parse("2025-10-31"),
+            LocalDate.parse("2025-09-30"),
             122945.23,
             None,
             None
@@ -352,9 +357,9 @@ object StandingRequestScheduleConstants {
           RequestItem(
             "6",
             "25A3",
-            "2025-08-01",
-            "2025-10-31",
-            "2025-10-31",
+            LocalDate.parse("2025-08-01"),
+            LocalDate.parse("2025-10-31"),
+            LocalDate.parse("2025-10-31"),
             122945.23,
             None,
             None
@@ -362,9 +367,9 @@ object StandingRequestScheduleConstants {
           RequestItem(
             "7",
             "25A4",
-            "2025-11-01",
-            "2026-01-31",
-            "2025-12-31",
+            LocalDate.parse("2025-11-01"),
+            LocalDate.parse("2026-01-31"),
+            LocalDate.parse("2025-12-31"),
             122945.23,
             None,
             None
@@ -372,9 +377,9 @@ object StandingRequestScheduleConstants {
           RequestItem(
             "8",
             "25A4",
-            "2025-11-01",
-            "2026-01-31",
-            "2026-01-31",
+            LocalDate.parse("2025-11-01"),
+            LocalDate.parse("2026-01-31"),
+            LocalDate.parse("2026-01-31"),
             122945.23,
             None,
             None
@@ -385,18 +390,18 @@ object StandingRequestScheduleConstants {
   )
 
   val standingRequestErrorJson = Json.obj(
-    "processingDate" -> "2024-07-15T09:45:17Z",
+    "processingDate" -> "2024-07-15",
     "code" -> "003",
     "text" -> "Request Could Not Be Processed"
   )
 
   val standingRequestEmptyJson = Json.obj(
-    "processingDate" -> "2025-03-17T09:30:47Z",
+    "processingDate" -> "2025-03-17",
     "standingRequests" -> JsArray.empty
   )
 
   val standingRequestJsonOneOpen = Json.obj(
-    "processingDate" -> "2025-02-15T09:30:47Z",
+    "processingDate" -> "2025-02-15",
     "standingRequests" -> Json.arr(
       Json.obj(
         "requestNumber" -> "20000037272",

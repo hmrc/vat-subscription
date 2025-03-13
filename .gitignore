@@ -35,3 +35,4 @@ bin
 .bsp
 .metals/
 .vscode/
+project/metals.sbt
