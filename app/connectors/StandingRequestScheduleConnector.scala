@@ -71,7 +71,7 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
       appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
       CORRELATION_HEADER                  -> getCorrelationId(hc),
       AUTHORIZATION_HEADER                -> s"Basic ${appConfig.hipAuthorisationToken}",
-      appConfig.hipEnvironmentHeader,
+      appConfig.hipEnvironmentHeader
     )
 
   def generateNewUUID: String = randomUUID.toString
