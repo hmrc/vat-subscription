@@ -33,3 +33,6 @@ tmp
 .idea_modules
 bin
 .bsp
+.metals/
+.vscode/
+project/metals.sbt

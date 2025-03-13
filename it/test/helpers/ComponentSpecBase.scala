@@ -41,7 +41,8 @@ trait ComponentSpecBase extends AnyWordSpecLike with Matchers with GuiceOneServe
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
-    "microservice.services.des.url" -> mockUrl
+    "microservice.services.des.url" -> mockUrl,
+    "microservice.services.hip.url" -> mockUrl
   )
 
   override def beforeAll(): Unit = {

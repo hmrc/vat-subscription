@@ -18,16 +18,17 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.JsValue
+import play.api.libs.json.Json
 
 
-object GetVatCustomerInformationStub extends WireMockMethods {
+object GetStandingRequestScheduleStub extends WireMockMethods {
 
-  def stubGetInformation(vatNumber: String)(status: Int, body: JsValue): StubMapping =
-    when(method = GET, uri = s"/vat/customer/vrn/$vatNumber/information",
+  def stubGetStandingRequestSchedule(vatNumber: String)(status: Int, body: JsValue): StubMapping = {
+    when(method = GET, uri = s"/RESTAdapter/VAT/standing-requests/VRN/$vatNumber",
       headers = Map(
-        "Authorization" -> "Bearer dev",
+        "Authorization" -> "Basic Y2xpZW50SWQ6Y2xpZW50U2VjcmV0",
         "Environment" -> "dev"
       )
     ).thenReturn(status = status, body = body)
-
+  }
 }
