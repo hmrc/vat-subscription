@@ -45,7 +45,9 @@ class StandingRequestScheduleHttpParser @Inject()(appConfig: AppConfig) extends 
               logger.warn(s"Invalid Success Response Json. Error: $errors")
               Left(UnexpectedStandingRequestScheduleFailure(INTERNAL_SERVER_ERROR, "Invalid Success Response Json"))
           }
-        case _ => handleErrorResponse(response)
+        case x =>
+          logger.info("Response Status" + x.toString)
+          handleErrorResponse(response)
       }
   }
 
@@ -56,7 +58,7 @@ class StandingRequestScheduleHttpParser @Inject()(appConfig: AppConfig) extends 
         logUnexpectedResponse(response)
         Left(SrsInvalidVatNumber)
       case NOT_FOUND =>
-        logger.debug("[StandingRequestScheduleHttpParser][handleErrorResponse] - " +
+        logger.info("[StandingRequestScheduleHttpParser][handleErrorResponse] - " +
           s"NOT FOUND returned - Schedule not found. Status: $NOT_FOUND. Body: ${response.body}")
         Left(SrsVatNumberNotFound)
       case FORBIDDEN =>
