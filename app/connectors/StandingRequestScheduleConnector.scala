@@ -18,14 +18,14 @@ package connectors
 
 import config.AppConfig
 import httpparsers.StandingRequestScheduleHttpParser
-
+import play.api.http.MimeTypes
 import javax.inject.{Inject, Singleton}
 import play.api.http.Status._
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggingUtil
-
+import uk.gov.hmrc.http.HeaderNames
 import java.util.UUID.randomUUID
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,8 +44,8 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
     val hipHeaders = buildHeadersV1 
 
-    logger.debug(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
-    logger.debug(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $hipHeaders")
+    infoLog(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
+    infoLog(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $hipHeaders")
 
     http.GET[StandingRequestScheduleHttpParserResponse](
       url = url(vatNumber),
@@ -63,14 +63,14 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
 
   private val CORRELATION_HEADER: String   = "CorrelationId"
-  private val AUTHORIZATION_HEADER: String = "Authorization"
   private val requestIdPattern      = """.*([A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}).*""".r
 
   private def buildHeadersV1(implicit hc: HeaderCarrier): Seq[(String, String)] =
     Seq(
+      play.api.http.HeaderNames.CONTENT_TYPE -> MimeTypes.JSON,
       appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
       CORRELATION_HEADER                  -> getCorrelationId(hc),
-      AUTHORIZATION_HEADER                -> s"Basic ${appConfig.hipAuthorisationToken}",
+      HeaderNames.authorisation                -> s"Basic ${appConfig.hipAuthorisationToken}",
       appConfig.hipEnvironmentHeader
     )
 

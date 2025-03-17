@@ -40,7 +40,7 @@ class RetrieveStandingRequestScheduleController @Inject()(VatAuthorised: VatAuth
         case Right(standingRequests) => Ok(Json.toJson(standingRequests))
         case Left(SrsInvalidVatNumber) =>
           infoLog(s"[RetrieveStandingRequestScheduleController][retrieveStandingRequestScheduleDetails]: " +
-            s"InvalidVatNumber returned from StandingRequestScheduleRetrievalService")
+            s"SrsInvalidVatNumber returned from StandingRequestScheduleRetrievalService")
           BadRequest(Json.toJson(InvalidVatNumber))
         case Left(SrsVatNumberNotFound) =>
           infoLog(s"[RetrieveStandingRequestScheduleController][retrieveStandingRequestScheduleDetails]: " +
