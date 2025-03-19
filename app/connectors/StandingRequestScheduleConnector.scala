@@ -49,6 +49,8 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
     logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
     logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $hipHeaders")
+    logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
+    logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $hipHeaders")
 
     http.GET[StandingRequestScheduleHttpParserResponse](
       url = url(vatNumber),
