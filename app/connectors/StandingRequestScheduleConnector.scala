@@ -25,9 +25,12 @@ import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggingUtil
-
+import java.time.{Clock, Instant}
+import java.util.Base64
 import java.util.UUID.randomUUID
 import scala.concurrent.{ExecutionContext, Future}
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Singleton
 class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
@@ -36,7 +39,7 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
   import httpParser.StandingRequestScheduleHttpParserResponse
 
-  private def url(vatNumber: String) = s"${appConfig.hipUrl}/etmp/RESTAdapter/VATC/standing-requests/VRN/$vatNumber"
+  private def url(vatNumber: String) = s"${appConfig.hipUrl}/etmp/RESTAdapter/VAT/standing-requests/VRN/$vatNumber"
 
   def getSrsInformation(vatNumber: String)
                     (implicit hc: HeaderCarrier, ec: ExecutionContext, user: Request[_]): Future[StandingRequestScheduleHttpParserResponse] = {
@@ -44,6 +47,8 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
     val hipHeaders = buildHeadersV1 
 
+    logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
+    logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $hipHeaders")
     logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] URL: ${url(vatNumber)}")
     logger.info(s"[StandingRequestScheduleConnector][getSrsInformation] Headers: $hipHeaders")
 
@@ -61,17 +66,23 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
     }
   }
 
-
-  private val CORRELATION_HEADER: String   = "CorrelationId"
-  private val AUTHORIZATION_HEADER: String = "Authorization"
   private val requestIdPattern      = """.*([A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}).*""".r
+
+  private val CorrelationIdHeader: String   = "CorrelationId"
+  private val AuthorizationHeader: String = "Authorization"
+  private val xOriginatingSystemHeader: String  = "X-Originating-System"
+  private val xReceiptDateHeader: String        = "X-Receipt-Date"
+  private val xTransmittingSystemHeader: String = "X-Transmitting-System"
 
   private def buildHeadersV1(implicit hc: HeaderCarrier): Seq[(String, String)] =
     Seq(
       appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
-      CORRELATION_HEADER                  -> getCorrelationId(hc),
-      AUTHORIZATION_HEADER                -> s"Basic ${appConfig.hipAuthorisationToken}",
-      appConfig.hipEnvironmentHeader
+      CorrelationIdHeader                  -> getCorrelationId(hc),
+      AuthorizationHeader                -> s"Basic ${appConfig.hipAuthorisationToken}",
+      appConfig.hipEnvironmentHeader,
+      xOriginatingSystemHeader -> "MTDP",
+      xReceiptDateHeader ->  DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
+      xTransmittingSystemHeader -> "HIP" 
     )
 
   def generateNewUUID: String = randomUUID.toString
