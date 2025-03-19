@@ -39,7 +39,7 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
 
   import httpParser.StandingRequestScheduleHttpParserResponse
 
-  private def url(vatNumber: String) = s"${appConfig.hipUrl}/etmp/RESTAdapter/VAT/standing-requests/VRN/$vatNumber"
+  private def url(vatNumber: String) = s"${appConfig.hipUrl}/etmp/RESTAdapter/VATC/standing-requests/VRN/$vatNumber"
 
   def getSrsInformation(vatNumber: String)
                     (implicit hc: HeaderCarrier, ec: ExecutionContext, user: Request[_]): Future[StandingRequestScheduleHttpParserResponse] = {
