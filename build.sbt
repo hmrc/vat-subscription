@@ -23,7 +23,7 @@ RoutesKeys.routesImport := Seq.empty
 val appName = "vat-subscription"
 val bootstrapVersion = "8.4.0"
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.14"
+ThisBuild / scalaVersion := "2.13.16"
 lazy val plugins: Seq[Plugins] = Seq.empty
 
 lazy val coverageSettings: Seq[Setting[_]] = {
