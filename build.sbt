@@ -21,9 +21,9 @@ import uk.gov.hmrc.DefaultBuildSettings._
 RoutesKeys.routesImport := Seq.empty
 
 val appName = "vat-subscription"
-val bootstrapVersion = "8.4.0"
+val bootstrapVersion = "8.6.0"
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.14"
+ThisBuild / scalaVersion := "2.13.16"
 lazy val plugins: Seq[Plugins] = Seq.empty
 
 lazy val coverageSettings: Seq[Setting[_]] = {
@@ -82,6 +82,5 @@ lazy val it = project
   .settings(itSettings())
   .settings(
     fork := false,
-    addTestReportOption(Test, "int-test-reports"),
-    Test / testGrouping := oneForkedJvmPerTest((Test / definedTests).value)
+    addTestReportOption(Test, "int-test-reports")
   )
