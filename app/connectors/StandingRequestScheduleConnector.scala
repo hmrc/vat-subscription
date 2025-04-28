@@ -114,7 +114,7 @@ object GetStandingRequestScheduleFailure {
 case object SrsInvalidVatNumber extends GetStandingRequestScheduleFailure {
   override val status: Int = BAD_REQUEST
   override val body = "Bad request"
-  implicit val writes: Writes[InvalidVatNumber.type] = Writes {
+  implicit val writes: Writes[SrsInvalidVatNumber.type] = Writes {
     _ => Json.obj("status" -> status.toString, "body" -> body)
   }
 }
@@ -122,7 +122,7 @@ case object SrsInvalidVatNumber extends GetStandingRequestScheduleFailure {
 case object SrsVatNumberNotFound extends GetStandingRequestScheduleFailure {
   override val status: Int = NOT_FOUND
   override val body = "Not found"
-  implicit val writes: Writes[VatNumberNotFound.type] = Writes {
+  implicit val writes: Writes[SrsVatNumberNotFound.type] = Writes {
     _ => Json.obj("status" -> status.toString, "body" -> body)
   }
 }
@@ -130,7 +130,7 @@ case object SrsVatNumberNotFound extends GetStandingRequestScheduleFailure {
 case object SrsForbidden extends GetStandingRequestScheduleFailure {
   override val status: Int = FORBIDDEN
   override val body: String = "Forbidden"
-  implicit val writes: Writes[Forbidden.type] = Writes {
+  implicit val writes: Writes[SrsForbidden.type] = Writes {
     _ => Json.obj("status" -> status.toString, "body" -> body)
   }
 }
@@ -138,7 +138,15 @@ case object SrsForbidden extends GetStandingRequestScheduleFailure {
 case object SrsMigration extends GetStandingRequestScheduleFailure {
   override val status: Int = PRECONDITION_FAILED
   override val body: String = "Migration"
-  implicit val writes: Writes[Migration.type] = Writes {
+  implicit val writes: Writes[SrsMigration.type] = Writes {
+    _ => Json.obj("status" -> status.toString, "body" -> body)
+  }
+}
+
+case object SrsInactiveUser extends GetStandingRequestScheduleFailure {
+  override val status: Int = UNPROCESSABLE_ENTITY
+  override val body: String = "Customer is not on VAT scheme"
+  implicit val writes: Writes[SrsInactiveUser.type] = Writes {
     _ => Json.obj("status" -> status.toString, "body" -> body)
   }
 }
