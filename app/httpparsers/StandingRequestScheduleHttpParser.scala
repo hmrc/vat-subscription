@@ -64,11 +64,24 @@ class StandingRequestScheduleHttpParser @Inject()(appConfig: AppConfig) extends 
       case FORBIDDEN =>
         logUnexpectedResponse(response)
         Left(SrsForbidden)
+      case UNPROCESSABLE_ENTITY =>
+        handle422Response(response)
       case status =>
         logUnexpectedResponse(response)
         Left(UnexpectedStandingRequestScheduleFailure(status, response.body))
     }
   }
+
+  private def handle422Response(response: HttpResponse): Left[GetStandingRequestScheduleFailure, StandingRequestSchedule] = {
+  (response.json \ "errors" \ "code").asOpt[String] match {
+    case Some("004") =>
+      logger.info("[StandingRequestScheduleHttpParser][handle422Response] - Customer is not on VAT scheme (benign 422).")
+      Left(SrsInactiveUser)
+    case _ =>
+      logUnexpectedResponse(response, message = "Unexpected 422 response")
+      Left(UnexpectedStandingRequestScheduleFailure(UNPROCESSABLE_ENTITY, response.body))
+  }
+}
 
   def logUnexpectedResponse(response: HttpResponse, message: String = "Unexpected response"): Unit = {
     logger.warn(
