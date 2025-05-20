@@ -148,7 +148,7 @@ object VatCustomerInformation extends JsonReadUtil with JsonObjectSugar {
       lastName = lastName,
       organisationName = organisationName,
       tradingName = tradingName,
-      effectiveRegistrationDate,
+      effectiveRegistrationDate = effectiveRegistrationDate,
       customerMigratedToETMPDate,
       hybridToFullMigrationDate,
       flatRateScheme.isDefined,

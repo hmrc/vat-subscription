@@ -63,7 +63,7 @@ class RetrieveVatCustomerDetailsController @Inject()(VatAuthorised: VatAuthorise
       vatCustomerDetailsRetrievalService.retrieveCircumstanceInformation(vatNumber) map {
         case Right(vatInformation) =>
           if (vatInformation.changeIndicators.isEmpty)
-            infoLog("[RetrieveVatCustomerDetailsController][retrieveVatInformation]: No changeIndicators object returned from GetCustomerInformation")
+            infoLog("[RetrieveVatCustomerDetailsController][retrieveVatInformation]: No changeIndicators object returned from GetCustomerInformation" + Json.toJson(vatInformation))
           Ok(Json.toJson(vatInformation))
         case Left(InvalidVatNumber) =>
           infoLog(s"[RetrieveVatCustomerDetailsController][retrieveVatInformation]: InvalidVatNumber returned from CustomerDetailsRetrieval Service")
