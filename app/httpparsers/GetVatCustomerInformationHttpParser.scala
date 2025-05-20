@@ -35,8 +35,7 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extend
     override def read(method: String, url: String, response: HttpResponse): GetVatCustomerInformationHttpParserResponse =
       response.status match {
         case OK =>
-          logger.info("[CustomerCircumstancesHttpParser][read]: Status OK")
-          logger.warn("[CustomerCircumstancesHttpParser][read][warn]: Status OK")
+          logger.debug("[CustomerCircumstancesHttpParser][read]: Status OK")
           response.json.validate(
             VatCustomerInformation.reads(appConfig)
           ) match {
