@@ -23,7 +23,8 @@ import uk.gov.hmrc.http.{HeaderNames, HttpResponse, SessionKeys}
 
 trait LoggingUtil extends LoggerLike {
 
-  lazy val trueClientIp: Request[_] => Option[String] = request => request.headers.get(HeaderNames.trueClientIp).map(trueClientIp => s"trueClientIp: $trueClientIp ")
+  lazy val trueClientIp: Request[_] => Option[String] = request =>
+    request.headers.get(HeaderNames.trueClientIp).map(trueClientIp => s"trueClientIp: $trueClientIp ")
 
   lazy val sessionId: Request[_] => Option[String] = request => request.session.get(SessionKeys.sessionId).map(sessionId => s"sessionId: $sessionId ")
 
@@ -50,6 +51,7 @@ trait LoggingUtil extends LoggerLike {
   def errorLog(message: => String, throwable: Throwable)(implicit mc: MarkerContext, request: Request[_]): Unit = this.error(s"$message (${identifiers(request)})", throwable)
 
   def errorConnectorLog(message: => String)(implicit mc: MarkerContext, httpResponse: HttpResponse): Unit = this.error(s"$message (${identifiersFromHttpResponse(httpResponse)})")
+
 }
 
 object LinkLogger extends LoggingUtil

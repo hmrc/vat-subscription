@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{InvalidVatNumber, Migration, SrsForbidden, SrsInvalidVatNumber, SrsMigration,
+import connectors.{InvalidVatNumber, SrsForbidden, SrsInvalidVatNumber,
   SrsVatNumberNotFound, UnexpectedStandingRequestScheduleFailure, VatNumberNotFound, Forbidden => ForbiddenResult}
 import controllers.actions.VatAuthorised
 import play.api.libs.json.Json

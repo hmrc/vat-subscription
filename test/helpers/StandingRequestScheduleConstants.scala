@@ -16,12 +16,10 @@
 
 package helpers
 
-import play.api.libs.json.{JsObject, JsValue, Json}
-import helpers.BankDetailsTestConstants._
-import helpers.BaseTestConstants._
+import play.api.libs.json.{JsObject, Json}
 import models._
 import play.api.libs.json.JsArray
-import java.time.{LocalDate, LocalDateTime, Instant, ZoneId}
+import java.time.{LocalDate, Instant, ZoneId}
 
 object StandingRequestScheduleConstants {
 
