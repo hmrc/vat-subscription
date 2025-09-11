@@ -27,7 +27,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import connectors.mocks.MockStandingRequestScheduleConnector
 import scala.concurrent.Future
-import connectors.{SrsInvalidVatNumber}
+import connectors.SrsInvalidVatNumber
 
 class StandingRequestScheduleRetrievalServiceSpec extends AnyWordSpecLike with Matchers with MockStandingRequestScheduleConnector {
 

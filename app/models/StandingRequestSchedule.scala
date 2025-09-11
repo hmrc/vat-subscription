@@ -21,7 +21,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import utils.{JsonObjectSugar, JsonReadUtil}
-import java.time.{LocalDate, LocalDateTime, Instant, ZoneId}
+import java.time.{LocalDate, Instant, ZoneId}
 
 case class StandingRequestSchedule(processingDate: Option[LocalDate], standingRequests: List[StandingRequest] = List())
 

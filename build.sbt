@@ -16,17 +16,17 @@
 
 import play.sbt.routes.RoutesKeys
 import sbt.Keys.{javaOptions, retrieveManaged, scalaVersion}
-import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings.*
 
 RoutesKeys.routesImport := Seq.empty
 
 val appName = "vat-subscription"
-val bootstrapVersion = "8.6.0"
+val bootstrapVersion = "10.1.0"
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "2.13.16"
 lazy val plugins: Seq[Plugins] = Seq.empty
 
-lazy val coverageSettings: Seq[Setting[_]] = {
+lazy val coverageSettings: Seq[Setting[?]] = {
   import scoverage.ScoverageKeys
 
   val excludedPackages = Seq(
@@ -58,7 +58,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
 )
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins: _*)
+  .enablePlugins((Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins) *)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(coverageSettings *)
   .settings(scalaSettings *)

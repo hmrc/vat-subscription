@@ -18,8 +18,6 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.JsValue
-import play.api.libs.json.Json
-
 
 object GetStandingRequestScheduleStub extends WireMockMethods {
 

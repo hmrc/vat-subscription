@@ -23,9 +23,6 @@ import helpers.IntegrationTestConstants._
 import helpers.servicemocks.AuthStub._
 import helpers.servicemocks.GetStandingRequestScheduleStub._
 import helpers.{ComponentSpecBase, CustomMatchers}
-import models._
-import models.get.{PPOBGet, PPOBAddressGet}
-import com.github.tomakehurst.wiremock.client.WireMock._
 
 class RetrieveStandingRequestScheduleControllerISpec
     extends ComponentSpecBase

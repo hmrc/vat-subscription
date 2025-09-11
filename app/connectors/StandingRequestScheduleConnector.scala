@@ -25,8 +25,7 @@ import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggingUtil
-import java.time.{Clock, Instant}
-import java.util.Base64
+import java.time.Instant
 import java.util.UUID.randomUUID
 import scala.concurrent.{ExecutionContext, Future}
 import java.time.format.DateTimeFormatter
@@ -85,9 +84,9 @@ class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
       xTransmittingSystemHeader -> "HIP" 
     )
 
-  def generateNewUUID: String = randomUUID.toString
+  private def generateNewUUID: String = randomUUID.toString
 
-  def getCorrelationId(hc: HeaderCarrier): String =
+  private def getCorrelationId(hc: HeaderCarrier): String =
     hc.requestId match {
       case Some(requestId) =>
         requestId.value match {
