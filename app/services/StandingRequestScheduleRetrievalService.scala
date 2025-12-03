@@ -37,16 +37,11 @@ class StandingRequestScheduleRetrievalService @Inject()(standingRequestScheduleC
     standingRequestScheduleConnector.getSrsInformation(vatNumber).map {
       case Right(details) =>
         infoLog(s"[StandingRequestScheduleRetrievalService] Response received:")
-        Right(returnRequestCategory3Only(details))
+        Right(details)
       case Left(error) =>
         warnLog(s"[StandingRequestScheduleRetrievalService] Error received: $error")
         Left(error)
     }
   }
-
-  private def returnRequestCategory3Only(details: StandingRequestSchedule): StandingRequestSchedule = {
-    details.copy(standingRequests = details.standingRequests.filter(_.requestCategory == "3"))
-  }
-
 }
 
