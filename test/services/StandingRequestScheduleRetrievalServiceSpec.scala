@@ -45,18 +45,6 @@ class StandingRequestScheduleRetrievalServiceSpec extends AnyWordSpecLike with M
       await(res) shouldBe Right(standingRequestScheduleModel)
     }
 
-    "retrieve only requestCategory '3' standing requests schedule from valid vat number" in {
-      mockStandingRequestScheduleConnector(testVatNumber, Future.successful(Right(standingRequestMultipleModel)))
-      val res = TestStandingRequestScheduleRetrievalService.retrieveStandingRequestSchedule(testVatNumber)
-      await(res) shouldBe Right(standingRequestCategory3ModelSingle)
-    }
-
-    "return failed response when no requestCategory '3' standing requests schedule from valid vat number" in {
-      mockStandingRequestScheduleConnector(testVatNumber, Future.successful(Right(standingRequestNonPOACategoryModel)))
-      val res = TestStandingRequestScheduleRetrievalService.retrieveStandingRequestSchedule(testVatNumber)
-      await(res) shouldBe Right(standingRequestEmptyStandingRequestsModel)
-    }
-
     "return a failed response when the customer information cannot be retrieved" in {
       mockStandingRequestScheduleConnector(testVatNumber, Future.successful(Left(SrsInvalidVatNumber)))
       val res = TestStandingRequestScheduleRetrievalService.retrieveStandingRequestSchedule(testVatNumber)

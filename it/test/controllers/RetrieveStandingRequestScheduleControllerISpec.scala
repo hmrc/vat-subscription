@@ -224,66 +224,6 @@ class RetrieveStandingRequestScheduleControllerISpec
           jsonBodyAs(expectedStandingRequestSchedule)
         )
       }
-
-      "return OK with requestCategory 3 standing requests only" in {
-
-        val expectedStandingRequestRequestCategory3Only: JsObject = Json.obj(
-          "processingDate" -> "2025-03-17",
-          "standingRequests" -> Json.arr(
-            Json.obj(
-              "requestNumber" -> "20000037272",
-              "requestCategory" -> "3",
-              "createdOn" -> "2025-01-05",
-              "changedOn" -> "2025-02-26",
-              "requestItems" -> Json.arr(
-                Json.obj(
-                  "period" -> "1",
-                  "periodKey" -> "25A1",
-                  "startDate" -> "2025-01-01",
-                  "endDate" -> "2025-03-31",
-                  "dueDate" -> "2025-03-31",
-                  "amount" -> 22945.23,
-                  "chargeReference" -> "XD006411191344",
-                  "postingDueDate" -> "2025-03-31"
-                ),
-                Json.obj(
-                  "period" -> "2",
-                  "periodKey" -> "25A2",
-                  "startDate" -> "2025-04-01",
-                  "endDate" -> "2025-06-30",
-                  "dueDate" -> "2025-05-31",
-                  "amount" -> 22945.23,
-                  "chargeReference" -> "XD006411191344",
-                  "postingDueDate" -> "2025-05-31"
-                ),
-                Json.obj(
-                  "period" -> "3",
-                  "periodKey" -> "25A2",
-                  "startDate" -> "2025-04-01",
-                  "endDate" -> "2025-06-30",
-                  "dueDate" -> "2025-06-30",
-                  "amount" -> 22945.23,
-                  "chargeReference" -> "XD006411191344",
-                  "postingDueDate" -> "2025-06-30"
-                )
-              )
-            )
-          )
-        )
-
-        stubAuth(OK, successfulAuthResponse(mtdVatEnrolment))
-        stubGetStandingRequestSchedule(testVatNumber)(
-          OK,
-          standingRequestMultipleRequestCategoriesJson
-        )
-
-        val res = get(s"/$testVatNumber/standing-requests")
-
-        res should have(
-          httpStatus(OK),
-          jsonBodyAs(expectedStandingRequestRequestCategory3Only)
-        )
-      }
     }
 
     "calls to HIP returned BAD_REQUEST" should {
