@@ -16,8 +16,7 @@
 
 package controllers
 
-import connectors.{InvalidVatNumber, SrsForbidden, SrsInvalidVatNumber,
-  SrsVatNumberNotFound, UnexpectedStandingRequestScheduleFailure, VatNumberNotFound, Forbidden => ForbiddenResult}
+import connectors.{InvalidVatNumber, SrsForbidden, SrsInactiveUser, SrsInvalidVatNumber, SrsVatNumberNotFound, UnexpectedStandingRequestScheduleFailure, VatNumberNotFound, Forbidden => ForbiddenResult}
 import controllers.actions.VatAuthorised
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -38,6 +37,10 @@ class RetrieveStandingRequestScheduleController @Inject()(VatAuthorised: VatAuth
     implicit user =>
       standingRequestScheduleRetrievalService.retrieveStandingRequestSchedule(vatNumber) map {
         case Right(standingRequests) => Ok(Json.toJson(standingRequests))
+        case Left(SrsInactiveUser) =>
+          infoLog(s"[RetrieveStandingRequestScheduleController][retrieveStandingRequestScheduleDetails]: " +
+            s"SrsInactiveUser returned from StandingRequestScheduleRetrievalService")
+          NotFound(Json.toJson(SrsInactiveUser))
         case Left(SrsInvalidVatNumber) =>
           infoLog(s"[RetrieveStandingRequestScheduleController][retrieveStandingRequestScheduleDetails]: " +
             s"InvalidVatNumber returned from StandingRequestScheduleRetrievalService")

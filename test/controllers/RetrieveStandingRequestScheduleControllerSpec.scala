@@ -64,6 +64,17 @@ class RetrieveStandingRequestScheduleControllerSpec extends TestUtil
         }
       }
 
+      "the user does not have standing requests" when {
+        "return a NotFound" in {
+          mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
+          mockRetrieveStandingRequestsSchedule(testVatNumber)(Future.successful(Left(SrsInactiveUser)))
+
+          val res: Future[Result] = TestRetrieveStandingRequestScheduleController.retrieveStandingRequestScheduleDetails(testVatNumber)(FakeRequest())
+          status(res) shouldBe NOT_FOUND
+          contentAsJson(res) shouldBe Json.toJson(SrsInactiveUser)
+        }
+      }
+
       "the vat number is not found" should {
         "return a NotFound" in {
           mockAuthRetrieveMtdVatEnrolled(vatAuthPredicate)
