@@ -96,6 +96,53 @@ class GetVatCustomerInformationHttpParserSpec extends TestUtil {
 
         res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "{}"))
       }
+
+      "parse a SERVICE_UNAVAILABLE am:fault response as an UnexpectedGetVatCustomerInformationFailure" in {
+
+        val responseBody = """<am:fault xmlns:am="http://wso2.org/apimanager">
+        |<am:code>101504</am:code>
+        |<am:type>Status report</am:type>
+        |<am:message>Runtime Error</am:message>
+        |<am:description>Send timeout</am:description>
+        |</am:fault>""".stripMargin
+
+        val httpResponse = HttpResponse(SERVICE_UNAVAILABLE, responseBody)
+
+        val res = httpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(SERVICE_UNAVAILABLE, "Runtime Error - Send timeout"))
+      }
+
+      "parse a BAD_GATEWAY HTML response as an UnexpectedGetVatCustomerInformationFailure" in {
+
+        val responseBody = """<html><head><title>502 Bad Gateway</title></head><body><center><h1>502 Bad Gateway</h1></center></body></html>"""
+
+        val httpResponse = HttpResponse(BAD_GATEWAY, responseBody)
+
+        val res = httpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(BAD_GATEWAY, "Received HTML response from downstream"))
+      }
+
+      "parse an empty unexpected response body as an UnexpectedGetVatCustomerInformationFailure" in {
+
+        val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, "")
+
+        val res = httpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, "Downstream returned empty body"))
+      }
+
+      "parse an unexpected JSON error body as an UnexpectedGetVatCustomerInformationFailure" in {
+
+        val responseBody = """{"unexpected":"json"}"""
+
+        val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, responseBody)
+
+        val res = httpParser.GetVatCustomerInformationHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Left(UnexpectedGetVatCustomerInformationFailure(INTERNAL_SERVER_ERROR, responseBody))
+      }
     }
   }
 }
