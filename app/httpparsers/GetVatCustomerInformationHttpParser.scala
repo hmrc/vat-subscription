@@ -31,6 +31,8 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extend
 
   type GetVatCustomerInformationHttpParserResponse = Either[GetVatCustomerInformationFailure, VatCustomerInformation]
 
+  private val MaxBodyLength = 300
+
   implicit object GetVatCustomerInformationHttpReads extends HttpReads[GetVatCustomerInformationHttpParserResponse] {
     override def read(method: String, url: String, response: HttpResponse): GetVatCustomerInformationHttpParserResponse =
       response.status match {
@@ -67,8 +69,37 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extend
         logUnexpectedResponse(response)
         Left(Forbidden)
       case status =>
-        logUnexpectedResponse(response)
-        Left(UnexpectedGetVatCustomerInformationFailure(status, response.body))
+        val body = Option(response.body).getOrElse("").trim
+
+        classifyBody(body) match {
+          case EmptyBody =>
+            logger.warn(s"[CustomerCircumstancesHttpParser][handleErrorResponse] Empty response body received. " +
+              s"Status: $status. CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}")
+            Left(UnexpectedGetVatCustomerInformationFailure(status, "Downstream returned empty body"))
+
+          case XmlBody =>
+            val xmlMessage = extractXmlMessage(body)
+            logger.info(s"[CustomerCircumstancesHttpParser][handleErrorResponse] XML response received. " +
+              s"Status: $status. Message: $xmlMessage. " +
+              s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}")
+            Left(UnexpectedGetVatCustomerInformationFailure(status, xmlMessage))
+
+          case HtmlBody =>
+            logger.info(s"[CustomerCircumstancesHttpParser][handleErrorResponse] HTML response received from downstream. " +
+              s"Status: $status. " +
+              s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}")
+            Left(UnexpectedGetVatCustomerInformationFailure(status, "Received HTML response from downstream"))
+
+          case JsonBody =>
+            val truncated = body.take(MaxBodyLength)
+            logger.warn(s"[CustomerCircumstancesHttpParser][handleErrorResponse] Unexpected JSON error body structure: $truncated")
+            Left(UnexpectedGetVatCustomerInformationFailure(status, truncated))
+
+          case UnknownBody =>
+            val truncated = body.take(MaxBodyLength)
+            logger.warn(s"[CustomerCircumstancesHttpParser][handleErrorResponse] Unknown response format: $truncated")
+            Left(UnexpectedGetVatCustomerInformationFailure(status, truncated))
+        }
     }
   }
 
@@ -80,4 +111,38 @@ class GetVatCustomerInformationHttpParser @Inject()(appConfig: AppConfig) extend
         s"CorrelationId: ${response.header("CorrelationId").getOrElse("Not found in header")}"
     )
   }
+
+  private def extractXmlMessage(xml: String): String = {
+    def extract(tag: String): Option[String] =
+      s"<$tag>(.*?)</$tag>".r.findFirstMatchIn(xml).map(_.group(1))
+
+    List(
+      extract("am:message"),
+      extract("am:description")
+    ).flatten.mkString(" - ") match {
+      case "" => "XML fault received"
+      case message => message
+    }
+  }
+
+  private def classifyBody(body: String): BodyType = body match {
+    case "" => EmptyBody
+    case b if b.startsWith("{") || b.startsWith("[") => JsonBody
+    case b if b.contains("<am:fault") => XmlBody
+    case b if b.toLowerCase.contains("<html") => HtmlBody
+    case _ => UnknownBody
+  }
+
+  private sealed trait BodyType
+
+  private case object EmptyBody extends BodyType
+
+  private case object JsonBody extends BodyType
+
+  private case object XmlBody extends BodyType
+
+  private case object HtmlBody extends BodyType
+
+  private case object UnknownBody extends BodyType
+
 }
