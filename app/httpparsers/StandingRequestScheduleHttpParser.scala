@@ -77,6 +77,9 @@ class StandingRequestScheduleHttpParser @Inject()(appConfig: AppConfig) extends 
     case Some("004") =>
       logger.info("[StandingRequestScheduleHttpParser][handle422Response] - Customer is not on VAT scheme (benign 422).")
       Left(SrsInactiveUser)
+    case Some("003") =>
+      logger.info("[StandingRequestScheduleHttpParser][handle422Response] - No request exists (benign 422).")
+      Left(SrsVatNumberNotFound)
     case _ =>
       logUnexpectedResponse(response, message = "Unexpected 422 response")
       Left(UnexpectedStandingRequestScheduleFailure(UNPROCESSABLE_ENTITY, response.body))

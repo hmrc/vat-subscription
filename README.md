@@ -859,4 +859,4 @@ This code is open source software licensed under the [Apache 2.0 License]("http:
 
 
 ## Testing
-`sbt clean coverage test it/test coverageReport`
+execute `./run-all-tests.sh` or `sbt clean coverage test it/test coverageReport`
