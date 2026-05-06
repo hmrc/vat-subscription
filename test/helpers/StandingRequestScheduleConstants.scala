@@ -393,6 +393,22 @@ object StandingRequestScheduleConstants {
     "text" -> "Request Could Not Be Processed"
   )
 
+  val standingRequestUnprocessableErrorJson = Json.obj(
+    "errors" -> Json.obj(
+        "processingDate" -> "2026-05-05",
+        "code" -> "003",
+        "text" -> "Not found"
+    )
+  )
+
+  val standingRequestUnprocessableErrorInActiveUserJson = Json.obj(
+    "errors" -> Json.obj(
+      "processingDate" -> "2026-05-05",
+      "code" -> "004",
+      "text" -> "Customer is not on VAT scheme"
+    )
+  )
+
   val standingRequestEmptyJson = Json.obj(
     "processingDate" -> "2025-03-17",
     "standingRequests" -> JsArray.empty

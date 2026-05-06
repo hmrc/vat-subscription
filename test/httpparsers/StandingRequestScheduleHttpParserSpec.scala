@@ -79,6 +79,25 @@ class StandingRequestScheduleHttpParserSpec extends TestUtil {
         res shouldBe Left(SrsForbidden)
       }
 
+      "parse a UNPROCESSABLE_ENTITY response as a SrsVatNumberNotFound when Error Code is 003" in {
+
+        val httpResponse = HttpResponse(UNPROCESSABLE_ENTITY, standingRequestUnprocessableErrorJson.toString)
+
+        val res = httpParser.GetStandingRequestScheduleHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Left(SrsVatNumberNotFound)
+      }
+
+      "parse a UNPROCESSABLE_ENTITY response as a SrsInActiveUser when Error Code is 004" in {
+
+        val httpResponse = HttpResponse(UNPROCESSABLE_ENTITY, standingRequestUnprocessableErrorInActiveUserJson.toString)
+
+        val res = httpParser.GetStandingRequestScheduleHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+        res shouldBe Left(SrsInactiveUser)
+      }
+
+
       "parse any other response as a UnexpectedStandingRequestScheduleFailure" in {
 
         val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, Json.obj().toString)
