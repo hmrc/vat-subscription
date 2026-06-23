@@ -23,10 +23,7 @@ object GetStandingRequestScheduleStub extends WireMockMethods {
 
   def stubGetStandingRequestSchedule(vatNumber: String)(status: Int, body: JsValue): StubMapping = {
     when(method = GET, uri = s"/etmp/RESTAdapter/VATC/standing-requests/VRN/$vatNumber",
-      headers = Map(
-        "Authorization" -> "Basic Y2xpZW50SWQ6Y2xpZW50U2VjcmV0",
-        "Environment" -> "dev"
-      )
+      headers = Map("Authorization" -> "Basic Y2xpZW50SWQ6Y2xpZW50U2VjcmV0")
     ).thenReturn(status = status, body = body)
   }
 }

@@ -18,18 +18,18 @@ package connectors
 
 import config.AppConfig
 import httpparsers.StandingRequestScheduleHttpParser
-
-import javax.inject.{Inject, Singleton}
 import play.api.http.Status._
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggingUtil
+
 import java.time.Instant
-import java.util.UUID.randomUUID
-import scala.concurrent.{ExecutionContext, Future}
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.UUID.randomUUID
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StandingRequestScheduleConnector @Inject()(val http: HttpClient,
